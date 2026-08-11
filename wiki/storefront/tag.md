@@ -26,7 +26,7 @@ This page reuses `products/list.tpl` (the same template as [[products-list]]) â€
 - **Controller**: the tag controller, the request handler (the `index` method is an alias that delegates to `view`)
 - **Middleware**: `uuid_generate`, `subscriber_uuid`, `TSStatistic:tag`
 
-If the URL slug does not match the current `url_handle`, the controller 301-redirects to the canonical URL. If the slug resolves to no tag, the controller throws the platform code with `sf.global.err.tag_no_longer_exists`.
+If the URL slug does not match the current `url_handle`, the controller 301-redirects to the canonical URL. If the slug resolves to no tag, the controller throws a not-found error with `sf.global.err.tag_no_longer_exists`.
 
 ## How it loads
 

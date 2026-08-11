@@ -69,7 +69,7 @@ If any one of these fails, VIES is skipped silently. A non-EU country, an empty 
 |-------------|------------------------|----------------|
 | `valid: true` | `true` (plus name + address + checkDate) | Yes — row saves silently. |
 | `valid: false` | `false` | **Depends on endpoint** — see "Two endpoints, two behaviours" below. |
-| Service unreachable (the platform code) | `false` (defaults) | Yes — exception is swallowed, row saves with default `valid: false`. |
+| Service unreachable (an error) | `false` (defaults) | Yes — exception is swallowed, row saves with default `valid: false`. |
 
 ### Two endpoints, two behaviours
 
@@ -112,5 +112,5 @@ API writes go through the JSON-API v2 path described in [[customer-billing-addre
 
 ## Open questions
 
-- Confirm whether the platform code is logged anywhere the merchant can see (or only in backend logs) (verify).
+- Confirm whether an error is logged anywhere the merchant can see (or only in backend logs) (verify).
 - Confirm whether the 7-day TTL is calendar days or wall-clock seconds (verify).

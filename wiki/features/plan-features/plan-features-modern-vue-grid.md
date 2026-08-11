@@ -52,7 +52,7 @@ The modern Vue tab at `/admin/plan-features` renders a grid of **per-feature car
 ### Loading / empty states
 
 - `CardGhostLoader` is rendered in place of the cards while data loads.
-- the platform code shown when the search returns zero rows.
+- a not-found error shown when the search returns zero rows.
 
 ### Per-feature card (`FeatureCard`)
 

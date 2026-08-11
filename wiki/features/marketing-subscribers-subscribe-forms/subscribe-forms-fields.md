@@ -65,7 +65,7 @@ For each input slot:
 | `placeholder` | Override the default storefront placeholder. |
 | `fieldStyle` / `labelStyle` | Custom CSS overrides. |
 
-### Validation rules (in the platform code)
+### Validation rules (in the request validator)
 
 - `email` — `email` rule + `required` if marked required.
 - `phone` — `phone_number_global:country.iso2` rule + `required` if marked required.

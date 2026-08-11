@@ -80,7 +80,7 @@ This aspect documents attributes only. For the filter / sort reference and worke
 
 This endpoint itself does NOT run a per-row plan-feature check. The `discount_coupon` plan-feature counter is consumed once when the parent Container Discount is created on [[api-discounts]] (with `is_container = 1` + `discount_type = percent` + no `code` set on the parent → the adapter's gate selects `discount_coupon`). Once the parent exists, generating or POSTing individual codes here is unmetered at the JSON-API v2 layer.
 
-If the parent-Container plan-gate fails on a later call, the exception bubbles up as **HTTP 402 Payment Required** at the api2 handler — not HTTP 403. (Older wiki phrasing claimed 403; the api2 handler explicitly maps the platform code to HTTP 402.)
+If the parent-Container plan-gate fails on a later call, the exception bubbles up as **HTTP 402 Payment Required** at the api2 handler — not HTTP 403. (Older wiki phrasing claimed 403; the api2 handler explicitly maps a plan-restriction error to HTTP 402.)
 
 ## Equivalent UI
 

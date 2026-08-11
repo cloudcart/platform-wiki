@@ -70,7 +70,7 @@ On save, `attachPostCodes` deletes and re-creates every pattern row for the rule
 
 ### Validation
 
-The post-code field is validated when `operation = 11` via the custom `geo_post_codes` the application framework rule in the platform code, which loops every entry through the platform code. Exact merchant-facing error strings (verified 2026-06-11 against `lang/{en,bg}/geo_zone.php` keys `error.post_code.range.*`):
+The post-code field is validated when `operation = 11` via the custom `geo_post_codes` the application framework rule in the request validator, which loops every entry through the platform code. Exact merchant-facing error strings (verified 2026-06-11 against `lang/{en,bg}/geo_zone.php` keys `error.post_code.range.*`):
 
 | Failure | EN error string | BG error string |
 |---|---|---|

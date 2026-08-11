@@ -34,7 +34,7 @@ URL pattern: `/admin/billing/invoicing` (the editor side panel; the read-only su
 
 This feature is split into 6 aspect pages, each covering one well-scoped slice. The Assistant should drill into the aspect that matches the question, not read every page.
 
-- [[billing-invoicing-fields-and-validation]] — every form field (Country, Company ID, VAT, Company, Address, MOL `name`, Email); the platform code required-validation rules; the four merchant-visible validation messages.
+- [[billing-invoicing-fields-and-validation]] — every form field (Country, Company ID, VAT, Company, Address, MOL `name`, Email); the request validator required-validation rules; the four merchant-visible validation messages.
 - [[billing-invoicing-eik-apis-lookup]] — the BG branch: 9-digit / 13-digit EIK check-digit algorithm, EGN sole-trader path, APIS Trade Register call at `regdata.apis.bg`, Bulgarian-language address formatting.
 - [[billing-invoicing-vat-vies-lookup]] — the non-BG branch: VIES validation, HMRC for `GB`, per-country VAT pattern enforcement, the three skip cases (BG / CH / non-VAT countries), outage handling.
 - [[billing-invoicing-country-driven-form]] — how the Country dropdown swaps which field is primary; the `disabledMapping` named maps (`countryBg`, `countryNoBg`, `eikBg`, `vatNoBg`); the auto-trigger watchers; the DE-only `euOnly` filter.

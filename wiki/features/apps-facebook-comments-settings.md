@@ -28,7 +28,7 @@ Sidebar → Apps → Facebook Comments → **Settings tab**. Route: `/admin/apps
 |---|---|---|
 | **Comments count** (`facebook_comments_number`) | Required, integer, min 1, max 100 | How many comments to display per page before "Show more". |
 
-Validation messages (per [[apps-facebook-comments]] the platform code):
+Validation messages (per [[apps-facebook-comments]] the request validator):
 - Required: *"Please add how many comments you would like to see on your website"*.
 - Min 1: *"Please add different number from zero"*.
 - Max 100: *"Maximum comments are 100"*.

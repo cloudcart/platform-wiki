@@ -40,7 +40,7 @@ Not covered here:
 
 - **Bulk Send vs single-cart Send vs auto-sweep — three different failure UX paths**:
   - **Bulk Send restore link** — iterates, calls `generateRestoreCode` per cart, the underlying mailer's quota check then silently delete-removes failing carts. Merchant sees aggregate "X emails sent" toast.
-  - **Single-cart Send** (from a cart's details panel on [[orders-abandoned]]) — explicitly checks the platform code BEFORE sending and throws the platform code exception with the merchant-facing "feature limit warning" message when the quota is exhausted. Merchant sees a **hard paywall** on the single-cart path.
+  - **Single-cart Send** (from a cart's details panel on [[orders-abandoned]]) — explicitly checks the platform code BEFORE sending and throws a a plan-restriction error exception with the merchant-facing "feature limit warning" message when the quota is exhausted. Merchant sees a **hard paywall** on the single-cart path.
   - **Auto-sweep** — silently skips failing carts; merchant sees no signal beyond `date_sent` stamps not appearing.
 - **`date_sent` stamp vs re-send guard** — `date_sent` is purely an informational stamp showing when the last restore-link email was dispatched. It is **not** a "don't send twice" guard in the manual flow. The code path that would block re-sending is present but commented out. (verify)
 
@@ -62,7 +62,7 @@ So a merchant sending to 10 carts may see "4 emails sent" + 6 carts disappeared 
 The per-cart **Send** action on a single cart's panel takes a different path:
 
 - It explicitly calls the platform code **before** sending.
-- On quota exhaustion, throws the platform code exception with the merchant-facing "feature limit warning" message — the merchant sees a **hard paywall** dialog with a link to [[plan-features]].
+- On quota exhaustion, throws a a plan-restriction error exception with the merchant-facing "feature limit warning" message — the merchant sees a **hard paywall** dialog with a link to [[plan-features]].
 - The seven-check eligibility filter still applies; failing checks still silent-skip (no per-check error to the merchant — same as bulk).
 
 So the **only path that explicitly surfaces a paywall to the merchant** is the single-cart Send. Bulk Send and auto-sweep both fail silently on quota exhaustion. See [[abandoned-cart-plan-quota]].

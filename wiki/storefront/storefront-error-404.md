@@ -13,7 +13,7 @@ source_count: 3
 
 ## Purpose
 
-The fallback page rendered when no storefront route matches the requested URL, when the controller explicitly throws the platform code, or when the framework's error handler maps an HTTP exception to a status-code page. Also used for the 402/403/500 family in the same template, distinguished by `$code` and `$message`.
+The fallback page rendered when no storefront route matches the requested URL, when the controller explicitly throws a not-found error, or when the framework's error handler maps an HTTP exception to a status-code page. Also used for the 402/403/500 family in the same template, distinguished by `$code` and `$message`.
 
 ## URL & route
 
@@ -23,7 +23,7 @@ The fallback page rendered when no storefront route matches the requested URL, w
 
 ## How it loads
 
-1. the application framework's exception renderer catches the unmatched-route exception (or an explicit the platform code, `PaymentRequired`, etc.).
+1. the application framework's exception renderer catches the unmatched-route exception (or an explicit a not-found error, `PaymentRequired`, etc.).
 2. The site error handler resolves the active theme's `error.tpl`.
 3. the theme templates is a one-line include of `notifications/error.tpl`.
 4. `templates/notifications/error.tpl` wraps the error in the standard `header.tpl` + `footer.tpl` and branches:

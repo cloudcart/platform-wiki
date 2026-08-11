@@ -53,9 +53,9 @@ Not covered here:
 
 | Plan feature state | Auto-sweep | Manual bulk Send | Manual single-cart Send |
 |---|---|---|---|
-| **Absent / disabled** | Site skipped entirely | Shows paywall | Hard paywall (the platform code) |
+| **Absent / disabled** | Site skipped entirely | Shows paywall | Hard paywall (a plan-restriction error) |
 | **Present with quota remaining** | Sends, increments counter | Sends, increments counter | Sends, increments counter |
-| **Present, quota exhausted** | Silent skip; the platform code aborts the batch (see [[abandoned-cart-threshold]]) | Silent delete (mailer's underlying quota check) | Hard paywall (the platform code) |
+| **Present, quota exhausted** | Silent skip; a plan-restriction error aborts the batch (see [[abandoned-cart-threshold]]) | Silent delete (mailer's underlying quota check) | Hard paywall (a plan-restriction error) |
 
 (verify the exact silent-vs-hard split on each path against the bulk and sweep code paths)
 
@@ -70,13 +70,13 @@ Every successful send (auto-sweep or manual) increments `plan.count.email.abando
 
 ### Single-cart Send — the only path with a clean paywall
 
-The per-cart **Send** action on a single cart's panel (from [[orders-abandoned]]) is the only path that explicitly checks the platform code BEFORE attempting to send and throws the platform code exception with the merchant-facing "feature limit warning" message when the quota is exhausted. The merchant sees a paywall dialog with a link to [[plan-features]] to purchase more `abandoned_notification` quota via a feature-pack top-up.
+The per-cart **Send** action on a single cart's panel (from [[orders-abandoned]]) is the only path that explicitly checks the platform code BEFORE attempting to send and throws a a plan-restriction error exception with the merchant-facing "feature limit warning" message when the quota is exhausted. The merchant sees a paywall dialog with a link to [[plan-features]] to purchase more `abandoned_notification` quota via a feature-pack top-up.
 
 The bulk Send restore link action and the auto-sweep both fail silently on quota exhaustion (see [[abandoned-cart-bulk-send]] for the path-specific failure UX). Merchants relying on bulk Send won't see a clear "you've hit your limit" signal — they'll just see "X emails sent" toasts where X is smaller than expected and carts disappearing from the list silently.
 
 ### What happens when the auto-sweep hits exhaustion mid-batch
 
-The auto-sweep job throws the platform code exception when the `abandoned_notification` quota is exhausted mid-run — the job **aborts at the first failing cart**, so subsequent carts in the same batch are NOT processed even if some could have qualified by per-cart criteria. The next sweep tick re-attempts from scratch but hits the same exhausted-quota check immediately. (verify) This is invisible to the merchant; the only visible signal is `date_sent` stamps stalling out before all eligible carts are sent, and the "Abandoned count: X" total plateauing at the cap.
+The auto-sweep job throws a a plan-restriction error exception when the `abandoned_notification` quota is exhausted mid-run — the job **aborts at the first failing cart**, so subsequent carts in the same batch are NOT processed even if some could have qualified by per-cart criteria. The next sweep tick re-attempts from scratch but hits the same exhausted-quota check immediately. (verify) This is invisible to the merchant; the only visible signal is `date_sent` stamps stalling out before all eligible carts are sent, and the "Abandoned count: X" total plateauing at the cap.
 
 ### Period rollover behaviour
 
@@ -103,4 +103,4 @@ So the period rollover effectively un-blocks the manual paths against historical
 
 ## Open Questions
 
-- Confirm the exact merchant-facing wording of the "feature limit warning" string surfaced by the platform code on the single-cart Send path. (verify against the message catalogue)
+- Confirm the exact merchant-facing wording of the "feature limit warning" string surfaced by a plan-restriction error on the single-cart Send path. (verify against the message catalogue)

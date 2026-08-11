@@ -57,7 +57,7 @@ The merchant tunes the validation behaviour from [[settings-cart]] via the `chec
 
 ### Conditional validation from store settings
 
-The platform code form validator reads several `checkout_hide_*` settings from [[settings-cart]] and adjusts validation per field. Each setting accepts three values: `required`, `optional`, or `hidden`.
+The request validator form validator reads several `checkout_hide_*` settings from [[settings-cart]] and adjusts validation per field. Each setting accepts three values: `required`, `optional`, or `hidden`.
 
 | Setting (from [[settings-cart]]) | Field affected |
 |----------------------------------|----------------|

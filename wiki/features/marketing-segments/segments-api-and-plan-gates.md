@@ -53,7 +53,7 @@ Each segment that uses the `planLimit` condition will only process the first:lim
 
 The plan's segment-count cap is shown next to the "Add segment" button as a "remaining" counter via `/admin/common/remaining/segments`.
 
-### Server-side validation rules — the platform code (create / update)
+### Server-side validation rules — the request validator (create / update)
 
 - **`channel`** — required, must equal the literal value `cloudcart`. The platform stores segments tagged with a channel string so future channel-specific segment types can coexist; today the only allowed value is `cloudcart`.
 - **`conditions.conditions`** — required, must be a non-empty array, AND must pass the custom `conditionsValidate` extension. Empty body returns *"You must have at least one row with conditions"*. See [[marketing-segments-editor]] § "Validation lifecycle" for the full per-field error map.

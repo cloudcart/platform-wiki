@@ -44,7 +44,7 @@ The merchant doesn't see this surface directly — but a connected integration (
 |--------|------|-------|
 | GET | `/api/v2/posts` | List with `filter[*]`, `sort`, pagination. |
 | GET | `/api/v2/posts/{id}` | Single resource. |
-| POST | `/api/v2/posts` | Create. Runs the platform code validation — see [[blog-articles-rules]]. |
+| POST | `/api/v2/posts` | Create. Runs the request validator validation — see [[blog-articles-rules]]. |
 | PATCH | `/api/v2/posts/{id}` | Update. Same validation. |
 | DELETE | `/api/v2/posts/{id}` | Hard delete; cascades to comments. |
 
@@ -93,7 +93,7 @@ For migrating existing content from WordPress / Ghost / Medium without a custom 
 - [[json-api-v2]] — auth, rate limits, side-effects principle.
 - [[blog-articles-list]] — admin UI equivalent for browsing.
 - [[blog-articles-editor]] — admin UI equivalent for create / edit.
-- [[blog-articles-rules]] — the platform code validation that the API runs.
+- [[blog-articles-rules]] — the request validator validation that the API runs.
 - [[blog-articles-storefront-visibility]] — `publish_date` semantics (API is the only way to set it from a third party).
 - [[blog-articles-csv-import]] — bulk-import alternative.
 - [[apps-blog-csv-import]] — the app that powers CSV import.

@@ -37,7 +37,7 @@ The resource page itself (endpoint paths, attribute list, allowed filters, full 
 
 ### What the merchant CANNOT do here
 
-- Skip validation. The same the platform code validator runs on the API (see [[customer-shipping-address-validation]]).
+- Skip validation. The same the request validator validator runs on the API (see [[customer-shipping-address-validation]]).
 - Bypass the courier-mapping regeneration on save. It runs on every PATCH / POST — see [[customer-shipping-address-save-hooks]].
 - Delete the customer's current default shipping address through the API — rejected with HTTP 422 *"Cannot delete customer default address."* Same protection as the admin bulk delete (see [[customer-shipping-address-defaults]]).
 

@@ -39,7 +39,7 @@ The page is rendered by `AppsList.vue` and has three main sections, top-to-botto
 | **Searchbar + category filter** | Free-text search input + multi-select category picker. Includes a "Recommended" pseudo-category. |
 | **Two tabs** | "My apps" (only installed) vs "All apps for &lt;Country&gt;" (everything filtered to the merchant's country). The "All apps" tab additionally shows the country flag from the store's country code. |
 | **App grid** | Cards with logo, name, install/uninstall button, and category. |
-| **Empty state** | the platform code when search/filter yields zero matches; the query is also reported via Sentry for analytics. |
+| **Empty state** | a not-found error when search/filter yields zero matches; the query is also reported via Sentry for analytics. |
 
 ## Install / Uninstall sub-flow (per app card)
 

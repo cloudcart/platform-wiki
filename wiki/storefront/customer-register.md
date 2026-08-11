@@ -27,7 +27,7 @@ Lets a new visitor open a customer account on the store. Used either as the stan
 1. the request handler builds the page array (`title`, `active`, `load_content => './auth/register.tpl'`, the platform code) and either returns a full `auth.tpl` render or a JSON envelope around `auth-content.tpl` when the platform code is true.
 2. The custom merchant-defined fields injected as `$fields` come from the registration form configuration in the admin → see **settings-customers** (specifically the "Registration form fields" section). Each field is rendered by `themes/_global/templates/customer/custom-form-component/{type}.tpl`.
 3. When the request originates from the social-login callback (`socialLoginCallback`), the controller passes `hash`, `social_first_name`, `social_last_name`, `social_email` into the same template — the email field is then rendered `readonly` and a hidden `hash` input is added so the form can finish wiring the OAuth account on submit.
-4. On `POST`, the platform code validates, then the platform code creates the customer; `registerPost` then chooses the redirect.
+4. On `POST`, the request validator validates, then the platform code creates the customer; `registerPost` then chooses the redirect.
 
 ## What the customer sees
 
@@ -49,14 +49,14 @@ Footer: submit button (`cc-button js-loading`, disabled until JS binds), then a 
 
 ## Storefront behaviour
 
-- the platform code enforces:
+- the request validator enforces:
   - `first_name` required, max 255
   - `last_name` required, max 255
   - `email` required, valid, `unique_email`, max 191
   - `password` required, min 6, max 20
   - `alternative_phone` required
-  - Plus GDPR rules from the platform code and the merchant's custom-fields rules from `CustomFields`
-  - Plus, when the relevant settings are on, the full shipping/billing the platform code validation prefixed with `shipping.` / `billing.`
+  - Plus GDPR rules from the request validator and the merchant's custom-fields rules from `CustomFields`
+  - Plus, when the relevant settings are on, the full shipping/billing the request validator validation prefixed with `shipping.` / `billing.`
 - the platform code creates the customer, fires registration events, and sets `is_activated` according to the customer-activation flow (the membership / private-store flow can leave the customer pending until an admin approves them).
 - Post-registration redirect order:
   1. If a private-store redirect page is configured and the customer is not yet activated → membership redirect page.

@@ -56,7 +56,7 @@ If there are NO eligible existing discounts, an inline `alert-danger` shows inst
 
 The default type is **Percent**, not Flat — the merchant must explicitly switch to Flat for currency-amount discounts. The detailed manual-discount validation (flat-less-than-subtotal, percent clamping) is on [[orders-discount-add-manual]].
 
-### Submission validation (the platform code)
+### Submission validation (the request validator)
 
 - `discount_variant` required, one of `existing` / `manual`.
 - `discount_target_id` required when `variant = existing`.

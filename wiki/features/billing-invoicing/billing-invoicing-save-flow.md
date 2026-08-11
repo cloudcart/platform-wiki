@@ -40,7 +40,7 @@ No new fields — this aspect is about the save handler's behaviour, not new for
 
 When the merchant clicks **Submit**:
 
-1. The platform code runs the required-field + `eik` + `vat_number` validators. See [[billing-invoicing-fields-and-validation]] for the rules.
+1. The request validator runs the required-field + `eik` + `vat_number` validators. See [[billing-invoicing-fields-and-validation]] for the rules.
 2. If validation fails, the per-field errors render inline and the save aborts.
 3. The country is read from the request.
 4. **If country ≠ BG, the platform tries an additional APIS lookup as an enrichment step** with `company_id` (and `vat` as fallback). If APIS returns data, the country code is overwritten with the APIS-derived country, and any additional fields APIS returned are merged in. The merchant doesn't see this happen — it's a silent backend enrichment with no UI feedback if it fails.

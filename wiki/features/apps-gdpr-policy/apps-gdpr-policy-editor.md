@@ -54,7 +54,7 @@ Per-policy status flip via `GET /api/gdpr/policy/status/{policy_id}/{status?}`. 
 
 ### Validation — minimum 2 characters for name and content
 
-the platform code requires both `policy.name` (min 2, max 191 characters) and `policy.content` (min 2 characters, no upper limit). **Empty bodies or single-character titles are rejected.** The name has a 191-char hard cap (the utf8mb4 index limit). Content has no upper bound — the merchant can paste long-form HTML.
+the request validator requires both `policy.name` (min 2, max 191 characters) and `policy.content` (min 2 characters, no upper limit). **Empty bodies or single-character titles are rejected.** The name has a 191-char hard cap (the utf8mb4 index limit). Content has no upper bound — the merchant can paste long-form HTML.
 
 ### Policy name uniqueness — enforced against the ENTIRE pages table
 

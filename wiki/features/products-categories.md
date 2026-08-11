@@ -36,7 +36,7 @@ This feature is split into 7 aspect pages, each covering one well-scoped slice. 
 - [[products-categories-seo]] — SEO title / description, URL handle (auto-suffix vs reject by source), 301-redirect on rename.
 - [[products-categories-taxonomy]] — Google Shopping `taxonomy_id` mapping + the standalone Define-taxonomy modal from the List tab.
 - [[products-categories-deletion-rules]] — delete blocked when products remain, XML-import lock, discount cascade, orphaned image, CloudCart-staff-only `category:path-rebuild` support tool.
-- [[products-categories-api-validation]] — JSON-API v2 surface, server-side the platform code rules (simple-create vs full-edit, Shipping-Hours conditional rule), plan gates (`categories` numeric, `category_properties` boolean), side-effects parity across UI / API / CSV.
+- [[products-categories-api-validation]] — JSON-API v2 surface, server-side the request validator rules (simple-create vs full-edit, Shipping-Hours conditional rule), plan gates (`categories` numeric, `category_properties` boolean), side-effects parity across UI / API / CSV.
 
 ## What the merchant can do here
 
@@ -65,7 +65,7 @@ Every field surfaced on this screen is documented on the relevant aspect page. T
 | SEO title / description, URL handle | [[products-categories-seo]] |
 | Google Shopping taxonomy (feeds + search) | [[products-categories-taxonomy]] |
 | Delete confirmation + error messages | [[products-categories-deletion-rules]] |
-| the platform code server-side validation rules + JSON-API endpoints | [[products-categories-api-validation]] |
+| the request validator server-side validation rules + JSON-API endpoints | [[products-categories-api-validation]] |
 
 ## Business rules
 

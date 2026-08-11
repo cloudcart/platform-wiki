@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-Address validation in CloudCart is **NOT hard-coded** — it's driven by store settings. The same the platform code validator reads multiple `checkout_hide_*` settings from [[settings-cart]] to decide which fields are required, optional, or hidden, plus a separate `post_code_not_required` toggle that weakens post-code rules. This aspect documents every setting that influences validation, the per-field defaults, the Google-Maps-only extra required fields, and the practical consequence: **two CloudCart stores can have different required-field sets on the same modal**.
+Address validation in CloudCart is **NOT hard-coded** — it's driven by store settings. The same the request validator validator reads multiple `checkout_hide_*` settings from [[settings-cart]] to decide which fields are required, optional, or hidden, plus a separate `post_code_not_required` toggle that weakens post-code rules. This aspect documents every setting that influences validation, the per-field defaults, the Google-Maps-only extra required fields, and the practical consequence: **two CloudCart stores can have different required-field sets on the same modal**.
 
 ## Where to find it
 

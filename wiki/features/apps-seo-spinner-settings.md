@@ -108,7 +108,7 @@ There is no "Undo last spin" button. The platform does not snapshot the prior SE
 
 ### Per-record limit comes from the plan
 
-The settings page does not let the merchant pick a "max records to spin" number. The plan dictates how many records each group can spin (e.g., 1,000 products, 100 categories). When the limit is hit mid-run, the platform code notification fires with an upgrade prompt, and the remaining records are skipped.
+The settings page does not let the merchant pick a "max records to spin" number. The plan dictates how many records each group can spin (e.g., 1,000 products, 100 categories). When the limit is hit mid-run, an a plan-restriction error notification fires with an upgrade prompt, and the remaining records are skipped.
 
 ### Single-language
 

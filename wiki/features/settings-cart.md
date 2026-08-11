@@ -70,7 +70,7 @@ When the page POSTs the settings payload, the backend iterates each `<key, value
 
 ### Backend validation is permissive
 
-The backend the platform code only validates four fields:
+The backend the request validator only validates four fields:
 
 - `product_threshold` (nullable, integer ≥ 0)
 - `checkout_customer_access` (required, one of `both`, `member`, `guest`)

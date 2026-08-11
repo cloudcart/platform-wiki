@@ -72,7 +72,7 @@ The job destroys itself (`EXECUTE_DESTROY`) at start if **any** are true:
 - `abandoned_remainder` setting is NOT `yes`.
 - No abandoned carts exist to send.
 
-Mid-batch, if the plan-allowance for abandoned sends is depleted, the platform code throws the platform code and the job stops processing further carts for that run. The remaining carts are picked up on the next scheduled run if allowance is restored.
+Mid-batch, if the plan-allowance for abandoned sends is depleted, the platform code throws a plan-restriction error and the job stops processing further carts for that run. The remaining carts are picked up on the next scheduled run if allowance is restored.
 
 ### Eligibility — who actually receives the mail
 
@@ -88,7 +88,7 @@ A cart fires `abandoned_restore_link` only if **all** are true:
 
 ### Plan-billing accounting
 
-Every send increments `plan.count.email.abandoned_notification` (a per-month tally). When the merchant's plan tier hits the abandoned-notification allowance ceiling, mid-batch sends throw the platform code. The merchant then either waits for the monthly reset or upgrades at [[plan-features]].
+Every send increments `plan.count.email.abandoned_notification` (a per-month tally). When the merchant's plan tier hits the abandoned-notification allowance ceiling, mid-batch sends throw a plan-restriction error. The merchant then either waits for the monthly reset or upgrades at [[plan-features]].
 
 ### `date_sent` is set after one send — no spam
 

@@ -28,7 +28,7 @@ The form action is `route('site.auth.login')` by default, but if the page was op
 
 1. the request handler returns either a full page (via the platform code) or, when the platform code is true, a JSON envelope around `templatePath('auth-content')`. The latter is what the panel drawer uses.
 2. The shared wrapper the theme templates renders the breadcrumb + container, then includes `./auth-content.tpl`, which dispatches on `$load_content` (here `./auth/login.tpl`).
-3. The form is constrained by the platform code (`email` required + valid + `exist_customer_email:invalid-credentials` + max 191; `password` required, 3–20 chars). The rule `exist_customer_email:invalid-credentials` is what produces the generic "invalid credentials" error rather than leaking that an email exists.
+3. The form is constrained by the request validator (`email` required + valid + `exist_customer_email:invalid-credentials` + max 191; `password` required, 3–20 chars). The rule `exist_customer_email:invalid-credentials` is what produces the generic "invalid credentials" error rather than leaking that an email exists.
 4. On `POST`, `loginPost` first re-fetches the customer by email, checks `$customer->active` (throws `sf.err.account.inactive` if not), then calls the platform code.
 
 ## What the customer sees

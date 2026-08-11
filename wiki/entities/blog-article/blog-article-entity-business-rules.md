@@ -44,7 +44,7 @@ When `meta_title` is empty, the storefront uses the article's `title` as the `<t
 
 ### Title length: admin form 191, model-level 3191
 
-The admin API form (the platform code) caps the article title at 191 characters with *"Name is too long"*. The model's underlying `_validateData` (used by legacy editor + CSV import + API v2) caps the title at **3,191 characters**. So depending on the save path, an unusually long title may be accepted by the API but rejected by the modern admin editor. Practical advice: keep titles under 191 for cross-path safety.
+The admin API form (the request validator) caps the article title at 191 characters with *"Name is too long"*. The model's underlying `_validateData` (used by legacy editor + CSV import + API v2) caps the title at **3,191 characters**. So depending on the save path, an unusually long title may be accepted by the API but rejected by the modern admin editor. Practical advice: keep titles under 191 for cross-path safety.
 
 ### Author is an admin user, not a customer
 

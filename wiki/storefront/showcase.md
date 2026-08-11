@@ -15,7 +15,7 @@ source_count: 3
 
 The showcase page is a **theme-specific promotional landing surface** for a curated product set. It is rendered only by themes that ship a `showcase/list.tpl` template — the base `flair` theme does NOT, so on most stores `/showcase/{slug}` returns a 404 ("not found") unless the merchant is on a theme that supports it (theme-dependent).
 
-The showcase controller's logic is unusual: if a view lookup returns **true**, the controller throws the platform code. If the view does NOT exist, it returns the showcase view. **This is inverted from intuition** — the most likely interpretation is a guard added to force a 404 on themes that DO have the view (the line `if(\Illuminate\Support\Facades\a view lookup)` was likely meant to be `!a view lookup). Behaviour to verify — see "Known issues" below.
+The showcase controller's logic is unusual: if a view lookup returns **true**, the controller throws a not-found error. If the view does NOT exist, it returns the showcase view. **This is inverted from intuition** — the most likely interpretation is a guard added to force a 404 on themes that DO have the view (the line `if(\Illuminate\Support\Facades\a view lookup)` was likely meant to be `!a view lookup). Behaviour to verify — see "Known issues" below.
 
 ## URL & route
 
@@ -26,7 +26,7 @@ The showcase controller's logic is unusual: if a view lookup returns **true**, t
 
 ## How it loads
 
-1. The showcase controller checks a view lookup. If the view exists, it throws the platform code (the "if" branch raises the 404).
+1. The showcase controller checks a view lookup. If the view exists, it throws a not-found error (the "if" branch raises the 404).
 2. If the view does NOT exist, it returns the platform code — which would itself trigger a view-not-found error.
 
 In effect: the route returns **404 in every realistic case** unless the controller's logic is overridden by a custom theme deploying its own router. The route is wired up but the controller is currently a no-op / 404 surface (verify against production behaviour — themes that include `templates/showcase/list.tpl` may bypass the controller via a custom dispatch).
@@ -76,7 +76,7 @@ When the page does render (on a theme where the controller logic happens to fall
 
 ## Known issues / by-design vs bug
 
-- **Likely bug (verify)**: the controller's `if(a view lookup)` branch throws the platform code. The most plausible reading is that this should be `if(!a view lookup)` (return 404 when the theme does NOT have the view). As written, the route is effectively a no-op for themes that ship the view and a view-not-found error for themes that don't. Production behaviour may be patched at theme-dispatcher level — verify before claiming this is a customer-facing bug. See [[storefront-known-issues]].
+- **Likely bug (verify)**: the controller's `if(a view lookup)` branch throws a not-found error. The most plausible reading is that this should be `if(!a view lookup)` (return 404 when the theme does NOT have the view). As written, the route is effectively a no-op for themes that ship the view and a view-not-found error for themes that don't. Production behaviour may be patched at theme-dispatcher level — verify before claiming this is a customer-facing bug. See [[storefront-known-issues]].
 - **By design**: only some themes ship a working showcase template — most base themes don't.
 - **By design**: showcases are module-driven (admin in [[design-modules]]) rather than entity-driven (no separate admin model like selections / categories).
 

@@ -80,7 +80,7 @@ The eligibility and consent gates fail **silently**:
 
 - **Auto-sweep** — the cart simply isn't processed this tick. No log surface to the merchant.
 - **Manual bulk send** — carts that fail are deleted from the list; merchant sees only the aggregate "X emails sent" toast.
-- **Manual single-cart Send** — this path explicitly throws the platform code ONLY on plan-quota exhaustion. Eligibility failures still happen silently.
+- **Manual single-cart Send** — this path explicitly throws a a plan-restriction error ONLY on plan-quota exhaustion. Eligibility failures still happen silently.
 
 So a merchant investigating "why didn't this cart get a recovery email?" has to manually verify each check against the cart's details before clicking Send. See [[abandoned-cart-bulk-send]] for the per-path failure UX.
 

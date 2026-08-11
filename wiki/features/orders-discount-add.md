@@ -54,13 +54,13 @@ What the merchant **cannot** do here:
 
 ## Settings & fields
 
-The Add Discount modal is one `ajaxForm` with a single primary dropdown (**Choose discount**: `existing` / `manual`) that progressively reveals the matching sub-form. Full field-by-field inventory — including the dynamic currency-vs-percent input mask, default type, and the platform code validation — is on [[orders-discount-add-form]].
+The Add Discount modal is one `ajaxForm` with a single primary dropdown (**Choose discount**: `existing` / `manual`) that progressively reveals the matching sub-form. Full field-by-field inventory — including the dynamic currency-vs-percent input mask, default type, and the request validator validation — is on [[orders-discount-add-form]].
 
 The existing-discount picker is **pre-filtered** by the backend (customer group, `order_over`, type exclusions, target type, code-less exclusion). The complete filter list and the no-auto-detach behaviour are on [[orders-discount-add-existing-eligibility]]. Manual-discount field rules (flat-less-than-subtotal, percent clamping, fixed label) are on [[orders-discount-add-manual]].
 
 ## Sub-pages (in this cluster)
 
-- [[orders-discount-add-form]] — the Add Discount modal: primary dropdown, existing / manual sub-forms, dynamic input mask, the platform code validation, panel-reload chain.
+- [[orders-discount-add-form]] — the Add Discount modal: primary dropdown, existing / manual sub-forms, dynamic input mask, the request validator validation, panel-reload chain.
 - [[orders-discount-add-existing-eligibility]] — the pre-filter that decides which existing [[marketing-discounts]] appear in the picker; the three allowed target types; threshold no-auto-detach.
 - [[orders-discount-add-manual]] — one-off manual discounts: flat-less-than-subtotal rule, percent clamp / no-negative, default Percent type, fixed "Manual discount" label.
 - [[orders-discount-add-delete]] — removing the order-level discount + delete-modifications; the browser confirm dialog; usage-count restore.

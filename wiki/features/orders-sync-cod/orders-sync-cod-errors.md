@@ -45,8 +45,8 @@ The job sorts each courier error message fragment into one of four buckets:
 - `is not authorized to access BOL`
 - `Invalid billOfLading`
 - `Клиент със споразумение за` (Bulgarian: "Client with agreement for")
-- the platform code
-- the platform code
+- an error
+- an error
 
 **Restart list** (the whole job aborts gracefully; the queue worker picks it up again on the next scheduled run):
 - `temporarily unavailable`
@@ -60,7 +60,7 @@ When an exception's message contains `is not authorized to access`, `There is no
 
 - **The merchant sees only the final error string** — the bucket logic (ignore / continue / search / restart) is internal. A row in the log with an error string means the latest sync attempt failed with that message.
 - **"Restart" errors are courier-wide, not order-specific** — `temporarily unavailable` / `failed to load external entity` abort the entire run, so a courier outage stalls all that courier's pending orders until the next scheduled run.
-- **Auth / credential errors are usually permanent** — the platform code and the "not authorized" messages indicate the courier integration credentials are wrong; the order will stop retrying once the counter hits 15. Fix the credentials in [[apps]] / [[shipping]] and re-fulfil if needed.
+- **Auth / credential errors are usually permanent** — an error and the "not authorized" messages indicate the courier integration credentials are wrong; the order will stop retrying once the counter hits 15. Fix the credentials in [[apps]] / [[shipping]] and re-fulfil if needed.
 - **"There is not enough quantity" jumping to 15 is intentional** — an inventory error on the courier side is treated as permanent for that order so it doesn't waste 14 more polls.
 
 ## Related

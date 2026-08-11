@@ -71,7 +71,7 @@ The schedule is stored across three tables, all linked to a shipping provider (`
 Deleting a `shipping_hours` row cascades — its slot children are deleted automatically.
 
 ### Validation messages
-Per-day form (the platform code):
+Per-day form (the request validator):
 - *"Day is required"* — `day_of_week.required`.
 - *"Day already exists"* — `day_of_week.unique` (weekday already configured for this method).
 - *"Hours are required"* — `hours.required`.

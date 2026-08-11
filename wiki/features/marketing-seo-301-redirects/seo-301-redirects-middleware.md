@@ -102,7 +102,7 @@ URLs to physical files served directly by the web server (`.pdf`, `.jpg`, `.css`
 
 ### AJAX requests bypass the middleware
 
-The AJAX skip means XHR requests to a redirected URL get the natural response (404 for missing) — not a 301. This is correct behaviour for fetch / the platform code flows, where the client expects a JSON or HTML payload, not a redirect.
+The AJAX skip means XHR requests to a redirected URL get the natural response (404 for missing) — not a 301. This is correct behaviour for fetch / the request validator flows, where the client expects a JSON or HTML payload, not a redirect.
 
 ### Storefront pages cached at the CDN are unaffected by `has_301_redirects` flips
 

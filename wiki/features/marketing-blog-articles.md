@@ -31,7 +31,7 @@ This feature is split into 6 aspect pages. Drill into the one that matches the q
 - [[blog-articles-list]] — the list screen: header actions, table columns, filters, bulk publish / unpublish / delete, pending-comments banner.
 - [[blog-articles-editor]] — the Add / Edit two-column form: fields, slug auto-sync, inline-image async mirroring, in-place category create, SubmitChanges footer.
 - [[blog-articles-csv-import]] — the 3-step **Add via CSV** wizard (gated by the `blog_csv_import` app): upload + settings, field mapping, progress confirmation.
-- [[blog-articles-rules]] — server-side validation rules (the platform code), 500-articles-per-category cap, tag caps, granular blog-permission keys, plan-feature caps, delete cascades.
+- [[blog-articles-rules]] — server-side validation rules (the request validator), 500-articles-per-category cap, tag caps, granular blog-permission keys, plan-feature caps, delete cascades.
 - [[blog-articles-storefront-visibility]] — `active` toggle, `publish_date` scheduled-publish scope, comment routing inherited from the parent category, storefront URLs, 5-per-minute comment throttle, third-party comment-platform replacement.
 - [[blog-articles-api]] — JSON-API v2 surface ([[api-posts]] / [[api-authors]]), the same side effects as the UI, the API-specific behaviours (scheduled publishing, no `active='yes'` default override).
 
@@ -56,7 +56,7 @@ The hub catalogues the surface only. Every detail lives on the relevant sub-page
 
 Full field catalogue lives on the relevant sub-page. Highlights that apply cluster-wide:
 
-- **Required fields**: `name` (3 ≤ length ≤ 191), `author_id`, `blog_id`. See [[blog-articles-rules]] for the full the platform code ruleset and verbatim error strings.
+- **Required fields**: `name` (3 ≤ length ≤ 191), `author_id`, `blog_id`. See [[blog-articles-rules]] for the full the request validator ruleset and verbatim error strings.
 - **URL handle** is auto-derived from the title on first save then locks; renaming creates a 301 redirect from the old slug via [[marketing-seo-301-redirects]]. See [[blog-articles-editor]] + [[blog-articles-rules]].
 - **Plan-feature keys**: `blog_articles` (numeric + access — article count cap; lower plans cannot access the route at all) and `blog_categories` (numeric + access — required parent). Extendable via feature pack — see [[plan-features]] + [[plan-vs-feature-pack]].
 - **Permission keys** — four independent keys gate the area: `marketing.blog_articles`, `marketing.blog_categories`, `marketing.blog_comments`, `marketing.blog_tags`. See [[blog-articles-rules]] + [[settings-staff]].

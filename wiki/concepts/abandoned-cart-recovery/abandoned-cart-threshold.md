@@ -75,7 +75,7 @@ So the recovery email fires after `abandoned_remainder_interval` **plus up to 3 
 
 ### Quota-exhaustion behaviour mid-sweep
 
-The auto-sweep job throws the platform code exception when the `abandoned_notification` quota is exhausted mid-run — the job **aborts at the first failing cart**, so subsequent carts in the same batch are NOT processed even if some could have qualified. The next sweep tick re-attempts from scratch. This is invisible to the merchant; the only visible signal is `date_sent` stamps stalling out before all eligible carts are sent. (verify)
+The auto-sweep job throws a a plan-restriction error exception when the `abandoned_notification` quota is exhausted mid-run — the job **aborts at the first failing cart**, so subsequent carts in the same batch are NOT processed even if some could have qualified. The next sweep tick re-attempts from scratch. This is invisible to the merchant; the only visible signal is `date_sent` stamps stalling out before all eligible carts are sent. (verify)
 
 ### Example: 60-min timer, customer recovers after 6 hours
 

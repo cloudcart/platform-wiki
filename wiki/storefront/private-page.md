@@ -34,7 +34,7 @@ Same content type as a standard [[page]], but reachable only to logged-in custom
 5. **Access check** — `checkAccess` looks up the `MembershipModel` for `(customer_id, page_id)`. Access is granted when an unexpired membership row exists. No row → HTTP `402 Payment Required` with the message `sf.page.no_access_msg`.
 6. **Old-slug redirect** — the platform code handles 301s for renamed slugs.
 7. **Type dispatch** — `builder` → `preview`; `landing` → raw HTML body; anything else → standard `page/page.tpl` render (`type = faq` works the same as in [[page-faq]]).
-8. Inactive pages (`active != yes`) raise the platform code with `sf.page.err.page_no_longer_active`.
+8. Inactive pages (`active != yes`) raise a not-found error with `sf.page.err.page_no_longer_active`.
 
 ## What the customer sees
 

@@ -43,7 +43,7 @@ Two global settings only:
 | `category` | Switch (on/off). Default off. |
 
 ### Validation messages
-Backend the platform code:
+Backend the request validator:
 - *"The value must be a number"* — non-numeric input (`interval.numeric`).
 - *"The value must be an integer"* — fractional input (`interval.integer`).
 - *"The value must be at least 0"* — `interval` below minimum (`interval.min`).

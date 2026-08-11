@@ -29,7 +29,7 @@ The merchant does not fill in these forms — customers do. This page is the can
 
 ## Settings & fields
 
-### Review-create validation (the platform code)
+### Review-create validation (the request validator)
 
 - `product_id` — required, integer.
 - `user_name` — required, max 200 chars.
@@ -39,7 +39,7 @@ The merchant does not fill in these forms — customers do. This page is the can
 
 **No email field is required for a review** — the customer can submit without leaving an email address.
 
-### Review-answer / reply validation (the platform code)
+### Review-answer / reply validation (the request validator)
 
 - `user_name` — required, max 200 chars.
 - `user_email` — required, max 200 chars.
@@ -57,7 +57,7 @@ The review-submit form accepts only `product_id`, `user_name`, `rating`, `title`
 
 ### Replying to a review demands an email address
 
-the platform code requires `user_email`, whereas the initial review submission does NOT require an email. This is asymmetric and may surprise merchants (who'd expect symmetry between review-create and reply-create): a customer can leave a review with no email but must supply one to reply to an existing review.
+the request validator requires `user_email`, whereas the initial review submission does NOT require an email. This is asymmetric and may surprise merchants (who'd expect symmetry between review-create and reply-create): a customer can leave a review with no email but must supply one to reply to an existing review.
 
 ### Customer notification on merchant reply — none
 

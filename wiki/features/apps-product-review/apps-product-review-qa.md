@@ -38,7 +38,7 @@ Enabled via the **Questions and Answers** (`question`) toggle on [[apps-product-
 | **Questions and Answers** (`question`) | Switch | Master toggle for the Q&A feature. |
 | **Approve question before publishing** (`question_approved`) | Switch | When Q&A is ON: gate questions through moderation. |
 
-### Question-create validation (the platform code)
+### Question-create validation (the request validator)
 
 - `product_id` — required, integer.
 - `user_name` — required, max 200 chars.

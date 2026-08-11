@@ -121,8 +121,12 @@ SUBS = [
      r"Repository|Formatter|Seeder)\b", "the platform code"),
 
     # -- remaining application symbols -------------------------------------
-    (r"`[A-Z][A-Za-z]*(?:Request|Exception|NotFound|DeniedByPlan)`",
-     "the platform code"),
+    # Say what the class MEANT, not just that code was removed: "throws the
+    # platform code" is unreadable where "raises a not-found error" is not.
+    (r"`[A-Z][A-Za-z]*NotFound`", "a not-found error"),
+    (r"`[A-Z][A-Za-z]*DeniedByPlan`", "a plan-restriction error"),
+    (r"`[A-Z][A-Za-z]*Exception`", "an error"),
+    (r"`[A-Z][A-Za-z]*Request`", "the request validator"),
 
     # A class method with arguments — `Plan::canCreateByMap('x')`,
     # `Discount::whereType('y')->findOrFail()`. The earlier pattern only
