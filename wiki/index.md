@@ -1,0 +1,228 @@
+# Wiki Index — navigation map
+
+> **For the AI Assistant — how to use this map.** This file is a *router*, not the content. To answer a question: (1) scan the **one** section that fits — **Concepts** = "how does X work / why did X happen"; **Admin areas** = "where do I set / find X"; **Entities** = the data model; **API** = programmatic access; **Storefront** = customer-facing pages. (2) Open the **single** best page below and follow its `[[wikilinks]]` to the exact answer — drill, don't read several. Every page is reachable within ~2 hops; detailed sub-pages live under each hub, not here.
+>
+> **For maintainers.** One verified line per entry, hand-written (not auto-generated). New pages are added to their **hub** (the relevant admin area / cluster), not to this map — this map lists only concepts, top-level admin areas, entities, API resources, and storefront pages.
+
+## Concepts — how the platform works (cross-cutting)
+
+- [[abandoned-cart-recovery]] — bringing back shoppers who left a full cart (reminder emails + restore links).
+- [[admin-sidebar-navigation]] — the admin left-rail: the 9 top-level menu items and their fixed order.
+- [[b2b-wholesale]] — selling to business buyers: customer groups, group pricing, VAT invoicing, private store, fast order.
+- [[background-queue-inventory]] — every automatic background process + schedule ("why is my import / email / job stuck?").
+- [[backups-and-restore]] — daily store-database snapshots + rollback (paid add-on).
+- [[capture-source-attribution]] — where each subscriber came from: `subscribed_from` source + per-form `from_form` attribution.
+- [[cart-vs-order-lifecycle]] — cart vs order: two entities, different lifecycles ("where is the buyer in the journey?").
+- [[checkout-flow]] — the cart→order journey: shipping + payment selection, totals, order creation.
+- [[customer-group-targeting]] — what customer groups can drive (pricing via discounts, payment/shipping gating via Cart Rules, segments); the group is a gate, not a container.
+- [[delivery-scheduling]] — how an order's delivery day/time is decided + the slot↔shipping-method relationship.
+- [[digital-products]] — selling non-physical goods (downloadable file / membership page); no shipping.
+- [[discount-stacking]] — what wins when several discounts hit one cart (precedence, cooldowns, Cart Rules split).
+- [[external-record-mapping]] — the ID↔ID table linking CloudCart records to an integration's external keys (ExternalMetaData); the matching/dedup backbone of every ERP / import sync + the internal read queries.
+- [[erp-integrations]] — connecting an external ERP / accounting / inventory system (catalogue / stock / price / order sync).
+- [[food-restaurant-grocery]] — running a food business: restaurant POS, on-demand delivery, grocery storefront.
+- [[fulfillment-and-warehouse]] — how orders get picked / packed / shipped: in-house, 3PL, dropshipping, suppliers.
+- [[geo-targeting]] — deciding if a customer is "in scope" by location (zones, polygons, distances, IP).
+- [[headless-storefront]] — a custom frontend on CloudCart's APIs (Nitrogen); admin stays, storefront is bespoke.
+- [[import-pipeline]] — bulk-loading data in (CSV / XML / feed / ERP): upload → map → queue → history.
+- [[inventory-tracking]] — per-SKU stock: how counts decrement, restock, oversell, multi-warehouse.
+- [[invoicing-and-accounting]] — issuing invoices / credit notes + BG fiscal compliance + accounting / e-invoicing apps.
+- [[json-api-v2]] — the public REST API for reading / writing store data programmatically.
+- [[lead-capture-lifecycle]] — the form → subscriber → segment → campaign pipeline a captured marketing lead travels.
+- [[marketing-consent-collection]] — where/how marketing consent is collected across surfaces (form, checkout, GDPR) and proven via the audit log.
+- [[platform-rate-limits]] — edge rate limits, bot policy, timeouts (429s, blocked crawlers, 504s).
+- [[merchant-roles]] — admin account roles (Owner / Moderator / API) and what each can do.
+- [[merchant-subscription-lifecycle]] — the merchant's own CloudCart subscription (plan / pay / renew / retry / cancel) — support hub.
+- [[multi-currency]] — single-currency-by-design store; no per-customer currency switching.
+- [[multi-language]] — running the admin + storefront in multiple languages.
+- [[multichannel-selling]] — selling beyond the storefront: marketplaces, shopping feeds / ads, platform migration.
+- [[notification-delivery]] — how store events become outbound emails / SMS / webhooks / admin alerts.
+- [[online-sales-without-cash-register]] — BG fiscal regime: the courier issues the cash receipt for COD orders.
+- [[order-processing-pipeline]] — end-to-end side-effects of every order event (webhooks, emails, stock, jobs).
+- [[order-status-workflow]] — the order status lifecycle + what the merchant may do at each step.
+- [[order-totals-pipeline]] — the order of operations that builds the total: subtotal → discounts → VAT(goods) → shipping → VAT(shipping) → total.
+- [[payment-provider-mechanism]] — the common 5-stage pattern behind every payment-gateway integration.
+- [[plan-gates]] — how the subscription plan allows / blocks / quotas each merchant action.
+- [[plan-vs-feature-pack]] — "hit a limit — upgrade the plan or buy a feature pack?".
+- [[product-compatibility]] — selling by what a product *fits* (car / phone / device) via the Brand-Model app.
+- [[product-visibility]] — why a product does / doesn't appear on the storefront: active / draft / hidden / publish-window / stock / geo / category / index-sync checklist.
+- [[seo-handling]] — the storefront's search-engine signals (meta, sitemaps, redirects, structured data).
+- [[shipping-calculation]] — how the available shipping methods + prices are computed for a cart at checkout.
+- [[shipping-provider-mechanism]] — the common pattern behind every courier integration.
+- [[storefront-architecture]] — the storefront's Smarty server-rendered, multi-tenant, themed rendering stack.
+- [[storefront-known-issues]] — catalogue of storefront behaviours that generate tickets (by-design vs bug).
+- [[storefront-themes-catalog]] — the installable storefront-themes library (Design → Themes).
+- [[subscribe-form-display-engine]] — when / where / to whom a subscribe form shows: the render-time eligibility cascade.
+- [[subscriber-deliverability]] — "can this campaign reach this subscriber?" — the reachability predicate + "why didn't they receive it" diagnostic.
+- [[subscriber-double-optin]] — single vs double opt-in: how a subscriber becomes `verified` (and why that gates every campaign send).
+- [[subscriber-segmentation]] — automated (dynamic) vs one-time (snapshot) audiences; how a subscriber enters / leaves a segment.
+- [[subscriber-vs-customer]] — Customer vs Subscriber: two separate person records, different purposes.
+- [[subscription-lifecycle]] — the shared state machine for any paid recurring item (technical reference).
+- [[tax-computation]] — how the tax line on each order is computed (rate, VAT / OSS, snapshot).
+- [[theme-customization-layers]] — the three stacked storefront-design customisation layers.
+- [[variants-model]] — Parameter × Option × Variant: three distinct catalogue concepts.
+- [[widget-vs-page-builder-block]] — two storefront-composition surfaces compared.
+
+## Admin areas — where to configure (open the hub, then drill to the exact screen)
+
+- [[apps]] — App Store + every integration: couriers, ERP, payments, marketing, channels, accounting, fulfilment.
+- [[products]] — catalogue: list, editor, variants, bulk actions, categories, brands, smart collections, digital products.
+- [[orders]] — orders: list, details, line items, invoices, credit notes, refunds, fulfilment, manual add, statuses.
+- [[customers]] — customer list + per-customer detail + customer groups (B2B / loyalty).
+- [[marketing]] — discounts, campaigns, channels, SEO, cross-sell / up-sell, subscribers, abandoned-cart.
+- [[analytics]] — dashboard boxes + reports (sales, orders, customers, sessions, traffic).
+- [[settings]] — store settings: general, shipping, payments, taxes, invoicing, staff, statuses, boxes, geo zones, hooks.
+- [[design]] — themes, storefront modules, page builder, widgets.
+- [[payment-providers]] — directory of every payment gateway (jump to a provider's config).
+- [[settings-payment-providers]] — the Payment methods screen (install / activate / order providers).
+- [[shipping]] — directory of every courier integration (jump to a courier's page).
+- [[settings-shipping]] — the Shipping methods screen (enable / price / geo-zone methods + Delivery days).
+- [[plans]] — subscription plans catalogue + purchase flow.
+- [[account]] — the signed-in admin's personal profile / account.
+- [[merchant]] — the account-owner record (billing identity; owner-only).
+- [[contracts]] — long-term-agreement (LTA) surface for negotiated accounts.
+- [[nitrogen]] — headless storefronts (Nitrogen).
+- [[dashboard]] — the admin home screen (sign-in landing panels).
+
+## Entities — the data model
+
+- [[admin-notification]] — a system alert to the merchant (email / in-panel).
+- [[api-key]] — a credential for an external integration to call the API.
+- [[backup]] — one point-in-time snapshot of the store database.
+- [[blog-article]] — a single storefront blog post.
+- [[blog-category]] — top-level container for blog articles.
+- [[blog-comment]] — visitor feedback on a blog article.
+- [[blog-tag]] — a free-form label across blog articles.
+- [[bundle]] — a product that groups others at one bundled price.
+- [[campaign]] — a multi-channel marketing dispatch to a subscriber segment.
+- [[cart-rule]] — a trigger-and-action promo rule run on every cart.
+- [[cart]] — the in-progress pre-purchase record of what a shopper is buying.
+- [[category-property]] — a category-scoped product spec attribute.
+- [[category]] — a hierarchical product grouping (the storefront navigation taxonomy).
+- [[channel]] — a configured outbound message pipe (Email / SMS / Viber / Web Push).
+- [[credit-note]] — an accounting document issued against an invoice (refund / cancellation).
+- [[customer-group]] — a labeled bucket of customers driving pricing / checkout / segmentation.
+- [[customer]] — a buyer (registered account or guest).
+- [[discount-code]] — a coupon string the customer enters to activate a discount.
+- [[discount]] — the central promotion rule that reduces the price paid.
+- [[domain]] — a hostname attached to the store.
+- [[email-template]] — a reusable email design (subject + HTML body).
+- [[file-asset]] — an uploaded file in CloudCart storage.
+- [[geo-distance]] — a named radius around a map point.
+- [[geo-polygon]] — a named merchant-drawn map shape.
+- [[geo-zone]] — a named region attached to features to gate by location.
+- [[import-task]] — the audit + processing record of one bulk import.
+- [[invoice]] — the customer-facing tax document issued against an order.
+- [[order-status]] — the workflow enum on every order (placed / paid / shipped / …).
+- [[order]] — the central record of a customer's purchase.
+- [[pat-token]] — a per-admin scoped token for the CLI / GraphQL API.
+- [[payment-provider]] — a configured payment-gateway integration.
+- [[payment-status]] — the "is it paid?" enum on an order's payment.
+- [[plan]] — a published CloudCart subscription tier.
+- [[product-option]] — a per-product customer-input field (no separate SKU).
+- [[product-status]] — the stock-based availability label shown to customers.
+- [[product]] — a sellable catalogue item.
+- [[queue-job]] — one unit of background work off the request thread.
+- [[segment]] — a saved query selecting a dynamic group of subscribers.
+- [[seo-meta]] — the meta-tag bundle rendered in each page's `<head>`.
+- [[seo-redirect]] — a 301 permanent URL redirect rule.
+- [[shipping-provider]] — a configured courier / delivery integration.
+- [[shipping-status]] — the fulfilment-stage enum on every order.
+- [[site]] — the merchant's whole store instance (the tenant record).
+- [[smart-collection]] — a rule-based dynamic product grouping.
+- [[staff-member]] — a human admin account that logs into the panel.
+- [[subscriber-form]] — the storefront module that captures new subscribers.
+- [[subscriber]] — a marketing-audience record reachable on ≥1 channel.
+- [[tax]] — a tax / fee rate applied to an order at checkout.
+- [[variant]] — a specific sellable SKU under a product.
+- [[vendor]] — the brand / manufacturer label on a product.
+- [[webhook]] — an outbound HTTP callback fired on store events.
+
+## API resources — JSON-API v2 (see [[json-api-v2]] for auth / pagination / filtering)
+
+- [[api-authors]] — read-only author / staff list for authoring tools.
+- [[api-blogs]] — CRUD on blog categories.
+- [[api-categories]] — CRUD on the category tree.
+- [[api-customer-billing-address]] — CRUD on a customer's billing addresses.
+- [[api-customer-groups]] — CRUD on customer groups.
+- [[api-customer-shipping-address]] — CRUD on a customer's shipping addresses.
+- [[api-customer-tags]] — CRUD on customer tags.
+- [[api-customers]] — CRUD on customers (registered + guests).
+- [[api-discount-codes-pro]] — Code PRO multi-code campaigns.
+- [[api-discount-codes]] — single-use Container coupon codes.
+- [[api-discounts]] — the parent promotion record.
+- [[api-images]] — product image gallery rows.
+- [[api-order-billing-address]] — read-only order billing address.
+- [[api-order-discount]] — read-only discounts applied to an order.
+- [[api-order-fulfillment]] — the order's fulfilment record (create to ship).
+- [[api-order-modification]] — read-only post-placement order edits.
+- [[api-order-payment]] — read-only order payment record.
+- [[api-order-products-options]] — read-only chosen product options per line.
+- [[api-order-products]] — read-only order line items.
+- [[api-order-shipping-address]] — read-only order shipping address.
+- [[api-order-shipping]] — read-only order shipping selection.
+- [[api-order-tax]] — read-only per-bracket tax rows on an order.
+- [[api-order-total]] — read-only order totals breakdown.
+- [[api-orders]] — the orders resource (read / write orders).
+- [[api-payment-providers]] — read-only installed payment providers.
+- [[api-posts]] — CRUD on blog articles.
+- [[api-product-options]] — the Product Options catalog entries.
+- [[api-product-to-discount]] — per-variant price overrides under a Fixed discount.
+- [[api-products]] — CRUD on catalogue products.
+- [[api-properties]] — catalogue-wide spec attributes (Material, Country …).
+- [[api-property-options]] — option values for a property.
+- [[api-redirects]] — CRUD on 301 redirect rules.
+- [[api-segments]] — read-only subscriber segments.
+- [[api-shipping-providers]] — read-only installed couriers.
+- [[api-store-quantity]] — per-warehouse stock rows (product, variant, store).
+- [[api-stores]] — physical store / warehouse locations.
+- [[api-subscribers-channels]] — per-channel deliverability rows on a subscriber.
+- [[api-subscribers-tags]] — subscriber ↔ tag links.
+- [[api-subscribers]] — CRUD on marketing subscribers.
+- [[api-tags]] — CRUD on blog tags.
+- [[api-units]] — units of measure (grocery app).
+- [[api-variant-options]] — option values of a variant parameter.
+- [[api-variant-parameters]] — catalogue-wide variant dimensions (Size, Color …).
+- [[api-variants]] — purchasable SKU rows under a product.
+- [[api-vendors]] — brand / manufacturer catalog rows.
+- [[api-webhooks]] — CRUD on webhook subscriptions.
+
+## Storefront — customer-facing pages
+
+- [[home]] — the storefront landing page (domain root).
+- [[product-detail]] — the customer product page (most-viewed storefront page).
+- [[products-list]] — the whole-catalogue listing (`/products`).
+- [[storefront-category]] — a single-category landing page.
+- [[categories-list]] — the directory of all categories.
+- [[storefront-vendor]] — a brand's product listing page.
+- [[vendors-list]] — the directory of all vendors / brands.
+- [[tag]] — products tagged with a given product tag.
+- [[search]] — the catalogue search-results page (legacy Smarty engine).
+- [[storefront-search-new]] — the new predictive search-as-you-type (new engine): relevance-ranked, typo-tolerant, faceted; matches name/SKU/barcode/specs/brand/category.
+- [[selection]] — a merchant-curated product collection page.
+- [[showcase]] — a theme-specific promotional landing for a curated set.
+- [[storefront-bundles-list]] — listing scoped to bundle products.
+- [[bundles-category]] — a category page filtered to bundles.
+- [[storefront-cart]] — the customer's open cart page.
+- [[checkout]] — the express single-page checkout (cart→order).
+- [[checkout-complete]] — the "order confirmed / thank you" page.
+- [[checkout-return]] — landing after returning from an off-site payment gateway.
+- [[restore-abandoned]] — the abandoned-cart recovery restore-link landing.
+- [[compare]] — the side-by-side product comparison tray.
+- [[wishlist]] — the customer's saved-for-later list.
+- [[customer-account]] — the signed-in customer's account home.
+- [[customer-login]] — the customer sign-in page.
+- [[customer-register]] — the customer account-creation page.
+- [[customer-orders]] — the customer's order history.
+- [[customer-addresses]] — the customer's shipping / billing address book.
+- [[blog-list]] — the storefront blog landing (paginated articles).
+- [[blog-filter]] — blog articles scoped to a category or tag.
+- [[storefront-blog-article]] — a single blog article page.
+- [[page]] — a generic CMS page (Terms, Privacy, About …).
+- [[page-faq]] — a CMS page rendered as an FAQ accordion.
+- [[private-page]] — a members-only CMS page.
+- [[contacts]] — the customer-facing contact page.
+- [[storefront-withdrawal]] — the EU "withdraw from contract" statement form (`/withdrawal`, Directive 2023/2673 Art. 11a); provided by the Aftercare app.
+- [[maintenance]] — the maintenance-mode page.
+- [[storefront-notifications]] — back-in-stock / price-drop storefront notify flows.
+- [[storefront-error-404]] — the storefront 404 fallback page.
