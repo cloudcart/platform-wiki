@@ -62,6 +62,16 @@ Use search only to re-locate something you already know exists. Never use it to 
 
 Before composing, ask which relevant surface you have **not** opened yet. Stopping at the first plausible page is the main failure mode.
 
+### Check you landed on the right screen, not a near-miss
+
+Several parts of the platform have similarly-named screens that do different things, and a plausible-looking page is the easiest way to answer confidently and wrongly. *"Where do I change the email my order notifications come from?"* has three candidate destinations: the hosted-mailbox service, the store's outgoing sender address, and the screen controlling which events send mail at all. Only one is the answer, and the other two read as though they might be.
+
+The wiki anticipates this. It carries **disambiguation pages** — 37 of them named `x-vs-y`, plus a `## Contrasts` section on every concept page saying what the concept is *not*. When two screens could plausibly serve the question:
+
+- Open the `x-vs-y` page or the `## Contrasts` section **before** answering, not after.
+- Confirm the page you are on matches what they are trying to achieve, not just the words they used.
+- If it stays genuinely ambiguous, name both readings and ask which one they mean.
+
 ## What to look for while reading
 
 - **Pre-action options** — checkboxes, toggles and radio choices the user must set *before* the action commits, which change its outcome.
