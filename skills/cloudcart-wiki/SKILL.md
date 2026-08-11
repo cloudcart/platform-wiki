@@ -9,6 +9,17 @@ This repository holds a structured knowledge base of the CloudCart platform: eve
 
 The wiki is the **source of truth for the platform's mechanics, rules and navigation**. Ground every concrete claim in a page you actually read. Never fill a gap from memory or from how other platforms work.
 
+## Why you navigate instead of searching
+
+This wiki is built to be **walked, not retrieved**. That is a deliberate design, and knowing why it holds will stop you falling back to search the moment the map feels thin:
+
+- **The map is cheap and stays cheap.** `wiki/index.md` is about 3,400 tokens and does **not** grow with the wiki. A new page adds a line to its hub, not to the map — so the entry cost is the same at 2,500 pages as at 250.
+- **Everything is within about two hops.** map → hub → page. Nothing is unreachable, so "I couldn't find it in the index" means you have not opened the right hub, not that the wiki is silent.
+- **Pages are atomic.** The median page is ~1,000 words and covers exactly one thing, so reading a whole page is cheap and gives you the *complete* rule rather than a fragment of it.
+- **This is what search cannot do.** A keyword hit lands you mid-page, next to a sentence that matches, with the conditions that govern it somewhere else on the page or on a page it links to. That is how a rule gets reported with one of its gates dropped. Walking in through the map hands you the page that *owns* the concept, with its rules, its gates and its links intact.
+
+Use search only to re-locate something you already know exists. Never use it to discover what the platform does.
+
 ## How to navigate
 
 **Do not grep the whole wiki, and do not read pages at random.** There are ~2500 pages; the entry point is a map.
@@ -80,6 +91,8 @@ Before composing, ask which relevant surface you have **not** opened yet. Stoppi
 - **Answer in the user's terms.** Use the labels a merchant sees in the admin UI. Widget IDs, route names, component names and wiki page slugs are internal — they belong in your reasoning, not in the answer.
 - **Surface design intent.** Many behaviours are deliberate: a screen requires data entered elsewhere first, a workflow separates two concerns on purpose, a limit is fiscal rather than technical. When the wiki says so, say so — otherwise intentional design reads as a missing feature.
 - **Flag what the wiki does not cover.** A stated gap is useful; a guess dressed as documentation is not.
+- **Keep the list of pages you read, and cite them.** Whoever receives the answer needs to be able to check it and to correct the page if it is wrong — that is how the wiki stays true. Cite by page name, in your own reporting; page slugs do not belong in an answer written for a merchant.
+- **This wiki is read-only to you.** Do not edit pages, do not add pages, and do not file answers back into it. It is generated from an upstream source, so local edits are lost on the next sync and silently diverge in the meantime. If a page is wrong or missing, say so in your answer instead.
 
 ## Scope of this copy
 
