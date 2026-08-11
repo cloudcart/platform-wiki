@@ -117,8 +117,5 @@ The wiki anticipates this. It carries **disambiguation pages** — 37 of them na
 - **Surface design intent.** Many behaviours are deliberate: a screen requires data entered elsewhere first, a workflow separates two concerns on purpose, a limit is fiscal rather than technical. When the wiki says so, say so — otherwise intentional design reads as a missing feature.
 - **Flag what the wiki does not cover.** A stated gap is useful; a guess dressed as documentation is not.
 - **Keep the list of pages you read, and cite them.** Whoever receives the answer needs to be able to check it and to correct the page if it is wrong — that is how the wiki stays true. Cite by page name, in your own reporting; page slugs do not belong in an answer written for a merchant.
-- **This wiki is read-only to you.** Do not edit pages, do not add pages, and do not file answers back into it. It is generated from an upstream source, so local edits are lost on the next sync and silently diverge in the meantime. If a page is wrong or missing, say so in your answer instead.
+- **This wiki is read-only to you.** Do not edit pages, do not add pages, and do not file answers back into it — edits are lost on the next update and silently diverge in the meantime. If a page is wrong or missing, say so in your answer instead.
 
-## Scope of this copy
-
-This is a **public, redacted** copy of an internal wiki. Some pages were removed and some passages rewritten where they described security mechanics, internal infrastructure, or staff-only tooling. Where a page reads as though something was omitted, it probably was. Nothing that remains was altered in its merchant-facing meaning.

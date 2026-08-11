@@ -28,14 +28,6 @@ The wiki is **not** meant to be read front to back, and not to be grepped at ran
 
 Page conventions — frontmatter fields, section structure, what `(verify)` means — are documented in the skill.
 
-## What this copy is
-
-This is a **public, redacted** copy of an internal wiki. Pages describing security mechanics, platform infrastructure and staff-only tooling were removed or rewritten; internal source references, ticket ids and technology names were stripped.
-
-Merchant-facing behaviour is unchanged. Where a page reads as though something was left out, it was — and it was left out on purpose.
-
-The redaction is applied by a script rather than by hand, so it runs identically on every sync: the tree is derived from the internal wiki, then re-checked against a set of leak rules that must all come back clean before anything is published. That tooling is kept private — the rules and substitutions it carries would themselves describe what was removed.
-
 ## Accuracy
 
 Pages are written against the platform's actual behaviour, but the platform changes. A claim marked `(verify)` was not confirmed against a running system — treat it as provisional. Anything else may still have drifted since its `updated` date.
