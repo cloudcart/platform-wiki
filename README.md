@@ -34,11 +34,7 @@ This is a **public, redacted** copy of an internal wiki. Pages describing securi
 
 Merchant-facing behaviour is unchanged. Where a page reads as though something was left out, it was — and it was left out on purpose.
 
-The redaction is reproducible rather than hand-applied: `tools/build.py` derives this tree from the internal one, and `tools/scan.py` re-checks the result against a set of leak rules and refuses to pass if any of them still match.
-
-```bash
-python3 tools/scan.py wiki --gate     # verify this tree is clean
-```
+The redaction is applied by a script rather than by hand, so it runs identically on every sync: the tree is derived from the internal wiki, then re-checked against a set of leak rules that must all come back clean before anything is published. That tooling is kept private — the rules and substitutions it carries would themselves describe what was removed.
 
 ## Accuracy
 
