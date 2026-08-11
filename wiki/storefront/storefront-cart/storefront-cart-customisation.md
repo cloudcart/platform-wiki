@@ -53,8 +53,8 @@ These are server-side settings; they have no dedicated JS hooks of their own. Th
 - `compact_cart_panel` — when on, clicking the header cart bubble opens the drawer instead of navigating to `/cart`.
 - `cart_max_products` — per-variant quantity cap (0 = unlimited).
 - `cart_max_quantity` — per-cart total quantity cap (0 = unlimited).
-- `checkout_min_price` — minimum cart subtotal to allow checkout (blocks "Proceed" CTA otherwise — error message shown).
-- `checkout_max_price` — maximum cart subtotal.
+- `checkout_min_price` — minimum cart subtotal to allow checkout. **Not enforced in the cart** — the Proceed CTA stays active; the customer is stopped on the checkout page, which shows the error in place of the form. See [[settings-cart-limits-and-decrement]].
+- `checkout_max_price` — maximum cart subtotal, stopped the same way.
 
 **Theme Editor → Cart module:**
 

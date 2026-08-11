@@ -70,13 +70,27 @@ The `product_threshold` field on this page is the **store-wide default**. Each i
 
 The `product_threshold` field defines WHEN the `product_quantity_low` admin notification fires. The recipient (the store's `site_email` from [[settings-general]]) and the master gating (`mail_product_quantity_low` + `administrator_email_notifications`) both live in [[settings-admin-notifications]] — either toggle OFF suppresses the alert at dispatch.
 
-### Min/Max checks fire at checkout submit, not at add-to-cart
+### Min/Max order value is checked when the customer OPENS checkout
 
-The `checkout_min_price` / `checkout_max_price` checks happen at order-submit time, not when the customer adds items to the cart. So a customer can browse a cart that violates the limits — they hit the validation error only when they try to place the order. The storefront usually surfaces this with an inline error message at the bottom of the checkout form.
+The `checkout_min_price` / `checkout_max_price` checks run when the customer **arrives at the checkout page** — not while they build the cart, and not when they submit the order.
 
-### `cart_max_products` and `cart_max_quantity` are per-customer caps
+The cart itself does not enforce them. The customer can fill a cart that violates the limit, and the **Proceed to checkout** button stays active and works. What happens next is the part that surprises merchants: instead of the checkout form, the page shows **only the error message** — the entire step sequence is replaced by it, so there is no form to fill in and nothing to submit.
 
-These caps apply per **customer**, not per **order**. A repeat customer's accumulated history doesn't subtract from the cap — each cart-submission round starts fresh. The cap applies to the items in the current cart at submit time. Blank = 0 = no cap.
+- Below `checkout_min_price` → *"…allowed checkout"* (`sf.checkout.err.checkout_min_price_%1$s_allowed_checkout`), with the minimum formatted in the store currency.
+- Above `checkout_max_price` → *"…allowed in cart"* (`sf.store.err.max_price_%1$s_allowed_in_cart`).
+
+The customer's way out is to go back to the cart and change the quantities. A merchant reporting *"customers reach checkout and see nothing but a message"* is describing this working as designed — the fix is to lower the minimum, not to chase a broken checkout.
+
+### `cart_max_products` and `cart_max_quantity` cap different things, both at add-to-cart
+
+Neither is a per-customer cap, and neither waits for submit — both are enforced the moment an item is added or its quantity changed:
+
+| Setting | What it caps |
+|---|---|
+| `cart_max_products` | the quantity of a **single variant** on one cart line |
+| `cart_max_quantity` | the **total quantity across the whole cart** |
+
+Exceeding either is refused at that moment with *"no more than N allowed in cart"* (`sf.store.err.variant_no_more_than_%1$s_allowed_in_cart`), so a cart that breaks a cap cannot be built in the first place. Blank = 0 = no cap.
 
 ### `order_id_display` affects every customer-visible surface
 

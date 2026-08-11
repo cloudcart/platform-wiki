@@ -81,7 +81,7 @@ Mutations are gated/shaped by a few settings (full detail on [[storefront-cart-c
 
 - `cart_max_products` — per-variant quantity cap enforced by `cart.add`.
 - `cart_max_quantity` — per-cart total quantity cap enforced by `cart.add`.
-- `checkout_min_price` / `checkout_max_price` — bounds the "Proceed to checkout" path.
+- `checkout_min_price` / `checkout_max_price` — do **not** gate the "Proceed to checkout" button; the cart lets the customer through and the checkout page shows a notice instead of the steps ([[checkout-page-routing]]).
 - `action_after_add_to_cart` — what the UI does after a successful `cart.add`.
 
 ## Theme variations
