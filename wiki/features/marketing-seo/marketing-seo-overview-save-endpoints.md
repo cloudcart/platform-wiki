@@ -46,7 +46,7 @@ Each card then mutates its own keys and POSTs to its own dedicated endpoint:
 | Deindex | `POST /admin/api/core/seo/settings/no-index-limit` | `{noindex_query_limit, allow_noindex_query_limit}` |
 | Pagination word | `POST /admin/api/core/seo/settings/meta-page-title` | `{meta_page}` |
 | Robots.txt | `POST /admin/api/core/seo/settings/robot-txt` | multipart, just the `robots` field |
-| Sharing | `POST /admin/marketing/seo/add-this` (legacy route) | Open Graph image + social-share module settings |
+| Llms.txt | `POST /admin/api/core/seo/settings/llms-txt` | just the `llms` field |
 | RSS | `POST /admin/api/core/seo/settings/rss-feed` | `{rss_feed_count}` |
 
 The **Sitemap URL** and **RSS feed URL** fields are read-only — there is no save route for them.

@@ -37,8 +37,9 @@ Per-card deep dives (one card = one page):
 - [[marketing-seo-meta-title]] — the pagination word prepended to meta titles on page 2+.
 - [[marketing-seo-sitemap]] — read-only sitemap.xml URL display.
 - [[marketing-seo-robots]] — the robots.txt body editor.
-- [[marketing-seo-sharing]] — the social-share toolbar + default Open Graph image.
 - [[marketing-seo-rss]] — the newest-products RSS feed size.
+- [[marketing-seo-llms]] — the `/llms.txt` file telling AI assistants what the store sells and which pages to read.
+- [[marketing-seo-sharing]] — the social-share toolbar + Open Graph image (no longer a card on this screen).
 
 ## Where to find it
 
@@ -53,7 +54,7 @@ The screen pairs an info column with a setting column in each of seven cards, ea
 - Set the **pagination word** prepended to repeated meta titles — see [[marketing-seo-meta-title]].
 - Copy the read-only **sitemap.xml** URL — see [[marketing-seo-sitemap]].
 - Edit the **robots.txt** body — see [[marketing-seo-robots]].
-- Configure the **product social-share** toolbar + default Open Graph image — see [[marketing-seo-sharing]].
+- Publish **`/llms.txt`**, the file telling AI assistants what the store sells — see [[marketing-seo-llms]].
 - Set the **RSS feed** product count and copy the feed URL — see [[marketing-seo-rss]].
 
 What the merchant **cannot** do here: per-page meta titles/descriptions per section ([[marketing-seo-meta]]), per-URL 301 redirects ([[marketing-seo-301-redirects]]), per-product meta overrides (on [[product]]), per-category meta overrides (on [[category]]), domain-level redirects ([[apps-domain-redirect]]), or editing the sitemap content. Full breakdown on [[marketing-seo-overview-layout]].
@@ -88,8 +89,8 @@ Card-specific business rules (how canonical actually renders, how the noindex th
 - [[marketing-seo-meta-title]] — Pagination word card.
 - [[marketing-seo-sitemap]] — Sitemap.xml card.
 - [[marketing-seo-robots]] — Robots.txt card.
-- [[marketing-seo-sharing]] — Social-share + OG image card.
 - [[marketing-seo-rss]] — RSS feed card.
+- [[marketing-seo-llms]] — Llms.txt card.
 - [[marketing-seo-meta]] — per-section meta titles & descriptions.
 - [[marketing-seo-301-redirects]] — per-URL 301 redirects manager.
 - [[apps-seo-spinner]] — AI content-variation generator for descriptions + meta.

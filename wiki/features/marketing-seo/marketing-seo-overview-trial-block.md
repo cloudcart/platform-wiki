@@ -60,6 +60,10 @@ Once the store moves off trial / expired / development / demo, the storefront st
 
 For a "my new store isn't on Google" ticket, the first thing to check is the store's plan state, not the robots.txt text. If the store is on trial / expired / development / demo, the block is by-design and the fix is to upgrade. Only after that should the merchant's robots.txt content (see [[marketing-seo-robots]]) be reviewed.
 
+### `/llms.txt` is withheld on the same stores
+
+A trial or expired store also publishes no [[marketing-seo-llms|llms.txt]] — the URL answers **404** rather than an empty file, so an AI assistant reads *"no such file"* instead of a shop describing itself as nothing. It starts answering as soon as the store is on a paid plan.
+
 ## Related
 
 - [[marketing-seo]] — hub.

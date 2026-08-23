@@ -37,6 +37,7 @@ Use this table to look up any control's stored setting key, default, and validat
 | **Title** (text input under "Text to add pagination to meta title and description") | Stored as `setting('meta_page')`. The literal word prepended on page 2+ of paginated lists: "Page 2 — Original Title". Used with the self-canonical strategy to avoid duplicate-content penalties on paginated category / vendor lists. | `Page` | `required`. Server returns "Meta page is required" if empty. Per-language — set the word to match the storefront language (e.g., `Страница` for Bulgarian). See [[marketing-seo-meta-title]]. |
 | **Sitemap URL** (read-only display + copy button) | Direct link to the auto-generated `sitemap.xml` for the store's primary domain. | `<primary scheme>://<primary host>/sitemap.xml` | Click the row to copy to clipboard; toast reads "Copied to clipboard". The sitemap itself is generated on demand by the storefront and is NOT regenerated from this admin page. See [[marketing-seo-sitemap]]. |
 | **Robots.txt body** (textarea, 3 rows) | The literal text content the storefront serves at `/robots.txt`. Stored as `setting('robots.txt')` plus an `update_robots` timestamp. | A default platform robots.txt | No client-side validation — anything the merchant types is accepted. Save shows the confirm modal "Are you sure?" with body "There is a possibility that you will break your site by changing the contents of this file." with primary "OK" button. The platform always appends checkout/cart/wishlist Disallow lines + `Crawl-Delay: 3`. See [[marketing-seo-robots]]. |
+| **Llms.txt body** (textarea, 10 rows) | The Markdown the storefront serves at `/llms.txt`. Stored as `setting('llms.txt')` plus an `update_llms` timestamp that drives the file's `Last-Modified`. Max **65 536 characters**. Blank is valid and means "publish the summary generated from the store's own name, description and contacts" — it does not switch the file off. See [[marketing-seo-llms]]. |
 | **Share product** (switch) | Master enable for the AddThis-style social sharing toolbar on product detail pages. | OFF | Stored as `module.enabled`. Sub-controls below only matter when ON. See [[marketing-seo-sharing]]. |
 | **Show share count** (switch) | Toggle social counters next to share buttons. | `no` | true/false stored as `yes` / `no`. |
 | **Show button for other social networks** (switch) | Display the "+" button that exposes additional sharing networks. | `no` | Stored as `module.show_compact`. |
@@ -62,6 +63,7 @@ Use this table to look up any control's stored setting key, default, and validat
 - [[marketing-seo-meta-title]] — Pagination word card.
 - [[marketing-seo-sitemap]] — Sitemap.xml card.
 - [[marketing-seo-robots]] — Robots.txt card.
+- [[marketing-seo-llms]] — Llms.txt card.
 - [[marketing-seo-sharing]] — Social-share + OG image card.
 - [[marketing-seo-rss]] — RSS feed card.
 

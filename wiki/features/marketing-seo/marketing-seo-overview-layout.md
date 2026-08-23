@@ -34,7 +34,7 @@ The screen is laid out as **seven self-contained cards**. Each card pairs an inf
 - **Pagination word in meta** — the literal word ("Page", "Страница", etc.) prefixed to meta titles & descriptions on page 2 of any paginated list. See [[marketing-seo-meta-title]].
 - **Sitemap.xml** — read-only display of the sitemap URL with a copy-to-clipboard control. See [[marketing-seo-sitemap]].
 - **Robots.txt** — full-content text editor for the robots.txt body, guarded by a confirmation modal. See [[marketing-seo-robots]].
-- **Share a product** ("Sharing module") — enable / configure the social-sharing toolbar on product pages and upload the default Open Graph image. See [[marketing-seo-sharing]].
+- **Llms.txt file** — the Markdown file published at `/llms.txt` telling AI assistants what the store sells and which pages are worth reading. See [[marketing-seo-llms]].
 - **RSS feed** — set how many products go into the RSS feed (1-100) and copy the feed URL. See [[marketing-seo-rss]].
 
 ### What the merchant CANNOT do here

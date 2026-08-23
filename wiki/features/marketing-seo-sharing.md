@@ -14,7 +14,9 @@ source_count: 4
 
 ## Purpose
 
-This is the **"Share a product"** card on the [[marketing-seo]] screen — the 6th of the 7 cards. It bundles two unrelated outcomes into one admin card and one save call:
+> **The Sharing card is no longer part of the Marketing → SEO screen.** It was removed when the [[marketing-seo-llms|Llms.txt]] card took its place. The default Open Graph image is now uploaded on **Settings → Brand** ([[settings-brand]]). Where the social-share toolbar is configured today is unconfirmed — see *Open questions*. The behaviour described below still applies to the storefront; only the admin location changed.
+
+This was the **"Share a product"** card on the [[marketing-seo]] screen. It bundles two unrelated outcomes into one admin card and one save call:
 
 1. A built-in **social-sharing toolbar** (an AddThis-style module that historically sat on product detail pages) — visual layout, which counters/buttons show, custom HTML override. **Disabled on every modern theme** — see [[seo-sharing-toolbar]].
 2. The **default `og:image`** — the fallback Open Graph cover image used in link previews on Facebook / LinkedIn / X / Viber when a shared storefront page has no image of its own. **This is the only field that matters on modern themes** — see [[seo-sharing-og-image]].
@@ -70,5 +72,7 @@ The card uses the shared **Save / Revert** wrapper — both buttons appear in an
 - [[category]] — per-category OG image override.
 
 ## Open questions
+
+- Where the product social-share toolbar is configured now that the card has been removed from the SEO screen — whether it moved to another screen, or the toolbar is driven only by the theme.
 
 No outstanding questions.
