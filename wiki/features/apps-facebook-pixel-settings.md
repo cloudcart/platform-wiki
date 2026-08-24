@@ -107,7 +107,13 @@ If any gate fails, only the browser pixel fires (and the browser pixel itself is
 
 ### Test Event Code routing
 
-When `test_event_code` is set on the Manager, every CAPI request adds the code via the platform code before execution. This tags every event with the test code regardless of which event type fires — there's no per-event-type test mode.
+When `test_event_code` is set, every CAPI request adds the code before execution. This tags every event with the test code regardless of which event type fires — there's no per-event-type test mode.
+
+### Clearing the code — empty the field and Save
+
+The code is attached to an event **only while the field holds a value**. Emptying it on the Settings form and saving is all that is required: the field stays empty, and from the next event onwards nothing carries the test code.
+
+This matters because the field is easy to leave behind after a test session, and while it is set **every production event is tagged as test data** — which is what makes Meta filter real conversions out of reporting. A merchant whose conversions stopped appearing shortly after they tested their setup should check this field first.
 
 ### Event source URL — known critical gap (BUG, 2026-06-08)
 
