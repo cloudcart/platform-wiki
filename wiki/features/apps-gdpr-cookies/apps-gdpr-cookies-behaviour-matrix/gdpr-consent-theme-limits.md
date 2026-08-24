@@ -3,7 +3,7 @@ type: feature
 nav_path: "Apps → GDPR → Cookies → Behaviour matrix → Theme dependencies & limits"
 route_name: ""
 route_path: ""
-aliases: ["cookie dialog theme", "gdpr_popup theme", "cookie settings link missing", "gdpr-trigger cookies-trigger", "toggle state theme dependent", "reject all no consent stored", "cookie consent unverified behaviour"]
+aliases: ["cookie dialog theme", "gdpr_popup theme", "cookie settings link missing", "gdpr-trigger cookies-trigger", "toggle state theme dependent", "reject all optional cookies", "cookie consent unverified behaviour"]
 tags: [apps, gdpr, cookies, consent, storefront, theme, known-issues]
 plan_gates: []
 created: 2026-08-08
@@ -44,20 +44,21 @@ Two consequences that matter in support:
 
 Only the **wall** is auto-opened by the platform, and only when no consent is stored.
 
-### Rejecting EVERY optional category may store nothing at all
+### Rejecting every optional category IS recorded
 
-In testing, a save with **all** optional categories switched off did not produce a stored consent, while a save with at least one category on did. Until this is confirmed and fixed, treat "reject everything" as an unreliable path: the visitor may simply be re-prompted, with each group's `default` still governing in the meantime.
+**Save preferences** writes one entry per category shown in the dialog — each as `yes` or `no` according to its switch — with no special case for "everything off". A visitor who rejects every optional category therefore gets that recorded exactly like any other combination, and the rejections are honoured.
 
-This one is worth a **platform fix**, not a documentation note — a visitor who deliberately rejects everything should still have that recorded.
+There is only one way a save genuinely stores nothing: if the dialog renders **no category switches at all**. That happens when no group has any cookies defined, since an empty group is not rendered ([[gdpr-consent-configurations]]). With nothing to iterate, the save writes an empty value. Check the group definitions ([[apps-gdpr-cookies-definitions]]) before treating this as a fault.
 
-### Three behaviours are documented from observation, not source
+The bar still returns after an all-off save — not because nothing was stored, but because of the partial-consent rule on [[gdpr-consent-persistence]].
+
+### Two behaviours are documented from observation, not source
 
 These live outside the application code, so they are stated from observed behaviour and should not be quoted as verified platform rules:
 
 | Behaviour | Why it is unverified |
 |---|---|
 | What counts as a **"complete" consent** (and therefore hides the bar) | Decided by a storefront script asset that is not part of the application code. Observed: full acceptance dismisses the bar, partial acceptance does not. |
-| **Rejecting every optional category** storing nothing | Observed in testing (above); the mechanism was not traced. |
 | The dialog's **toggle state on re-open** | Rendered by the theme, so there is no single platform-wide behaviour to assert. |
 
 Everything else in this sub-cluster — the settings, the button behaviours, the cleanup asymmetry, the 365-day lifetime, the bar/wall combinations, the empty-group rule — is verified against the platform's own storefront script, settings form and templates.
@@ -71,4 +72,4 @@ Everything else in this sub-cluster — the settings, the button behaviours, the
 
 ## Open questions
 
-- Whether "reject every optional category" is meant to store a consent (all categories `no`) or is intentionally a no-op. Current behaviour looks like a defect; worth confirming with development.
+None.

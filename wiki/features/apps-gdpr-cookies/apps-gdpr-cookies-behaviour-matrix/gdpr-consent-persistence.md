@@ -45,7 +45,7 @@ This is intentional: the bar doubles as a **standing reminder that categories re
 |---|---|---|---|
 | Accept all | yes | yes | **gone** |
 | Save preferences, **some** categories on | **yes** | **yes — the toggles show what was chosen** | **still shows** ← by design |
-| Save preferences, **all optional off** | **may not be stored at all** — see [[gdpr-consent-theme-limits]] | — | still shows |
+| Save preferences, **all optional off** | **yes** — every category is recorded, each as rejected | **yes** | still shows ← by design |
 | Close with × | **no** | — | shows again on the next page |
 | Nothing | no | — | keeps showing |
 
