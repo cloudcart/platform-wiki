@@ -83,7 +83,7 @@ Per-product price overrides, per-item option price overrides, and per-order opti
 
 ### 🔴 An INVOICED order can no longer be edited — at all
 
-**Once an invoice number has been issued for the order, the line-item editing UI disappears entirely** — no per-row cog, no **Add product**. This is a fiscal rule (Наредба Н-18 / §16.7): the fiscal document is already out, so quantities, prices, and discounts can no longer be changed on the order itself. **It applies regardless of the order's status (paid or unpaid) and regardless of fulfilment** — so **un-fulfilling / marking the order as not shipped does NOT re-open editing**, because the block is the invoice, not the fulfilment state.
+**Once an invoice number has been issued for the order, the line-item editing UI disappears entirely** — no per-row cog, no **Add product**. This is a fiscal rule (Наредба Н-18): the fiscal document is already out, so quantities, prices, and discounts can no longer be changed on the order itself. **It applies regardless of the order's status (paid or unpaid) and regardless of fulfilment** — so **un-fulfilling / marking the order as not shipped does NOT re-open editing**, because the block is the invoice, not the fulfilment state.
 
 To change what the customer actually receives after an invoice exists, the correction goes through a **credit note / return** ([[orders-returns]] → [[orders-credit]]), not an order edit. To sell an additional item, create a **new order** for it (it gets its own invoice).
 

@@ -107,7 +107,7 @@ Every API-driven mutation writes a row to [[orders-history]] with the **acting n
 
 The API uses [[settings-api-keys|PAT-token authentication]] — see [[pat-token]] for the token entity. Rate limits + auth model live on [[json-api-v2]].
 
-### What a a support ticket ticket says when the API mutated an order
+### What a support ticket shows when the API mutated an order
 
 Common merchant-facing patterns:
 

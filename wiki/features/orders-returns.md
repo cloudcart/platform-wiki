@@ -3,7 +3,7 @@ type: feature
 nav_path: "Orders → open an order → Returns / Issue return"
 route_name: admin.core.orders.returns
 route_path: ""
-aliases: ["Order return", "Order returns", "Issue return", "Return goods", "Full return", "Partial return", "Return refund", "Returned status", "Върната поръчка", "Връщане на стока", "Издай връщане", "Частично връщане", "Пълно връщане", "order return lifecycle", "return status", "return"]
+aliases: ["Order return", "Order returns", "Issue return", "Return goods", "Full return", "Partial return", "Return refund", "Returned status", "Върната поръчка", "Връщане на стока", "Издай връщане", "Частично връщане", "Пълно връщане", "order return lifecycle", "return status", " return"]
 tags: [orders, returns, refund, credit-note, restock, compliance]
 plan_gates: []
 created: 2026-07-24
@@ -15,7 +15,7 @@ source_count: 1
 
 ## Purpose
 
-An **order return** is the merchant-side record of goods (or value) coming back on a placed order — the core mechanism behind refunds, restock, and credit notes (fiscal basis: **Наредба Н-18 / §18**). A return can be a **full** reversal of the whole order or a **partial** one covering selected lines, and it moves the returned quantities back into stock, gives the customer their money back through a chosen method, and issues the fiscal credit note.
+An **order return** is the merchant-side record of goods (or value) coming back on a placed order — the core mechanism behind refunds, restock, and credit notes (fiscal basis: **Наредба Н-18**). A return can be a **full** reversal of the whole order or a **partial** one covering selected lines, and it moves the returned quantities back into stock, gives the customer their money back through a chosen method, and issues the fiscal credit note.
 
 > Do **not** confuse this with [[checkout-return]] — that is the *payment-gateway* return (the page a customer lands on after an off-site payment), an unrelated mechanism that happens to share the word "return".
 

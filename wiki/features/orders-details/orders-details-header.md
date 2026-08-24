@@ -3,7 +3,7 @@ type: feature
 nav_path: "Orders → Details → Header"
 route_name: admin.orders.details
 route_path: /admin/orders/details/:order_id
-aliases: ["Create order button disabled", "Създай поръчка неактивен", "draft order cannot be created", "draft says add products payment shipping", "order draft blocked", "Order header", "Order details header", "Order breadcrumb", "Order toolbar", "Header actions toolbar", "Draft alert", "Issue return button", "Why does my paid order show Fulfilled"]
+aliases: ["Order header", "Order details header", "Order breadcrumb", "Order toolbar", "Header actions toolbar", "Draft alert", "Issue return button", "Why does my paid order show Fulfilled"]
 tags: [orders, order-details, header, toolbar, status-pill, draft, returns]
 plan_gates: []
 created: 2026-06-10

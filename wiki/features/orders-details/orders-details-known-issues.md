@@ -64,7 +64,7 @@ After the Bulgarian BGN→EUR transition, generating a waybill for an order stil
 
 ### Invoiced orders cannot be edited — un-fulfilling does not help (by-design, top confusion)
 
-Once an **invoice number** exists on the order, the line-item editing UI is gone: no per-row cog, no **Add product**, no quantity / price / discount change. This is fiscal (Наредба Н-18 / §16.7) — the fiscal document is already issued, so corrections belong on a **credit note / return**, not on the order.
+Once an **invoice number** exists on the order, the line-item editing UI is gone: no per-row cog, no **Add product**, no quantity / price / discount change. This is fiscal (Наредба Н-18) — the fiscal document is already issued, so corrections belong on a **credit note / return**, not on the order.
 
 **The frequent merchant report:** *"we used to mark the order as not shipped, add a product, and re-issue the waybill keeping the same invoice number — now we can't."* That workflow is intentionally closed: the block keys on the **invoice**, not on fulfilment, so **Mark as unfulfilled** does **not** re-open editing, and it applies whether the order is paid or unpaid. The paths now are: issue a **return** for what changes ([[orders-details-returns]] → [[orders-returns]] / [[orders-credit]]), or create a **new order** for an additional item. See [[orders-details-products]].
 
