@@ -3,7 +3,7 @@ type: feature
 nav_path: "Orders → Details → Header"
 route_name: admin.orders.details
 route_path: /admin/orders/details/:order_id
-aliases: ["Order header", "Order details header", "Order breadcrumb", "Order toolbar", "Header actions toolbar", "Draft alert", "Issue return button", "Why does my paid order show Fulfilled"]
+aliases: ["Create order button disabled", "Създай поръчка неактивен", "draft order cannot be created", "draft says add products payment shipping", "order draft blocked", "Order header", "Order details header", "Order breadcrumb", "Order toolbar", "Header actions toolbar", "Draft alert", "Issue return button", "Why does my paid order show Fulfilled"]
 tags: [orders, order-details, header, toolbar, status-pill, draft, returns]
 plan_gates: []
 created: 2026-06-10
@@ -61,15 +61,25 @@ The old order-level **Credit note** menu (Create / Download / Send credit note) 
 
 ### Draft alert (only when `is_draft = 1`)
 
-A warning banner is rendered for orders in draft state. The content is composed dynamically based on which prerequisites are missing:
+A warning banner is rendered for orders in draft state. The content is composed dynamically, and **each fragment appears only when that specific piece is missing**:
 
-- Missing products → *"… add products …"* fragment.
-- Missing payment provider → *"… select payment …"* fragment.
-- Missing shipping (non-digital orders) → *"… configure shipping …"* fragment.
+- No line items → *"… add products …"* fragment.
+- No payment record on the order → *"… select payment …"* fragment.
+- No shipping record on the order → *"… configure shipping …"* fragment. Skipped entirely when the order has **only digital products** (nothing to ship), so a digital-only draft is never held back for shipping.
 
-**Button states inside the alert:**
+### 🔴 ANY ONE missing piece disables Create order — not all three
 
-- ALL pieces missing → **Create order** button is disabled.
+The **Create order** button is disabled when **products OR payment OR shipping** is missing. It is not a case of "all three must be missing"; a draft that has products and payment but no shipping record is blocked exactly the same way.
+
+This matters when reading a merchant's report. Because the fragments are per-piece, **the banner text tells you precisely what is missing** — a banner naming only delivery means products and payment are recorded and only the shipping record is absent. Conversely, a disabled button is **not** evidence that all three are missing, and it is not evidence of a validation fault: it is the designed response to the one piece that is not there.
+
+Two traps when checking the order's data against the banner:
+
+- **The payment shown is the newest record.** The order's payment is read as the most recent payment row, so older rows left behind by earlier changes of method are irrelevant — one current record is enough to satisfy the check, and several stale ones do not block anything.
+- **A courier being visible and selected on screen is not the same as a shipping record existing.** If the courier returned a quote but the rate never got written to the order, there is no shipping record and the draft stays blocked — the screen shows a chosen courier while the banner correctly reports delivery as missing. Investigate why the rate is empty ([[orders-details-shipping]]), not why the button is disabled.
+
+**Other button states:**
+
 - Order ready but not confirmed → **Create order** button enabled + (for online payments) a second **Create order and send to client** button (creates the order AND emails the customer a payment link).
 - Order confirmed but waiting for online payment → manual-order help text + the customer's checkout URL with a copy-to-clipboard action and a **Send as email** button.
 
