@@ -56,9 +56,9 @@ This modal is OPENED from within the Edit modal. When open, the parent Edit moda
 
 ### Email channel is always active for every staff member
 
-Every staff member receives a `two_factor_action` email automatically when a 2FA-protected action requires verification (per the platform's 2FA helper). This email channel is **permanent** — the "Email two factor authentication is active" row on the Edit modal is a **status indicator, not a toggle**. There is no per-row UI to disable email 2FA.
+Every staff member receives a `two_factor_action` email automatically when a 2FA-protected action requires verification. This email channel is **permanent** — the "Email two factor authentication is active" row on the Edit modal is a **status indicator, not a toggle**. There is no per-row UI to disable email 2FA.
 
-The email 2FA channel uses **8-character** verification codes (vs the 6-digit codes used by authenticator apps).
+**But it stops being used once the authenticator app is configured.** The platform only generates and sends an email code for a staff member who has **no** authenticator secret; with one configured, no email is produced at all and the app's code is what satisfies the challenge. The two channels do not run side by side — see [[account-cc2fa-email]].
 
 ### Authenticator-app 2FA is configurable per row
 
@@ -111,7 +111,7 @@ Each staff member configures their own authenticator-app secret independently. A
 | Channel | Code length |
 |---|---|
 | Authenticator app (TOTP) | 6 digits |
-| Email channel | 8 characters |
+| Email channel | 6 digits |
 
 ## Related
 
