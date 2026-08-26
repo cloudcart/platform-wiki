@@ -98,9 +98,9 @@ The frontend validates these as required before submit: site name, site industry
 
 The PUT response (`/admin/api/core/settings/general`) sometimes returns `{ settings: {...} }` and sometimes returns the flat object directly. The Vue page handles both. Merchants who automate against this API (uncommon) should defensively handle both shapes.
 
-### CloudCart staff bypass on email change
+### The email-change confirmation is skipped for platform callers
 
-When a CloudCart support agent is logged into the store via console-login, saving a new email **applies immediately** with no codes, no confirmation step, and no `new_site_email` placeholder. See [[settings-general-store-details]] for the merchant flow this bypasses.
+The two-code confirmation applies to the **merchant**. It is skipped — the new address applying immediately, with no codes and no pending placeholder — when the caller is CloudCart staff on a console login **or** CloudCart's own tooling acting with platform authority. So *"this cannot be changed without the codes"* is true of the merchant path only. See [[settings-general-store-details]].
 
 ## Related
 

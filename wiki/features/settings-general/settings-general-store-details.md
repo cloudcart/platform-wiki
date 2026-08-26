@@ -71,7 +71,22 @@ When the merchant types a new value into the **Email** field and saves:
 3. The warning panel renders inline with the two code inputs and three buttons (**Cancel**, **Resend emails**, **Confirm**) — actions described in the Modals section above.
 4. While the change is pending, `new_site_email` is populated AND visible to the merchant. Once Confirm completes, `new_site_email` and both codes are cleared. **Diagnostic answer:** "did my email change apply?" → yes iff the warning panel is gone and the Email field shows the new address; no if the warning panel is still showing.
 5. **Important: email confirmation codes are NOT suppressed by the Admin Notifications master toggle.** Even with "Send notifications to administrators" turned OFF in [[settings-admin-notifications]], the two confirmation codes still go out — the `email_confirmation` notification is always-enabled there (toggle disabled in the UI, API rejects attempts to disable it, AND the dispatch helper enqueues directly, bypassing the master-toggle gate). If a merchant says "I never got the codes," it is NOT the admin notifications setting.
-6. **CloudCart staff bypass:** when a CloudCart support agent is logged into the store via console-login (detected via `session('cc_console_login.auth_id')`), saving a new email **applies immediately** with no codes, no confirmation step, no `new_site_email` placeholder. The merchant is not notified.
+6. **The confirmation is skipped when the platform itself is the caller** — see the next rule. In that case the new address **applies immediately**: no codes, no confirmation step, no `new_site_email` placeholder, and the merchant is not notified.
+
+### 🔴 Two callers skip the confirmation, not one
+
+The codes exist to prove the person asking still controls the **old** address. That proof is redundant when the request comes from the platform rather than from the merchant, so the confirmation is skipped for **both** of these:
+
+| Caller | How it arrives |
+|---|---|
+| **CloudCart staff on a console login** | A support agent working inside the store's admin. |
+| **CloudCart acting on the store through its own tooling** | Support systems operating with platform authority rather than the merchant's. |
+
+Both already carry more authority than the confirmation protects, which is why the check is waived rather than bypassed.
+
+**This matters when judging whether an email change is possible at all.** Reading only the merchant flow gives the answer *"it cannot be done without the two codes, so a person has to do it"* — which is wrong for a platform-authenticated caller, and will send a solvable request down a manual escalation path for no reason.
+
+Applying it this way also **clears any half-finished change**: a `new_site_email` left pending from an earlier merchant attempt is dropped along with both codes, so an abandoned attempt cannot outlive the address just set.
 
 ### Email confirmation delivery is queued
 
