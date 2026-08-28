@@ -214,6 +214,7 @@ Not applicable — this is a navigation hub, not a screen with its own settings.
 - [[apps-stores-settings]]
 - [[apps-stores-sync]]
 - [[apps-stores-sync-settings]]
+- [[apps-subscriptions]]
 - [[apps-suppliers]]
 - [[apps-suppliers-overview]]
 - [[apps-suppliers-supplier-products]]
