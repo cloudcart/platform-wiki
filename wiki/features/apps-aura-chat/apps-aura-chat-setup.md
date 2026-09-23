@@ -48,10 +48,8 @@ This aspect covers getting the chat onto the storefront. It lists the settings a
 | Discount codes | off | [[apps-aura-chat-discount-codes]] |
 | Agents | published-pages lookup always on; product research off | [[apps-aura-chat-agents]] |
 | Topics | the eight standard topics | [[apps-aura-chat-topics-feedback]] |
-| Proactive Sales | one rule, "Proactive message": after 10 seconds on a page, says *Can I help you with something at {store}?*; never speaks on `/checkout`, `/cart*`, `/account*` | [[apps-aura-chat-proactive]] |
+| Proactive Sales | one rule, "Proactive message": after 10 seconds on a page, asks whether it can help, in the store's language; never speaks on `/checkout`, `/cart*`, `/account*` | [[apps-aura-chat-proactive]] |
 | Allowance | a small starter allowance | [[apps-aura-chat-usage]] |
-
-The starter proactive message is **in English**, whatever the store's language. A Bulgarian shop will want to rewrite it on the Proactive Sales tab.
 
 ### The two helper apps
 
@@ -76,16 +74,9 @@ Disabling the app takes the chat off the storefront. Settings, rules, conversati
 
 On uninstall the store is **suspended** on the chat service. The chat stops answering at once, the app's storefront access key is revoked, and the store's configuration and conversations are **kept**.
 
-### Reinstalling resets part of the setup (as of 2026-09-23)
+### Reinstalling brings the same setup back
 
-Installing again finds the suspended store and reactivates it with a fresh access key. The store name, proactive rules, topics, rating settings, disclaimer, catalog rules, discount policy, agent switches and past conversations are kept. These go back to their starting values:
-
-- **appearance and opening questions** (position, dimming, cards, launcher, brand colour, launcher icon, questions);
-- **skills** — all switched off again;
-- **the merchant's own instructions** — emptied;
-- **the allowance** — set back to the starter allowance. Credit already paid for is not lost. The allowance is recalculated from all paid packs at the next credit purchase ([[apps-aura-chat-usage]]).
-
-So after a reinstall, check the Settings and Knowledge & Skills tabs, and re-enter the instructions from a copy.
+Installing again finds the suspended store and reactivates it. The starting values above go **only to a store the chat service has never seen**. A reinstall refreshes just the store's currency, default language, storefront address and the app's access key. Everything else stays as the merchant left it: the look, opening questions, skills, own instructions, the allowance, proactive rules, topics, rating settings, disclaimer, catalog rules, discount policy, agent switches and past conversations.
 
 ### A failed install can be finished from the settings
 

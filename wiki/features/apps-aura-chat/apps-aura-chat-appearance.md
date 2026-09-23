@@ -99,7 +99,7 @@ Every box is saved to the chat service. If it cannot be reached, the tab shows *
 - [[apps-aura-chat-widget]] — the result on the storefront.
 - [[apps-aura-chat-topics-feedback]] — the rating row.
 - [[apps-aura-chat-proactive]] — where the launcher icon is also used.
-- [[apps-aura-chat-setup]] — the starting values, and what a reinstall resets.
+- [[apps-aura-chat-setup]] — the starting values a new store gets.
 
 ## Open questions
 

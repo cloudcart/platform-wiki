@@ -76,7 +76,7 @@ The standard topics a new store starts with:
 | Не разбра въпроса ми | Did not understand my question |
 | Не можа да помогне | Could not help |
 
-The box's help text says "Off by default", but a **new store starts with it on**, with the four standard reasons ([[apps-aura-chat-setup]]).
+A **new store starts with it on**, with the four standard reasons ([[apps-aura-chat-setup]]).
 
 ## Business rules
 

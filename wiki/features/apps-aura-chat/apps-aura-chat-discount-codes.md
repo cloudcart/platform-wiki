@@ -44,7 +44,7 @@ A status line says where things stand: *Codes are being offered when the occasio
 | **Valid for** | days, 1–90 | "The longest a code may last. The assistant gives shorter where shorter will do, and no code outlives this." |
 | **Before the same customer may get another** | days, 1–3650 | Counted from when a code was issued. A signed-in customer is recognised across conversations; a guest by their browser. There is no "off": for "once only", set the maximum. |
 | **When to consider a discount** | text, up to 600 characters, with a counter | Optional. The assistant already watches for hesitation, price objections, a basket gone quiet and a shopper about to leave. Text here is **added** to those moments and only decides when the policy is read, not what is given. Placeholder: *e.g. When a trade customer asks about volume, or during the winter sale*. |
-| **When a discount may be offered** | text, up to 600 characters | "Read as policy: the assistant will not go beyond it. An occasion you have not described has no policy behind it, and the answer is then no." Placeholder: *e.g. When delivery is more than two days late, or when a shopper hesitates over a large basket and has asked about the price twice.* |
+| **When a discount may be offered** | text, up to 600 characters, with a counter | Anything past 600 characters is cut when saved; the counter turns red near the limit. "Read as policy: the assistant will not go beyond it. An occasion you have not described has no policy behind it, and the answer is then no." Placeholder: *e.g. When delivery is more than two days late, or when a shopper hesitates over a large basket and has asked about the price twice.* |
 
 ## Business rules
 
@@ -94,4 +94,4 @@ Every code sits under one discount in the store, created on first use: **Aura ch
 
 ## Open questions
 
-- **When a discount may be offered** has no character counter, and text beyond 600 characters is cut when saved (verify whether the admin will warn).
+- None known.

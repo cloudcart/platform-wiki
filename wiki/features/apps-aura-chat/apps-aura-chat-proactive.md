@@ -90,9 +90,15 @@ The assistant has no built-in exception for checkout or payment pages. Emptying 
 
 **Kind of page** and the `{product}` / `{category}` variables read page data the Datalayer app publishes. Without it the tab warns *These rules cannot fire yet*: those conditions never match, silently, on exactly the pages they target. **Install Datalayer** fixes it in place ([[apps-datalayer]]).
 
-### The starter rule is in English
+### The starter rule speaks the store's language
 
-A new store's rule "Proactive message" says *Can I help you with something at {store}?* after 10 seconds on any page. It is not translated. A Bulgarian shop will usually rewrite it, e.g. *Мога ли да помогна с нещо в {store}?*
+A new store gets one rule, "Proactive message", which fires after 10 seconds on any page. Its sentence is in the store's default language:
+
+- Bulgarian: *Мога ли да ви помогна с нещо в {store}?*
+- English: *Can I help you with something at {store}?*
+- any other language: the Bulgarian sentence.
+
+Stores that installed Aura Chat before this change keep the English sentence until the merchant rewrites it. A reinstall does not replace it ([[apps-aura-chat-setup]]).
 
 ### Rules are checked in the shopper's browser
 

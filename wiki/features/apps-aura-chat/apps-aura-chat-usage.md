@@ -57,7 +57,7 @@ The allowance is a running total. It is **not reset each month** and credit **do
 
 ### The starter allowance
 
-A new install gets a small starter allowance so the chat works from its first minute. At the first credit purchase, the allowance is recalculated as **the total of all paid packs**; the starter amount is not added on top. Reinstalling the app sets the allowance back to the starter amount until the next purchase ([[apps-aura-chat-setup]]).
+A new install gets a small starter allowance so the chat works from its first minute. At the first credit purchase, the allowance is recalculated as **the total of all paid packs**; the starter amount is not added on top. The starter allowance goes only to a store installing Aura Chat for the first time; uninstalling and reinstalling leaves the allowance as it was ([[apps-aura-chat-setup]]).
 
 ### What uses the allowance
 
