@@ -1,85 +1,84 @@
 ---
 type: feature
-nav_path: "Apps → Advanced Search → Indexing"
-route_name: apps.advanced_search.overview
-route_path: /admin/apps/advanced_search
-aliases: ["Advanced Search indexing", "Re-index", "Search maintenance mode", "Engine selection", "Search result freshness", "Multi-language search index"]
-tags: [apps, others, search, indexing]
+nav_path: "Apps → Aura Search → Settings → System status / Optimization → Index status"
+route_name: apps.advanced_search.optimization.index
+route_path: /admin/apps/advanced_search/optimization/index
+aliases: ["Aura Search index", "search index", "reindex", "re-index", "Update CloudCart search engine index", "rebuild search index", "product not found in search", "new product not in search", "search engine Algolia or CloudCart", "index status", "индекс на търсачката", "преиндексиране", "продуктът не излиза в търсенето"]
+tags: [apps, search, indexing, engine]
 plan_gates: ["advanced_search"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-09-23
+source_count: 5
 ---
 
-> Part of [[apps-advanced-search]]. See the hub for the other aspects (settings, analytics, usage, orders, support).
+> Part of [[apps-advanced-search]]. See the hub for the other aspects (plans, overview, searches, pins, vocabulary, AI, settings).
 
-# Advanced Search — Indexing & engine
+# Aura Search — the search index and the engine
 
 ## Purpose
 
-This aspect covers what happens beneath the search box: which engine actually serves queries, how the index is built and rebuilt, what the merchant sees during a re-index, how quickly catalogue changes appear in results, and how multi-language stores are handled. It is the operational side the merchant needs to understand before triggering a re-index on a live store.
+Aura Search does not search the product tables directly. It searches an **index**: a copy of the catalogue kept in the search engine. This aspect covers which engine answers the search box, how the index stays current, how to rebuild it, and how to tell whether it holds the whole catalogue.
 
 ## Where to find it
 
-The re-index control sits on the Advanced Search app (`apps.advanced_search.overview`); the engine choice (`searchBarEngine`) is on the Settings tab — see [[apps-advanced-search-settings]]. The index itself is owned by [[apps-listing-engine]].
+- **Settings → System status** (right-hand rail) — products, categories and vendors in the index, and the **Update CloudCart search engine index** button.
+- **Optimization → Index status** (`/admin/apps/advanced_search/optimization/index`) — per-type counts of the index against the store (*Variants*, *Categories*, *Vendors*), and a summary of orders after a search by status.
+- **Overview** — an *index is missing products* card appears when the index falls well behind ([[apps-advanced-search-overview]]).
 
 ## What the merchant can do here
 
-- **Trigger a full re-index** — rebuild the entire index. This puts the storefront into maintenance mode while it runs (see Business rules).
-- **Choose the engine** (via Settings `searchBarEngine`) — built-in [[apps-listing-engine]] or [[apps-algolia]].
-- **Rely on automatic re-indexing** — product / category / vendor / variant changes re-index reactively; the merchant doesn't normally trigger anything.
-
-### What the merchant CANNOT do here
-
-- Run two indexings in parallel — a new re-index cancels the running batch first (see Business rules).
-- Pin a product to the top of a query — ranking is weight + boost + semantic score only (see [[apps-advanced-search-settings]]).
+- **Rebuild the index** with **Update CloudCart search engine index**. The button is greyed out while the app is off.
+- Compare what is indexed with what the store holds.
+- Choose the **Search engine** — CloudCart or Algolia ([[apps-advanced-search-settings]]).
 
 ## Settings & fields
 
-| Field | Notes |
-|-------|-------|
-| `searchBarEngine` | `cloudcart` (built-in) or `algolia`. Selects which engine serves queries. |
-| `batch_id` (app setting) | The active re-index batch; one at a time. |
+| Field | Values | Notes |
+|---|---|---|
+| **Search engine** (`searchBarEngine`) | `cloudcart`, `algolia` | Algolia is offered only while [[apps-algolia]] is installed and active. |
 
 ## Business rules
 
-### Engine selection logic (built-in vs Algolia)
+### Which engine answers the search box
 
-```
-IF Algolia ([[apps-algolia]]) is NOT installed OR NOT active:
-  → Use the CloudCart engine (gated by isSearchEngine availability + Advanced Search isActive).
-ELSE:
-  → Use the engine specified by setting 'searchBarEngine':
-     - 'cloudcart' → built-in [[apps-listing-engine]].
-     - 'algolia' → [[apps-algolia]].
-```
+- **Algolia not installed, or not active:** the CloudCart engine answers, whatever the setting says. A saved `algolia` choice falls back to `cloudcart` on its own once Algolia is switched off.
+- **Algolia active:** the **Search engine** setting decides. With `algolia`, the search box is Algolia's, and Aura Search's dropdown settings (limits, prices, highlighting, all-words matching) no longer apply to it.
+- **Installing Aura Search while Algolia is already active** sets the engine to `algolia` from the start. Installed the other way round, it stays `cloudcart` until changed.
 
-So the SAME `searchBarEngine` setting toggles built-in vs Algolia. Without Algolia installed, the setting is irrelevant — built-in is forced.
+### Changes reach the index by themselves, within seconds
 
-**Install order matters.** On install, the platform checks whether Algolia is installed + active; if yes, it sets `searchBarEngine = 'algolia'` immediately, overriding the `'cloudcart'` default. Install Algolia first → install Advanced Search → engine is Algolia. Install Advanced Search first → engine stays `cloudcart`.
+Adding, editing or deleting a product, variant, category or vendor — and changes to price, stock, images, visibility, discounts, tags, brand/model and the like — are sent to the index automatically as they happen. The background queue normally applies them within seconds. A large import can make it lag for a while as the queue works through. A nightly pass also applies prices and discounts scheduled for the next day.
 
-### Full re-index puts the storefront into MAINTENANCE MODE
+A rebuild is therefore **not** part of normal work. It is the fix for an index that has fallen behind — a missing product type, counts that do not match — not a step after every edit.
 
-When the merchant clicks **Re-index** (or the platform triggers it), the underlying [[apps-listing-engine]] full-upload job sets `maintenance = 1` on the site with a reason describing the index operation. **The storefront shows a maintenance page until the batch completes.** On completion (or error) the platform automatically lifts maintenance mode and surfaces a success notification. This is critical to know before re-indexing a live store — large catalogues may be in maintenance for an extended period.
+### 🔴 Rebuilding does not take the store offline
 
-### One batch at a time
+**Update CloudCart search engine index** queues a full rebuild in the background (*Sending data to index was added to the queue.*). **The storefront stays open and search keeps answering** while it runs: every product is re-sent to the index, and entries for things no longer in the store are removed. When it finishes, an admin notification says *Content indexing has been completed successfully.*
 
-The active batch ID is stored on the app settings (`batch_id`). Clicking "Re-index" while a previous batch is still running **cancels the previous batch first**, then queues the new one. Two indexings cannot run in parallel.
+Starting a rebuild while one is still running **cancels the first**. Two never run side by side.
 
-### Result freshness — near-instant via reactive jobs
+(Earlier versions of the platform put the store into maintenance mode for the length of a rebuild. That is no longer the case.)
 
-Product changes (and sibling events for categories, vendors, variants, etc.) dispatch indexing jobs on a background queue. Once the worker processes the job (typically seconds), the product appears in / disappears from search results. There is **no nightly-only batch** — re-indexing happens reactively per change. Bulk imports may temporarily lag while the queue catches up.
+### Telling whether the index is complete
 
-### Multi-language — per-language index with language-aware analyzers
+- **System status** reads *The index is empty* when the app is on but nothing is indexed, and *Everything is running normally* otherwise.
+- **Index status** puts each type's indexed count beside the store's own.
+- The Overview raises *Your catalogue is not in the search index* or *The search index is missing about N products* when fewer than **70 %** of the store's product variants are indexed, and lists it before every other card: until it is fixed, the other figures describe only what is indexed.
 
-Each language gets its own analyzer with the right stemmer + stopword filter (Bulgarian, English, German, French, Polish via the stempel plugin, etc.; Macedonian / Bosnian / Croatian fall back to the closest related language). When the store runs multiple languages, each storefront language uses its own analyzers, and re-indexing builds the correct mappings. Custom stopwords saved on the Stopwords tab are stored in site settings (`search_stopwords`) and applied across the site's indexes — see [[apps-advanced-search-settings]].
+Some difference between the counts is normal. Hidden, inactive and draft products, and products outside the store's zones, are not all indexed. The 70 % threshold is deliberately generous for that reason.
+
+### One index per store, per language
+
+Each store's data is kept apart from every other store's. Each language is analysed with its own rules for word endings and common words, so a multilingual store is matched correctly in each language. Changing the store's main language starts a rebuild automatically ([[settings-general-language]]).
 
 ## Related
 
 - [[apps-advanced-search]] — hub.
-- [[apps-listing-engine]] — the index + embedding service that does the indexing.
-- [[apps-algolia]] — alternative engine selected via `searchBarEngine`.
+- [[apps-listing-engine]] — the index itself, and its statistics page.
+- [[apps-listing-engine-reindex]] — the same rebuild, seen from the index's side.
+- [[apps-algolia]] — the alternative engine.
+- [[apps-advanced-search-overview]] — the index-coverage card.
 
 ## Open questions
 
-(None currently outstanding for this page.)
+- When the index will report the time of its last update, so that System status can show its reserved *Last synchronised* line.

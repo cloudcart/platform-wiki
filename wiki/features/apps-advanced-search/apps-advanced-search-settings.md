@@ -1,106 +1,110 @@
 ---
 type: feature
-nav_path: "Apps → Advanced Search → Settings"
+nav_path: "Apps → Aura Search → Settings"
 route_name: apps.advanced_search.settings
 route_path: /admin/apps/advanced_search/settings
-aliases: ["Advanced Search Settings", "Search engine settings", "AI Semantic Search toggle", "Search field weights", "Stopwords"]
-tags: [apps, others, search, ai, settings]
+aliases: ["Aura Search settings", "Advanced Search settings", "search engine settings", "searchable fields", "search description", "require all search words to match", "instant search results settings", "autocomplete settings", "highlight matched terms", "search result sorting", "sort dropdown on search page", "property filters on all listings", "recommended settings", "настройки на търсачката", "търсене в описанието", "всички думи да съвпадат"]
+tags: [apps, search, settings, autocomplete, ranking]
 plan_gates: ["advanced_search"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-09-23
+source_count: 5
 ---
 
-> Part of [[apps-advanced-search]]. See the hub for the other aspects (analytics, usage, orders, indexing, support).
+> Part of [[apps-advanced-search]]. See the hub for the other aspects (plans, overview, searches, pins, vocabulary, AI, indexing).
 
-# Advanced Search — Settings
+# Aura Search — the Settings tab
 
 ## Purpose
 
-The **Settings** tab is where the merchant configures how the storefront search behaves: which engine runs it, whether AI Semantic Search is on, which catalogue fields are searched, how heavily each field counts toward ranking, how many results of each type appear in the autocomplete dropdown, and which words the engine ignores (stopwords).
+The Settings tab configures how search behaves, what it returns, and how products are shown in the dropdown. It is split into panes chosen from a sub-menu on the left, with a status rail on the right.
 
 ## Where to find it
 
-Sidebar → Apps → **Advanced Search** → **Settings** tab (`apps.advanced_search.settings`). The Stopwords editor is a sibling tab (`apps.advanced_search.stopwords`).
+**Apps → Aura Search → Settings** (`/admin/apps/advanced_search/settings`). Each pane has its own address (`?section=matching`, `results`, `autocomplete`, `sorting`, `plan`), so a link can point at one pane.
 
 ## What the merchant can do here
 
-- **Search bar engine** — pick the underlying search backend (`searchBarEngine`). See [[apps-advanced-search-indexing]] for how built-in vs [[apps-algolia]] is resolved.
-- **AI Semantic Search** toggle — enable semantic / vector search.
-- **Show properties on all listings** — toggle.
-- **Show price** — display price in search results.
-- **Limits per result type** — max products / categories / vendors shown in the result panel.
-- **Filter (per field)** — name / description / category_name / vendor_name / variants / properties / brand_model / tags — which fields are searched.
-- **Weight (per field)** — numeric relevance weight per field; higher weight ranks that field's matches higher.
-- **Stopwords** — multi-tag input of common words to ignore; add via Enter / comma / space. Help text: *"Stopwords are common words (e.g. 'the', 'and', 'of') that are excluded from search queries to improve relevance and performance."*
-
-### What the merchant CANNOT do here
-
-- Define **synonyms** — there is no synonyms editor in [[apps-advanced-search]] or [[apps-listing-engine]]. Merchants cannot declare equivalences like "tshirt = t-shirt = tee"; matching relies on per-language stemming (the search index built-in stemmers for 30+ languages, plus a `latin_text` analyzer that transliterates Cyrillic to Latin for cross-script matching) and on the AI semantic vectors. Custom stopwords are stored in site settings (`search_stopwords`) and applied across the site's indexes.
-- Run an **A/B test** of semantic vs lexical — there is one global `aiSemanticSearch` on/off toggle, no built-in split test. To compare, the merchant flips the toggle and observes metrics over time, or uses external A/B infrastructure.
-- Customise the **search UI styling** — the autocomplete UI follows the storefront theme; visual changes go through Theme settings / custom CSS, not this app.
+Change any field below and save with the bar at the top of the page. The panes are **Basic**, **Matching & AI**, **Results & filters**, **Autocomplete**, **Sorting** and **Plan & usage**.
 
 ## Settings & fields
 
-### Configuration shape (per Settings interface)
+### Basic
 
-| Field | Notes |
-|-------|-------|
-| `searchBarEngine` | Underlying engine choice (`cloudcart` / `algolia`). See [[apps-advanced-search-indexing]]. |
-| `aiSemanticSearch` | Boolean — toggle semantic search. |
-| `showPropertiesOnAllListings` | Boolean. |
-| `showPrice` | Boolean. |
-| `limit.products` / `limit.categories` / `limit.vendors` | Result counts per type. |
-| `filter.<field>` | Boolean per searchable field. |
-| `weight.<field>` | Numeric weight per searchable field. |
+A short summary of the most-used controls, plus a live **Preview**:
 
-### Default settings on install
+- **Search engine** (`searchBarEngine`) — **CloudCart**, or Algolia when that app is installed and active; with a *Connected* / *Not active* badge.
+- **Word matching** — the two "all words" switches below.
+- **AI semantic search** (`aiSemanticSearch`).
+- **Product features** — the property-filters switch below.
+- **Search results** — a read-only summary with **Edit**, which opens Results & filters.
+- **Preview** — type a query to see what shoppers get, using the **saved** settings. Unsaved changes show once saved.
 
-- `showPrice = 1` (show price in results).
-- `searchBarEngine = 'cloudcart'` (built-in [[apps-listing-engine]], NOT Algolia) — but if Algolia is already active at install time the value auto-flips to `algolia` (see [[apps-advanced-search-indexing]]).
-- `aiSemanticSearch = 0` (off by default — paid plan feature).
-- `showPropertiesOnAllListings = 0`.
-- `limit.products = 9` (default 9 products in the autocomplete dropdown).
-- `limit.categories = 5`, `limit.vendors = 5`.
-- **Field filters: ONLY `name` is searched by default** (`filter.name = 1`). Description, category_name, vendor_name, variants, properties, brand_model, and tags are all OFF until the merchant ticks them on. This gives a tighter relevance baseline on install but means many merchants don't realise their description text isn't searched until they enable it.
+### Matching & AI
 
-Fields the merchant hasn't set fall back to these defaults.
+| Field | Default | Notes |
+|---|---|---|
+| **Require all search words to match** (`search.match_all_words`) | off | Only products containing **every** word of a multi-word search. *"red office chair"* then stops returning red things and chairs in general. Codes, SKUs and barcodes are unaffected. |
+| **Fall back to broad search when nothing matches all words** (`search.match_all_words_fallback`) | off | Shown only when the above is on. If no product has every word, the search broadens to any word instead of showing nothing. |
+| **AI Semantic Search** (`aiSemanticSearch`) | off | Matching by meaning as well as words ([[apps-advanced-search-ai]]). |
+| **Search Relevance & Weights** — a switch per field (`filter.*`) and a weight (`weight.*`) | only **name** on | Fields: product name (always on), description, category name, vendor name, variants, properties, tags, and brand & model when [[brand-model]] is installed. |
 
-### Save-time validation ranges
+**Weights are saved in the range 1–100** (defaults: name 10, description 2, the rest 5), although the pane's help text describes them as 0 to 10. With AI semantic search on, the field switches still govern the word-matching part. Matching by meaning looks at the product as a whole and cannot be limited to fields.
 
-When the merchant saves Settings, the platform enforces:
+### Results & filters
 
-- `limit.products`, `limit.categories`, `limit.vendors` — integers **0–20** (max 20 results per type in autocomplete).
-- `weight.*` (name / description / category_name / vendor_name / variants / properties / brand_model) — integers **1–100**.
+| Field | Default | Limit |
+|---|---|---|
+| **Show products prices** (`showPrice`) | on | |
+| **Show strikethrough (old) price** (`showOldPrice`) | on | shown when prices are on |
+| **The number of the products to be displayed** (`limit.products`) | 9 | 0–20 |
+| **… categories …** (`limit.categories`) | 5 | 0–20 |
+| **… vendors …** (`limit.vendors`) | 5 | 0–20 |
+| **Show categories from product results** (`search.categories_from_products`) | off | categories of the matched products, instead of a separate category search |
+| **Show vendors from product results** (`search.vendors_from_products`) | off | the same for vendors |
+| **Show property filters on all listing pages** (`showPropertiesOnAllListings`) | off | property filters on search, vendor, tag and collection pages, not only on categories |
 
-Values outside these ranges are rejected at save time.
+A limit of **0** hides that block from the dropdown. The instant-results settings apply only while **CloudCart** is the search engine.
+
+### Autocomplete
+
+- **Highlight matched terms in suggestions** (`search.highlight`, on) — marks the typed words in each suggestion.
+- **Show product … in suggestions** (`search.display.*`, all on) — description, category, vendor, variants, properties, brand & model. A switch appears only for a field that is searched, or for every field when AI semantic search is on. These control **display only**; matching is set under Matching & AI. Name and image are always shown; price follows **Show products prices**.
+
+### Sorting
+
+- **Show sort dropdown on the search results page** (`search.sort_ui.enabled`, off) — lets shoppers re-order `/search` themselves. A shopper's choice replaces the weights below for that page.
+- Weights **0–100**, all **0** by default: **Best-selling**, **Most-viewed**, **In-stock quantity**, **Discount amount**, **Discount %**, **Sale price** (more expensive first), **Featured**, **New products**, **Category relevance**. All at 0 = pure relevance order. How they apply, and when they are skipped, is on [[apps-advanced-search-ai]].
+
+### Plan & usage
+
+The plan, packs and monthly count — see [[apps-advanced-search-plans]].
 
 ## Business rules
 
-### Plan-gated
+### A new install searches the product name only
 
-The app is gated under the `advanced_search` plan feature. AI Semantic Search additionally requires the `advanced_search_ai_semantic_search` plan feature — it is enable-per-plan, NOT per-query metered. (Plan tier gating answers the "AI Semantic Search cost" question.)
+Out of the box only `filter.name` is on. Description, category, vendor, variants, properties and tags are **not searched** until switched on. That is the usual answer to *"a word from my product description finds nothing"*.
 
-### Semantic vs lexical
+### The rail: System status, Recommended settings, Plan & usage
 
-The AI Semantic Search toggle changes the matching algorithm:
+- **System status** — *Products in the index*, *Categories*, *Vendors*, refreshed every 30 seconds, and the rebuild button ([[apps-advanced-search-indexing]]). The headline reads *The app is turned off* when it is off, *The index is empty* when nothing is indexed, and otherwise *Everything is running normally*.
+- **Recommended settings** — a gauge of how many of seven recommended switches are on: AI semantic search, searching categories, features and variants, highlighting, prices in suggestions, and feature filters on all pages. **Review** opens the pane of the first one that is off. Nothing is enforced.
+- **Plan & usage** — plan name, searches per month, Used, Left, and a bar.
 
-- **OFF**: lexical (keyword-based) search with weights + stopwords + typo tolerance.
-- **ON**: vector-based semantic search — finds conceptually similar results even when wording differs.
+### Settings not on this tab
 
-Semantic search has higher inference cost; access is plan-tier gated rather than per-query billed. Embedding tokens are logged under `embedding.tokens` for platform operators but the merchant is not charged per token. Re-indexing is the main token cost; on-storefront search only embeds the query string.
-
-### No manual ranking override
-
-There is no rule that forces product Y to the top when the customer searches X. Ranking is driven by per-field weights, category boosts, and (when on) the semantic similarity score. See [[apps-advanced-search-indexing]].
+Typo tolerance is automatic and not adjustable ([[apps-advanced-search-vocabulary]]). Click tracking is on whenever analytics is on ([[apps-advanced-search-analytics]]).
 
 ## Related
 
 - [[apps-advanced-search]] — hub.
-- [[apps-listing-engine]] — built-in engine the weights / filters drive.
-- [[apps-algolia]] — alternative engine selectable via `searchBarEngine`.
-- [[apps-cloudio-overview]] — AI brand behind semantic search.
-- [[plan-gates]] — `advanced_search` / `advanced_search_ai_semantic_search` features.
+- [[apps-advanced-search-ai]] — semantic search and the ranking sliders in detail.
+- [[apps-advanced-search-vocabulary]] — synonyms, stopwords, typo tolerance.
+- [[apps-advanced-search-indexing]] — the engine choice and the rebuild button.
+- [[apps-advanced-search-plans]] — the Plan & usage pane.
+- [[apps-algolia]] — the alternative engine.
+- [[brand-model]] — the brand & model field.
 
 ## Open questions
 

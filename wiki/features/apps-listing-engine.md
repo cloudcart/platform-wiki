@@ -7,7 +7,7 @@ aliases: ["Listing Engine", "Search Engine", "the search index indexer", "CC Lis
 tags: [apps, search, infrastructure, the search index, embeddings, indexing]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-08-06
+updated: 2026-09-23
 source_count: 5
 ---
 # Listing Engine (search index + embeddings)
@@ -34,7 +34,7 @@ Sidebar → Apps → install → **Listing Engine**. Routes: `/admin/apps/listin
 ## What the merchant can do here
 
 - **Read the Statistics dashboard** — per-entity indexed count vs database count + Synced / Out-of-sync badge. See [[apps-listing-engine-statistics]].
-- **Trigger a full re-index** — the "Re-index" button rebuilds the index (storefront goes into maintenance mode while it runs). See [[apps-listing-engine-reindex]].
+- **Trigger a full re-index** — the "Re-index" button rebuilds the index in the background; the storefront stays open while it runs. See [[apps-listing-engine-reindex]].
 - **Rely on automatic indexing** — every product / category / vendor change re-indexes reactively without merchant action. See [[apps-listing-engine-reindex]].
 - **Monitor embedding-token usage** — the metric behind AI Semantic Search. See [[apps-listing-engine-embeddings]].
 
@@ -58,14 +58,14 @@ The detailed field-by-field breakdown lives in each aspect page.
 
 - **Index vs query split** — Listing Engine indexes; [[apps-advanced-search]] queries. Both must be installed and synced for storefront search to work.
 - **Per-site scoping** — every the search index count / query filters by `site_id`, so multi-store merchants get isolated indexes per site. See [[apps-listing-engine-statistics]].
-- **Re-index = maintenance mode** — a full re-index takes the storefront offline for the duration. See [[apps-listing-engine-reindex]].
+- **Re-index keeps the store open** — a full re-index runs in the background without maintenance mode. See [[apps-listing-engine-reindex]].
 - **AI Semantic Search depends on embeddings + the AI search driver** — the standard search driver does lexical (keyword) filtering only. See [[apps-listing-engine-embeddings]].
 - **Permission** — standard apps permission scope. `supportUninstall` / `supportChangeStatus` control whether the merchant can uninstall / pause the engine (verify return values).
 
 ## Sub-pages (in this cluster)
 
 - [[apps-listing-engine-statistics]] — the Statistics dashboard: indexed-vs-database counts, the Synced / Out-of-sync badge, the three indexed entity types, per-site scoping, all-or-nothing indexing scope.
-- [[apps-listing-engine-reindex]] — the Re-index button, maintenance mode during a full re-index, batch lifecycle (cancel-previous-on-retry), reactive event-driven indexing, the two built-in nightly jobs, patch-job pausing, completion notification.
+- [[apps-listing-engine-reindex]] — the Re-index button, what the storefront does during a full re-index, batch lifecycle (cancel-previous-on-retry), reactive event-driven indexing, the two built-in nightly jobs, patch-job pausing, completion notification.
 - [[apps-listing-engine-embeddings]] — the vector embedding service (e5-small / OpenAI), embedding-token usage tracking, the `advanced_search_ai_semantic_search` plan gate, the `mysql` vs `the search index` driver, and which metrics are NOT surfaced to the merchant.
 
 ## Related

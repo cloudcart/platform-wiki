@@ -5,7 +5,7 @@ route_path: /search
 themes_using: [liquid]
 tags: [storefront, search, predictive, instant, autocomplete, liquid, search-engine]
 created: 2026-06-11
-updated: 2026-06-11
+updated: 2026-09-23
 source_count: 1
 ---
 
@@ -41,13 +41,13 @@ The new search runs on the **indexed search engine** (see [[storefront-arch-sear
 - **Typo tolerance.** Matching is fuzzy — a small misspelling still matches (most visibly in the predictive dropdown).
 - **Meaning-based matching.** Beyond exact keywords, the engine also ranks **semantically related** products (meaning-based, not just literal words), so close synonyms / related wording can still surface relevant items.
 - **Relevance ranking.** Results are ordered by **relevance to the query first**; sellable items are favoured and (when the store hides out-of-stock) out-of-stock items are pushed to the end. Variants of the same product are **grouped** into one result. For search, the store's usual "featured / on-sale first" ordering is intentionally **not** applied — relevance wins so the best match is on top.
-- **Synonyms / boosts.** Merchant-defined synonyms and term boosts come from [[apps-advanced-search]].
+- **Synonyms / pins / boosts.** Merchant-defined synonyms, pinned products and ranking signals come from the Aura Search app — see [[apps-advanced-search-vocabulary]], [[apps-advanced-search-pinned]] and [[apps-advanced-search-ai]].
 
 ## Storefront behaviour
 
 - **What can appear at all.** A product shows in results only if it is **active, published (not draft), inside its publishing window, not hidden, and available in the customer's geo-zone**; when the store hides out-of-stock products, only **sellable** ones appear (otherwise out-of-stock items appear, pushed to the end). So a product missing from search is usually hidden / draft / out-of-window / out-of-zone / out-of-stock — not a search bug.
 - **Stays in sync.** The index is kept current as the catalogue changes (price, stock, name, category) — see [[apps-listing-engine]]; a just-edited product may take until the next index sync to reflect.
-- Every search **logs analytics** (the query string + total hits), surfaced under [[apps-advanced-search]] / the search dashboards.
+- Searches **log analytics** (the query string + whether it found anything) only when the Aura Search app is enabled with search analytics on — surfaced on [[apps-advanced-search-analytics]].
 - **Crawlers are blocked**: a bot request to `/search` returns **403 + `X-Robots-Tag: noindex`** — search-result pages are deliberately not indexed.
 
 ## JavaScript behaviour

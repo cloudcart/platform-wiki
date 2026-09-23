@@ -5,7 +5,7 @@ route_path: /search
 themes_using: [all]
 tags: [storefront, search, results, listing, autosuggest]
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-09-23
 source_count: 3
 ---
 
@@ -15,7 +15,7 @@ source_count: 3
 
 The search page renders **catalogue search results** for the query a customer typed (or that the storefront search bar / autosuggest box redirected them to). It funnels through the SAME `products/list.tpl` template as [[products-list]] — the search controller just seeds a different listing scope (`'search'` with the query string as the where-clause).
 
-Search results also feed the platform's **search analytics** — every search performed on `/search` logs the query string and the total-hits count via `logSearchAnalytics` in the abstract listing pipeline, which surfaces under [[apps-advanced-search]] / search-engine dashboards.
+Search results also feed **search analytics** when the Aura Search app is enabled with analytics switched on: each search performed on `/search` logs the query string and whether it found anything, which surfaces on the app's Searches tab ([[apps-advanced-search-analytics]]). With analytics off, nothing is logged.
 
 ## URL & route
 
@@ -76,9 +76,9 @@ The visible structure is identical to [[products-list]]:
 | Which filters appear in the result sidebar | [[design-modules]] → Products filters module |
 | Per-page choices on results | [[design-modules]] → Products filters module |
 | Whether facet counts show next to filters | [[design-modules]] → `show_facet_counts` |
-| Sort order on results | Not configurable — fixed to relevance |
+| Sort order on results | Relevance by default. With [[apps-advanced-search]] the merchant can weight ranking signals and show a sort dropdown to shoppers — see [[apps-advanced-search-settings]] |
 | Search-engine choice (the search engine vs. fallback) | Platform-managed; merchants can opt in to [[apps-advanced-search]] |
-| Synonyms, stop-words, boost rules | [[apps-advanced-search]] (advanced search app) |
+| Synonyms, pinned products, ranking signals | Aura Search — [[apps-advanced-search-vocabulary]], [[apps-advanced-search-pinned]], [[apps-advanced-search-ai]]. Ignored common words come from a built-in list per language and are not merchant-editable in effect ([[apps-advanced-search-vocabulary]]). |
 | SEO meta on `/search` | Translation strings — `/search` is `noindex` for crawlers anyway |
 
 ## Theme variations
@@ -107,7 +107,7 @@ The visible structure is identical to [[products-list]]:
 - [[storefront-category]] — same template, category scope.
 - [[product-detail]] — destination of result click.
 - [[design-modules]] — search module + filter module configuration.
-- [[apps-advanced-search]] — advanced search app (synonyms, boosts).
+- [[apps-advanced-search]] — the Aura Search app (synonyms, pinned products, ranking signals, analytics).
 - [[storefront-known-issues]] — cross-storefront issue register.
 
 ## Open questions

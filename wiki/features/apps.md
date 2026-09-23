@@ -7,7 +7,7 @@ aliases: []
 tags: [apps, hub]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-28
+updated: 2026-09-23
 source_count: 2
 ---
 # Apps
@@ -81,7 +81,7 @@ Not applicable — this is a navigation hub, not a screen with its own settings.
 - [[payment-provider-mechanism]] — the payment-integration mechanism behind the payment apps (concept hub).
 - [[invoicing-and-accounting]] — the accounting-integration mechanism behind Szamlazz / SmartBill / FGO / Profisc (concept hub).
 - [[multi-language]] — the translation mechanism behind the Multilang app (concept hub).
-- [[apps-advanced-search]]
+- [[apps-advanced-search]] — **Aura Search** (internal name Advanced Search): the paid storefront search app.
 - [[apps-aftercare]]
 - [[apps-algolia]]
 - [[apps-algolia-settings]]

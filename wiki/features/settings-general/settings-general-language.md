@@ -7,7 +7,7 @@ aliases: ["Storefront language", "Admin panel language", "Customer name display"
 tags: [settings, general, language, multi-language, search, the search engine, customer-name]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-09-23
 source_count: 5
 ---
 
@@ -61,7 +61,9 @@ The modal cannot be closed with Escape and is centred on the page.
 | **Confirm action** | Marks the language change as acknowledged, closes the popup, then re-runs the save handler — this time the save proceeds past the language-change interception. |
 | **Implicit cancel** | Closing the popup (via the X / backdrop click if allowed) reverts the language change in the form to the server value. |
 
-Stores on any OTHER listing engine (the search index, the older default search backend, etc.) save the language change with no modal — but the same reindex-and-rebuild cost still applies; the merchant just doesn't see the upfront warning.
+Stores on any OTHER listing engine save the language change with no modal, but the same reindex still runs.
+
+The modal's wording is outdated: that re-index **no longer places the store in maintenance mode** ([[apps-listing-engine-reindex]]).
 
 ## Business rules
 
