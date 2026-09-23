@@ -49,9 +49,29 @@ The XSD schema and sample XML are refreshed only when NRA publishes a new При
 
 - **NRA Alternative-regime portal page** — *Алтернативен режим за регистриране и отчитане на продажбите*: https://nra.bg/wps/portal/nra/fiskalni-ustroystva-supto-i-e-magazini/page.turgovia-v-internet-i-e-magazini/page.lternativen-rejim-za-registrirane-i-otchitane-na-prodajbite
 
+## Aura Chat — the assistant's instructions (`aura-chat-prompts/`)
+
+Verbatim copies of the text the Aura Chat assistant is given, so a support agent can see exactly what it was told. These are CloudCart's own texts, kept here because they are raw assets that the pages summarise, not pages themselves. Each file starts with a header giving what it is, when it is used and the source revision. Placeholders filled per store are marked `{…}`, and conditional blocks `[…]`. Guide: [[apps-aura-chat-prompts]].
+
+| File | What it is |
+|---|---|
+| `aura-chat-01-platform-base.txt` | Base instructions, every conversation |
+| `aura-chat-02-store-profile.txt` | Store profile template (date, name, currency, language, catalog rules, current page, skill list) |
+| `aura-chat-03-store-guidance.txt` | Frame around the merchant's own instructions |
+| `aura-chat-skill-product-discovery.txt` | Skill playbook: Finding products |
+| `aura-chat-skill-product-advice.txt` | Skill playbook: Advising on products (+ Product research section) |
+| `aura-chat-skill-order-status.txt` | Skill playbook: Orders |
+| `aura-chat-skill-order-returns.txt` | Skill playbook: Returns |
+| `aura-chat-skill-promo-codes.txt` | Skill playbook: Promo codes |
+| `aura-chat-promo-policy.txt` | The store's discount policy as appended to the Promo codes playbook (two versions) |
+| `aura-chat-agent-policy-lookup.txt` | Agent: Store pages (published pages lookup) |
+| `aura-chat-agent-product-research.txt` | Agent: Product research |
+| `aura-chat-topic-filing.txt` | Topic filing instruction and the default topics |
+
+
 ## What does NOT belong here
 
-- Internal CloudCart documents (those go under `wiki/concepts/` or `wiki/features/`).
+- Internal CloudCart documents (those go under `wiki/concepts/` or `wiki/features/`). Exception: the Aura Chat instruction copies above, which are raw source text rather than documentation.
 - Source code, schemas under active development (those belong in the product repo, not the wiki).
 - Anything proprietary or paywalled — only publicly accessible references.
 - Articles / annexes of Наредба № Н-18 that are outside the alternative-regime scope — they're not consulted by the N18 Audit integration; consult lex.bg directly if needed.

@@ -82,6 +82,7 @@ Not applicable — this is a navigation hub, not a screen with its own settings.
 - [[invoicing-and-accounting]] — the accounting-integration mechanism behind Szamlazz / SmartBill / FGO / Profisc (concept hub).
 - [[multi-language]] — the translation mechanism behind the Multilang app (concept hub).
 - [[apps-advanced-search]] — **Aura Search** (internal name Advanced Search): the paid storefront search app.
+- [[apps-aura-chat]] — **Aura Chat**: the AI sales and support assistant in a storefront chat window, run on prepaid credit.
 - [[apps-aftercare]]
 - [[apps-algolia]]
 - [[apps-algolia-settings]]
