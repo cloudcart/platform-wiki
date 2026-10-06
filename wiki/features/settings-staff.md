@@ -117,6 +117,7 @@ A second plan-conditional carve-out: the `backups` permission node is removed fr
 
 ## Related
 
+- [[mobile-admin-app-sign-in]] — Moderators sign in to the CloudCart Admin app exactly as the owner does; their rights here decide what they see in it.
 - [[settings]] — parent area hub.
 - [[settings-general]] — for session-key rotation (alternative to Force sign out) and `site_email` (default notification recipient).
 - [[settings-admin-notifications]] — the 4 admin notifications triggered by this screen and their delivery rules.

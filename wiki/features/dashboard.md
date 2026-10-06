@@ -135,6 +135,7 @@ The Plan step's CTA opens the **Plan-picker modal** — the same modal used ever
 - [[analytics]] — full charts dashboard (the three boxes here are subset).
 - [[analytics-pipeline]] — how chart data is computed end-to-end.
 - [[account]] — the broader merchant onboarding flow (see also account/store wizard).
+- [[mobile-admin-app]] — the CloudCart Admin phone app, advertised on this page.
 - [[products-products]] — destination of the Add Products CTA.
 - [[settings-shipping]] — Shipping methods step.
 - [[settings-payment-providers]] — Payment methods step.

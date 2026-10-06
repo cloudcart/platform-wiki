@@ -7,7 +7,7 @@ aliases: ["Video Slider", "Video Slider Module", "Video carousel", "Video block"
 tags: [apps, marketing, content, landing-pages, plan-gated]
 plan_gates: ["video_slider_widget"]
 created: 2026-05-22
-updated: 2026-08-06
+updated: 2026-10-05
 source_count: 1
 ---
 # Video Slider Module
@@ -19,7 +19,7 @@ source_count: 1
 Used by merchants who:
 - Sell products that benefit from video demonstrations (fashion, cosmetics, electronics).
 - Want to showcase customer testimonials on the homepage.
-- Embed Instagram-Reels-style content on the storefront.
+- Embed Instagram-Reels-style content on the storefront. Each slide plays a video address the merchant enters; the module does not read posts from an Instagram, Facebook or TikTok account. That is the Social Feed app ([[apps-social-feed]]).
 
 The app is **plan-gated** — paid feature.
 
@@ -117,6 +117,7 @@ The Manager implements `MoreRecordsSubscription` — after the merchant purchase
 
 - [[apps]] — App Store.
 - [[plan-gates]] — concept page on plan-based feature gating.
+- [[apps-social-feed]] — shows the latest posts from a connected Instagram, Facebook or TikTok account.
 
 ## Open questions
 

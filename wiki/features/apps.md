@@ -83,6 +83,9 @@ Not applicable — this is a navigation hub, not a screen with its own settings.
 - [[multi-language]] — the translation mechanism behind the Multilang app (concept hub).
 - [[apps-advanced-search]] — **Aura Search** (internal name Advanced Search): the paid storefront search app.
 - [[apps-aura-chat]] — **Aura Chat**: the AI sales and support assistant in a storefront chat window, run on prepaid credit.
+- [[apps-nekorekten]] — **Nekorekten**: checks cash-on-delivery buyers against nekorekten.com, flags the order and can withhold cash on delivery at checkout.
+- [[apps-bulk-print]] — **Bulk print**: order slips, waybill generation and A6 / A4 labels for many orders at once, as a mode inside Orders; free app with paid daily packs.
+- [[apps-social-feed]] — **Social Feed**: the store's latest Instagram, Facebook and TikTok posts in a storefront section or a page-builder block.
 - [[apps-aftercare]]
 - [[apps-algolia]]
 - [[apps-algolia-settings]]

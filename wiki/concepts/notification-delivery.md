@@ -40,7 +40,7 @@ What it does NOT cover:
 
 - Marketing-campaign segmentation and audience selection (lives under Marketing → Campaigns).
 - Inbound webhook handling (receiving HTTP from payment providers / couriers) — a different pattern under Apps.
-- Push notifications to mobile apps — CloudCart has no mobile push channel today.
+- Push notifications to the merchant's phone — a separate channel of the CloudCart Admin app, see [[mobile-admin-app-notifications]].
 
 ## Contrasts
 

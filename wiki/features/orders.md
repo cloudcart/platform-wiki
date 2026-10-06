@@ -7,7 +7,7 @@ aliases: ["Orders", "Order list", "Order management", "Поръчки", "Спи�
 tags: [orders, list, core, smarty, hub]
 plan_gates: ["orders_amount", "orders_revenue", "users_traffic", "abandoned_orders_info", "new_orders"]
 created: 2026-05-21
-updated: 2026-08-06
+updated: 2026-10-05
 source_count: 13
 ---
 
@@ -27,7 +27,7 @@ Sidebar → **Orders**. Breadcrumb reads "Orders". Route `/admin/orders` (or `/a
 
 The Orders list is split into seven aspect pages. Each covers one well-scoped slice; drill into the aspect matching the question rather than reading every page.
 
-- [[orders-list-columns]] — the 8 (+1 conditional) list columns, which five are sortable, the comment icon, and the header actions (**+ Add order**, **Export**).
+- [[orders-list-columns]] — the 8 (+1 conditional) list columns, which five are sortable, the comment icon, and the header actions (**+ Add order**, **Export**, **Enable Bulk print**).
 - [[orders-list-filters]] — the free-text search box, the 22+ filter types, saved filter presets, session persistence, the numeric operator encoding, and the two filter combinations that silently return the wrong rows.
 - [[orders-list-bulk-actions]] — bulk Archive / Unarchive / Mark as completed: the exact confirmation strings, customer-notification side-effect, the archive status gate, and why a mixed selection aborts the whole batch (and why a bulk status change can report success while changing nothing).
 - [[orders-list-status-taxonomy]] — the 11 hard-coded canonical statuses (positive flow + `NEGATIVE_STATUS` array), the bulk-status dropdown restriction (5 statuses removed), and how custom statuses from [[settings-statuses]] layer as sub-labels.
@@ -38,6 +38,8 @@ The Orders list is split into seven aspect pages. Each covers one well-scoped sl
 ## What the merchant can do here
 
 In one screen: scan all orders, search free-text, filter aggressively, save a filter set for reuse, sort by five columns, open one order ([[orders-details]]), add a manual order ([[orders-add]]), bulk-archive / bulk-unarchive / bulk-mark-completed, and export the list. Detail pages handle per-order editing (status, customer, addresses, payment, shipping, products, invoice, refund, returns) — none of those are reachable inline from the list.
+
+Printing order slips, generating waybills and printing waybill labels for **many orders at once** is not done from this list. It needs the **Bulk print** app, whose **Enable Bulk print** button on this list opens a separate screen for it ([[apps-bulk-print]]).
 
 **Cannot** from this list:
 - **Delete orders — in bulk or one at a time.** There is no order-delete action anywhere in the admin panel, and none on the order detail page either; the JSON-API v2 orders resource excludes DELETE as well. Orders are **archived** ([[orders-archive]]).
@@ -117,6 +119,7 @@ The gates are registered against the paths `orders` and `orders/details/%`. When
 - [[settings-payment-providers]] — payment providers used in the filter.
 - [[shipping]] — shipping integrations used in the filter.
 - [[settings-invoicing]] — invoice template + numbering for the invoice / credit-note flows.
+- [[apps-bulk-print]] — the Bulk print app: order slips, waybills and labels for many orders at once (`/admin/orders/bulk-print`).
 - [[orders-returns]] — the order-return process (full / partial, restock, refund, credit note) issued from an order.
 - [[apps-aftercare]] — the EU "Withdraw from contract" (right-of-withdrawal) app; its withdrawal-requests inbox lives under Orders (`/admin/orders/aftercare`).
 - [[marketing-discounts]] — discount codes used in the filter.

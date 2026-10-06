@@ -33,6 +33,7 @@
 - [[platform-rate-limits]] — edge rate limits, bot policy, timeouts (429s, blocked crawlers, 504s).
 - [[merchant-roles]] — admin account roles (Owner / Moderator / API) and what each can do.
 - [[merchant-subscription-lifecycle]] — the merchant's own CloudCart subscription (plan / pay / renew / retry / cancel) — support hub.
+- [[mobile-admin-app]] — CloudCart Admin, the phone app (iOS / Android) for owners and Moderators alike: signing in, orders, new orders, push notifications, deleting the account.
 - [[multi-currency]] — single-currency-by-design store; no per-customer currency switching.
 - [[multi-language]] — running the admin + storefront in multiple languages.
 - [[multichannel-selling]] — selling beyond the storefront: marketplaces, shopping feeds / ads, platform migration.

@@ -7,7 +7,7 @@ aliases: ["Page builder modules", "Page builder blocks", "Dynamic page modules",
 tags: [design, modules, page-builder, marketing, landing-pages]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-05
 source_count: 4
 ---
 
@@ -90,6 +90,7 @@ The block picker only surfaces modules whose app dependency is satisfied. The de
 | `request_review` | Product Review (installed AND enabled) |
 | `store_locations` | Store Locations |
 | `cc_form` | Subscribers (provides the form catalogue) |
+| `social-feed` | Social Feed (installed AND enabled) — see [[apps-social-feed-page-block]] |
 
 If the app is uninstalled after the merchant added the block, the storefront rendering falls back to a "not installed" message (verify behaviour per module).
 
@@ -117,6 +118,7 @@ Saving a page invalidates the page's cache key and (if the page is assigned to a
 - [[apps-product-review]] — gates `product_review` / `request_review` blocks.
 - [[brand-model]] — gates `brand-model` block.
 - [[marketing-subscribers]] — provides the form catalogue for `cc_form`.
+- [[apps-social-feed-page-block]] — the `social-feed` block (Social Feed app).
 
 ## Open questions
 

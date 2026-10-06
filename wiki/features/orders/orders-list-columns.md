@@ -7,7 +7,7 @@ aliases: ["Orders list columns", "Order list grid columns", "Orders header actio
 tags: [orders, list, columns, sortable, header-actions, smarty]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
+updated: 2026-10-05
 source_count: 4
 ---
 
@@ -17,7 +17,7 @@ source_count: 4
 
 ## Purpose
 
-The list table on `/admin/orders` is the merchant's first read of every order. This aspect documents the **8 default columns (+ 1 conditional)**, which columns are sortable, the comment-icon affordance, and the two header buttons sitting above the table: **+ Add order** and **Export**.
+The list table on `/admin/orders` is the merchant's first read of every order. This aspect documents the **8 default columns (+ 1 conditional)**, which columns are sortable, the comment-icon affordance, and the header buttons sitting above the table: **+ Add order**, **Export**, and **Enable Bulk print** when the Bulk print app is installed.
 
 ## Where to find it
 
@@ -29,6 +29,7 @@ Sidebar → **Orders**. The header buttons sit above the filter bar; the column 
 
 - **+ Add order** — opens a slide-in panel (the manual-order creation flow). Clicking the header button opens the manual-order side-panel inline (via `data-ajax-panel` with class `wide order-preview`). See [[orders-add]] for the full panel contents, fields, and validation.
 - **Export** — opens the export flow, which first asks for a **two-factor confirmation code**. The full mechanics (what it contains, inline vs emailed delivery) live on [[orders-list-export]]. The whole header region — including this button — is omitted on a store with no orders at all.
+- **Enable Bulk print** (Включи Масов печат) — shown only while the **Bulk print** app is installed. It opens the separate Bulk print screen at `/admin/orders/bulk-print`, for printing order slips, generating waybills and printing labels for many orders at once ([[apps-bulk-print-mode]]).
 
 ### List columns (8, plus 1 conditional)
 
@@ -91,6 +92,7 @@ Unlike most navigation in the admin, **+ Add order** does NOT navigate to `/admi
 - [[orders]] — hub.
 - [[orders-list-filters]] — filter bar (sits above the table).
 - [[orders-list-export]] — Export header button mechanics.
+- [[apps-bulk-print-mode]] — the Bulk print screen opened by **Enable Bulk print**.
 - [[orders-list-default-visibility]] — default sort behaviour.
 - [[orders-add]] — manual-order add flow opened by the **+ Add order** button.
 - [[orders-details]] — per-order detail page reached by clicking any row.

@@ -7,7 +7,7 @@ aliases: ["Waybill", "Generate waybill", "Tracking number", "Shipping label", "�
 tags: [orders, shipping, waybill, courier, omniship, smarty]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-10
+updated: 2026-10-05
 source_count: 10
 ---
 
@@ -62,7 +62,7 @@ This feature is split into 7 aspect pages. The Assistant should drill into the a
 - **Remove waybill** — void on courier side + restore local order state to `not_fulfilled`.
 - **Update insurance** — change declared value on an active waybill (re-syncs courier).
 - **Change side** — switch payer side from a dropdown (re-syncs courier; recalculates totals).
-- **NOTE:** No bulk waybill generation, no in-place waybill amendment (must Remove then Generate again), no draft waybill state.
+- **NOTE:** No bulk waybill generation on the order page (for many orders at once, the **Bulk print** app — see [[apps-bulk-print-waybills]]), no in-place waybill amendment (must Remove then Generate again), no draft waybill state.
 
 ### What the merchant CANNOT do here
 

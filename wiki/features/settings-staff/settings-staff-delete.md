@@ -89,6 +89,7 @@ Deleting a moderator does **not** appear to automatically wipe their active admi
 - [[settings-staff-permissions-tree]] — `settings.admins.all` permission gates the DELETE endpoint.
 - [[settings-staff-force-signout]] — owner-only mass-logout for ensuring a deleted moderator's session is also wiped.
 - [[settings-admin-notifications]] — the 4 staff notifications (none fires on delete).
+- [[mobile-admin-app-account-deletion]] — a Moderator CAN delete their own account, but only from the CloudCart Admin mobile app.
 
 ## Open questions
 

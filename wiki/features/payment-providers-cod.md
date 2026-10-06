@@ -7,7 +7,7 @@ aliases: ["Cash on delivery", "COD", "Pay on delivery", "Cash on delivery to cou
 tags: [paymentproviders, payment-providers, cod, cash, offline, bulgaria]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-05-22
+updated: 2026-10-05
 source_count: 0
 ---
 # Cash on delivery
@@ -82,6 +82,10 @@ The seller-pays-shipping flag (`is_seller_payer_shipping`) is FALSE for COD: the
 
 There is no refund flow. To refund a COD order, the merchant cancels the courier delivery, marks the order Cancelled, and physically refunds the cash if the goods were already received — CloudCart never received money to "pull back".
 
+### COD can be withheld from individual buyers by the Nekorekten app
+
+With the **Nekorekten** app enabled, Cash on delivery can disappear at checkout for one buyer while staying on offer for everyone else. That happens when the buyer's phone or email is on the app's blocked list, or has a report on nekorekten.com, depending on the app's **Cash on delivery at checkout** option. See [[apps-nekorekten-checkout]].
+
 ### Permission, cache + side effects
 
 Configuring COD requires the `store.payment_providers` permission section (see [[merchant-roles]]). Saving updates the configuration row only — no queued jobs, no webhook deliveries. Settings take effect on the next checkout-page load.
@@ -96,6 +100,7 @@ Configuring COD requires the `store.payment_providers` permission section (see [
 - [[apps-boxnow]] — courier integration that drives COD settlement.
 - [[discount]] — the per-provider discount mechanism (used for COD fees).
 - [[checkout-flow]] — how COD appears in the checkout payment-method list.
+- [[apps-nekorekten]] — app that screens COD buyers against nekorekten.com and can withhold COD per buyer.
 
 ## How it works (verified against backend)
 

@@ -7,8 +7,8 @@ aliases: ["Order sidebar", "Customer card", "Notify customer toggle", "Admin not
 tags: [orders, order-details, sidebar, notify-customer, admin-note, recalculate-lock, eur-conversion, erp]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
-source_count: 4
+updated: 2026-10-05
+source_count: 5
 ---
 
 > Part of [[orders-details]]. See the hub for the other aspects.
@@ -21,7 +21,7 @@ The right-hand sidebar of the order details page groups the convenience actions:
 
 ## Where to find it
 
-Sidebar: right column of `/admin/orders/details/<order_id>`. Cards stack vertically: **Customer**, **Customer address** (see [[orders-details-addresses]]), **Order source**, **Customer IP info**, **Other info**, **Cart time life**, then **Convert prices to EUR** when applicable. Below the products table: the **Comments** textarea (admin note) and the **Totals** box with the **Recalculate lock** icon next to the shipping subtotal.
+Sidebar: right column of `/admin/orders/details/<order_id>`. Cards stack vertically: **Customer**, **Customer address** (see [[orders-details-addresses]]), **Order source**, **Customer IP info**, **Other info**, **Cart time life**, then **Convert prices to EUR** when applicable. On cash-on-delivery orders, a **Nekorekten** card closes the column while that app is enabled. Below the products table: the **Comments** textarea (admin note) and the **Totals** box with the **Recalculate lock** icon next to the shipping subtotal.
 
 ## What the merchant can do here
 
@@ -75,6 +75,10 @@ Visible only when the order has a `customer_ip`. Each IP-info row has a **Banned
 ### Order source / Customer IP info / Other info / Cart time life
 
 Read-only info cards: **Order source** (UTM source / medium / campaign + referer), **Customer IP info** (IP + geo-lookup), **Other info** (miscellaneous fields), and **Cart time life** (how long the session was active before checkout).
+
+### Nekorekten card (app, cash-on-delivery orders)
+
+Shown only on orders paid by Cash on delivery, while the **Nekorekten** app is installed and enabled. It carries the buyer's risk verdict from nekorekten.com (**High risk** / **Low risk** / **Not checked**), the reports behind it, and the **Check again** and **Block customer** / **Unblock customer** buttons. See [[apps-nekorekten-order-check]].
 
 ### Invoice / Receipt / Credit-note actions (back-references)
 
@@ -145,6 +149,7 @@ Every sidebar action (Notify-customer toggle, admin-note save, recalculate-lock 
 - [[orders-user-files]] — per-order file attachments.
 - [[customers-details]] — "View customer profile" target.
 - [[settings-banned-ip]] — Banned-IP form panel.
+- [[apps-nekorekten-order-check]] — the Nekorekten risk card on cash-on-delivery orders.
 - [[settings-cart]] — Google Maps API key.
 - [[orders-details-returns]] — the Returns box, which now issues credit notes.
 - [[orders-archive]] — archived orders reject the customer-info and admin-note saves.

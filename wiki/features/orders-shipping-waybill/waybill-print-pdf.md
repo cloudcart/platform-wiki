@@ -7,7 +7,7 @@ aliases: ["Print waybill PDF", "Print shipping label", "Packing slip", "Dispatch
 tags: [orders, shipping, waybill, pdf, print, label]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-05
 source_count: 2
 ---
 
@@ -66,9 +66,9 @@ Once the waybill is removed via [[waybill-remove-void]], the print button disapp
 
 The platform PDF lists ALL non-digital products on the order in one document — there is no per-package or per-box split. For multi-box shipments, the courier-formatted label (from the courier's app) is what handles the box numbering; the platform's summary PDF is one document for the whole order.
 
-### No bulk print
+### Bulk printing needs the Bulk print app
 
-There is no bulk-print action on the [[orders]] list page. Each waybill's PDF is downloaded per-order. For high-volume merchants, the courier's own dashboard typically provides a batch-print queue.
+Without an app, each waybill's PDF is printed per order from the order page. With the **Bulk print** app installed, **Orders → Enable Bulk print → Waybills print** issues waybills and prints the labels of many orders at once, across couriers, in **A6 thermo** or **A4** ([[apps-bulk-print-labels]]). A courier app's own **Shipments** tab can also print several labels of that one courier together ([[econt-shipments]]).
 
 ## Related
 
@@ -78,7 +78,8 @@ There is no bulk-print action on the [[orders]] list page. Each waybill's PDF is
 - [[apps-econt]] — Econt's per-app Print waybill action (courier-formatted).
 - [[apps-boxnow]] — BoxNow locker-label print.
 - [[orders-details]] — parent screen with the Print PDF button.
-- [[orders]] — list page (no bulk print).
+- [[orders]] — list page.
+- [[apps-bulk-print]] — the Bulk print app: waybills and labels for many orders at once.
 
 ## Open questions
 

@@ -7,7 +7,7 @@ aliases: ["Social module", "social", "extra.social", "Social icons module", "Soc
 tags: [design, modules, navigation, footer, social]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-05
 source_count: 3
 ---
 
@@ -136,6 +136,7 @@ Save / Reset regenerate the storefront cache key — the new icon row applies on
 - [[settings-general]] — global social URL fallbacks (`facebook_link`, `instagram_link`, `x_link`, etc.).
 - [[design-module-navigation-links]] — alternative for unsupported networks (WhatsApp, Telegram, Discord) via an `external` link with `https://wa.me/...` / `tg://...` URLs.
 - [[design-modules]] — parent module catalogue.
+- [[apps-social-feed]] — shows the posts themselves, not icons.
 
 ## Open questions
 

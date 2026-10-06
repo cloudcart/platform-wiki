@@ -7,7 +7,7 @@ aliases: ["Econt shipments", "Econt waybills list", "Econt shipments return", "�
 tags: [apps, shipping, courier, bulgaria, econt, shipments, labels, waybill]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-05
 source_count: 2
 ---
 
@@ -83,6 +83,7 @@ The print flow opens the generated PDF in a new browser tab — labels are not a
 - [[orders-shipping-waybill]] — where the outbound waybill is generated per-order (the rows shown here are the outputs).
 - [[econt-waybill-recipient-mapping]] — recipient block composition for outbound + return waybills (B2B billing-override).
 - [[econt-cod-insurance]] — COD status row meaning for cash-on-delivery shipments.
+- [[apps-bulk-print-labels]] — not this tab: the Bulk print app prints labels of several couriers together from **Orders → Enable Bulk print**, asks A6 / A4 on every run, and can also issue the waybills.
 
 ## Open questions
 

@@ -8,7 +8,7 @@ aliases: ["Checkout payment step", "Card payment", "Offline payment", "COD", "Ba
 tags: [storefront, checkout, payment, providers, card, offline, bnpl, leasing]
 plan_gates: []
 created: 2026-06-12
-updated: 2026-06-12
+updated: 2026-10-05
 source_count: 4
 ---
 
@@ -69,13 +69,15 @@ The controller (the platform code line ~1651) runs a multi-stage filter on the p
 | 6 | Same gate for `pop` (Pay on place) — needs `supportsPayOnPlace` AND quote `allowancePayOnPlace`. |
 | 7 | If the shipping provider has a **per-provider payment allowlist** (`provider->payments`), only providers IN the list survive. Used by carrier integrations that restrict which gateways they accept on COD-style orders. |
 | 8 | If the cart is **not shippable** (digital-only), `cod` and `pop` are dropped from the list. |
+| 9 | **Installed apps** get the last word and may only remove methods. The **Nekorekten** app removes `cod` for a buyer who is on its blocked list or reported on nekorekten.com, depending on its settings. The same app check runs again when the order is placed, so a withheld method cannot be submitted. See [[apps-nekorekten-checkout]]. |
 
-So a single missing provider can be traced to any of these 8 stages. Common support diagnostics:
+So a single missing provider can be traced to any of these 9 stages. Common support diagnostics:
 
 - *"Stripe is missing but I configured it"* → check shipping manager's `provider->payments` allowlist (stage 7) and category restrictions (stage 4).
 - *"COD missing for digital goods"* → stage 8.
 - *"BNPL missing on small orders"* → stage 2 (`isAllowedByOrderAmount`).
 - *"Leasing missing when 'Use different billing' is off"* → stage 3.
+- *"COD missing for one customer only"* → stage 9, the Nekorekten app ([[apps-nekorekten-checkout]]).
 
 ## Per-provider extras
 
@@ -146,10 +148,11 @@ None recorded for this section. Any merchant-facing surprises specific to this s
 - [[settings-cart]] — `payment_description`, `default_payment_provider`.
 - [[products-categories-cart-restrictions]] — per-category restriction model.
 - [[settings-shipping]] — shipping-provider's payment allowlist (stage 7).
+- [[apps-nekorekten-checkout]] — the Nekorekten app withholding COD per buyer (stage 9).
 - [[payment-provider-mechanism]] — 5-stage provider lifecycle.
 - [[payment-providers-tbi]] / [[payment-providers-bnp]] / [[payment-providers-dsk-bnpl]] / [[payment-providers-fibank-bnpl]] — leasing/BNPL integrations.
 - [[settings-payment-providers]] / per-provider pages — e.g. [[payment-providers-stripe]], [[payment-providers-cloudcart-pay]], [[payment-providers-borica-way4]].
 
 ## Open questions
 
-None — 8-stage filter pipeline verified against the platform code line 1651–1750 on 2026-06-12.
+None — core filter stages 1–8 verified against the platform code line 1651–1750 on 2026-06-12.
