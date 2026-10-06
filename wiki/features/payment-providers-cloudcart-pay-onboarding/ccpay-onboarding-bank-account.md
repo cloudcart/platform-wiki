@@ -1,90 +1,89 @@
 ---
 type: feature
-nav_path: "Payment Providers → Cloudcart Pay → Onboarding → Bank account"
+nav_path: "Settings → Payment methods → CloudCart Pay → Onboarding → Bank account"
 route_name: apps.cloudcart_pay.onboarding
 route_path: /admin/payment-providers/cloudcart_pay/onboarding
-aliases: ["CloudCart Pay payout IBAN", "External account", "Bank account on file", "Replace bank account", "BIC SWIFT", "Settlement currency"]
+aliases: ["CloudCart Pay payout IBAN", "Bank account on file", "Replace bank account", "BIC SWIFT CloudCart Pay", "Settlement currency onboarding", "Банкова сметка CloudCart Pay", "Налична банкова сметка", "Замяна на банкова сметка"]
 tags: [paymentproviders, payment-providers, cloudcart-pay, onboarding, bank, iban, payouts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-10-06
+source_count: 2
 ---
 
-> Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (wizard flow, KYB fields, documents, verification, status, connect/disconnect).
+> Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (wizard flow, fields, people, documents, verification, status, review and alerts, connect/disconnect).
 
-# Onboarding — Bank account
+# Onboarding — Bank account (step 6)
 
 ## Purpose
 
-Step 6 of the onboarding wizard collects the **payout IBAN** — the external bank account where Paypercut will settle the merchant's card receipts via SEPA payout. The bank account is added as a Paypercut `external_account` of type `bank_account` and attached to the connected account.
+Step 6 adds the **payout bank account** — the IBAN to which CloudCart Pay pays out the merchant's card takings. Later bank accounts are added and managed on the [[payment-providers-cloudcart-pay-payouts|Payouts tab]].
 
 ## Where to find it
 
-Payment Providers → CloudCart Pay → **Onboarding** tab → **Bank** (step 6).
+Settings → Payment methods → CloudCart Pay → **Onboarding** tab → step 6, **Bank** (Банка); screen title **Bank Account** (Банкова сметка).
 
 ## What the merchant can do here
 
-- Add a new payout IBAN with holder name, holder type, country, currency, IBAN, optional BIC / SWIFT.
-- See the **Bank account on file** alert when an account is already configured.
-- Click **Replace bank account** to dismiss the alert and open the new-IBAN form.
-- Click **Cancel** to keep the existing IBAN without changes.
+- **Add the payout IBAN** with holder name, holder type, country, currency and an optional BIC / SWIFT.
+- **See the bank account already on file**.
+- **Replace bank account** to enter a different one, or **Cancel** to keep the current one.
 
 ## Settings & fields
 
-Backend: `POST /admin/cloudcart-pay/external-accounts` → Paypercut `POST /v1/accounts/{id}/external_accounts` with `external_account.object=bank_account`, `numbers.scheme=iban`.
+### Bank account on file (Налична банкова сметка)
 
-| Field | Required? | What it does | Notes |
-|-------|-----------|--------------|-------|
-| **Account Holder Name** | Yes | Exact name as registered with the bank; must match the legal entity or representative. | Max 255. |
-| **Holder Type** | Yes | `company` or `individual`. | |
-| **Country** | Yes | 2-letter ISO country where the account is held. | |
-| **Currency** | Yes | Settlement currency. Picked from `BGN, DKK, SEK, NOK, GBP, EUR, USD, CHF, CZK, HUF, PLN, RON`. | Determines the supported scheme. |
-| **IBAN** | Yes | International Bank Account Number, up to 34 chars. | The backend strips all whitespace before sending. Validation message on failure: *"IBAN must be a valid IBAN."* |
-| **BIC / SWIFT** | No | 8 or 11-character SWIFT/BIC identifier. | **Omitted from the API call entirely when blank** (sending an empty BIC makes Paypercut reject the IBAN scheme). |
+When an account is already saved, the step shows the holder name with a badge such as "EUR · BG" (currency and country), the bank name and the account number ending (•••• 1234), or a **Submitted** badge. Text: *"Bank account is saved with CloudCart. Click Continue to proceed, or "Replace bank account" to enter new details."* Buttons: **Replace bank account** (Замяна на банкова сметка) or **Cancel** (Отказ).
 
-The full Paypercut payload uses `numbers.scheme=iban`, `numbers.iban`, optional `numbers.bic`, plus `country`, `currency`, `holder_name`, `holder_type`, and optional `default_for_currency`.
+### The form
 
-Existing bank accounts are shown in a "Bank account on file" alert with a **Replace bank account** button — the merchant can dismiss the new form with **Cancel** to keep the existing IBAN.
+| Field | Required | Notes / help text |
+|---|---|---|
+| **Account Holder Name** (Име на титуляря на сметката) | Yes | *"Name exactly as registered with the bank. Must match the legal entity or the representative."* Up to 255 characters. |
+| **Holder Type** (Тип титуляр) | Yes | **Company** or **Individual** (Физическо лице). *"Whether the bank account belongs to the legal entity or an individual."* |
+| **Country** (Държава) | Yes | *"Country where the bank account is held."* Same 30 countries as step 1. |
+| **Currency** (Валута) | Yes | *"Currency in which payouts will be settled to this account."* BGN, DKK, SEK, NOK, GBP, EUR, USD, CHF, CZK, HUF, PLN, RON. Starts at EUR. |
+| **IBAN** | Yes | *"International Bank Account Number, no spaces. Up to 34 characters."* |
+| **BIC / SWIFT** | No | *"8 or 11-character SWIFT/BIC identifier. Optional if the IBAN is sufficient for routing."* |
+
+Buttons: **Back** (Назад) and **Save & Continue** (Запазване и продължаване), or **Continue** when an account is on file and not being replaced.
 
 ## Business rules
 
-### Whitespace is stripped from IBAN server-side
+### Spaces in the IBAN are fine
 
-The backend strips all whitespace from the IBAN before sending it to Paypercut. Merchants who paste an IBAN like `BG80 BNBG 9661 1020 3456 78` get a clean `BG80BNBG96611020345678` on the platform. The IBAN's own validation runs against the cleaned value.
+Spaces are removed before the IBAN is sent, so an IBAN pasted as "BG80 BNBG 9661 1020 3456 78" is saved as one string. The IBAN can still be at most 34 characters.
 
-### Empty BIC is omitted, not sent as ""
+### BIC can stay empty
 
-If the BIC / SWIFT field is left blank, the backend omits `numbers.bic` from the API payload entirely. Sending `bic=""` makes Paypercut reject the IBAN scheme with a validation error. This is a quiet correctness fix — the merchant never sees the rejection because the field is properly skipped on serialise.
+A blank BIC / SWIFT is simply left out; it never causes the IBAN to be refused.
 
-### Validation message for invalid IBAN
+### Errors appear on the field
 
-If the IBAN fails Paypercut's structural validation, the merchant sees verbatim: *"IBAN must be a valid IBAN."* No partial diagnostic about which character or country prefix is wrong is shown.
+When the IBAN or the BIC is refused, the reason appears under that field rather than as a general error. Other refusals appear under the form.
 
-### Replace bank account — adds, doesn't update in place
+### Replace bank account adds a new account
 
-Clicking *Replace bank account* opens the new-IBAN form; submitting it adds a new `external_account` to the connected account. Paypercut keeps the prior account in history; whether the prior account is automatically marked inactive on the platform side is a provider rule. (verify)
+Replacing submits a new bank account to the connected account; the earlier one stays listed on the [[payment-providers-cloudcart-pay-payouts|Payouts tab]]. The first account added for a currency becomes that currency's default payout account; the default can be set when adding an account on the Payouts tab — see [[cloudcart-pay-payouts-bank-accounts]].
 
-### Settlement currencies are fixed
+### Currencies here and on the Payouts tab
 
-The 12 settlement currencies in the picker (`BGN, DKK, SEK, NOK, GBP, EUR, USD, CHF, CZK, HUF, PLN, RON`) are the ones the platform supports. If the storefront's order currency is not on this list, the customer's order is rejected at checkout-session creation time on Paypercut's side — see [[payment-providers-cloudcart-pay]] for the currency handling.
+The currency list in this step includes **BGN**; the Payouts tab's form and its **Supported Settlement Currencies** list do not. See [[cloudcart-pay-payouts-schedule-limits]].
 
-### Step 6 completion criterion
+### When step 6 counts as done
 
-Step 6 is marked complete when the connected account has ≥1 external account with an `id`, `last4`, or `holder_name` — see [[ccpay-onboarding-wizard-flow]]. The merchant cannot finish step 6 without successfully adding an IBAN.
-
-### Payouts list lives on a separate sub-tab
-
-This step only **adds** the bank account during onboarding. The standalone Payouts tab — [[payment-providers-cloudcart-pay-payouts]] — surfaces the payouts capability status, additional bank-account management actions, and the running payout schedule once the account is live.
+When the connected account has a bank account. The step cannot be finished without one.
 
 ## Related
 
 - [[payment-providers-cloudcart-pay-onboarding]] — hub.
-- [[ccpay-onboarding-wizard-flow]] — step completion mechanics.
-- [[ccpay-onboarding-status-capabilities]] — step 7 where the `payouts` capability state is shown.
-- [[payment-providers-cloudcart-pay-payouts]] — separate sub-tab for payouts lifecycle management.
-- [[payment-providers-cloudcart-pay]] — currency handling end-to-end.
+- [[payment-providers-cloudcart-pay-payouts]] — payouts and later bank accounts.
+- [[cloudcart-pay-payouts-bank-accounts]] — the bank accounts table and the default per currency.
+- [[cloudcart-pay-payouts-schedule-limits]] — settlement currencies.
+- [[ccpay-onboarding-status-capabilities]] — the Payouts status after onboarding.
+- [[ccpay-onboarding-wizard-flow]] — when steps count as done.
 
 ## Open questions
 
-- ⏸️ Whether Paypercut automatically marks the prior external_account inactive when a new one is added via *Replace bank account*, or whether both stay active until the merchant explicitly designates a default. `(verify)`
+- Whether an earlier bank account stays in use for payouts after **Replace bank account**, or stops once a new default exists.
+- Whether payouts in BGN are possible, given that BGN is offered only in this step.

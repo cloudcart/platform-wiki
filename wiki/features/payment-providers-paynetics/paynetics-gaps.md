@@ -7,11 +7,13 @@ aliases: ["Paynetics refund", "Paynetics capture", "Paynetics sync", "Paynetics 
 tags: [paymentproviders, payment-providers, paynetics, refund, capture, sync, deprecated, card-gateway]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-06
 source_count: 2
 ---
 
 > Part of [[payment-providers-paynetics]]. See the hub for related aspects (setup & UI, payment lifecycle).
+
+> **Obsolete — Paynetics no longer works.** It takes no payments and new stores cannot install it. It is an old, separate integration and has nothing to do with **CloudCart Pay** ([[payment-providers-paynetics]]).
 
 # Paynetics — Feature gaps
 
@@ -52,7 +54,7 @@ There is no periodic sync — the platform doesn't poll Paynetics for status cha
 - Tokenisation / saved cards not implemented.
 - Google Pay / Apple Pay not exposed in the storefront (even though Paynetics supports them bank-side).
 
-If the merchant needs these features, they should consider [[payment-providers-borica-way4]] or [[payment-providers-cloudcart-pay]].
+A merchant who needs card payments today uses another card gateway, such as [[payment-providers-borica-way4]] or [[payment-providers-cloudcart-pay]].
 
 ### Recurring billing — code exists, not exposed
 
@@ -60,7 +62,7 @@ The integration's payload type supports `recurring`, `recurringPeriod`, `recurri
 
 ### Why these gaps won't be filled
 
-The Paynetics route is commented out of the payment-provider router (deprecated for new tenants — see the hub's *Purpose*). The capture / refund / sync / recurring / wallet gaps are therefore unlikely to be addressed. Merchants needing those capabilities should migrate to [[payment-providers-cloudcart-pay|CloudCart Pay]] or [[payment-providers-mypos|myPOS]].
+Paynetics no longer works (see the hub's *Purpose*), so none of these gaps will be filled. A merchant who needs card payments uses another card gateway, such as [[payment-providers-cloudcart-pay|CloudCart Pay]] or [[payment-providers-mypos|myPOS]].
 
 ## Related
 
@@ -68,8 +70,8 @@ The Paynetics route is commented out of the payment-provider router (deprecated 
 - [[orders-payment-refund]] — flags a refund on the order (financial reversal happens in Paynetics's portal).
 - [[orders-payment-manual]] — manual payment entry (offline / outside Paynetics).
 - [[payment-providers-borica-way4]] — alternative supporting Authorize + Capture and wallets.
-- [[payment-providers-cloudcart-pay]] — CloudCart's own card gateway with the broader feature set.
+- [[payment-providers-cloudcart-pay]] — CloudCart's own card gateway, a separate product.
 
 ## Open questions
 
-_None — the gaps above are by design for a deprecated integration._
+_None — Paynetics no longer works._

@@ -1,104 +1,102 @@
 ---
 type: feature
-nav_path: "Payment Providers → Cloudcart Pay → Onboarding → Verification & Attestation"
+nav_path: "Settings → Payment methods → CloudCart Pay → Onboarding → Agreements & Identity Verification"
 route_name: apps.cloudcart_pay.onboarding
 route_path: /admin/payment-providers/cloudcart_pay/onboarding
-aliases: ["Paypercut service agreement", "TOS acceptance", "Submit account for review", "Identity verification session", "Verification unavailable fallback", "Attestation"]
-tags: [paymentproviders, payment-providers, cloudcart-pay, onboarding, verification, tos, attestation]
+aliases: ["CloudCart Pay agreements step", "Accept & Submit", "Identity verification CloudCart Pay", "Verification link", "Verification unavailable", "Споразумения и верификация на самоличността", "Приемане и изпращане", "Започване на верификация на самоличността"]
+tags: [paymentproviders, payment-providers, cloudcart-pay, onboarding, verification, agreements]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-10-06
+source_count: 3
 ---
 
-> Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (wizard flow, KYB fields, documents, bank, status, connect/disconnect).
+> Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (wizard flow, fields, people, documents, bank, status, review and alerts, connect/disconnect).
 
-# Onboarding — Verification & Attestation
+# Onboarding — Agreements & Identity Verification (step 5)
 
 ## Purpose
 
-Step 5 of the onboarding wizard handles three distinct sub-flows: (a) acceptance of the Paypercut service agreement documents (rendered dynamically from the compliance task bundle), (b) submission of the account for review (`details_submitted=true` with server-stamped TOS evidence), and (c) optional creation of an identity verification session for the representative person. This step is where the merchant moves the account from "data collected" to "in review on Paypercut's side".
+Step 5 does two things once the account has been submitted for review in step 4: the merchant **accepts the agreement documents**, and the company's **legal representative verifies their identity** through a link. After that the account waits for approval, which takes from a few hours to 2 business days after submission, longer for a complicated company structure (operator statement).
 
 ## Where to find it
 
-Payment Providers → CloudCart Pay → **Onboarding** tab → **Verification** (step 5).
+Settings → Payment methods → CloudCart Pay → **Onboarding** tab → step 5, **Verification** (Верификация); screen title **Agreements & Identity Verification** (Споразумения и верификация на самоличността).
+
+Intro: *"Review and accept the required agreements, then verify the identity of the account representative. This creates a verification session that can be completed by the representative."*
 
 ## What the merchant can do here
 
-- Tick acceptance checkboxes for each Paypercut-served agreement document (mandatory documents are starred).
-- Click **Accept & Submit** to post an `attestation` recording acceptance.
-- Tick the "I confirm the information is accurate" checkbox and click **Submit account for review** to set `details_submitted=true`.
-- Click **Start Identity Verification** to create a verification session for the representative; copy the resulting link to share with them.
-- See the **Verification unavailable** graceful fallback notice when Paypercut errors AND the account is already operational.
+- **Open, tick and accept** every agreement document with **Accept & Submit** (Приемане и изпращане).
+- **Start the identity verification** with **Start Identity Verification** (Започване на верификация на самоличността).
+- **Open or copy the verification link** and send it to the legal representative.
+- **Continue** to the bank step.
 
 ## Settings & fields
 
-| Control | What it does | Notes |
-|---------|--------------|-------|
-| **Agreement document checkboxes** | One per Paypercut-served agreement document; mandatory documents are starred. **Accept & Submit** posts an `attestation` recording acceptance. | Renders dynamically from the compliance task bundle returned by Paypercut (`agreement_bundle` on each compliance task). |
-| **"I confirm the information is accurate" checkbox + Submit account for review button** | Sets `details_submitted=true` on the Paypercut account and records the TOS acceptance evidence: ISO 8601 date, request IP, user agent (capped at 1024 chars), `service_agreement=full`. | Shown only when `details_submitted` is in `currently_due`. |
-| **Start Identity Verification button** | Creates a verification session for the representative; returns a URL to share with them. | Disabled until the account is submitted (`details_submitted` not currently due). |
-| **Verification link copy / open** | Once a session exists, the link is shown with a Copy button and an Open Verification Link CTA. | The link is one-shot per session — re-creating creates a new session. |
-| **"Verification unavailable" notice** | Shown when Paypercut returns a 500 / api_error AND the account is already operational. Lets the merchant continue and complete verification later. | Defensive UX — Paypercut occasionally errors here even on healthy accounts. |
+### Before the account is submitted
 
-### Backend endpoints
+The step shows a warning instead of the agreements:
 
-- `POST /admin/cloudcart-pay/attestations` → Paypercut `POST /v1/accounts/{id}/attestations`.
-- `PUT /admin/cloudcart-pay/account/submit` → Paypercut `PUT /v1/accounts/{id}` with `details_submitted=true`.
-- `POST /admin/cloudcart-pay/verification-session` → Paypercut `POST /v1/identity_verification_sessions`.
+- no person yet — *"Please create a representative in the previous step first."*
+- not submitted — *"Submit the account for review in the Documents step first. Once review starts, the agreements to accept will appear here."*
+
+### Agreements
+
+Heading **Review and accept the agreement documents** (Прегледайте и приемете документите със споразуменията). One checkbox per required document, each title opening the document. The operator's list of the six documents, all required:
+
+1. Tri-Party Merchant Agreement
+2. Tri-Party Merchant DPA
+3. Payment Instruction
+4. Fee Schedule to the Tri-Party Merchant Agreement
+5. Nominee Agreement
+6. Paynetics Privacy Policy
+
+**Accept & Submit** stays disabled until every box is ticked. What the agreement says is summarised in [[cloudcart-pay-merchant-terms]]; the prices in the Fee Schedule are in [[cloudcart-pay-pricing]].
+
+### Identity verification
+
+Notice: *"Identity verification must be carried out by a legal representative of the company being registered. Any other person completing it will not be accepted."*
+
+After **Start Identity Verification** a **Verification Session** panel shows **Open Verification Link** (Отваряне на връзката за верификация), the text *"Share this link with the company's legal representative to complete identity verification:"*, the link itself and **Copy**.
+
+Buttons at the bottom: **Back** (Назад) and **Continue** (Продължете).
 
 ## Business rules
 
-### Acceptance evidence is server-stamped
+### Agreements appear only after submission
 
-When the merchant submits the account for review, the `tos_acceptance` block sent to Paypercut is **stamped server-side** with:
+The documents to accept are prepared for the account once it has been submitted for review in step 4, which is why this step asks for the submission first. The list on screen comes from the account itself, so the exact titles shown are the ones that apply; only the required ones are listed.
 
-- `date = now`
-- `ip = request IP`
-- `user_agent = request user agent (≤ 1024 chars)`
-- `service_agreement = "full"`
+### Acceptance
 
-The merchant cannot spoof acceptance from the browser side — the values are computed on the controller, not posted by the form.
+**Accept & Submit** records the acceptance on behalf of the company in the name of its legal representative. The item then leaves the **Compliance Tasks** list on the Status step. Until it is accepted, that list shows the agreement with a **Resolve** button leading back here — see [[ccpay-onboarding-status-capabilities]].
 
-### Agreement documents come from the compliance task bundle
+### Identity verification
 
-The agreement checkboxes are NOT a static list. The wizard reads the compliance task bundle returned by Paypercut (`GET /v1/accounts/{id}/compliance-status`) and renders one checkbox per attached `agreement_bundle` document. Mandatory documents are starred. Tasks without an `agreement_bundle` (i.e., other compliance tasks) are surfaced read-only on step 7 instead — see [[ccpay-onboarding-status-capabilities]].
+- It is done by the **legal representative** chosen in step 3 ([[ccpay-onboarding-people-roles]]), through the link, on their own device.
+- Each click on **Start Identity Verification** creates a new verification link.
+- Errors: *"Complete the remaining account details first (business information, representative and documents in the previous steps). Identity verification becomes available once all required information has been submitted."* and *"Identity verification is not available yet. Please make sure all required business and representative details have been submitted, then try again."*
+- If the verification service is down while the account has nothing outstanding, the merchant is not blocked: *"Identity verification is temporarily unavailable from the payment provider. Your account details have been submitted and the account is active — you can continue now and the representative can complete identity verification later from this step."*
 
-### Identity verification gating
+### When step 5 counts as done
 
-Paypercut cannot create a verification session until `details_submitted=true` on the account. The wizard hard-blocks the *Start Identity Verification* button while `requirements.currently_due` still contains `details_submitted`. If the merchant somehow bypasses the gate and Paypercut returns a 500 / api_error, the controller intercepts and replaces the error with the verbatim message:
+When the account has been submitted for review (or a verification link was created). **Continue** always moves on to step 6.
 
-> *"Identity verification is not available yet. Please make sure all required business and representative details have been submitted, then try again."*
+### What happens next
 
-### "Verification unavailable" graceful fallback
-
-If `POST /admin/cloudcart-pay/verification-session` fails AND the account has no remaining `currently_due` requirements (i.e., the account is already operational), the Vue layer **suppresses the error** and shows the verbatim message:
-
-> *"Identity verification is temporarily unavailable from the payment provider. Your account details have been submitted and the account is active — you can continue now and the representative can complete identity verification later from this step."*
-
-This prevents an isolated provider-side outage from trapping merchants on a step they've otherwise completed.
-
-### Verification link is one-shot per session
-
-Re-clicking *Start Identity Verification* creates a new session — the previous link becomes stale. The merchant should share the link only once per session to the representative; if the link expires or is lost, a new session can be created without affecting the rest of the account state.
-
-### Step 5 completion criterion
-
-Step 5 is marked complete when `details_submitted === true` on the live Paypercut account — see [[ccpay-onboarding-wizard-flow]]. Acceptance of agreement documents on its own does not flip step 5 to complete; the *Submit account for review* action is what writes `details_submitted=true`.
-
-### KYB review SLA is not exposed in CloudCart
-
-Turnaround from *Submit account for review* until the `card_payments` capability flips to `active` is on Paypercut's side and not surfaced in CloudCart. The merchant sees the live state of the capability on step 7 (see [[ccpay-onboarding-status-capabilities]]). For an SLA estimate, refer to Paypercut's onboarding documentation or support. (verify)
+The account is reviewed by a person. Approval takes from a few hours to 2 business days after submission; it can take longer when the company's structure is complicated (operator statement). Progress shows on the **Status** step, and changes arrive as an admin notification and an email — see [[ccpay-onboarding-review-alerts]].
 
 ## Related
 
 - [[payment-providers-cloudcart-pay-onboarding]] — hub.
-- [[ccpay-onboarding-wizard-flow]] — step completion mechanics + resume.
-- [[ccpay-onboarding-account-business-fields]] — step 3 representative whose identity is being verified.
-- [[ccpay-onboarding-documents-upload]] — step 4 documents accompanying verification.
-- [[ccpay-onboarding-status-capabilities]] — step 7 where compliance tasks without an agreement bundle are surfaced.
-- [[payment-providers-cloudcart-pay]] — activation gate that depends on `card_payments` capability becoming active.
+- [[cloudcart-pay-merchant-terms]] — what the accepted agreement contains.
+- [[cloudcart-pay-pricing]] — the Fee Schedule.
+- [[ccpay-onboarding-documents-upload]] — step 4, where the account is submitted.
+- [[ccpay-onboarding-people-roles]] — the legal representative.
+- [[ccpay-onboarding-status-capabilities]] — compliance tasks and capabilities.
+- [[ccpay-onboarding-review-alerts]] — waiting for approval.
 
 ## Open questions
 
-- ⏸️ KYB review SLA on the Paypercut / CloudCart Pay side — not surfaced in CloudCart. `(verify)` against Paypercut's onboarding documentation.
+- Whether an earlier verification link stops working once a new one is created.

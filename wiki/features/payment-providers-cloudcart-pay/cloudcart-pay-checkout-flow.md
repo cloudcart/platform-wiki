@@ -1,75 +1,103 @@
 ---
 type: feature
-nav_path: "Payment Providers → Cloudcart Pay → Checkout flow"
+nav_path: "Settings → Payment methods → CloudCart Pay → Checkout flow"
 route_name: apps.cloudcart_pay.overview
 route_path: /admin/payment-providers/cloudcart_pay
-aliases: ["CloudCart Pay checkout flow", "CloudCart Pay embedded checkout", "CloudCart Pay hosted checkout", "CloudCart Pay Apple Pay Google Pay", "CloudCart Pay capture"]
-tags: [paymentproviders, payment-providers, cloudcart-pay]
+aliases: ["CloudCart Pay checkout flow", "CloudCart Pay inline checkout", "CloudCart Pay embedded checkout", "CloudCart Pay popup checkout", "CloudCart Pay Apple Pay Google Pay", "CloudCart Pay capture", "Плащане с карта в поръчката", "Вградено плащане", "Изскачащ прозорец за плащане"]
+tags: [paymentproviders, payment-providers, cloudcart-pay, checkout]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-10-06
+source_count: 2
 ---
 
-> Part of [[payment-providers-cloudcart-pay]]. See the hub for the other aspects (account model, activation gate, refunds + webhooks, saved card) and the four lifecycle tabs.
+> Part of [[payment-providers-cloudcart-pay]]. See the hub for the other aspects (account model, activation gate, express checkout, Apple Pay domain, refunds, saved card) and the six tabs.
 
 # CloudCart Pay — checkout flow
 
 ## Purpose
 
-This page documents how a customer actually pays when they pick CloudCart Pay at checkout — the embedded vs hosted modes, which card brands and wallets are accepted, why capture is always immediate, how currency is handled, and the idempotency behaviour that prevents double charges. It is the page to read for "how does the card form appear?" or "does CloudCart Pay support Apple Pay?" questions.
+How a shopper pays with CloudCart Pay on the store's checkout: the two ways the card form can appear (inline, the default, or a popup), Apple Pay and Google Pay, what happens when the total changes or the session runs out, and why every payment is captured at once. It is the page for "how does the card form look?", "does CloudCart Pay take Apple Pay?" and "why did the shopper see a message about the total?".
 
 ## Where to find it
 
-This behaviour happens on the **storefront checkout**, not in the admin panel — CloudCart Pay surfaces there as a card payment option once activated (see [[checkout-flow]]). The merchant configures the method from Sidebar → **Payment Providers** → **CloudCart Pay**.
+The behaviour is on the **storefront checkout**, payment step (see [[checkout-flow]]). The merchant chooses the form in Settings → Payment methods → CloudCart Pay → **Settings** → **Checkout display** (Показване при плащане), and turns the wallets on or off in **Digital wallets** (Дигитални портфейли) — see [[payment-providers-cloudcart-pay-settings]].
 
 ## What the merchant can do here
 
-- **Offer inline (embedded) card entry** on the modern checkout, so the customer never leaves the store.
-- **Accept Visa / Mastercard plus Apple Pay and Google Pay** out of the box.
-- **Rely on automatic capture** — funds are captured immediately on a successful payment; there is no separate manual-capture step.
+- **Show the card fields inside the checkout page** (inline, the default) or **in a popup** after the complete-order button.
+- **Offer Apple Pay and Google Pay** next to the card form, each on or off separately.
+- **Rely on automatic capture** — there is no separate capture step.
 
 ## Settings & fields
 
-There are no merchant-facing fields specific to the checkout flow — the mode (embedded vs hosted) is chosen automatically by the storefront, and wallets are always auto-enabled. The customer-facing label is set on the [[payment-providers-cloudcart-pay-settings|Settings tab]]; the *Save customer card* option that affects the checkout session is documented in [[cloudcart-pay-save-card]].
+| Setting (Settings tab) | Options | Default | Effect at checkout |
+|---|---|---|---|
+| **Card form display** | **Inline card fields** / **Popup window** | Inline card fields | Where the card form appears. |
+| **Apple Pay** | On / Off | On | Apple Pay button next to the card form. |
+| **Google Pay** | On / Off | On | Google Pay button next to the card form. |
+| **Save Customer Card** | On / Off | On | Signed-in customers can save and reuse a card — see [[cloudcart-pay-save-card]]. |
 
 ## Business rules
 
-### Checkout mechanism — hosted checkout + embedded JS
+### Inline card fields (default)
 
-CloudCart Pay uses the platform's **Checkout Session** API in two modes:
+When the shopper selects CloudCart Pay on the payment step, the card form opens right inside that payment method, for guests and signed-in customers alike. It is prepared for the cart total at that moment.
 
-- **Embedded checkout** (`ui_mode=embedded`) — the default when the storefront uses the modern checkout JS. The customer enters card details inline within the CloudCart checkout; a popup is rendered with the order total; `payment_method_types` is forced to `card`. On submission the platform confirms the payment intent; on failure it falls back to a confirm-checkout-js fallback path.
-- **Hosted checkout** (`ui_mode=hosted`) — fallback. CloudCart Pay creates a checkout session and returns a redirect URL; the customer completes payment on the provider-hosted page and is bounced back to `payments.return` with `?pid=<payment_id>` (the return URL is `<cc_payments_domain>/return/provider/cloudcart_pay?pid=<payment_id>`).
+When the shopper completes the order, the order is created and the card is charged in the same click. If 3-D Secure is needed, the bank's check appears inside the form.
 
-In both modes the card brand, expiry, and last 4 digits are captured and shown on the [[payment-providers-cloudcart-pay-transactions|Transactions]] tab. The platform stores the payment-intent ID as `provider_reference_id` along with the checkout session ID.
+- **The total changed.** If the cart total changed after the form appeared, the shopper sees *"The order total changed — please confirm the payment again."* (Сумата на поръчката се промени — моля, потвърдете плащането отново.) and the form reloads for the new total.
+- **The form expired.** It reloads itself.
+- **The form cannot load** (for example the account is not set up): it is hidden, and the payment continues in the popup.
+- **Wallets inline.** Tapping Apple Pay or Google Pay first checks the checkout form (terms, required fields) without creating an order. The order is created only once the wallet payment succeeds, so a cancelled wallet leaves no pending order.
 
-### Apple Pay + Google Pay auto-enabled
+### Popup window
 
-Apple Pay and Google Pay wallets are auto-enabled (`display=auto`) on every checkout session, in both embedded and hosted modes. The merchant does not configure them separately.
+With **Popup window**, the shopper completes the order first; a window then opens with the order total, the card form and the enabled wallets. On phones the window fills the whole screen. Its close button is hidden while a payment or a 3-D Secure check is in progress.
 
-### Two-phase capture — auto-capture only
+The popup is also where a payment goes when the inline form could not load.
 
-`capture_method=automatic` is hard-coded on every checkout session. There is **no** Authorize-then-Capture flow exposed in the CloudCart Pay integration today — funds are captured immediately on a successful payment. This is why [[orders-payment-capture|manual capture]] is effectively a no-op for CloudCart Pay charges.
+### Look of the card form
 
-### Currency handling
+The card form uses CloudCart Pay's own fixed styling (red buttons, rounded fields on a white card), not the store theme's colours. Card details are typed into the secure form and never reach the store.
 
-Whatever the storefront's order currency is, the platform passes it directly to the provider. The connected account's supported settlement currencies are listed in [[payment-providers-cloudcart-pay-payouts]]; if a customer's currency isn't supported by the account, the checkout-session creation is rejected and the customer cannot complete the CloudCart Pay payment in that currency.
+### Automatic capture
 
-### Idempotency — no duplicate charges on retry
+Every payment is captured at once on success. There is no authorize-then-capture option, so [[orders-payment-capture|manual capture]] does not apply to CloudCart Pay.
 
-The checkout-session and refund APIs are idempotent on `client_reference_id` (set to `<order_id>`) and refund ID respectively. If the platform retries a checkout creation for the same order, the provider returns the existing session rather than a duplicate charge. The sync fallback also re-reads the live state rather than re-confirming — see [[cloudcart-pay-refunds-webhooks]].
+### Payment window and abandoned payments
+
+A payment session stays payable for **2 hours**. A declined card does not end it: the shopper can try another card in the same form, and the payment is marked failed only once the session can no longer be paid. A payment that is still open after **3 hours** is closed as timed out by a background check, so the order does not stay "requested" — see [[cloudcart-pay-refunds-webhooks]].
+
+### No double charge for the same cart
+
+If the same cart was already paid (for example the shopper went back and pressed the button again), the shopper is taken to that order's confirmation page instead of being charged a second time.
+
+### Order reference on the payment
+
+Each payment carries a description of the form "Order #<number> | <store domain>" and the order number, so it can be found on the [[payment-providers-cloudcart-pay-transactions|Transactions tab]] by **Order Reference**.
+
+### Currency
+
+The popup charges in the order's currency. The inline form is prepared in the store's main currency. Payouts are made in the settlement currencies listed on the [[payment-providers-cloudcart-pay-payouts|Payouts tab]].
+
+### Subscriptions
+
+When the basket holds a subscription product, the card is always saved for the renewals, even if **Save Customer Card** is off — see [[cloudcart-pay-save-card]].
 
 ## Related
 
 - [[payment-providers-cloudcart-pay]] — hub.
-- [[checkout-flow]] — storefront checkout where CloudCart Pay surfaces as a card option.
-- [[payment-providers-cloudcart-pay-transactions]] — where each checkout's card brand / last-4 / status appears.
-- [[payment-providers-cloudcart-pay-payouts]] — supported settlement currencies.
-- [[orders-payment-capture]] — manual capture (immediate for CloudCart Pay because of auto-capture).
-- [[cloudcart-pay-save-card]] — how the save-card setting changes the checkout session.
-- [[payment-status]] — Completed / Failed mapping for CloudCart Pay charges.
+- [[payment-providers-cloudcart-pay-settings]] — where the form and wallets are set.
+- [[cloudcart-pay-apple-pay-domain]] — Apple Pay needs the store domain registered.
+- [[cloudcart-pay-express-checkout]] — wallet buttons on product pages.
+- [[cloudcart-pay-save-card]] — saved cards at checkout.
+- [[cloudcart-pay-refunds-webhooks]] — how payment statuses are updated afterwards.
+- [[checkout-flow]] — the storefront checkout.
+- [[orders-payment-capture]] — manual capture, not used by CloudCart Pay.
+- [[payment-status]] — payment statuses on orders.
 
 ## Open questions
 
-(none)
+- What a shopper sees when the inline form is prepared in the store's main currency but the order is placed in another currency on a multi-currency store.
+- Which card brands beyond Visa and Mastercard are accepted (the merchant help article says "Visa, Mastercard and more").

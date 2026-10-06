@@ -1,87 +1,97 @@
 ---
 type: feature
-nav_path: "Payment Providers → Cloudcart Pay → Onboarding → Wizard flow"
+nav_path: "Settings → Payment methods → CloudCart Pay → Onboarding → Wizard flow"
 route_name: apps.cloudcart_pay.onboarding
 route_path: /admin/payment-providers/cloudcart_pay/onboarding
-aliases: ["CloudCart Pay onboarding wizard", "7-step KYB wizard", "Onboarding step indicator", "Resume onboarding", "Deep-link step"]
+aliases: ["CloudCart Pay onboarding wizard", "7-step onboarding", "Onboarding step indicator", "Resume onboarding", "Deep-link step", "Set up your CloudCart Connect account", "Стъпки на регистрацията CloudCart Pay"]
 tags: [paymentproviders, payment-providers, cloudcart-pay, onboarding, wizard]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-10-06
+source_count: 2
 ---
 
-> Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (KYB fields, documents, verification, bank, status, connect/disconnect).
+> Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (fields, people, documents, verification, bank, status, review and alerts, connect/disconnect).
 
 # Onboarding — wizard flow
 
 ## Purpose
 
-The onboarding screen is structured as a **7-step KYB (Know-Your-Business) wizard** that walks the merchant from "I have no CloudCart Pay account" to "my account is submitted for review". This aspect documents how the wizard itself behaves: the step structure, navigation between steps, resume-after-reload, deep-linking, and how each step's "complete" state is derived.
+How the onboarding wizard itself behaves: the first screen, the seven-step indicator, moving between steps, resuming after the browser was closed, opening a step directly, and when a step counts as done. The fields of each step are on the step pages.
 
 ## Where to find it
 
-Payment Providers → CloudCart Pay → **Onboarding** tab.
-
-Route: `/admin/payment-providers/cloudcart_pay/onboarding`. The wizard supports a `?step=<1-7>` query parameter for deep-linking to a specific step.
+Settings → Payment methods → CloudCart Pay → **Onboarding** tab. A step can be opened directly by adding `?step=1` … `?step=7` to `/admin/payment-providers/cloudcart_pay/onboarding`.
 
 ## What the merchant can do here
 
-- Walk through the 7 wizard steps sequentially.
-- Jump to any already-completed step via the step indicators at the top of the page.
-- Resume on the last incomplete step on every reload — `determineCurrentStep` walks the saved progress list and lands on the first unfinished step.
-- Edit previously-entered data by clicking a completed step in the stepper. Some fields (country, business type) are locked — see [[ccpay-onboarding-connect-disconnect]].
-- Deep-link directly into a step with `?step=N`.
-
-## The 7 steps
-
-| # | Step | Aspect page | What it does |
-|---|------|------------|--------------|
-| 1 | **Account** | [[ccpay-onboarding-account-business-fields]] | Pick country, business type (`company` / `non_profit`), email; creates the connected account. |
-| 2 | **Business** | [[ccpay-onboarding-account-business-fields]] | Public business profile, legal entity (KYB), registered address. |
-| 3 | **Representative** | [[ccpay-onboarding-account-business-fields]] | A real person who controls the entity — identity, contact, home address. |
-| 4 | **Documents** | [[ccpay-onboarding-documents-upload]] | Identity document + business registration document. |
-| 5 | **Verification** | [[ccpay-onboarding-verification-attestation]] | Accept Paypercut agreements, submit account for review, optionally start identity verification. |
-| 6 | **Bank** | [[ccpay-onboarding-bank-account]] | Add the payout IBAN. |
-| 7 | **Status** | [[ccpay-onboarding-status-capabilities]] | Read-only status dashboard: capabilities, requirements, compliance tasks. |
+- **Start** a new account or **link** an existing one from the first screen.
+- **Move between steps** with the step indicator and the **Back** / **Continue** buttons.
+- **Come back later** and land on the first step that is not done yet.
+- **Open the Status step at any time.**
 
 ## Settings & fields
 
-The wizard itself exposes only step-indicator controls; the per-step fields live on the aspect pages linked above. The step-indicator panel renders one chip per step, marks completed steps with a check, the active step highlighted, and any step the merchant can revisit clickable.
+### First screen (no account yet)
+
+Title **Set up your CloudCart Connect account** (Настройте своя CloudCart Connect акаунт), text *"Create a connected business account to accept payments and receive payouts through CloudCart Pay, or link an existing CloudCart account."* Two buttons: **Start Onboarding** (Започване на регистрацията) and **Connect Existing Account** (Свързване със съществуващ акаунт) — see [[ccpay-onboarding-connect-disconnect]].
+
+### Step indicator
+
+Seven steps: **Profile, Business, Representative, Documents, Verification, Bank, Status** (Профил, Бизнес, Представител, Документи, Верификация, Банка, Статус).
+
+| What the merchant sees | Meaning |
+|---|---|
+| Check mark | The step is done. |
+| Highlighted step | The step on screen. |
+| **Status** step in red | The account still has something outstanding: requirements, documents being verified, rejected items or an unfinished compliance task. |
+
+A step can be clicked when it is done, when it is not beyond the current step, or when every earlier step is done. **Status** can always be opened.
 
 ## Business rules
 
-### Onboarding progress is reconstructed live from the API
+### The steps in order
 
-Step completion is **not** stored only as a local counter — the platform calculates which steps are satisfied **from the live Paypercut account state** on every load, then unions that with the local `onboarding_completed_steps` counter. Concretely:
+| # | Step | Done when |
+|---|---|---|
+| 1 | Profile | The account exists. |
+| 2 | Business | The account has a legal company name and a trading name. |
+| 3 | Representative | At least one person is on the account. |
+| 4 | Documents | At least one document is uploaded. |
+| 5 | Verification | The account has been submitted for review. |
+| 6 | Bank | A payout bank account is on the account. |
+| 7 | Status | The account is submitted and nothing is outstanding. |
 
-- **Step 1** complete: an account ID exists.
-- **Step 2** complete: `company.name` AND `business_profile.name` are set.
-- **Step 3** complete: ≥1 person exists with `relationship.representative=true` (or any person — first one wins).
-- **Step 4** complete: the Files API (`GET /v1/files`) returns ≥1 uploaded file.
-- **Step 5** complete: `details_submitted === true`.
-- **Step 6** complete: the account has ≥1 external account with an `id`, `last4`, or `holder_name`.
-- **Step 7** complete: `details_submitted === true` AND `requirements.currently_due` is empty.
+Done states are worked out from the live account each time the tab opens, together with the steps this store has already completed. A store that links an existing account therefore sees the steps that account already covers marked as done, without entering anything again.
 
-This means a merchant who links an **existing** account via the *Connect Existing Account* flow sees the correct already-completed steps without re-entering anything — see [[ccpay-onboarding-connect-disconnect]] for the connect/disconnect mechanics.
+### Submitting happens in the Documents step
 
-### Live state, no local cache
+The account is submitted for review with the button in step 4 (**Submit account for review**). Because step 5 counts as done from that moment, reopening the wizard may land on **Bank** or **Status**. Any agreements still to accept then appear on the **Status** step as a compliance task whose **Resolve** button leads back to step 5 — see [[ccpay-onboarding-verification-attestation]].
 
-The May 2026 refactor removed every locally-cached copy of the account / persons / bank / documents data. Field values rendered in the wizard come straight from the Paypercut API: `GET /v1/accounts/{id}` (with `expand=external_accounts`), `GET /v1/accounts/{id}/persons`, and `GET /v1/files`. Stale legacy keys (`tax_id`, `bank_iban`, `doc_identity`, etc.) are explicitly stripped on every account load via `cleanupObsoleteConfig`. Only the connected account ID and the local "completed steps" counter are persisted by CloudCart itself; everything else is the platform's source of truth.
+### Resuming
 
-### Approved account = long-lived dashboard
+On opening, the wizard lands on the first of steps 1–6 that is not done; when all are done, on **Status**. A `?step=` in the address takes precedence. Nothing typed into an unsaved form is kept.
 
-Once approved, the merchant's account on this tab becomes the long-lived "account dashboard" — the same screen shows verification status, capability flags, outstanding compliance tasks (see [[ccpay-onboarding-status-capabilities]]), and the *Disconnect* action (see [[ccpay-onboarding-connect-disconnect]]).
+### Live data, no local copy
 
-### Permission
+Business details, people, documents and bank accounts are read from the connected account each time; the store keeps only the link to the account and its onboarding progress. Changes made from another store that shares the account appear here on the next load.
 
-The page is under `hasApiPermission:settings,store.payment_providers`. A staff member without that grant cannot reach the page or its API endpoints — see [[settings-staff]].
+### After approval
+
+The tab stays the account's dashboard: the **Status** step shows the capabilities and anything the compliance team asks for, and step 1 holds **Disconnect**. See [[ccpay-onboarding-status-capabilities]].
+
+### Staff access
+
+The Onboarding tab and its actions are available only to staff whose role allows the store's payment methods settings — see [[settings-staff]].
 
 ## Related
 
 - [[payment-providers-cloudcart-pay-onboarding]] — hub.
-- [[payment-providers-cloudcart-pay]] — parent provider overview with the activation gate.
-- [[settings-staff]] — `store.payment_providers` permission required to open this page.
+- [[ccpay-onboarding-connect-disconnect]] — the first screen's two paths.
+- [[ccpay-onboarding-documents-upload]] — where the account is submitted.
+- [[ccpay-onboarding-status-capabilities]] — the Status step.
+- [[payment-providers-cloudcart-pay]] — CloudCart Pay hub.
+- [[settings-staff]] — staff permissions.
 
 ## Open questions
 

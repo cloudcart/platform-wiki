@@ -1,106 +1,115 @@
 ---
 type: feature
-nav_path: "Payment Providers → Cloudcart Pay → Onboarding → Documents"
+nav_path: "Settings → Payment methods → CloudCart Pay → Onboarding → Documents"
 route_name: apps.cloudcart_pay.onboarding
 route_path: /admin/payment-providers/cloudcart_pay/onboarding
-aliases: ["CloudCart Pay documents upload", "Identity document upload", "Business registration document", "Proof of registration", "File view proxy"]
+aliases: ["CloudCart Pay documents upload", "KYC documents CloudCart Pay", "Which documents CloudCart Pay", "Bank statement CloudCart Pay", "Proof of residence", "Submit account for review", "Документи CloudCart Pay", "Банково извлечение на Юридическото лице", "Документ за местоживеене", "Изпращане на акаунта за преглед"]
 tags: [paymentproviders, payment-providers, cloudcart-pay, onboarding, documents, uploads]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-10-06
+source_count: 3
 ---
 
-> Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (wizard flow, KYB fields, verification, bank, status, connect/disconnect).
+> Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (wizard flow, fields, people, verification, bank, status, review and alerts, connect/disconnect).
 
-# Onboarding — Documents upload
+# Onboarding — Documents (step 4)
 
 ## Purpose
 
-Step 4 of the onboarding wizard collects two KYB documents: the representative's **government-issued identity document** and the **business registration document** (certificate of incorporation / commercial register extract). This aspect documents the upload slots, file constraints, attachment mechanics on the Paypercut side, and the inline file-view proxy.
+Step 4 collects the documents the review needs — one set for the company and one set **for every person** added in step 3 — plus anything extra the compliance team asks for. It is also where the merchant **submits the account for review**. This is the page for "which documents do I need?" and "I uploaded it, why does it still ask?".
 
 ## Where to find it
 
-Payment Providers → CloudCart Pay → **Onboarding** tab → **Documents** (step 4).
+Settings → Payment methods → CloudCart Pay → **Onboarding** tab → step 4, **Documents** (Документи). Intro: *"Upload identity and business verification documents as required."*
 
 ## What the merchant can do here
 
-- Upload an **identity document** for the representative (PDF, PNG, JPG, JPEG, max 10 MB).
-- Upload a **business registration document** (same constraints).
-- See a "Documents on file" panel listing already-uploaded files with file ID, size in KB and a clickable proxy link.
-- Click a file ID to open the file inline in the browser via the proxy.
-- See additional document slots when Paypercut returns specific `pending_requirements` containing the word `document` (dynamic slot list).
+- **See the documents already on file** and open each one.
+- **Upload the company's documents** and **each person's documents**.
+- **Answer extra document requests** from the compliance team.
+- **Replace** a document that is already waiting for review, after a confirmation.
+- **Submit the account for review** (Изпращане на акаунта за преглед).
 
 ## Settings & fields
 
-Backend: `POST /admin/cloudcart-pay/files` → Paypercut `POST /v1/files` with `multipart/form-data`.
+### Documents on file (Налични документи)
 
-Two upload slots (or a dynamic list of slots when Paypercut returns specific `pending_requirements` containing the word `document`):
+Each uploaded file with its upload date, name (opens in a new tab), type (**Identity document**, **Business document** or **Additional verification**) and size. The newest three are shown; **Show all** / **Show less** toggles the rest. Note: *"Upload a new file below and click Continue to add/replace."*
 
-| Slot | Required document | Constraints |
-|------|-------------------|-------------|
-| **Identity Document** | Representative's government-issued ID. Attached to the representative's `verification.document.front` on upload. | Allowed types: PDF, PNG, JPG, JPEG. Max 10 MB. |
-| **Business Registration Document** | Certificate of incorporation / commercial register extract. Attached to the account's `documents.proof_of_registration.files`. | Same constraints. |
+### Company documents (Документи на дружеството)
 
-Both upload with `purpose=identity_document` (per the Paypercut spec; `account_requirement` is rejected for `proof_of_registration`). The slot is encoded in a separate `slot` field that the backend uses to decide which entity to attach the file to.
+| Document | Required | Description on screen |
+|---|---|---|
+| **Legal entity bank statement** (Банково извлечение на Юридическото лице) | Yes | *"Банково извлечение - не по-старо от 3 месеца, с ясно видим титуляр и IBAN - необходимо за изплащане на сумите"* (no older than 3 months, account holder and IBAN clearly visible). |
 
-Already-uploaded files are listed in a **"Documents on file"** panel above the slots, showing the file ID, size in KB, and a clickable proxy link (`/admin/cloudcart-pay/files/{id}`) that streams the file inline with the correct Content-Type.
+Extra company documents by country:
+
+| Country | Extra documents |
+|---|---|
+| Bulgaria | none |
+| Romania | **Certificat constatator** — *"Company registration certificate issued by the Trade Register."* |
+| Greece | **Company extract** (official registration extract), **Memorandum of association**, **UBO document** (identifies the ultimate beneficial owners). |
+
+### One card per person
+
+Above the cards: *"Please attach the required documents for each ultimate beneficial owner (UBO) holding more than 25% ownership of the company, and for every manager added in the Representative step."* Each card shows the person's name and roles and a counter such as "1 / 2".
+
+| Document | Required | Description on screen |
+|---|---|---|
+| **Identity document** (Документ за самоличност) | Yes | *"Копие на валиден документ за самоличност - лична карта (предна и задна страна) или паспорт"* (ID card front and back, or passport). |
+| **Proof of residence** (Документ за местоживеене) | Yes | *"Сметка за комунални услуги, банково извлечение или друг официален документ, показващ адреса на местоживеене на лицето, не по-стар от 3 месеца"* (no older than 3 months). |
+
+Below: *"Missing someone? Beneficial owners and managers are added in the Representative step."* with **Add or edit people** (Добавяне или редактиране на лица).
+
+### Additional documents requested by our compliance team
+
+(Допълнителни документи, изискани от нашия екип за съответствие.) One upload slot for each document the reviewer asked for that the checklist does not already cover — for example **Proof of current address**, **Company licence** or **Proof of company registration** (Удостоверение за актуално състояние). The reviewer's own explanation, which names the person a document is about, is shown above the slot.
+
+### Files
+
+PDF, PNG, JPG or JPEG, up to **10 MB**. A picked file shows **Ready to upload**; after upload, **Uploaded**.
 
 ## Business rules
 
-### Allowed extensions and size cap
+### Submitting the account
 
-`POST /admin/cloudcart-pay/files`:
-1. Validates extension: `pdf`, `png`, `jpg`, `jpeg`.
-2. Max size 10 MB.
-3. Files outside these constraints are rejected before being forwarded to Paypercut.
+The footer button reads **Submit account for review** until the account has been submitted, then **Continue**. Clicking it uploads the files picked this time, attaches each one to the company or to its person, and — if not done yet — submits the account for review. The acceptance is recorded with the date, the IP address and the browser on CloudCart's side. Then the wizard moves to step 5, where the agreements appear.
 
-### Filename sanitisation + MIME preservation
+If information is still missing: *"The account still has missing required information. Review the highlighted requirements and complete the previous steps, then submit again."* Clicking without picking new files uploads nothing again.
 
-The backend **sanitises the filename** before forwarding to Paypercut: strips `[^A-Za-z0-9._-]`, preserves the extension, and forwards the real MIME type so the file is stored with the correct content-type. (Legacy uploads without an extension were stored as `bin` and downloaded as unrecognisable files — fixed.)
+Note on the screen before submission: *"When your documents are ready, submit the account for review. Once review starts, you will accept the agreements and verify the representative's identity in the next step."*
 
-### `purpose=identity_document` is always sent
+### Submitted — waiting for review
 
-All uploads — both identity and business registration — go with `purpose=identity_document`. Paypercut rejects `account_requirement` for the documents this wizard collects. After upload, the wizard attaches the returned file ID to the correct entity:
+Once a document answers something the review asked for, its slot shows **Submitted — waiting for review** (*"Submitted on <date> · <file>"*) instead of an upload box. The review is done by a person; uploading the same document again does not speed it up. See [[ccpay-onboarding-review-alerts]].
 
-- **Identity document** → `verification.document.front` on the representative person record.
-- **Business document** → `documents.proof_of_registration.files` on the account record.
+### Replace document
 
-The wizard distinguishes the two via the `slot` field in the multipart payload — the backend uses `slot` to decide which Paypercut entity to attach the resulting file to.
+**Replace document** first asks: *"This document is already with our compliance team. Upload a new one only if it is a different document, for example when the one you sent was wrong or unreadable. Sending the same document again does not speed up the review."* — buttons **Upload a different document** and **Cancel**.
 
-### File view proxy
+### Each upload reaches the review team
 
-Clicking a file ID hits `GET /admin/cloudcart-pay/files/{file_id}` which:
+Every upload notifies CloudCart's compliance team at once; an upload left unreviewed is chased automatically — see [[ccpay-onboarding-review-alerts]].
 
-1. Fetches the file from Paypercut's signed S3 URL.
-2. **Sniffs the actual MIME type** (Paypercut's presigned URLs force a download with an extensionless temp name, so the proxy must re-detect the real content-type).
-3. Streams it inline with these response headers:
-   - `Content-Type` correctly inferred
-   - `Content-Disposition: inline`
-   - `X-Content-Type-Options: nosniff`
-   - `Cache-Control: private, no-store`
+### Opening a document
 
-The proxy keeps Paypercut's S3 URLs off the merchant's browser entirely — every read goes through the CloudCart admin host.
+File names open the document inside the admin panel; the file is never handed out through a public link.
 
-### Dynamic slot list
+### When step 4 counts as done
 
-If Paypercut returns `pending_requirements` containing entries with the word `document`, the wizard renders **one extra upload slot per requirement** in addition to the two standard slots. This handles cases where Paypercut requests follow-up documents during review (e.g., proof of address, additional ID).
-
-### Step 4 completion criterion
-
-Step 4 is marked complete when `GET /v1/files` returns ≥1 uploaded file on the account — see [[ccpay-onboarding-wizard-flow]] for the live-state derivation logic. The merchant cannot "finish" step 4 by clicking past it without uploading at least one document.
-
-### Re-upload to replace the representative's ID
-
-The wizard does NOT expose a "delete file" action. To replace an identity document (e.g., after the original representative is changed in step 3 — see [[ccpay-onboarding-account-business-fields]]), the merchant re-uploads in the same slot; the new file ID is attached to the representative's `verification.document.front` and the old file remains in the Files API but no longer linked.
+When at least one document has been uploaded.
 
 ## Related
 
 - [[payment-providers-cloudcart-pay-onboarding]] — hub.
-- [[ccpay-onboarding-wizard-flow]] — step completion mechanics.
-- [[ccpay-onboarding-account-business-fields]] — step 3 representative whose ID document is uploaded here.
-- [[ccpay-onboarding-verification-attestation]] — step 5 where the identity document is checked.
+- [[ccpay-onboarding-people-roles]] — the people whose documents are asked for.
+- [[ccpay-onboarding-verification-attestation]] — step 5, after submission.
+- [[ccpay-onboarding-status-capabilities]] — rejected documents and pending requirements.
+- [[ccpay-onboarding-review-alerts]] — waiting for review and approval time.
+- [[ccpay-onboarding-wizard-flow]] — when steps count as done.
 
 ## Open questions
 
-(none)
+- The operator's field list shows the step 4 buttons as **Добавяне или редактиране на лица**, **Назад** and **Продължете**; on screen the main button reads **Submit account for review** (Изпращане на акаунта за преглед) until the account is submitted.
+- The merchant help article still names a "business registration document" for every merchant; the screen asks Bulgarian companies only for the bank statement plus each person's ID and proof of residence.

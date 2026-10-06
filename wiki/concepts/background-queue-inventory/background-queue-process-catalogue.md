@@ -5,7 +5,7 @@ aliases: ["Background process catalogue", "Process identifiers", "Queue identifi
 tags: [background, async, internal-reference, ai-agent, support, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-06
 source_count: 3
 ---
 
@@ -57,7 +57,7 @@ Look up the internal identifier before querying the queue-inspection tool. Ident
 | Free-site expiry notifications | `expire_free_sites_notify` | 1 d | Yes |
 | Site status + DB reconciliation | `handle_site_status_and_db` | 1 d | Yes |
 | Reseller payouts | `reseller_payouts` | 1 d | Yes |
-| CloudCart Pay settlement batch | `settlement_batch` | 1 d | Yes |
+| Braintree settlement batch sync (CloudCart's own invoices) | `settlement_batch` | 1 d | Yes |
 | Offer expiry | `offer_tasks` / `expire_offers` | 1 d | Yes |
 | Unpaid-app uninstall | `uninstall_un_paid_apps` | 12 h | Yes |
 | Unpaid-functionality disable | `disable_un_paid_functionality` | 12 h | Yes |

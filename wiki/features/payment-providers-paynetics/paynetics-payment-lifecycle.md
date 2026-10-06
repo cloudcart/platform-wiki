@@ -7,11 +7,13 @@ aliases: ["Paynetics payment lifecycle", "Paynetics purchase", "Payoo hosted pag
 tags: [paymentproviders, payment-providers, paynetics, lifecycle, 3ds, return-url, card-gateway]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-06
 source_count: 2
 ---
 
 > Part of [[payment-providers-paynetics]]. See the hub for related aspects (setup & UI, feature gaps).
+
+> **Obsolete — Paynetics no longer works.** It takes no payments and new stores cannot install it. It is an old, separate integration and has nothing to do with **CloudCart Pay** ([[payment-providers-paynetics]]).
 
 # Paynetics — Payment lifecycle
 

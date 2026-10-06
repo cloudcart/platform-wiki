@@ -7,7 +7,7 @@ aliases: ["Paynetics", "Paynetics BG", "Payoo", "Виртуален ПОС Payne
 tags: [paymentproviders, payment-providers, paynetics, card-gateway, bulgaria]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-06-10
+updated: 2026-10-06
 source_count: 2
 ---
 # Paynetics
@@ -16,7 +16,7 @@ source_count: 2
 
 **Paynetics** is the bank-card gateway from **Paynetics AD** — a licensed Bulgarian payment institution (EMI) operating across the EEA. The customer is redirected to Paynetics's hosted **Payoo** payment page, enters their Visa / Mastercard card, completes 3-D Secure, and the funds settle to the merchant's Paynetics account (Paynetics issues IBAN sub-accounts to merchants and supports SEPA payouts to a withdrawal bank account).
 
-> **Deprecated for new tenants.** The Paynetics route is commented out of the platform's payment-provider router; new stores cannot install Paynetics from the Payments picker. Existing stores with Paynetics already configured continue to work. Merchants looking for a Bulgarian card gateway with an integrated CloudCart experience today should use [[payment-providers-cloudcart-pay|CloudCart Pay]] or [[payment-providers-mypos|myPOS]] instead.
+> **Obsolete — this payment method no longer works.** New stores cannot install it, and it no longer takes payments in stores that still have it configured. It is a separate, old integration and has nothing to do with **CloudCart Pay**: a merchant asking about card payments today is pointed to [[payment-providers-cloudcart-pay|CloudCart Pay]] or [[payment-providers-mypos|myPOS]], and a question about CloudCart Pay is never answered from this page.
 
 Paynetics is one of the lighter-touch onboarding options for Bulgarian merchants — Paynetics handles the merchant agreement directly (no third-party bank acquiring contract needed) and the CloudCart configuration is just **two fields per environment**: API Key + Secret. The integration uses HMAC-SHA256 signed POST messages to Paynetics's hosted payment service at `pm.payoo.paynetics.digital`.
 
@@ -32,9 +32,9 @@ Route: `/admin/payment-providers/paynetics`. Route name: `apps.paynetics.overvie
 
 This feature is split into 3 aspect pages:
 
-- [[paynetics-setup-ui]] — screen location, the standard settings layout (Logo / Mode / Amount / Discount), the minimal Vue UI that does **not** render credential fields, the four stored credential keys (`test_api_key` / `test_secret` / `api_key` / `secret`), the `enable_iframe` legacy boolean, and the no-plan-gate / deprecated-picker status.
+- [[paynetics-setup-ui]] — screen location, the standard settings layout (Logo / Mode / Amount / Discount), the minimal Vue UI that does **not** render credential fields, the four stored credential keys (`test_api_key` / `test_secret` / `api_key` / `secret`), the `enable_iframe` legacy boolean, and the no-plan-gate status.
 - [[paynetics-payment-lifecycle]] — purchase → base64 `pm` payload → HMAC-SHA256 request signing → `/authenticate/request` → hosted Payoo page → mandatory 3DS → encrypted return URL (status-in-URL, no webhook dependency); binary `success`/`error` → `Completed`/`Failed` mapping; card networks; multi-currency; `reference = payment ID`.
-- [[paynetics-gaps]] — the not-implemented surfaces: no Authorize + Capture, `refund` TODO stub, no `sync` reconciliation, no saved cards, no Google Pay / Apple Pay wallets, recurring fields present but commented out — all unlikely to be filled given deprecation.
+- [[paynetics-gaps]] — the not-implemented surfaces: no Authorize + Capture, `refund` TODO stub, no `sync` reconciliation, no saved cards, no Google Pay / Apple Pay wallets, recurring fields present but commented out — none will be filled, as Paynetics no longer works.
 
 ## What the merchant can do here
 
@@ -72,11 +72,11 @@ The cross-cutting rules that apply to the integration as a whole — each spelle
 - [[orders-payment-manual]] — manual payment entry (offline / outside Paynetics).
 - [[payment-providers-borica-way4]] — multi-bank Bulgarian alternative.
 - [[payment-providers-mypos]] — alternative friction-light card gateway for BG merchants without a traditional bank contract.
-- [[payment-providers-cloudcart-pay]] — CloudCart's own card gateway.
+- [[payment-providers-cloudcart-pay]] — CloudCart's own card gateway, a separate product.
 - [[payment-provider]] — entity definition.
 - [[payment-status]] — Completed / Failed mapping for Paynetics charges (see [[paynetics-payment-lifecycle]]).
 - [[checkout-flow]] — concept page on storefront checkout.
 
 ## Open questions
 
-(none — the Paynetics integration is deprecated for new tenants; the capture / refund / sync / recurring / wallet gaps are unlikely to be filled. See [[paynetics-gaps]] and the deprecation note in *Purpose*.)
+(none — Paynetics no longer works; see the note in *Purpose*.)

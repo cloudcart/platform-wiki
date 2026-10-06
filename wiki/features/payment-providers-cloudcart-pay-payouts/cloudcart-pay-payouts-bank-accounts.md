@@ -1,105 +1,99 @@
 ---
 type: feature
-nav_path: "Payment Providers → Cloudcart Pay → Payouts → Bank accounts"
+nav_path: "Settings → Payment methods → CloudCart Pay → Payouts → Bank accounts"
 route_name: apps.cloudcart_pay.payouts
 route_path: /admin/payment-providers/cloudcart_pay/payouts
-aliases: ["CloudCart Pay bank accounts", "Add bank account payouts", "External account IBAN", "Default for currency", "Settlement bank account list"]
+aliases: ["CloudCart Pay bank accounts", "Add bank account payouts", "Default payout account", "Set as default payout account for its currency", "Change payout IBAN", "Добавяне на банкова сметка", "Банкови сметки CloudCart Pay", "Смяна на IBAN за изплащания"]
 tags: [paymentproviders, payment-providers, cloudcart-pay, payouts, bank-account, iban]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-10-06
+source_count: 2
 ---
 
-> Part of [[payment-providers-cloudcart-pay-payouts]]. See the hub for the other aspects (capability status, schedule/limits).
+> Part of [[payment-providers-cloudcart-pay-payouts]]. See the hub for the other aspects (payout status, schedule and limits).
 
 # Payouts — bank accounts
 
 ## Purpose
 
-This is the bank-account management half of the Payouts tab: the **Bank Accounts table** listing the IBAN accounts on file, and the inline **Add Bank Account** form for registering a new one without re-running the onboarding wizard. Each connected account has one or more **external accounts** (IBAN-based bank accounts) registered for payouts; this surface shows them and lets the merchant add more.
+The bank-account half of the Payouts tab: the **Bank Accounts** table of IBAN accounts the connected account can be paid out to, and the **Add Bank Account** form for adding another one without re-running the onboarding — including making it the default payout account for its currency.
 
 ## Where to find it
 
-Payment Providers → CloudCart Pay → **Payouts** tab → the **Bank Accounts** table and the **Add Bank Account** button below the Payout Status card.
+Settings → Payment methods → CloudCart Pay → **Payouts** tab → **Bank Accounts** (Банкови сметки). The **Add Bank Account** button (Добавяне на банкова сметка) is at the right of the section title and turns into **Cancel** while the form is open.
 
 ## What the merchant can do here
 
-- **See the list of bank accounts on file**, with holder name, type, masked account / last 4, country, currency, bank name, and a "Default" badge on the default-for-currency account.
-- **Add a new bank account** through the inline form — IBAN-only (scheme = `iban`).
-- **Mark the new account as default for its currency** with a checkbox.
-- **Cancel** the form to collapse it without adding anything.
+- **See the bank accounts on file** and which one is the default for each currency.
+- **Add a bank account** (IBAN only).
+- **Make the new account the default** for its currency.
+- **Cancel** to close the form without adding anything.
 
-(Editing or deleting an existing account is not exposed yet — see [[cloudcart-pay-payouts-schedule-limits]].)
+Existing accounts cannot be edited or deleted here — see [[cloudcart-pay-payouts-schedule-limits]].
 
 ## Settings & fields
 
 ### Bank Accounts table
 
-| Column | What it shows | Notes |
-|--------|---------------|-------|
-| Holder | `holder_name` (or legacy `account_holder_name`). | |
-| Type | `holder_type`: `company` or `individual`. | |
-| Account | Full `account_number` if returned (rare — typically masked); otherwise `•••• <last4>`. | Paypercut returns the IBAN masked for security after creation. |
-| Country | Two-letter ISO code where the account is held. | |
-| Currency | Settlement currency, upper-cased. | |
-| Bank | `bank_name` if Paypercut can resolve it from the IBAN; `-` otherwise. | |
-| Default | "Default" badge on the row that is `default_for_currency=true`. | |
+| Column | What it shows |
+|---|---|
+| **Holder** (Титуляр) | Account holder name. |
+| **Type** | Company or individual. |
+| **Account** | The number as returned, normally masked: "•••• 1234". |
+| **Country** | Country code where the account is held. |
+| **Currency** | Payout currency. |
+| **Bank** | Bank name when the account reports one; "-" otherwise. |
+| **Default** | A **Default** badge on the default account for its currency. |
 
 ### Add Bank Account form
 
-Shown after clicking **Add Bank Account** (collapses when **Cancel** is clicked).
+| Field | Required | Notes |
+|---|---|---|
+| **Account Holder Name** (Име на титуляря на сметката) | Yes | As registered with the bank; should match the company or the representative. Up to 255 characters. |
+| **Holder Type** (Тип титуляр) | Yes | **Company** or **Individual**; starts at Company. |
+| **Country** (Държава) | Yes | 30 European countries. |
+| **Currency** (Валута) | Yes | EUR, USD, DKK, SEK, NOK, GBP, CHF, CZK, HUF, PLN, RON; starts at EUR. |
+| **IBAN** | Yes | Up to 34 characters; spaces are removed. |
+| **BIC / SWIFT** | No | 8 or 11 characters. |
+| **Set as default payout account for its currency** (Задаване като сметка по подразбиране за изплащания за съответната валута) | No | Help: *"The first account added for a currency is the default automatically."* |
 
-| Field | Required? | What it does | Notes |
-|-------|-----------|--------------|-------|
-| **Account Holder Name** | Yes | Name as registered with the bank. | Max 255. Should match the legal entity or the representative. |
-| **Holder Type** | Yes | `company` or `individual`. | |
-| **Country** | Yes | Two-letter ISO country code; picked from a 30-country EEA+CH+GB+NO list. | |
-| **Currency** | Yes | Settlement currency; default `EUR`. Picked from `EUR, USD, DKK, SEK, NOK, GBP, CHF, CZK, HUF, PLN, RON`. | |
-| **IBAN** | Yes | International Bank Account Number, up to 34 chars. Whitespace is stripped server-side. | |
-| **BIC / SWIFT** | No | 8 or 11-character SWIFT/BIC identifier. **Omitted from the API call when blank** — sending an empty BIC makes Paypercut reject the IBAN scheme branch with misleading errors. | |
-| **Set as default payout account for its currency** | No | Checkbox. Sets `default_for_currency=true` on the new external account. | Helper text: "The first account added for a currency is the default automatically." |
-| **Add Bank Account** button | n/a | Submits the form. Disabled until Holder Name and IBAN are populated. | |
-
-The form maps Paypercut field-level errors (`{ code, message, param: "numbers.iban", ... }`) back to the matching input — for example, an invalid IBAN renders as a red border on the IBAN field with the provider's message, instead of a generic banner.
+**Add Bank Account** stays disabled until **Account Holder Name** and **IBAN** are filled.
 
 ## Business rules
 
-### Page is read live from the connected account
+### Same rules as onboarding step 6
 
-`GET /admin/cloudcart-pay/payouts` calls `getConnectedAccount($accountId, ['external_accounts'])` on the Paypercut Accounts API with the `expand=external_accounts` query parameter — the bank accounts are returned inline with the account object. The controller flattens Paypercut's nested response (each item is `{ external_account: {...}, default_for_currency: bool }`) into a list of flat objects the UI can render directly.
+The form submits the bank account to the connected account exactly as onboarding step 6 does ([[ccpay-onboarding-bank-account]]):
 
-Nothing about bank accounts is mirrored to CloudCart's database — every load is a fresh upstream read. Disconnecting and re-connecting (or switching to a different connected account) immediately changes what this page shows.
+- spaces in the IBAN are removed, so an IBAN pasted in groups is fine;
+- a blank **BIC / SWIFT** is left out and never causes the IBAN to be refused;
+- a refusal about the IBAN or the BIC appears under that field; other refusals appear above the button.
 
-### Adding a bank account uses the same endpoint as onboarding step 6
+After a successful add, the form closes and the list reloads with the new account.
 
-The inline form POSTs to `/admin/cloudcart-pay/external-accounts` — the same endpoint as the wizard's bank step. Validation rules and field semantics are identical (see [[ccpay-onboarding-bank-account]]). The backend:
+### Default account per currency
 
-1. Validates the payload: `external_account.object=bank_account`, `country` (size 2), `currency` (size 3), `holder_name` (max 255), `holder_type` in `company,individual`, `numbers.scheme=iban`, `numbers.iban` (max 34), optional `numbers.bic` (max 11), optional `default_for_currency` (boolean).
-2. **Strips whitespace from the IBAN** before sending (`preg_replace('/\s+/', '', ...)`). A pasted `BG80 BNBG 9661 1020 3456 78` is cleaned to `BG80BNBG96611020345678` before validation runs.
-3. **Omits BIC entirely when empty** — sending `bic: ""` or `bic: null` makes Paypercut reject the IBAN branch of the `oneOf` external-account scheme and surface confusing aba / sort_code / eft errors. Leaving BIC blank is therefore safe; the merchant never sees the spurious rejection.
-4. Forwards the payload to Paypercut's `POST /v1/accounts/{id}/external_accounts` with the `Paypercut-Account` header.
-5. On 4xx, the field-level error (with `param`) is returned to the UI which binds it to the matching input — for example, `param=numbers.iban` renders a red border on the IBAN field.
+- The **first** account added for a currency becomes that currency's default automatically.
+- Ticking **Set as default payout account for its currency** makes the new account the default, in place of the previous one.
+- There is no "make default" action on existing rows, so changing the default for a currency means adding the new account with the box ticked.
 
-After success, the page re-fetches itself and displays the new account in the list.
+### Read live
 
-### Default-for-currency rule
+The table is read live from the connected account each time; nothing about bank accounts is stored in the store. After the store links another account, the table shows that account's bank accounts.
 
-When `default_for_currency=true` is sent on a new account creation:
+### Currencies
 
-- If no other account exists for that currency yet, the new account becomes the default automatically (this is Paypercut's default behaviour for the first account per currency — the form helper text reflects this).
-- If another account already holds the default for that currency, the platform transfers the default flag to the newly created account.
-
-The helper text under the checkbox reads: *"The first account added for a currency is the default automatically."* Because there is no explicit "set default" action on the existing rows, **changing the default for a currency is done implicitly by creating a new account with the checkbox ticked** — see [[cloudcart-pay-payouts-schedule-limits]] for the view-only nature of existing rows.
+The form offers 11 currencies, the same as the **Supported Settlement Currencies** list. Onboarding step 6 additionally offers BGN — see [[cloudcart-pay-payouts-schedule-limits]].
 
 ## Related
 
 - [[payment-providers-cloudcart-pay-payouts]] — hub.
-- [[ccpay-onboarding-bank-account]] — onboarding step 6 bank-account form; same endpoint and identical validation.
-- [[payment-providers-cloudcart-pay-onboarding]] — onboarding wizard adds the first bank account.
-- [[payment-providers-cloudcart-pay]] — parent overview and end-to-end currency handling.
-- [[multi-currency]] — how store currencies relate to payout settlement currencies.
+- [[ccpay-onboarding-bank-account]] — onboarding step 6, the same form.
+- [[cloudcart-pay-payouts-capability-status]] — whether payouts are enabled.
+- [[cloudcart-pay-payouts-schedule-limits]] — what this tab does not do.
+- [[payment-providers-cloudcart-pay-onboarding]] — onboarding.
 
 ## Open questions
 
-_None._
+- What happens to payouts in a currency that has no bank account in that currency.

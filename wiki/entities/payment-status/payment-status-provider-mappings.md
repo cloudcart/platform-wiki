@@ -3,7 +3,7 @@ type: entity
 aliases: ["Payment status provider mappings", "Gateway status mapping", "Refund button visibility", "Cancelled vs voided", "Disputed and chargebacked", "Съответствие на платежни статуси по доставчик"]
 tags: [orders, payments, payment-providers, entity]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-06
 source_count: 0
 ---
 
@@ -34,7 +34,7 @@ Each [[payment-provider]] has its own response codes and webhook events; each in
 
 - **Stripe**: `succeeded` → `completed`; `requires_action` / failure → `cancelled` / `failed`. Pull-based sync. See [[payment-providers-stripe]].
 - **Cardlink**: `isSuccessful = true` → `completed`; `isCancelled = true` → `cancelled`; otherwise `failed`. See [[payment-providers-cardlink]].
-- **CloudCart Pay**: native event stream — `payment.completed`, `payment.refunded`, etc. See [[payment-providers-cloudcart-pay]].
+- **CloudCart Pay**: payment notifications plus a background check read the payment's current state — paid → `completed`, processing → `pending`, expired → `timeouted`, cancelled → `cancelled`, declined and closed → `failed`. There is no refund notification; refunds made from CloudCart update the payment directly. See [[cloudcart-pay-refunds-webhooks]].
 - **COD** (Cash on Delivery): always starts `pending`; merchant flips to `completed` manually. See [[payment-providers-cod]] (or the cash-on-delivery option in [[settings-payment-providers]]).
 - **BNPL providers** (Mokka, Klarna): use the `authorized` flow with a dedicated provider-confirm step. See [[payment-providers-mokka]].
 - **Bank-redirect providers** (Borica, DSK, ProCredit, Fibank): redirect-then-sync. See provider-specific pages.

@@ -7,17 +7,19 @@ aliases: ["Paynetics setup", "Paynetics settings", "Paynetics API Key", "Payneti
 tags: [paymentproviders, payment-providers, paynetics, setup, credentials, card-gateway]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-06
 source_count: 2
 ---
 
 > Part of [[payment-providers-paynetics]]. See the hub for related aspects (payment lifecycle, feature gaps).
 
+> **Obsolete — Paynetics no longer works.** It takes no payments and new stores cannot install it. It is an old, separate integration and has nothing to do with **CloudCart Pay** ([[payment-providers-paynetics]]).
+
 # Paynetics — Setup & UI
 
 ## Purpose
 
-This aspect covers where the Paynetics screen lives, what the admin UI actually renders, the standard payment-method options the merchant configures, and the credential keys Paynetics needs. The headline fact: the Paynetics settings screen is the **shortest** of any payment provider on the platform — it renders only the standard four-row shell and does **not** render input fields for the API Key / Secret credentials, consistent with the provider's deprecated-for-new-tenants status.
+This aspect covers where the Paynetics screen lives, what the admin UI actually renders, the standard payment-method options the merchant configures, and the credential keys Paynetics needs. The headline fact: the Paynetics settings screen is the **shortest** of any payment provider on the platform — it renders only the standard four-row shell and does **not** render input fields for the API Key / Secret credentials, consistent with the provider being retired.
 
 ## Where to find it
 

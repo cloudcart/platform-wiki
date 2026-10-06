@@ -1,123 +1,102 @@
 ---
 type: feature
-nav_path: "Payment Providers → Cloudcart Pay → Onboarding → Account / Business / Representative fields"
+nav_path: "Settings → Payment methods → CloudCart Pay → Onboarding → Profile & Business"
 route_name: apps.cloudcart_pay.onboarding
 route_path: /admin/payment-providers/cloudcart_pay/onboarding
-aliases: ["CloudCart Pay KYB fields", "Account step", "Business step", "Representative step", "Legal entity fields", "KYB business profile"]
+aliases: ["CloudCart Pay KYB fields", "Account step", "Profile step", "Business step", "Legal entity fields", "Business information CloudCart Pay", "Настройка на акаунт", "Бизнес информация", "ЕИК CloudCart Pay", "Код на категорията на търговеца"]
 tags: [paymentproviders, payment-providers, cloudcart-pay, onboarding, kyb]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-10-06
+source_count: 2
 ---
 
-> Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (wizard flow, documents, verification, bank, status, connect/disconnect).
+> Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (wizard flow, people, documents, verification, bank, status, review and alerts, connect/disconnect).
 
-# Onboarding — Account / Business / Representative fields
+# Onboarding — Profile & Business fields
 
 ## Purpose
 
-This aspect catalogues every field collected by the first three wizard steps — **Account** (step 1), **Business** (step 2), **Representative** (step 3) — the core KYB data the platform sends to Paypercut to identify the legal entity, its public profile, and the natural person who controls it.
+Every field of the first two onboarding steps: **Profile** (screen **Account Setup**, which creates the connected account) and **Business** (screen **Business Information**: the public profile, customer support contacts, the legal entity and its registered address). Labels, required flags and help texts follow the operator's field list; the code agrees with it on every field here. The people are covered in [[ccpay-onboarding-people-roles]].
 
 ## Where to find it
 
-Payment Providers → CloudCart Pay → **Onboarding** tab → steps 1, 2, 3 in the stepper.
+Settings → Payment methods → CloudCart Pay → **Onboarding** tab → steps 1 and 2.
 
 ## What the merchant can do here
 
-- Enter the country, business type and primary email that create the connected account.
-- Fill in the public business profile, legal entity, registered address and customer-support contacts.
-- Identify the representative person (a real human who controls the entity) — identity, contact, home address.
-- Edit previously-entered data by clicking the completed step in the stepper. Country and business type are locked after creation — see [[ccpay-onboarding-connect-disconnect]].
+- **Create the account**: country, business type, email — **Create Account** (Създаване на акаунт).
+- **Change the account email later** with **Update** (Актуализация).
+- **Fill in the business**, then **Save & Continue** (Запазване и продължаване).
 
 ## Settings & fields
 
-### Step 1 — Account
+### Step 1 — Account Setup (Настройка на акаунт)
 
-Backend: `POST /admin/cloudcart-pay/account` → Paypercut `POST /v1/accounts`.
+| Field | Required | Notes / help text |
+|---|---|---|
+| **Connected Account ID** (ID на свързания акаунт) | — | Read-only, once the account exists, with **Copy** and **Disconnect**. *"Account created on CloudCart. Country and business type are locked after creation. Disconnect only clears the local link — the account still exists on CloudCart."* |
+| **Country** (Държава) | Yes | *"Country where the business is registered. Determines available currencies and compliance rules."* Searchable list of 30 European countries (EU members, Norway, Switzerland, United Kingdom). Pre-filled with the store's country. **Locked once the account exists.** |
+| **Business Type** (Тип бизнес) | Yes | **Company** or **Non-Profit** (Нестопанска организация). *"Legal form of the entity. This cannot be changed after the account is created."* **Locked once the account exists.** |
+| **Email** (Имейл) | Yes | *"Primary contact email for the connected account. Used for onboarding notifications."* Pre-filled with the store's email. |
 
-| Field | Required? | What it does | Notes |
-|-------|-----------|--------------|-------|
-| **Country** | Yes | Two-letter ISO country code where the business is registered. Determines available currencies and compliance rules. | Picked from a 30-country EEA+CH+GB+US-style list. **Locked after the account is created.** Pre-filled from the store's `setting('country')` for new accounts. |
-| **Business Type** | Yes | `company` or `non_profit`. | **Locked after the account is created.** |
-| **Email** | Yes | Primary contact email for the connected account; receives onboarding notifications. | Pre-filled from `setting('site_email')` for new accounts. RFC-validated. |
+The button stays disabled until **Country** and **Email** are filled. A new account asks for both card payments and payouts.
 
-New accounts request both capabilities by default: `card_payments.requested=true` and `payouts.requested=true`. Paypercut activates each independently after KYB review (see [[ccpay-onboarding-status-capabilities]]).
+### Step 2 — Business Information (Бизнес информация)
 
-### Step 2 — Business
+**Public business profile** (Публичен бизнес профил)
 
-Backend: `PUT /admin/cloudcart-pay/account` → Paypercut `POST /v1/accounts/{id}` updating `business_profile.*` and `company.*`.
+| Field | Required | Notes / help text |
+|---|---|---|
+| **Business Name (Trading Name)** (Търговско име) | Yes | *"Public name shown to your customers on invoices, receipts, and statement descriptors."* Up to 255 characters. |
+| **Website** (Уебсайт) | Yes | *"Public website where your products or services are offered."* A valid web address, up to 255 characters. |
+| **Merchant Category Code (MCC)** (Код на категорията на търговеца (MCC)) | Yes | Searchable list grouped into 26 industries, each entry a four-digit code with a name, e.g. "5691 — Men's & Women's Clothing". *"Pick the category that best describes your primary business activity. Required for some capabilities and risk checks."* |
+| **Estimated Employees** (Приблизителен брой служители) | No | A whole number, 0 or more. |
+| **Product Description** (Описание на продукта) | Yes | *"Short description of the products or services the business sells."* Up to 500 characters. |
 
-Four sub-sections: **Public business profile**, **Customer support**, **Legal entity (KYB)**, **Registered company address**.
+**Customer support** (Обслужване на клиенти) — all optional: **Support Email** (Имейл за поддръжка), **Support Phone** (Телефон за поддръжка, up to 40 characters), **Support URL** (URL за поддръжка).
 
-| Field | Required? | What it does | Notes |
-|-------|-----------|--------------|-------|
-| Business Name (Trading Name) | Yes | Public name shown to customers on invoices, receipts, statement descriptors. | Max 255 chars. |
-| Website | No | Public website where the products / services are offered. | URL-validated, max 255. |
-| Merchant Category Code (MCC) | No | Industry-grouped ISO 18245 MCC. The wizard renders a `<optgroup>` selector with 28 industry groups (Apparel, Automotive, Books/Media, Construction, Digital Goods, Education, …) and the underlying 4-digit code as the value. | Required for some capabilities and risk checks. Max 4 chars. |
-| Product Description | No | Short description of products / services sold. | Max 500 chars. |
-| Support Email | No | Customer-support email. | RFC-validated. |
-| Support Phone | No | Customer-support phone. | Max 40 chars. |
-| Support URL | No | Public support / contact page URL. | URL-validated, max 255. |
-| Estimated Employees | No | Approximate worker count (integer ≥ 0). | |
-| Support Address (line 1, line 2, city, state, postal code, country) | No | Customer-facing support address (separate from the legal-entity address). | Country is a 2-letter ISO code. |
-| Legal Company Name | Yes | Official registered name as on the certificate of incorporation / commercial register. | Max 255. |
-| Tax ID | Yes (unless on file) | National tax identifier (EIN, UIC, VAT, etc.). | Max 64. If the API reports `tax_id_provided` the field shows "On file — leave blank to keep current" and may be skipped. |
-| Company Phone | No | Official business phone, used for verification contact. | Max 40. |
-| Company Structure | No | Legal structure of the entity. | One of: `sole_proprietorship`, `single_member_llc`, `multi_member_llc`, `private_corporation`, `public_corporation`, `private_partnership`, `public_partnership`, `unincorporated_association`, `incorporated_non_profit`, `unincorporated_non_profit`. |
-| Company Address (line 1, line 2, city, state, postal code, country) | No | Registered company address (separate from support address). | |
+**Legal entity (KYB)** (Юридическо лице (KYB))
 
-The **Save & Continue** button is disabled until Business Name, Legal Company Name, and Tax ID (or "on file") are present.
+| Field | Required | Notes / help text |
+|---|---|---|
+| **Legal Company Name** (Юридическо име на фирмата) | Yes | *"Official registered name as it appears on the certificate of incorporation or commercial register."* |
+| **Tax ID** (ЕИК) | Yes, unless on file | *"National tax identifier (EIN, UIC, VAT, etc.) matching the legal entity."* Up to 64 characters. |
+| **Company Phone** (Телефон на фирмата) | Yes | *"Official business phone used for verification and compliance contact."* |
+| **Company Structure** (Структура на фирмата) | No | Sole Proprietorship (ЕТ), Single-Member LLC (ЕООД), Multi-Member LLC (ООД), Private Corporation (непублично АД), Public Corporation (публично АД), Private Partnership (СД), Public Partnership (КД), Unincorporated Association, Incorporated Non-Profit, Unincorporated Non-Profit. |
 
-### Step 3 — Representative
-
-Backend: `POST /admin/cloudcart-pay/persons` (create) or `POST /admin/cloudcart-pay/persons/{id}` (update) → Paypercut `POST /v1/accounts/{id}/persons` (create) OR `POST /v1/accounts/{id}/persons/{personId}` (update).
-
-Three sub-sections: **Identity**, **Contact**, **Home address**.
-
-| Field | Required? | What it does | Notes |
-|-------|-----------|--------------|-------|
-| First Name | Yes | Given name as on the rep's government-issued ID. | Max 100. |
-| Last Name | Yes | Family name as on the rep's government-issued ID. | Max 100. |
-| Date of Birth (day / month / year) | No | Day 1–31, month 1–12, year 1900–2010. | Sent as three integers (`dob.day`, `dob.month`, `dob.year`), not a date string. |
-| Nationality | No | Country of citizenship (2-letter ISO). | |
-| Title / Position | No | Job title (e.g., Director, CEO, Owner). | Max 100. Stored as `relationship.title`. |
-| Email | No | Personal email for verification notifications. | RFC-validated. |
-| Phone | No | Personal phone for verification contact. | Max 40. |
-| Home Address (line 1, line 2, city, state, postal code, country) | No | Country is 2-letter ISO. | |
-
-The representative is auto-flagged `relationship.representative=true`. Once verification is complete, some fields may become locked by CloudCart.
+**Registered company address** (Регистриран адрес на фирмата): **Address Line 1** (required), **Address Line 2**, **City** (required), **State / Region**, **Postal Code** (required), **Country** (required).
 
 ## Business rules
 
-### Step 1 fields locked after account creation
+### Country and business type are fixed after creation
 
-Country and business type become disabled the moment an account exists. The Paypercut platform does not let either change after creation. To "change country" the merchant must disconnect, create a new account, and re-onboard — see [[ccpay-onboarding-connect-disconnect]].
+Both lists are disabled as soon as the account exists. To register under another country or business type, the merchant disconnects and onboards a new account — see [[ccpay-onboarding-connect-disconnect]].
 
-### Step 2 completion is API-derived
+### Save & Continue needs every required field
 
-The stepper marks step 2 complete only when `company.name` AND `business_profile.name` are set on the live account — not when the merchant clicks Save. The step does not flip to "complete" until both core names exist.
+The button stays disabled until all required fields of step 2 are filled. A missing field is marked *"This field is required."* with *"Please fill in all required fields before continuing."* (Моля, попълнете всички задължителни полета, преди да продължите.). Errors returned for a field appear under that field in plain words, for example *"Website must be a valid URL."*
 
-### Tax ID may be "on file"
+### Tax ID can stay on file
 
-If the platform reports `tax_id_provided=true`, the Tax ID input shows "On file — leave blank to keep current" and the merchant can submit step 2 without re-entering it. Entering a new value overwrites the stored one.
+When the account already holds a tax ID, the field shows *"On file — leave blank to keep current"* (Налично — оставете празно, за да запазите текущото) and *"Tax ID is on file"* (Данъчният номер е наличен). Leaving it blank keeps the stored one; typing a new one replaces it.
 
-### Step 3 — representative replacement is edit-in-place
+### When step 2 counts as done
 
-The wizard does NOT expose a "delete person" or "swap representative" action. There is only an **edit-in-place** flow: when a representative already exists, step 3 loads their fields and saves changes back to the same person record. A merchant whose representative needs to be replaced (original rep left the company, or failed identity verification) edits the existing person's fields through this same step rather than creating a second person. To attach a new identity document, the merchant re-uploads in step 4 — see [[ccpay-onboarding-documents-upload]].
+When the account holds both the legal company name and the trading name. A store that links an existing account with these details sees steps 1 and 2 already done.
 
-### Step completion derived live, not stored
+### Details live on the account
 
-Each step's "complete" state is recomputed from the live Paypercut account on every load — see the rules under [[ccpay-onboarding-wizard-flow]]. A merchant who linked an existing account via *Connect Existing Account* sees steps 1, 2, 3 already marked complete if the underlying account already has the data.
+Everything entered here is saved to the connected account and read back live each time the tab opens; the store keeps no copy. Missing or rejected details are listed on the **Status** step with a **Resolve** button that opens step 2.
 
 ## Related
 
 - [[payment-providers-cloudcart-pay-onboarding]] — hub.
-- [[ccpay-onboarding-wizard-flow]] — step indicator + resume behaviour.
-- [[ccpay-onboarding-documents-upload]] — step 4, where the representative's ID document is uploaded.
-- [[ccpay-onboarding-verification-attestation]] — step 5, identity verification of the representative.
-- [[ccpay-onboarding-connect-disconnect]] — country / business-type lock rationale + disconnect-to-reset.
+- [[ccpay-onboarding-wizard-flow]] — moving between steps.
+- [[ccpay-onboarding-people-roles]] — step 3, the people.
+- [[ccpay-onboarding-connect-disconnect]] — the country and business-type lock.
+- [[ccpay-onboarding-status-capabilities]] — where missing or rejected details are listed.
 
 ## Open questions
 
-(none)
+- Bulgarian label of the **Company** business type and holder type (only **Non-Profit** — Нестопанска организация — is in the translation files read).

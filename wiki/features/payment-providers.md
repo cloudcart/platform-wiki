@@ -7,7 +7,7 @@ aliases: ["Payment providers directory", "Payment methods catalogue", "Плат�
 tags: [payment-providers, directory, hub]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-27
+updated: 2026-10-06
 source_count: 1
 ---
 # Payment Providers
@@ -16,7 +16,7 @@ source_count: 1
 
 This page is the **directory of every payment provider** CloudCart supports, so the merchant (or the support Assistant) can jump straight to the right provider's configuration page. The **Payments screen itself** — where providers are installed, activated, ordered, and uninstalled — is documented at [[settings-payment-providers]] (the canonical Settings → Payment methods screen). Use this page to *find* a provider; use [[settings-payment-providers]] to learn how the *screen* works.
 
-> **💡 Recommended payment method: [[payment-providers-cloudcart-pay|CloudCart Pay]]** — CloudCart's own built-in payment system. No separate contract with a third-party processor, in-admin onboarding, Apple Pay / Google Pay / Visa / Mastercard supported, SEPA payouts direct to the merchant's bank account. This is the canonical / default choice for merchants who don't already have a bank-side card acquiring contract.
+> **💡 Recommended payment method: [[payment-providers-cloudcart-pay|CloudCart Pay]]** — CloudCart's own built-in payment system, live since 6 October 2026 with a **0% transaction fee until 31 December 2026** ([[cloudcart-pay-pricing]]). No separate negotiation with a bank or processor, in-admin onboarding, Apple Pay / Google Pay / Visa / Mastercard supported, SEPA payouts direct to the merchant's bank account. This is the canonical / default choice for merchants who don't already have a bank-side card acquiring contract.
 
 ## Where to find it
 

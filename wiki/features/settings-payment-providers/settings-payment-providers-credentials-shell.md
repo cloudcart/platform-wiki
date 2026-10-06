@@ -7,7 +7,7 @@ aliases: ["Payment provider credentials index", "Per-gateway credentials map", "
 tags: [settings, payments, providers, credentials, downstream-pages]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-06
 source_count: 3
 ---
 
@@ -51,7 +51,7 @@ Most provider settings pages reuse a common shell that exposes 6 row slots. Prov
 | **Stripe** | Test / Live | Per-mode pair: **Secret Key**, **Publishable Key**. Two cards ("Live environment setup" / "Test environment setup") gated by the mode toggle. Plus **Save Customer Card** switch per mode. | _(no dedicated page yet)_ |
 | **myPOS** | Test / Live | Per-mode **Configuration package** (paste-only base64 the merchant copies from `www.mypos.eu → menu eCommerce → Online stores`). Test pack is pre-populated. The paste is decoded server-side; test info is shown read-only in a JSON viewer. Plus **Save Customer Card** per mode. | _(no dedicated page yet)_ |
 | **Borica Way4** | Test / Live | **Step 1 (one-time):** enter **Terminal ID** (TID), click **Generate CSR** to download a CSR for exchange with Borica. **Step 2 (returning):** upload Borica certificate `.zip` per mode; set **MID**, **EGW_SECURITY** (`MAC_GENERAL` / `MAC_ADVANCED`), **Currency** per mode (BGN / EUR). Plus **Save Customer Card**, **Google Pay / Apple Pay**, **EGW_MERCH_BACKREF** terminal-group block. | [[payment-providers-borica-way4]], [[borica-way4-setup-csr]], [[borica-way4-settings-fields]], [[borica-way4-save-card-wallets]] |
-| **CloudCart Pay** | Platform-wide | Connected-account flow — no API keys. Shows **Connected Account ID** + a **Manage Onboarding** button that navigates to KYC. Only on-page setting is **Save Customer Card**. | [[payment-providers-cloudcart-pay]], [[payment-providers-cloudcart-pay-settings]], [[payment-providers-cloudcart-pay-onboarding]] |
+| **CloudCart Pay** | Platform-wide | Connected-account flow — no API keys. Shows the **Connected Account** + a **Manage Onboarding** button that opens the onboarding, and an **Apple Pay domain** card. On-page settings: **Save Customer Card**, **Express checkout on product pages**, **Apple Pay** / **Google Pay**, and **Card form display** (inline or popup). | [[payment-providers-cloudcart-pay]], [[payment-providers-cloudcart-pay-settings]], [[payment-providers-cloudcart-pay-onboarding]] |
 | **Klear** | Test / Live | Per-mode **Public Api Key** + **Private Api Key**. Plus **Manually confirm a payment**, **Financing program ID**, **Financing program checkout rule** (`Exclusive` / `Inclusive`). | [[payment-providers-klear]] |
 | **PayPal / EasyPay / ePay / FusionPay / DSK BNPL / FiBank BNPL / TBI Bank / Iute / Cardlink / EuPlatesc / Paysera / Paynetics / Raiffeisen / NestPay / Sofort / Settle / Braintree / Libra Pay / Mokka / CPay** | Test / Live (most) | Same shared shell, 6 row slots. Credentials vary — most use API key + Merchant ID pair; BNPL providers expose schemes as a sub-tab (e.g., [[payment-providers-dsk-bnpl-promotions]]). | [[payment-providers-fusion-pay]], [[payment-providers-iute]], [[payment-providers-dsk-bnpl]], [[payment-providers-fibank-bnpl]] |
 

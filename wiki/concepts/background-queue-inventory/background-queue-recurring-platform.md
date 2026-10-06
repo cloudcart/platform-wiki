@@ -5,7 +5,7 @@ aliases: ["Recurring scheduled processes", "Scheduled jobs", "Platform schedule"
 tags: [background, async, scheduled, cron, support, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-06
 source_count: 3
 ---
 
@@ -61,7 +61,7 @@ Not covered:
 | Free-trial sites approaching expiry notify the merchant | Daily | No |
 | Site status (active / suspended / disabled) and database state are reconciled | Daily | No |
 | Reseller payouts are calculated and queued for transfer | Daily | Yes |
-| Settlement batches (for [[payment-providers-cloudcart-pay]] merchants) are generated | Daily | Yes |
+| Settlement batches of card payments to CloudCart for its own invoices (Braintree) are synced | Daily | Yes |
 | Active offer-based discounts that have reached their end-date are expired | Daily | No |
 | Apps the merchant has not paid for are uninstalled | Twice daily | No |
 | Functionality on plans the merchant has downgraded out of is disabled | Twice daily | No |
@@ -113,7 +113,7 @@ The 2-minute hung-process watchdog is the safety net for stuck visible processes
 - [[background-queue-inventory]] — hub.
 - [[settings-queue-view]] — visible-process diagnostics surface.
 - [[abandoned-cart-recovery]] — the 3-min cart-recovery cadence.
-- [[payment-providers-cloudcart-pay]] — daily settlement batch.
+- [[cloudcart-pay-refunds-webhooks]] — CloudCart Pay payments are checked one by one after each payment, not in a daily batch.
 - [[settings-emails]] — Modoboa mailbox reconciliation source.
 - [[background-queue-process-catalogue]] — internal-identifier mapping for each row above.
 

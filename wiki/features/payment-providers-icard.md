@@ -87,7 +87,7 @@ Standard payment-providers permission scope. Configuring iCard requires the merc
 - [[payment-providers]] — payment providers hub.
 - [[orders-payment-mark-paid]] — after iCard confirms, the order is marked paid.
 - [[orders-payment-refund]] — refunds are processed in iCard's portal, then mirrored in CloudCart.
-- [[payment-providers-borica-way4]] / [[payment-providers-mypos]] / [[payment-providers-paynetics]] — alternative Bulgarian card gateways.
+- [[payment-providers-cloudcart-pay]] / [[payment-providers-borica-way4]] / [[payment-providers-mypos]] — alternative card gateways for Bulgarian stores.
 
 ## How it works
 

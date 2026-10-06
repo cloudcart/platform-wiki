@@ -74,7 +74,7 @@
 - [[analytics]] — dashboard boxes + reports (sales, orders, customers, sessions, traffic).
 - [[settings]] — store settings: general, shipping, payments, taxes, invoicing, staff, statuses, boxes, geo zones, hooks.
 - [[design]] — themes, storefront modules, page builder, widgets.
-- [[payment-providers]] — directory of every payment gateway (jump to a provider's config).
+- [[payment-providers]] — directory of every payment gateway (jump to a provider's config); CloudCart Pay, the built-in one, is free of transaction fees until 31.12.2026.
 - [[settings-payment-providers]] — the Payment methods screen (install / activate / order providers).
 - [[shipping]] — directory of every courier integration (jump to a courier's page).
 - [[settings-shipping]] — the Shipping methods screen (enable / price / geo-zone methods + Delivery days).

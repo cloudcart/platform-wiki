@@ -7,7 +7,7 @@ aliases: ["Refund provider matrix", "Refund supported gateways", "Refund unsuppo
 tags: [orders, payment, refund, providers, gateway]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-06
 source_count: 4
 ---
 
@@ -34,7 +34,7 @@ For each provider the merchant has configured on [[settings-payment-providers]],
 | Provider | Refund call | Notes |
 |----------|-------------|-------|
 | **Stripe** | Stripe Refunds API on original PaymentIntent (`pi_*`) or Charge (`ch_*`) ID. | Full charge only via this button; partial via gateway dashboard. Refund window typically ~180 days on Stripe's side. Appears on the customer's card statement within ~5-10 business days. |
-| **CloudCart Pay** | Platform's own refund endpoint with PaymentIntent ID. | Full refund only. |
+| **CloudCart Pay** | CloudCart Pay refund of the original payment. | This button refunds the full payment; partial refunds go through an order return refunded to the card — see [[orders-payment-refund-partial-refunds]] and [[cloudcart-pay-refunds-webhooks]]. |
 | **PayPal** | PayPal Refunds API. | Refund amount sent in the original transaction's currency; Sandbox vs Live based on configuration. |
 | **Mollie** | Mollie refund API. | Full payment amount only. |
 | **PayU** | PayU refund API. | Full payment amount only. |

@@ -1,136 +1,104 @@
 ---
 type: feature
-nav_path: "Payment Providers → Cloudcart Pay → Settings"
+nav_path: "Settings → Payment methods → CloudCart Pay → Settings"
 route_name: apps.cloudcart_pay.settings
 route_path: /admin/payment-providers/cloudcart_pay/settings
-aliases: ["CloudCart Pay settings", "CloudCart Pay configuration", "Save customer card CloudCart Pay", "Настройки CloudCart Pay"]
+aliases: ["CloudCart Pay settings", "CloudCart Pay configuration", "Save customer card CloudCart Pay", "CloudCart Pay inline or popup", "CloudCart Pay digital wallets", "Настройки CloudCart Pay", "Показване при плащане", "Дигитални портфейли"]
 tags: [paymentproviders, payment-providers, cloudcart-pay]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-23
-source_count: 3
+updated: 2026-10-06
+source_count: 4
 ---
-# Settings
+# CloudCart Pay — Settings
 
 ## Purpose
 
-A small configuration screen for the **CloudCart Pay** payment method. The May 2026 refactor moved all credentials to the platform; the merchant-controlled settings are now the **Save customer card** switch plus a small set of checkout-experience toggles — **Express checkout**, **Digital wallets** (Apple Pay / Google Pay), and **Card form display** (inline vs popup). Everything credential-related that used to live here (test/live API keys, public keys, separate save-card per mode) is now platform-driven: the test-vs-live environment is platform-wide (`CLOUDCART_PAY_MODE` host env), the secret key is the platform's system key, and the merchant's link to it is the **connected account ID** established through onboarding.
-
-The tab therefore exists to (1) expose that single switch alongside the universal payment-method fields (logo, min/max amount, discount), and (2) surface the **connected account ID** (or a "no connected account yet" prompt) so the merchant knows which CloudCart Pay account this store is linked to.
+The **Settings** tab of CloudCart Pay is where the merchant decides how the method behaves at checkout: whether customers can save cards, whether the card fields sit inline on the checkout page or open in a popup, whether Apple Pay and Google Pay are offered, and whether the express button appears on product pages. It also shows which CloudCart Pay account the store is linked to and whether the store domain is registered for Apple Pay. There are no API keys or test/live switches here.
 
 ## Where to find it
 
-Payment Providers → CloudCart Pay → **Settings** tab. Route `/admin/payment-providers/cloudcart_pay/settings`; renders inside the `<router-view>` of the shared payment-provider page.
+Settings → Payment methods → CloudCart Pay → **Settings** tab. Address: `/admin/payment-providers/cloudcart_pay/settings`.
 
 ## What the merchant can do here
 
-- **See the connected account ID** in a `<code>` chip at the top, with a **Manage Onboarding** link to the [[payment-providers-cloudcart-pay-onboarding|Onboarding tab]] — or a "no connected account yet" banner with a **Start Onboarding** link.
-- **Toggle "Save Customer Card"** — whether customers see a "save this card for next time" option during checkout (see Business rules).
-- **Toggle "Express checkout"** — shows an Apple Pay / Google Pay express button on **product pages** so a shopper can buy a single product without going through the cart and checkout.
-- **Toggle "Digital wallets"** (Apple Pay / Google Pay) — enables/disables each wallet; applies to both the popup checkout and the express button.
-- **Pick the "Card form display"** — `inline` (card fields embedded in the checkout page) or `popup` (default — fields open in a popup/modal).
-- **Edit the standard payment-method shell** (logo, min/max amount, discount) via the shared settings shell used by every other payment provider.
+- **See the connected account** and open the onboarding with **Manage Onboarding**, or start it with **Start Onboarding**.
+- **Check and register the Apple Pay domain** — [[cloudcart-pay-apple-pay-domain]].
+- **Turn Save Customer Card on or off** — [[cloudcart-pay-save-card]].
+- **Turn express checkout on or off** on product pages (test environment only for now) — [[cloudcart-pay-express-checkout]].
+- **Turn Apple Pay and Google Pay on or off.**
+- **Choose the card form display**: inline or popup — [[cloudcart-pay-checkout-flow]].
+- **Edit the standard fields** every payment method has: logo, title and description, minimum and maximum order amount, discount.
 
 ## Settings & fields
 
-| Field / Control | What it does | Default | Validation / notes |
-|-----------------|--------------|---------|--------------------|
-| **Connected Account chip** | Read-only Paypercut connected-account ID this store is linked to (e.g., `acct_01HZX…`). | None until onboarding | Live from `connectedAccountState`; falls back to cached `configuration.connected_account_id` on cold reload. |
-| **Manage Onboarding** / **Start Onboarding** link | Jumps to the [[payment-providers-cloudcart-pay-onboarding|Onboarding tab]]. | n/a | "Manage" when an account is connected; "Start" (info banner) when `connected_account_id` is empty. |
-| **Save Customer Card** switch | Enables Paypercut's "save payment method" flow during checkout. | **ON** (new setups) | `configuration.save_card` boolean, persisted as `save_card`. The June-2026 defaults turned save-card (and wallets) **on** for new setups, alongside inline checkout. Legacy `test_save_card` / `live_save_card` still honoured for back-compat but no longer written. |
-| **Express checkout** switch | Apple Pay / Google Pay express button on **product pages** (buy a single product without cart/checkout). | OFF | `configuration.express_checkout` boolean. Needs at least one wallet enabled + a completed connected account. |
-| **Digital wallets** — Apple Pay / Google Pay | Enable/disable each wallet; applies to popup checkout **and** the express button. | Enabled (absent = enabled) | `configuration.apple_pay` / `configuration.google_pay` booleans. |
-| **Card form display** | `inline` (card fields embedded in the checkout page) or `popup` (fields open in a modal after the complete-order button). | **`inline`** | `configuration.display_mode` — `inline` / `popup`. The default flipped from `popup` to **`inline`** in June 2026 (card fields embedded directly in checkout). |
-| **Logo / Title / Description** | Standard payment-method appearance overrides. | Provider defaults | Shared shell; same as every provider. |
-| **Amount (min / max)** | Order-total range in which CloudCart Pay appears at checkout. | Unset | Standard payment-provider field. |
-| **Discount** | Optional discount when CloudCart Pay is selected. | None | Standard payment-provider field. |
-| **Active** switch (page header) | ON / OFF for storefront checkout. | OFF | Activation rejected (HTTP 422) if onboarding isn't complete and `card_payments` capability isn't active. See [[payment-providers-cloudcart-pay#activation-gate-payments-must-be-active-on-the-connected-account|the parent page's activation gate]]. |
+| Field / box | What it does | Default | Notes |
+|---|---|---|---|
+| **Connected Account** (Свързан акаунт) | The ID of the CloudCart Pay account the store is linked to, with **Manage Onboarding** (Управление на регистрацията). | — | Without an account the card reads **No connected account yet.** (Все още няма свързан акаунт.) with **Start Onboarding** (Започване на регистрацията). |
+| **Apple Pay domain** (Домейн за Apple Pay) | The store domain, **Registered** / **Not registered**, and **Register domain** / **Re-register**. | — | Shown once an account is connected. See [[cloudcart-pay-apple-pay-domain]]. |
+| **Save customer card** box → **Save Customer Card** | Signed-in customers can save their card and reuse it. | **On** | See [[cloudcart-pay-save-card]]. |
+| **Express checkout** box (Експресно плащане) → **Express checkout on product pages** | Apple Pay / Google Pay button on product pages. | Off | Locked with **Coming soon** in the live environment. See [[cloudcart-pay-express-checkout]]. |
+| **Digital wallets** box (Дигитални портфейли) → **Apple Pay**, **Google Pay** | Offers each wallet next to the card form and on the express button. | On, On | |
+| **Checkout display** box (Показване при плащане) → **Card form display** | **Inline card fields** (Вградено) — the card fields inside the checkout page; **Popup window** (Изскачащ прозорец) — the card form opens after the complete-order button. | **Inline card fields** | Required; an empty value shows *"Card form display is required"*. |
+| **Logo / Title / Description** | The method's label at checkout. | Provider defaults | Free to change. |
+| **Amount (min / max)** | Order totals for which CloudCart Pay is offered. | Empty | Standard field. |
+| **Discount** | A discount when the customer pays with CloudCart Pay. | None | Standard field. |
+| **Active** (page header) | Turns the method on or off at checkout. | Off | Checked on every switch-on — see [[cloudcart-pay-activation-gate]]. |
 
-### Removed / no-longer-shown fields (May 2026 refactor)
+Box help texts, verbatim:
 
-Removed during the connected-account refactor. They are no longer editable by the merchant and are stripped from stored configuration on the next page load via the obsolete-keys cleanup (noted here so older support material referencing them can be located):
-
-| Removed field | Why it's gone |
-|---------------|---------------|
-| `test_secret_key` / `live_secret_key` | Payments use the platform's system secret key; merchant has none of their own. |
-| `test_public_key` / `live_public_key` | Never used in production; removed entirely. |
-| Mode (test / live) toggle | Mode is platform-wide (`CLOUDCART_PAY_MODE` env), not per-merchant. |
-| Separate test/live save-card switches | Consolidated into the single mode-agnostic `save_card`. |
-| `tax_id`, `company_structure`, `bank_*`, `doc_*` keys | Onboarding data is now sourced live from the Paypercut API on every load; nothing is cached locally. |
+- Save customer card — *"Enable saving customer cards for future purchases"*.
+- Express checkout — *"Show an Apple Pay / Google Pay express checkout button on product pages so shoppers can buy a single product without going through the cart and checkout."*
+- Digital wallets — *"Enable or disable Apple Pay and Google Pay. Applies to the popup checkout and the express checkout button on product pages."*
+- Checkout display — *"Choose whether the card fields render directly in the checkout page or in a popup after clicking the complete order button."*
 
 ## Business rules
 
-### Save customer card — the only merchant-controlled CloudCart Pay field
+### Defaults, including for older stores
 
-This switch only affects **logged-in** storefront customers; the checkout-creation logic skips the save-card flow for guests entirely (regardless of switch state). When ON:
+A store that never saved these settings gets: **Save Customer Card** on, **Apple Pay** and **Google Pay** on, **Inline card fields**. Express checkout starts off.
 
-- Every checkout sets `saved_payment_method_options.payment_method_save = "enabled"` on the Paypercut checkout session.
-- For logged-in customers the session also sets `payment_intent_data.setup_future_usage = "on_session"`. The platform creates or re-uses a Paypercut customer record (stored against the CloudCart customer) so the saved card can later be charged off-session and offered from the saved-cards picker.
-- If the stored Paypercut customer is unknown to the current connected account (e.g., after disconnecting one account and connecting another), the stale reference is silently discarded and a fresh Paypercut customer created — no "No such customer" error.
+### Wallets apply everywhere
 
-When OFF, checkout still works but no Paypercut customer record is created; saved cards are neither offered nor retained.
+The **Apple Pay** and **Google Pay** switches apply to the inline card form, the popup and the express button alike, although the box's help text names only the popup and express. Apple Pay additionally needs the domain registered ([[cloudcart-pay-apple-pay-domain]]) and a device that supports it.
 
-Saved card records use the platform-wide save-card mechanism shared by every save-card-capable provider; the Paypercut customer ID and payment-method ID land on a CloudCart customer-card row visible at [[customers-details-payments]]. After a disconnect/re-connect to a different account, old cards remain as records but become unusable (see [[payment-providers-cloudcart-pay#save-card-flow-single-mode-agnostic-setting]]).
+### Express checkout is "Coming soon" in the live environment
 
-### Express checkout, card-form display, and digital wallets
+In the live environment (the badge in the page header) the express switch is disabled and shows **Coming soon**; it can be turned on only while the store charges in the test environment. See [[cloudcart-pay-express-checkout]].
 
-- **Express checkout** (`express_checkout`) adds Apple Pay / Google Pay buttons on the **product detail page** — the shopper confirms the wallet sheet (address + shipping method) and the order is created without entering the cart or full checkout. It is built on the storefront routes `site.payment.cloudcart_pay.express-shipping` (recalculates shipping for the wallet address) and `site.payment.cloudcart_pay.express-order` (creates the order). It requires the provider active + onboarded **and** at least one wallet enabled.
-- **Card form display** (`display_mode`): `popup` (default) opens the card form in a modal after "Complete order"; `inline` embeds the card fields directly on the checkout payment step via a short-lived inline session (`site.payment.cloudcart_pay.inline-session`).
-- **Digital wallets** (`apple_pay` / `google_pay`) are each enable/disable, default enabled. They apply to the popup checkout and the express button alike.
-- **Managing saved cards** — in inline mode the checkout payment step shows a "Manage saved cards" area where a signed-in customer can pick or remove a previously saved card; the same cards are visible to staff at [[customers-details-payments]].
+### No credentials, no test/live switch
 
-### No credential validation runs on save
+The merchant enters no keys: CloudCart holds them, and the store works through its connected account ([[cloudcart-pay-account-model]]). Saving therefore never fails on a credential. Whether the store charges in the **test** or **live** environment is set by CloudCart for the whole platform and shown read-only in the page header; the [[payment-providers-cloudcart-pay-transactions|Transactions tab]] shows only payments of that environment.
 
-There are no merchant-entered credentials to validate — the secret key is the platform's system key and the connection is the per-merchant `connected_account_id` from onboarding. "Save" never raises a per-field credential error; those failures are caught instead by the activation gate and the runtime auto-deactivation on config load.
+### What is saved
 
-### Stripping obsolete keys on save
+Only the settings on this tab are saved here. The business details, people, documents and bank accounts are not part of this form; they live on the connected account and are edited on the [[payment-providers-cloudcart-pay-onboarding|Onboarding tab]]. Saving also removes leftovers of older versions of the integration (old keys and cached business data) from the store's configuration.
 
-Every Save merges the new configuration into the existing one, then removes every key in the obsolete-keys list. A one-time cleanup: merchants who installed before the refactor may still carry stale `tax_id`, `bank_iban`, `test_secret_key`, etc.; the first Save (or first Onboarding-tab load) clears them. **Live data is sourced from the Paypercut API on every page load, never from stored configuration.**
+### Connected account shown without a reload
 
-### Connected-account chip reactivity
+Connecting or disconnecting on the Onboarding tab updates the **Connected Account** card here as soon as the merchant switches tabs.
 
-The display reads from a shared Vue reactive (`connectedAccountState`) updated by the Onboarding tab on connect, disconnect, and account-load. So connecting or disconnecting on Onboarding then switching to Settings updates the chip (new ID, or the "Start Onboarding" banner) without a reload. On a cold Settings load it falls back to `settings.configuration.connected_account_id` from the cached configuration.
+### Staff access
 
-### Test vs live mode is platform-controlled, not merchant-controlled
+The CloudCart Pay tabs open only for staff whose role allows the store's payment methods settings — see [[settings-staff]].
 
-CloudCart Pay's Settings page deliberately has no "Mode: Test / Live" toggle and no API-key pairs. The test-vs-live decision is owned by the platform via the host-level `CLOUDCART_PAY_MODE` environment variable (default `test`); the system secret key is also platform-wide (`CLOUDCART_PAY_TEST_SECRET_KEY` or `CLOUDCART_PAY_LIVE_SECRET_KEY`).
+### Plan
 
-Practical consequence: in test mode every charge runs against Paypercut's test environment and the [[payment-providers-cloudcart-pay-transactions|Transactions]] tab only shows test payments (`livemode=false` forced on the query); in live mode only live payments show. No merchant-visible button flips between the two.
-
-The page shows a **read-only mode badge reflecting the REAL platform mode** (`platform_mode` = `live` / `test`, sourced from `CLOUDCART_PAY_MODE`) — previously it could fall back to the never-set per-merchant `mode` and mislead. The badge now always shows the actual environment the store is charging in.
-
-### Disconnect option when the connected account is unreachable
-
-When a `connected_account_id` exists but its details can't be fetched (test/live mismatch, the account was deleted upstream, or the provider is unreachable), Onboarding shows the account ID + a warning + a **Disconnect** button (instead of silently falling back to the "start onboarding" state). This lets the merchant clear a stale/broken link and reconnect.
-
-### Publishable key is auto-fetched on connect
-
-On account create / connect, onboarding auto-fetches and stores the connected account's **publishable key** (`pk_…`). It is the merchant's own key used to initialise the express-checkout / inline SDK on the storefront (rather than a platform key). The merchant never enters it.
-
-### Saving uses the standard payment-provider save endpoint
-
-The form POSTs to `/admin/payment-providers/save/cloudcart_pay` (the shared save route). Configuration preparation casts `save_card` to a strict boolean, preserves existing `connected_account_id` and `onboarding_completed_steps` keys, and strips the obsolete-keys list.
-
-### Plan-tier gating
-
-None — inherits the parent provider's plan posture. See [[payment-providers-cloudcart-pay#plan-tier-gating]].
-
-### Permission
-
-Same middleware as the other payment-provider screens: `hasApiPermission:settings,store.payment_providers`. A staff member without that grant can't reach the page (denied before render).
+No plan gate is declared for CloudCart Pay.
 
 ## Related
 
-- [[payment-providers-cloudcart-pay]] — parent overview with the activation gate, checkout mechanism, and refund flow.
-- [[payment-providers-cloudcart-pay-onboarding]] — where the `connected_account_id` is actually created or linked.
-- [[payment-providers-cloudcart-pay-transactions]] — see the resulting card payments.
-- [[payment-providers-cloudcart-pay-payouts]] — see where the money lands.
-- [[settings-payment-providers]] — the global payment-providers list where this provider is installed.
-- [[payment-provider]] — entity definition.
-- [[customers-details-payments]] — customer-level view of saved cards (populated when *Save Customer Card* is ON).
-- [[orders-payment-capture]] — capture flow (CloudCart Pay uses automatic capture).
-- [[orders-payment-refund]] — refund flow against a CloudCart Pay payment.
+- [[payment-providers-cloudcart-pay]] — hub.
+- [[payment-providers-cloudcart-pay-onboarding]] — where the connected account is created or linked.
+- [[cloudcart-pay-checkout-flow]] — inline and popup card forms at checkout.
+- [[cloudcart-pay-save-card]] — saved cards.
+- [[cloudcart-pay-express-checkout]] — express checkout on product pages.
+- [[cloudcart-pay-apple-pay-domain]] — the Apple Pay domain card.
+- [[cloudcart-pay-activation-gate]] — the Active switch.
+- [[payment-providers-cloudcart-pay-transactions]] — the resulting card payments.
+- [[settings-payment-providers]] — the payment methods list.
+- [[settings-staff]] — staff roles and permissions.
 
 ## Open questions
 
-_None._
+- Bulgarian labels of the **Save Customer Card** switch and of the **Card form display** options as shown on screen (the Bulgarian names above come from the merchant help article).

@@ -1,76 +1,74 @@
 ---
 type: feature
-nav_path: "Payment Providers → Cloudcart Pay → Payouts → Capability status"
+nav_path: "Settings → Payment methods → CloudCart Pay → Payouts → Payout status"
 route_name: apps.cloudcart_pay.payouts
 route_path: /admin/payment-providers/cloudcart_pay/payouts
-aliases: ["Payouts enabled status", "Payouts capability pill", "Settlement currency CloudCart Pay", "Payouts disabled", "No bank accounts configured"]
+aliases: ["Payouts enabled status", "Payouts Disabled CloudCart Pay", "Payout Status card", "Default settlement currency", "No bank accounts configured", "Изплащанията са изключени", "Статус на изплащането"]
 tags: [paymentproviders, payment-providers, cloudcart-pay, payouts, capability, status]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-10-06
+source_count: 2
 ---
 
-> Part of [[payment-providers-cloudcart-pay-payouts]]. See the hub for the other aspects (bank-accounts table + form, schedule/limits).
+> Part of [[payment-providers-cloudcart-pay-payouts]]. See the hub for the other aspects (bank accounts, schedule and limits).
 
-# Payouts — capability status
+# Payouts — payout status
 
 ## Purpose
 
-This is the "is payouts working?" surface of the Payouts tab — the **Payout Status card** at the top. It answers the question merchants most often have after a busy sales day: are my settlements actually enabled, and which currency do they settle in? A single coloured pill plus the default-currency line give the answer at a glance, with a Refresh button to re-read the live state.
+The **Payout Status** card at the top of the Payouts tab: one badge that says whether payouts are enabled on the connected account, and the account's default currency. It is the merchant's quick answer to "can CloudCart Pay pay me out yet?".
 
 ## Where to find it
 
-Payment Providers → CloudCart Pay → **Payouts** tab → the **Payout Status** card at the top of the page.
+Settings → Payment methods → CloudCart Pay → **Payouts** tab → **Payout Status** (Статус на изплащането), at the top.
 
 ## What the merchant can do here
 
-- **Read the payouts capability** — a green "Enabled" or yellow "Disabled" pill.
-- **Read the default settlement currency** of the connected account (e.g., EUR for an EU merchant) when it is set.
-- **Refresh** the live status (and the bank-accounts list below) at any time.
+- **Read the payouts badge**: **Enabled** or **Disabled**.
+- **Read the default currency** of the account, when it has one.
+- **Refresh** the card and the bank accounts below it.
 
 ## Settings & fields
 
-### Payout Status card
-
-| Block | What it shows |
-|-------|---------------|
-| **Payouts** pill | Green "Enabled" if `payouts_enabled` is `true` on the connected account; yellow "Disabled" otherwise. |
-| **Default Currency** | The connected account's `default_currency` (typically `EUR` for EU merchants) — shown when set. |
-| **Refresh** button | Re-fetches `GET /admin/cloudcart-pay/payouts`. |
+| Element | What it shows |
+|---|---|
+| **Payouts** badge | Green **Enabled** when payouts are active on the account; amber **Disabled** otherwise. |
+| **Default Currency** (Валута по подразбиране) | The account's default currency, e.g. EUR — shown when set. |
+| **Refresh** (Обнови) | Reads the account again. |
 
 ## Business rules
 
-### The payouts pill is conservative
+### When the badge reads Enabled
 
-The payouts pill follows `payouts_enabled === true` on the connected account — **not** the `capabilities.payouts` flag. Paypercut leaves `payouts_enabled` `false` (or `null`) until the platform fully finalises the account, even after the underlying capability flips to `active`. For the **Status step on the Onboarding wizard** ([[ccpay-onboarding-status-capabilities]]) the logic is intentionally looser (it accepts either signal); this Payouts page errs on the side of "treat enabled as a real platform commitment" and only shows green when `payouts_enabled` is truly `true`.
+The badge reads **Enabled** when the account reports payouts as enabled **or** its payouts capability is active. The account can take some time to report payouts as fully enabled after the capability has been granted; counting the capability keeps the badge accurate in the meantime. The **Payouts** card on the onboarding **Status** step uses the same rule, so the two screens always show the same answer ([[ccpay-onboarding-status-capabilities]]).
 
-The practical consequence: a merchant can see "Disabled" here while the onboarding Status step still reads as progressing. When that happens, the merchant should check the Onboarding tab's status step for what is still required — often identity verification, additional documents, or a default bank account.
+When it reads **Disabled**, the onboarding **Status** step shows what is still needed — often a document, the identity verification or the bank account. Approval of a new account takes from a few hours to 2 business days after submission, longer for a complicated company structure (operator statement; see [[ccpay-onboarding-review-alerts]]). A change in the payouts status also arrives as an admin notification and an email.
 
-### "No bank accounts configured" state
+### "No bank accounts configured."
 
-If the external-accounts list is empty AND not loading, the page shows: *"No bank accounts configured."* The merchant should add one (see [[cloudcart-pay-payouts-bank-accounts]]) before payouts can run, even if the capability is otherwise active.
+When the account has no bank account, the **Bank Accounts** section shows *"No bank accounts configured."* (Няма конфигурирани банкови сметки.). A bank account is needed for payouts; it is added in onboarding step 6 or here with **Add Bank Account** ([[cloudcart-pay-payouts-bank-accounts]]).
 
-### "No account" state
+### No account
 
-If the upstream call returns 404 (no `connected_account_id`), the page shows: *"Please complete the onboarding process first."* — the same fallback as the Transactions tab ([[payment-providers-cloudcart-pay-transactions]]). The merchant has not started or finished onboarding, so there is nothing to read.
+Without a connected account the card shows *"Please complete the onboarding process first."* (Моля, първо завършете процеса на регистрация.) — the same as the Transactions tab.
 
-### Page is read live from the connected account
+### Live reading
 
-`GET /admin/cloudcart-pay/payouts` reads the connected account with its external accounts expanded inline. Nothing about the capability or bank accounts is mirrored to CloudCart's database — every load (and every Refresh click) is a fresh upstream read. Disconnecting and re-connecting, or switching to a different connected account, immediately changes what this card shows.
+The card is read live from the connected account each time the tab opens or **Refresh** is clicked; nothing is stored in the store.
 
-### Permission
+### Staff access
 
-The page is under `hasApiPermission:settings,store.payment_providers`. A staff member without that grant cannot reach the page or its API endpoints.
+Available only to staff whose role allows the store's payment methods settings ([[settings-staff]]).
 
 ## Related
 
 - [[payment-providers-cloudcart-pay-payouts]] — hub.
-- [[ccpay-onboarding-status-capabilities]] — onboarding step 7, where the `payouts` capability state is shown with the looser accept-either-signal logic.
-- [[payment-providers-cloudcart-pay-onboarding]] — onboarding wizard; complete it before payouts can be enabled.
-- [[payment-providers-cloudcart-pay-transactions]] — same "complete onboarding first" fallback.
-- [[payment-providers-cloudcart-pay]] — parent overview.
+- [[ccpay-onboarding-status-capabilities]] — the Payments and Payouts cards in onboarding.
+- [[ccpay-onboarding-review-alerts]] — approval time and alerts.
+- [[cloudcart-pay-payouts-bank-accounts]] — bank accounts.
+- [[payment-providers-cloudcart-pay-transactions]] — same "complete onboarding first" state.
 
 ## Open questions
 
-_None._
+(none)

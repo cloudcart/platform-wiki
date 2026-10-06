@@ -7,7 +7,7 @@ aliases: ["Stripe refund", "Stripe refunds", "Stripe sync", "Stripe status verif
 tags: [paymentproviders, payment-providers, stripe, refunds, sync, capture, reconciliation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-06
 source_count: 1
 ---
 
@@ -63,7 +63,7 @@ The integration uses Stripe Checkout in `mode: payment` (one-off) — not `mode:
 
 ### Stripe Connect — not supported
 
-CloudCart's Stripe integration is **single-account-per-store** — each store wires up its own publishable/secret key pair. There is no marketplace / Connect / managed-account flow at the CloudCart level. A merchant needing a Connect-style multi-vendor model would use [[payment-providers-cloudcart-pay|CloudCart Pay]] (itself a Paypercut-managed connected-account model) or build their own.
+CloudCart's Stripe integration is **single-account-per-store** — each store wires up its own publishable/secret key pair. There is no marketplace / Connect / managed-account flow at the CloudCart level. With [[payment-providers-cloudcart-pay|CloudCart Pay]] the store's payment account is created through CloudCart's own onboarding instead of the merchant's keys ([[cloudcart-pay-account-model]]).
 
 ### Self-deactivation on invalid credentials
 

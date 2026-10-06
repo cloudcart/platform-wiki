@@ -1,73 +1,68 @@
 ---
 type: feature
-nav_path: "Payment Providers → Cloudcart Pay → Payouts"
+nav_path: "Settings → Payment methods → CloudCart Pay → Payouts"
 route_name: apps.cloudcart_pay.payouts
 route_path: /admin/payment-providers/cloudcart_pay/payouts
-aliases: ["CloudCart Pay payouts", "Bank accounts CloudCart Pay", "Settlement bank account", "External account", "Изплащане", "Банкови сметки CloudCart Pay"]
+aliases: ["CloudCart Pay payouts", "Bank accounts CloudCart Pay", "Settlement bank account", "Payout status CloudCart Pay", "Изплащания CloudCart Pay", "Банкови сметки CloudCart Pay", "Статус на изплащането"]
 tags: [paymentproviders, payment-providers, cloudcart-pay, payouts, bank-account]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 1
+updated: 2026-10-06
+source_count: 2
 ---
-# Payouts
+# CloudCart Pay — Payouts
 
 ## Purpose
 
-The **Payouts** tab is where the merchant manages the bank accounts that CloudCart Pay settles money into, and checks whether settlements are actually enabled on the connected account. It is the merchant's everyday answer to "are my payouts working, and where is the money going?".
+The **Payouts** tab (Изплащания) answers "are my payouts working, and where does the money go?". It shows whether payouts are enabled on the connected account and its default currency, lists the bank accounts on file, and lets the merchant add another bank account without going back through the onboarding. Everything is read live from the connected account; nothing about bank accounts is stored in the store.
 
-The page does three jobs: it shows a single capability pill ("are settlements enabled?"), it lists the bank accounts on file, and it lets the merchant add a new bank account inline without re-running the onboarding wizard. Everything is read **live** from the payment provider (Paypercut) — nothing about bank accounts is stored in CloudCart's own database.
-
-This page does NOT show **individual payout events** (the actual money transfers), does NOT let the merchant change the payout schedule, and does NOT yet allow deleting or editing existing accounts. Those scope boundaries — plus the BGN settlement nuance — are documented in [[cloudcart-pay-payouts-schedule-limits]].
-
-This is a hub page. The Payouts tab spans three well-scoped aspects; drill into the one that matches the question rather than reading all three.
+The tab does **not** list individual payouts, does not let the merchant change the payout schedule, and does not edit or delete bank accounts — see [[cloudcart-pay-payouts-schedule-limits]].
 
 ## Sub-pages (in this cluster)
 
-- [[cloudcart-pay-payouts-capability-status]] — the "Enabled / Disabled" payouts pill (why it is conservative vs the capability flag), the default settlement currency, the "No account" and "No bank accounts configured" empty states, and the page permission.
-- [[cloudcart-pay-payouts-bank-accounts]] — the bank-accounts table columns, the inline **Add Bank Account** form (fields, IBAN whitespace stripping, empty-BIC omission), and the default-for-currency rule.
-- [[cloudcart-pay-payouts-schedule-limits]] — the platform-managed SEPA settlement schedule, failed-payout handling, the BGN store-vs-payout-currency discrepancy, and the list of features this page does not yet expose.
+- [[cloudcart-pay-payouts-capability-status]] — the **Payout Status** card: **Enabled** / **Disabled**, the default currency, the empty states.
+- [[cloudcart-pay-payouts-bank-accounts]] — the **Bank Accounts** table and the **Add Bank Account** form, including the default account per currency.
+- [[cloudcart-pay-payouts-schedule-limits]] — what the tab does not do, settlement currencies, open points about timing.
 
 ## Where to find it
 
-Payment Providers → CloudCart Pay → **Payouts** tab. The route is `/admin/payment-providers/cloudcart_pay/payouts`.
+Settings → Payment methods → CloudCart Pay → **Payouts** tab. Address: `/admin/payment-providers/cloudcart_pay/payouts`.
 
 ## What the merchant can do here
 
-- **See the payouts capability status** — a green "Enabled" or yellow "Disabled" pill. See [[cloudcart-pay-payouts-capability-status]].
-- **See the default settlement currency** of the connected account (e.g., EUR for an EU merchant).
-- **See the list of bank accounts on file** with holder, type, masked account, country, currency, bank name, and a "Default" badge. See [[cloudcart-pay-payouts-bank-accounts]].
-- **Refresh** the list at any time.
-- **Add a new bank account** inline (IBAN-only) and optionally mark it default for its currency. See [[cloudcart-pay-payouts-bank-accounts]].
-- **See the supported settlement currencies** in a read-only pill row: `EUR, USD, DKK, SEK, NOK, GBP, CHF, CZK, HUF, PLN, RON`.
+- **See whether payouts are enabled** and the default currency — [[cloudcart-pay-payouts-capability-status]].
+- **See the bank accounts on file** with holder, type, masked number, country, currency, bank and a **Default** badge — [[cloudcart-pay-payouts-bank-accounts]].
+- **Add a bank account** (IBAN) and make it the default for its currency.
+- **See the supported settlement currencies.**
+- **Refresh** the status.
 
 ## Settings & fields
 
-The detailed field tables live on the aspect pages:
-
-- **Payout Status card** (capability pill, default currency, Refresh button) — see [[cloudcart-pay-payouts-capability-status]].
-- **Bank Accounts table** + **Add Bank Account form** (holder name, holder type, country, currency, IBAN, optional BIC, default-for-currency checkbox) — see [[cloudcart-pay-payouts-bank-accounts]].
-- **Supported Settlement Currencies block** — a read-only row of currency pills: `EUR, USD, DKK, SEK, NOK, GBP, CHF, CZK, HUF, PLN, RON`. (The onboarding wizard's step 6 picker additionally includes `BGN` — see [[cloudcart-pay-payouts-schedule-limits]] for the store-vs-payout-currency distinction.)
+- **Payout Status** (Статус на изплащането): **Payouts** — **Enabled** / **Disabled**; **Default Currency** (Валута по подразбиране); **Refresh**.
+- **Bank Accounts** (Банкови сметки): table, and **Add Bank Account** (Добавяне на банкова сметка) / **Cancel**.
+- **Add Bank Account** form: Account Holder Name, Holder Type, Country, Currency, IBAN, BIC / SWIFT, **Set as default payout account for its currency**.
+- **Supported Settlement Currencies** (Поддържани валути за разплащане): EUR, USD, DKK, SEK, NOK, GBP, CHF, CZK, HUF, PLN, RON.
 
 ## Business rules
 
-- **The page reads live from the connected account** — `GET /admin/cloudcart-pay/payouts` fetches the account with its external accounts expanded inline. Nothing is mirrored to CloudCart's database; disconnecting/reconnecting immediately changes what this page shows. See [[cloudcart-pay-payouts-bank-accounts]].
-- **The capability pill is conservative** — it shows green only when `payouts_enabled === true`, not when the looser `capabilities.payouts` flag is active. See [[cloudcart-pay-payouts-capability-status]].
-- **Adding a bank account uses the same endpoint as onboarding step 6** — identical validation; IBAN whitespace is stripped and empty BIC is omitted. See [[cloudcart-pay-payouts-bank-accounts]] and [[ccpay-onboarding-bank-account]].
-- **The payout schedule is platform-managed** — no cadence picker, no manual-payout trigger; SEPA settlement timing is governed by Paypercut. See [[cloudcart-pay-payouts-schedule-limits]].
-- **The page is permission-gated** under `hasApiPermission:settings,store.payment_providers`. See [[cloudcart-pay-payouts-capability-status]].
+- **Payouts read Enabled** when payouts are active on the account — the same rule as the **Payouts** card on the onboarding **Status** step, so the two always agree. See [[cloudcart-pay-payouts-capability-status]].
+- **Adding an account works like onboarding step 6**: spaces in the IBAN are removed, a blank BIC is left out, and a refusal appears under the IBAN or BIC field. See [[cloudcart-pay-payouts-bank-accounts]].
+- **Live data.** Each load reads the connected account; after linking another account the tab shows that account's bank accounts.
+- **Payout timing is not set here.** There is no schedule, no manual payout and no payout history on this tab ([[cloudcart-pay-payouts-schedule-limits]]).
+- **Deductions.** Chargebacks and related costs can be deducted from the money being paid out under the agreement ([[cloudcart-pay-merchant-terms]]).
+- **No account.** Without a connected account the tab shows *"Please complete the onboarding process first."*
+- **Staff access** needs the permission for the store's payment methods settings ([[settings-staff]]).
 
 ## Related
 
-- [[payment-providers-cloudcart-pay]] — parent overview.
-- [[payment-providers-cloudcart-pay-onboarding]] — onboarding wizard; step 6 adds the first bank account.
-- [[ccpay-onboarding-bank-account]] — onboarding step 6 bank-account form (same endpoint as the inline form here).
-- [[payment-providers-cloudcart-pay-transactions]] — the charges that aggregate into each payout.
-- [[payment-providers-cloudcart-pay-settings]] — the parent settings tab.
-- [[settings-payment-providers]] — global payment-providers list.
-- [[payment-provider]] — entity definition.
-- [[multi-currency]] — how store currencies interact with payout settlement currencies.
+- [[payment-providers-cloudcart-pay]] — CloudCart Pay hub.
+- [[ccpay-onboarding-bank-account]] — the first bank account, added in onboarding step 6.
+- [[ccpay-onboarding-status-capabilities]] — the same Payouts status in onboarding.
+- [[payment-providers-cloudcart-pay-transactions]] — the payments behind the payouts.
+- [[cloudcart-pay-transactions-totals]] — totals and net per period.
+- [[cloudcart-pay-merchant-terms]] — deductions from payouts.
+- [[multi-currency]] — store currencies.
 
 ## Open questions
 
-_None._
+- How often and how long after a payment the money is paid out (not shown in CloudCart).

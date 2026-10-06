@@ -1,108 +1,104 @@
 ---
 type: feature
-nav_path: "Payment Providers → Cloudcart Pay → Onboarding → Status"
+nav_path: "Settings → Payment methods → CloudCart Pay → Onboarding → Status"
 route_name: apps.cloudcart_pay.onboarding
 route_path: /admin/payment-providers/cloudcart_pay/onboarding
-aliases: ["CloudCart Pay status dashboard", "Capabilities pills", "Pending Requirements", "Pending Verification", "Compliance Tasks", "payments_enabled", "payouts_enabled"]
+aliases: ["CloudCart Pay status dashboard", "CloudCart Pay account status", "Action needed items were rejected", "Pending Requirements", "Pending Verification", "Compliance Tasks", "Capability active provider finalizing", "Статус на акаунта", "Необходимо е действие", "Чакащи изисквания", "Задачи за съответствие", "Обнови статуса"]
 tags: [paymentproviders, payment-providers, cloudcart-pay, onboarding, status, capabilities, compliance]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-10-06
+source_count: 3
 ---
 
-> Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (wizard flow, KYB fields, documents, verification, bank, connect/disconnect).
+> Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (wizard flow, fields, people, documents, verification, bank, review and alerts, connect/disconnect).
 
-# Onboarding — Status & capabilities
+# Onboarding — Status (step 7)
 
 ## Purpose
 
-Step 7 of the onboarding wizard is the **read-only status dashboard** for the connected account. It shows the current state of the payments and payouts capabilities, the full list of capability flags, outstanding requirements the merchant must address, items Paypercut is verifying on its side, and any compliance tasks (some of which are accepted earlier in step 5 — see [[ccpay-onboarding-verification-attestation]]). Once onboarding is approved, this step becomes the long-lived "account dashboard" the merchant returns to.
+Step 7, **Account Status**, is the account's dashboard. It shows whether **card payments** and **payouts** are active, what the compliance team rejected and why, what has been sent and is waiting for review, what is still missing, and any compliance tasks. It is the page for "is my account approved?", "what is missing?" and "what does this red item mean?".
+
+Approval takes from a few hours to 2 business days after submission, longer for a complicated company structure (operator statement). See [[ccpay-onboarding-review-alerts]].
 
 ## Where to find it
 
-Payment Providers → CloudCart Pay → **Onboarding** tab → **Status** (step 7).
+Settings → Payment methods → CloudCart Pay → **Onboarding** tab → step 7, **Status** (Статус); screen title **Account Status** (Статус на акаунта). It can be opened at any time from the step indicator.
 
 ## What the merchant can do here
 
-- Read the current **Payments** and **Payouts** capability state.
-- Read the full capabilities list with coloured pills.
-- See pending requirements that need merchant action.
-- See pending verifications that are on Paypercut's side (no merchant action).
-- See outstanding compliance tasks.
-- **Refresh status** to re-fetch capabilities, requirements, and compliance tasks live from Paypercut.
-- Copy the connected account ID or the representative's person ID to the clipboard.
+- **Read the Payments and Payouts status.**
+- **Fix rejected items** with **Resolve** (Коригирай), which opens the right step.
+- **See what is waiting for review** and replace a document if it was wrong.
+- **Open the step for a missing item** from its link.
+- **Refresh Status** (Обнови статуса) without reloading the page.
 
 ## Settings & fields
 
-Backend: `GET /admin/cloudcart-pay/account` → Paypercut `GET /v1/accounts/{id}?expand=external_accounts`; `GET /admin/cloudcart-pay/compliance-status` → Paypercut `GET /v1/accounts/{id}/compliance-status`. Read-only.
+Read-only. The blocks, top to bottom (each appears only when it has content):
 
 | Block | What it shows |
-|-------|---------------|
-| **Payments** card | "Enabled" or "Disabled" + sub-text ("Capability under review" / "Capability active — provider finalizing"). Active when `payments_enabled === true` OR `capabilities.card_payments === "active"`. |
-| **Payouts** card | "Enabled" or "Disabled" + sub-text ("Payouts capability not requested" if the capability isn't on the account). Active when `payouts_enabled === true` OR `capabilities.payouts === "active"`. |
-| **Capabilities list** | Every capability on the account with a coloured pill: `active` (green), `inactive` (yellow), `pending` (cyan), `disabled` (red), other (grey). |
-| **Pending Requirements** | `requirements.currently_due` entries — the merchant must address each. |
-| **Pending Verification** | `requirements.pending_verification` entries — on Paypercut's side, no merchant action. |
-| **Compliance Tasks** | Outstanding tasks returned by the risk endpoint. Tasks with an `agreement_bundle` are accepted in step 5; other tasks are surface-only here. |
+|---|---|
+| **Some people are still missing from your account** | The roles the review still expects, e.g. beneficial owners holding 25% or more, with **Add or edit people**. |
+| **Action needed — items were rejected during review** | *"Our compliance team could not verify the items below. Please correct them or upload a new document, then submit again."* Each item: whose it is (**Company**, a person's name, or **Required document**), what it is, the reason, and **Resolve**. |
+| **Submitted — waiting for review** | Items already answered, each with *"Submitted on <date> · <file>"* and **Replace document**. Text in [[ccpay-onboarding-review-alerts]]. |
+| **Payments** / **Payouts** cards | A badge **Active**, **Pending** or **Inactive**, and **Enabled** or **Disabled**. |
+| **Pending Requirements** (Чакащи изисквания) | What is still needed, in plain words (e.g. "Business website", "Proof of residence"), each linking to its step; answered ones add "(submitted on <date> — waiting for review)". |
+| **Pending Verification** (Чакаща верификация) | What is being checked; nothing to do. |
+| **Compliance Tasks** (Задачи за съответствие) | Cards with a title, a **Blocking** (Блокиращо) badge when it blocks the account, a status badge such as **Action Required**, what is needed, "Affects: Card payments, Payouts", and **Resolve**. With none: *"No outstanding compliance tasks."* |
+
+Buttons: **Back** (Назад) and **Refresh Status** (shows **Refreshing…** while it works).
 
 ## Business rules
 
-### Payments enabled — either flag activates
+### Payments and Payouts cards
 
-The Payments card flips to "Enabled" when **either** `payments_enabled === true` **or** `capabilities.card_payments === "active"`. The two are usually in sync but the platform sometimes lags one behind the other; the OR keeps the card honest.
+- **Payments** reads **Enabled** when card payments are active on the account. When the card-payment capability is active but final activation is still being completed, it adds *"Capability active — provider finalizing"* (Възможността е активна — доставчикът финализира). Only an enabled **Payments** card lets the method be switched on ([[cloudcart-pay-activation-gate]]).
+- **Payouts** reads **Enabled** when payouts are active; *"Payouts capability not requested"* when the account never asked for payouts. The [[payment-providers-cloudcart-pay-payouts|Payouts tab]] uses the same rule, so both always agree.
+- Badge: **Active** = in use; **Pending** = under review; **Inactive** = not enabled.
 
-### Payouts capability may not be requested at all
+### Rejected items
 
-If the account was created without requesting `payouts.requested=true` (uncommon — see [[ccpay-onboarding-account-business-fields]] which sets both capabilities by default), the Payouts card shows "Payouts capability not requested" instead of "Disabled". This distinguishes "capability not on the account" from "capability on the account but inactive".
+Each rejection carries the reviewer's reason when one was written; otherwise a standard sentence, for example:
 
-### Capability pill colours
+- *"The document is not readable. Please upload a clearer copy."*
+- *"The document has expired. Please upload a valid one."*
+- *"A photocopy is not accepted. Please upload the original document."*
+- *"The back side of the document is missing. Please upload it."*
+- *"The name on the document does not match the details provided."*
+- *"Additional information was requested by our compliance team."*
 
-The full capabilities list uses a pill-colour convention:
+**Resolve** opens the step where it is fixed: business details → step 2, people → step 3, documents → step 4, agreements → step 5, bank account → step 6. After an upload the item moves from the red block to **Submitted — waiting for review**.
 
-- `active` → green pill
-- `inactive` → yellow pill
-- `pending` → cyan pill
-- `disabled` → red pill
-- any other state → grey pill
+### Compliance tasks
 
-The Assistant should map merchant-language questions ("why is my account yellow?") to the underlying capability state by reading this section.
+- A task with agreement documents says *"Agreement documents are reviewed and accepted in the Identity Verification step."*, lists the documents and has **Resolve** to step 5 ([[ccpay-onboarding-verification-attestation]]).
+- Other tasks list what they need, with ✓ for what is done.
+- Optional tasks (not required yet) are hidden, so an approved account does not show reminders it does not owe.
+- Known titles: **Activate card payments** (*"Submit your account details so card payments can be reviewed and activated."*), **Activate payouts**, **Three-party agreement**.
 
-### Pending Requirements vs Pending Verification
+### The step indicator turns red
 
-These are two different lists from Paypercut's `requirements` block:
+While anything is outstanding — requirements, items being verified, rejections or a required task — the **Status** step in the indicator is red.
 
-- **`requirements.currently_due`** — merchant action needed. Each entry names a field, document, or attestation the merchant must provide. Step 5 (verification submission) clears the `details_submitted` requirement; step 4 (documents) clears document requirements; step 6 (bank) clears external-account requirements.
-- **`requirements.pending_verification`** — Paypercut is checking something on its side. No merchant action — the merchant just waits.
+### Refresh
 
-### Compliance Tasks — two sub-classes
+**Refresh Status** reads the account, the review markers and the compliance tasks again. Changes made by the review also arrive as an admin notification and an email ([[ccpay-onboarding-review-alerts]]).
 
-Compliance tasks from the risk endpoint come in two flavours:
+### When step 7 counts as done
 
-- **Tasks with an `agreement_bundle`** — agreement documents (TOS, processing addendum, etc.) the merchant accepts on step 5. Once accepted, the task disappears from this list. See [[ccpay-onboarding-verification-attestation]].
-- **Tasks without an `agreement_bundle`** — surface-only on this step. The merchant sees them as information ("provide additional info to your account manager") but cannot act on them through the wizard. They typically resolve once Paypercut's risk team closes them server-side.
-
-### Step 7 completion criterion
-
-Step 7 is marked complete when `details_submitted === true` AND `requirements.currently_due` is empty — see [[ccpay-onboarding-wizard-flow]]. This is the "fully onboarded" state.
-
-### Refresh status re-fetches live
-
-Clicking *Refresh status* re-runs `GET /admin/cloudcart-pay/account` and `GET /admin/cloudcart-pay/compliance-status` against Paypercut without a page reload. The capability pills, requirements lists, and compliance task list all repopulate from the response. Useful when the merchant expects Paypercut to have moved a flag (e.g., after submitting documents) but the wizard was loaded before the change.
-
-### Status flow drives storefront activation
-
-The Payments capability state on this step is what gates the storefront-facing payment method. The provider page's *Active* switch refuses to flip ON until either `payments_enabled === true` or `capabilities.card_payments === "active"` — see [[payment-providers-cloudcart-pay]] for the activation gate's full criteria.
+When the account is submitted and nothing is outstanding, or when card payments and payouts are both enabled.
 
 ## Related
 
 - [[payment-providers-cloudcart-pay-onboarding]] — hub.
-- [[ccpay-onboarding-wizard-flow]] — step completion mechanics + resume.
-- [[ccpay-onboarding-verification-attestation]] — step 5 where compliance tasks with agreement bundles are accepted.
-- [[ccpay-onboarding-bank-account]] — step 6 where the `payouts` capability gets its bank account.
-- [[payment-providers-cloudcart-pay]] — activation gate that consumes this status.
-- [[payment-providers-cloudcart-pay-payouts]] — payouts capability surfaced on a separate sub-tab.
+- [[ccpay-onboarding-review-alerts]] — approval time, waiting for review, alerts.
+- [[ccpay-onboarding-documents-upload]] — uploading and replacing documents.
+- [[ccpay-onboarding-people-roles]] — adding missing people.
+- [[ccpay-onboarding-verification-attestation]] — agreements.
+- [[cloudcart-pay-activation-gate]] — switching the method on.
+- [[payment-providers-cloudcart-pay-payouts]] — the Payouts tab.
 
 ## Open questions
 
-(none)
+- Bulgarian wording of the task status badges (e.g. **Action Required**), which the operator's list also shows in English.
