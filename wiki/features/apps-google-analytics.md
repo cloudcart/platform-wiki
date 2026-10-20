@@ -7,7 +7,7 @@ aliases: ["Google Analytics", "GA", "GA4", "Universal Analytics", "Google Analyt
 tags: [apps, google, analytics, tracking, measurement]
 plan_gates: ["google_analytics"]
 created: 2026-05-22
-updated: 2026-08-06
+updated: 2026-10-12
 source_count: 8
 ---
 # Google Analytics
@@ -16,7 +16,7 @@ source_count: 8
 
 **Google Analytics** integration — tracks visitor behaviour, traffic sources, conversions, and ecommerce metrics on the storefront. CloudCart injects the appropriate tracking script (GA4 by default; legacy Universal Analytics — UA — also supported through a version flag) and emits the platform's ecommerce events (view_item, add_to_cart, begin_checkout, purchase, etc.) so the merchant sees rich ecommerce reporting in the GA console.
 
-Used by virtually every merchant for measurement. Free to set up (Google Analytics itself is free); CloudCart just provides the integration plumbing.
+Google Analytics itself is free; CloudCart provides the integration.
 
 > **Has an on/off control.** The app screen carries an **Enable / Disable** button, so the merchant can switch it off without uninstalling it. A disabled app stops working while keeping its settings — so *"the app is disabled"* IS a valid explanation to check here.
 
@@ -49,23 +49,24 @@ No other GA fields exist here. Cross-domain linkers, send-to multiple property I
 
 ### GA4 default + UA legacy mode (auto-detected from the code prefix)
 
-Google retired Universal Analytics in July 2023. New properties default to GA4 (Measurement ID format `G-XXXXXXXXXX`). Some legacy stores may still need the older UA mode (`UA-XXXXXX-Y`). The merchant sets no version toggle — the platform routes to the correct tag implementation purely from the prefix: `G-` → GA4, otherwise UA. Because detection is per-code, a single CloudCart instance can serve GA4 and UA stores side by side. A **single store** running BOTH GA4 + UA at once is not supported by this one-field design — the merchant uses [[apps-google-tags]] to manage both tags in GTM.
+Google retired Universal Analytics in July 2023. New properties default to GA4 (Measurement ID format `G-XXXXXXXXXX`). Some legacy stores may still need the older UA mode (`UA-XXXXXX-Y`). The merchant sets no version toggle — the platform routes to the correct tag implementation purely from the prefix: `G-` → GA4, otherwise UA. A **single store** running BOTH GA4 + UA at once is not supported by this one-field design — the merchant uses [[apps-google-tags]] to manage both tags in GTM.
 
 ### Ecommerce events
 
-CloudCart emits the standard GA4 ecommerce event taxonomy, client-side via the browser's `gtag.js`:
-- `view_item`
-- `view_item_list`
-- `add_to_cart`
-- `remove_from_cart`
-- `view_cart`
-- `begin_checkout`
-- `add_shipping_info`
-- `add_payment_info`
-- `purchase`
-- `refund`
+CloudCart sends these GA4 events client-side, via the browser's `gtag.js`:
+- `view_item` — a product page.
+- `view_item_list` — a category, smart collection, brand, tag or search-results page, with every product on it.
+- `add_to_cart`, `remove_from_cart`, `add_to_wishlist`.
+- `view_cart` — the cart page; `begin_checkout` — the start of checkout.
+- `add_shipping_info`, `add_payment_info`.
+- `purchase` — the order-confirmation page.
+- `login` (Google, Facebook or the login form) and `sign_up` (registration form).
 
 These appear in GA's Realtime + Conversion reports.
+
+### `select_item` is not sent (as of 2026-10-12)
+
+The storefront script contains a `select_item` event for a click on a product card in a listing. The version the storefront loads never identifies which card was clicked, so it stops before sending, on every store and theme. GA receives `view_item_list` on the listing and `view_item` on the product page, but no `select_item` in between.
 
 ### `purchase` event fires once per order — no duplicates on reload
 
@@ -73,7 +74,7 @@ The `purchase` event is dispatched ONLY the first time the customer lands on the
 
 ### `refund` event is NOT fired automatically
 
-Although `refund` is in the taxonomy above, the storefront never fires it when an order is refunded via [[orders-payment-refund]]. Merchants who need refund tracking in GA build it externally (GTM triggers on the admin refund action, or direct GA Measurement Protocol calls).
+GA4's `refund` event is not among the events above: the storefront never fires it when an order is refunded via [[orders-payment-refund]]. Merchants who need refund tracking in GA build it externally (GTM triggers on the admin refund action, or direct GA Measurement Protocol calls).
 
 ### Client-side only — no server-side measurement
 
@@ -93,7 +94,7 @@ The GA snippet is not emitted inline per page; the merchant's code is baked into
 
 ### Two tabs: Overview + Settings
 
-The app always shows exactly two tabs — **Overview** (`/admin/apps/google_analytics`) and **Settings** (`/admin/apps/google_analytics/settings`). There is no conditional tab visibility, OAuth state, or extra tabs after configuration. The same pattern is used by [[apps-google-tags]], Google Search Console, and [[apps-google-dynamic]].
+Always **Overview** (`/admin/apps/google_analytics`) and **Settings** (`/admin/apps/google_analytics/settings`), with no extra tabs after configuration — the same as [[apps-google-tags]] and [[apps-google-dynamic]].
 
 ## Plan gates
 
