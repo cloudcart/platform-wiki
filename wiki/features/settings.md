@@ -86,6 +86,7 @@ Sub-screens are individually gated. A merchant who grants a moderator only `sett
 - [[backups-and-restore]] — the backup / restore model behind [[settings-backups]].
 - [[merchant-roles]] — the staff role / permission model behind [[settings-staff]].
 - [[multi-currency]] — store-currency model affecting taxes, payments, and totals.
+- [[metafields-metaobjects]] — metafield and metaobject definitions, behind **Settings → Metaobjects**.
 - [[plan-gates]] — how plan-features gate which settings screens + options appear.
 
 ## Open questions

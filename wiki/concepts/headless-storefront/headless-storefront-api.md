@@ -116,6 +116,7 @@ Some scopes (`write_customers`, `read_orders`, `read_bulk_operations`) may be im
 - [[headless-environment-variables]] — `PUBLIC_STOREFRONT_API_TOKEN` is auto-injected as a system variable.
 - [[nitrogen-storefront-overview]] — Storefront API tab (tokens + scope picker).
 - [[json-api-v2]] — the OTHER GraphQL endpoint (`/api/gql`) and how it differs.
+- [[metafields-nitrogen]] — the metafield and metaobject queries.
 - [[plan-gates]] — how plan tier affects scope availability.
 
 ## Open Questions

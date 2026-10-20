@@ -7,7 +7,7 @@ aliases: ["PAT scopes", "CLI token scopes", "Read Only token", "Full Access toke
 tags: [settings, security, tokens, scopes, permissions]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-20
 source_count: 3
 ---
 
@@ -72,10 +72,11 @@ A token with a primary scope behaves like a global key constrained by HTTP metho
 | `settings` | Settings (full) | `settings` | `settings:read` |
 | `blog` | Blog (full) | `blog` | `blog:read` |
 | `webhooks` | Webhooks (full) | `webhooks` | `webhooks:read` |
+| `metaobjects` | Metaobjects | `metaobjects` | `metaobjects:read` |
 | `inventory` | Inventory | `inventory` | (no read-only variant — write-only feature) |
 | `discounts` | Discounts | `discounts` | (no read-only variant — write-only feature) |
 
-8 resource families, 6 with both read+write variants, 2 (`inventory`, `discounts`) with full-access only. A token can mix granular scopes (e.g., `orders:read + customers:read + products`) for narrow least-privilege automation.
+9 resource families, 7 with both read+write variants, 2 (`inventory`, `discounts`) with full-access only. A token can mix granular scopes (e.g., `orders:read + customers:read + products`) for narrow least-privilege automation.
 
 ### Resource → scope mapping (URL path prefix → required scope)
 

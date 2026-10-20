@@ -92,6 +92,7 @@ This feature is gated by `product_collections` (see [[plan-gates]], [[plan-vs-fe
 - [[products-categories]] — categories are one of the criteria types.
 - [[products-vendors]] — vendors are one of the criteria types.
 - [[products-property]] — category properties + options are one of the criteria types.
+- [[metafields-capabilities]] — product metafields with the smart-collection condition on are a criteria type too.
 - [[plan]] — the `product_collections` plan feature caps how many collections the merchant can create.
 - [[plan-gates]] — concept page on plan-based feature gating.
 - [[product]] — entity page.

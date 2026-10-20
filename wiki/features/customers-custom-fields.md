@@ -86,6 +86,7 @@ This page is split into 7 aspect pages, each covering one well-scoped slice. The
 - [[marketing-segments]] — custom-field values queryable for building segments.
 - [[settings-translations]] — `storefront_name` is translatable per storefront language.
 - [[api-customer-tags]] — different concept (tags vs custom fields).
+- [[metafields-permissions]] — customer metafields: set by the store, at most read by the shopper (contrast).
 - [[json-api-v2]] — authentication and side-effects principle.
 - [[plan-gates]] — gating-concept overview (this feature is NOT plan-gated).
 

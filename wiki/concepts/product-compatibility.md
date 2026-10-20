@@ -38,6 +38,7 @@ source_count: 1
 
 ## Related
 
+- [[metafields-use-case-compatibility]] — compatibility beyond brand → model, as metaobjects on Nitrogen storefronts.
 - [[brand-model]] — the app hub (the engine for this concept), with [[brand-model-brand]] and [[brand-model-model]].
 - [[products-variants-options]] — version-level distinctions (the deeper-than-model need).
 - [[products-vendors]] — manufacturer (a separate, flat axis).

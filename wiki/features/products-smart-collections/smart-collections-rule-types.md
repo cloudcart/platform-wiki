@@ -7,7 +7,7 @@ aliases: ["Smart Collections rule types", "Smart Collections value types", "Smar
 tags: [products, collections, selections, rule-types, operators, validation]
 plan_gates: ["product_collections"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-20
 source_count: 1
 ---
 
@@ -90,6 +90,10 @@ Because both `discount` (target products inside a specific discount) and `select
 ### UI-hidden types (`selection`, `featured`) are accepted from JSON-API v2
 
 Even though the rule builder UI never lists `selection` or `featured`, both types are valid on the create / save POST and on JSON-API v2 writes. Collections imported via [[json-api-v2]] or created from legacy migrations may carry these types; opening such a collection in the rule builder renders the row with a blank Type dropdown (known UI gap). The merchant cannot reproduce the row by re-saving — the only path to add these rules is the API.
+
+### A product metafield can be a rule too
+
+Besides the 12 types, a rule can test a **product metafield** whose definition has the smart-collection condition on. True/false fields support equals. Integer, decimal and rating fields support equals, greater than and less than. Single-line text and metaobject-reference fields support equals. Only definitions whose indexing has finished are offered. See [[metafields-capabilities]].
 
 ### Operator-type compatibility is validated on Save
 

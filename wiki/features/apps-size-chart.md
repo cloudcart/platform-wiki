@@ -70,6 +70,7 @@ Standard apps permission scope.
 
 ## Related
 
+- [[metafields-use-case-size-charts]] — structured size charts and fit hints as metaobjects, for Nitrogen storefronts.
 - [[apps]] — App Store.
 - [[apps-size-chart-conditions]] — conditions sub-page.
 - [[products-products]] — products where chart appears.

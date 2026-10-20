@@ -95,6 +95,7 @@ Full surface, plan gate (`category_properties`), and shared side effects live on
 - [[products-categories]] — properties are attached to specific categories; the storefront filter sidebar appears on category landing pages.
 - [[products-variants-options]] — distinct from properties — variants are physical SKU variations (different stock units); properties are descriptive specifications (no SKU split).
 - [[apps-csv-import]] — bulk-create properties + values via CSV.
+- [[metafields-metaobjects]] — metafields: typed extra fields, read by Nitrogen storefronts, not storefront filters.
 - [[settings-files]] — property + value images stored here.
 - [[product]] / [[category]] — entity pages.
 - [[api-properties]] / [[api-property-options]] — JSON-API v2 surface.

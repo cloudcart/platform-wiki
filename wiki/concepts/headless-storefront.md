@@ -103,6 +103,7 @@ Nitrogen spans dedicated admin screens, deployment surfaces external to CloudCar
 - [[domain]] — custom domain entity.
 - [[seo-handling]] — SEO mechanics; legacy-only override does NOT propagate to Nitrogen.
 - [[multi-language]] — multi-language content delivery; per-domain language pinning is legacy-only.
+- [[metafields-nitrogen]] — reading metafields and metaobjects on a Nitrogen storefront.
 - [[plan-gates]] — plan-feature gating that affects some scopes.
 - [[json-api-v2]] — the OTHER GraphQL endpoint and how it differs.
 
