@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → GDPR"
 route_name: apps.gdpr.overview
-route_path: /admin/apps/gdpr/overview
+route_path: /admin/apps/gdpr/overview, /admin/apps/gdpr
 aliases: ["GDPR", "Gdpr Overview", "Cookie consent", "Privacy compliance", "GDPR app", "ДРЛЗ", "enable disable button", "app active toggle"]
 tags: [apps, gdpr, compliance, privacy, cookies, eu-regulation]
 plan_gates: []

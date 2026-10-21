@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Settings → Geo distances"
 route_name: geo_distances.settings.main
-route_path: /admin/settings/geo-distances
+route_path: /admin/settings/geo-distances, /admin/settings/geo-distances/edit/:id
 aliases: ["Geo distances", "Distance zones", "Circular delivery zones", "Radius zones", "Гео разстояния", "Радиус зони"]
 tags: [settings, geo, distance, radius, shipping, maps]
 plan_gates: []

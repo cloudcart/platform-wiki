@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Suppliers"
 route_name: apps.suppliers.overview
-route_path: /admin/apps/suppliers/overview
+route_path: /admin/apps/suppliers/overview, /admin/apps/suppliers
 aliases: ["Suppliers", "Supplier management", "Wholesale suppliers", "Dropshipping suppliers", "Доставчици", "no enable disable button", "app has no active toggle"]
 tags: [apps, administration, suppliers, inventory, purchasing]
 plan_gates: []

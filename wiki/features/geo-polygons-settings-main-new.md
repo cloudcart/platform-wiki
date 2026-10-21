@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Settings → Geo polygons"
-route_name: geo_polygons.settings.main.new
-route_path: /admin/settings/geo-polygons-new
+route_name: geo_polygons.settings.main
+route_path: /admin/settings/geo-polygons
 aliases: ["Geo polygons", "Polygons", "Delivery zones (custom)", "Гео полигони", "Полигони"]
 tags: [settings, geo, polygons, shipping, maps]
 plan_gates: []
@@ -29,7 +29,7 @@ This page is the **hub** for the Geo polygons feature. The detail surfaces are s
 
 ## Where to find it
 
-Sidebar → Settings → **Geo polygons**. The breadcrumb reads "Settings → Geo polygons" (with the active sub-action appended on add/edit). The route is `/admin/settings/geo-polygons-new` — the `-new` suffix is the modern Vue interface URL. (The legacy `/admin/settings/geo-polygons` route still works but the merchant is documented to use this version.) The header icon is the globe-africa icon, and a single "Polygons" tab is shown, with a conditional "Add Polygon" / "Edit Polygon" tab on create/edit routes.
+Sidebar → Settings → **Geo polygons**. The breadcrumb reads "Settings → Geo polygons" (with the active sub-action appended on add/edit). The route is `/admin/settings/geo-polygons` — the `-new` suffix is the modern Vue interface URL. (The legacy `/admin/settings/geo-polygons` route still works but the merchant is documented to use this version.) The header icon is the globe-africa icon, and a single "Polygons" tab is shown, with a conditional "Add Polygon" / "Edit Polygon" tab on create/edit routes.
 
 For the full route table and the list / Add / Edit surfaces, see [[geo-polygons-settings-list-form]].
 

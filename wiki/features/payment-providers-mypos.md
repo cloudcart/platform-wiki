@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Payment Providers → myPOS"
 route_name: apps.mypos.overview
-route_path: /admin/payment-providers/mypos
+route_path: /admin/payment-providers/mypos, /admin/payment-providers/mypos/settings
 aliases: ["myPOS", "MyPOS", "Mypos", "myPOS Europe", "myPOS Virtual Checkout", "Виртуален ПОС myPOS", "Плащане с карта - myPOS", "MyposService"]
 tags: [paymentproviders, payment-providers, mypos, card-gateway, bulgaria, cross-border, popular]
 plan_gates: []

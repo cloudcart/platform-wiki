@@ -2,7 +2,7 @@
 type: concept
 nav_path: "Settings → Metaobjects"
 route_name: metafields.settings
-route_path: /admin/settings/metafields
+route_path: /admin/settings/metafields, /admin/settings/metafields/:ownerType/unstructured, /admin/settings/metafields/:ownerType/new, /admin/settings/metafields/:ownerType/:definitionId, /admin/settings/metafields/metaobjects/new, /admin/settings/metafields/metaobjects/:definitionId
 aliases: ["Metafields", "Metaobjects", "Metafields and metaobjects", "Custom data", "Metafield", "Metaobject", "Metafield definitions", "Metaobject definitions", "Metaobject entries", "custom namespace", "Метаполета", "Метаобекти", "Мета полета", "Мета обекти", "Допълнителни полета към продукт", "Собствени обекти"]
 tags: [metafields, metaobjects, custom-data, nitrogen, headless, concepts]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → IT4Profit"
 route_name: apps.it4profit.overview
-route_path: /admin/apps/it4profit
+route_path: /admin/apps/it4profit, /admin/apps/it4profit/settings, /admin/apps/it4profit/status, /admin/apps/it4profit/products, /admin/apps/it4profit/categories-mapping, /admin/apps/it4profit/import-history, /admin/apps/it4profit/import-history/:id
 aliases: ["IT4Profit", "IT4Profit ERP", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp]
 plan_gates: ["it4profit", "it4profit_total_products"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Payment Providers → Borica Way4"
 route_name: apps.borica_way4.overview
-route_path: /admin/payment-providers/borica_way4
+route_path: /admin/payment-providers/borica_way4, /admin/payment-providers/borica_way4/settings
 aliases: ["Borica", "Borica Way4", "Borica 3DS", "ПОС терминал Borica", "Виртуален ПОС Borica", "BoricaWay4", "Plashtane s karta - Borica", "Card payments - Borica"]
 tags: [paymentproviders, payment-providers, borica-way4, card-gateway, bulgaria]
 plan_gates: []

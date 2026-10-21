@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Products → Bundles → Pricing"
-route_name: bundles-edit.new
-route_path: /admin/products/bundles-new/edit/:id
+route_name: bundles-edit
+route_path: /admin/products/bundles/edit/:id
 aliases: ["Bundle pricing", "Bundle price mode", "Fixed price bundle", "Percent discount bundle", "Bundle savings"]
 tags: [apps, administration, products, bundles, pricing]
 plan_gates: ["bundles"]
@@ -20,7 +20,7 @@ This aspect covers **how a bundle is priced**: the two mutually-exclusive pricin
 
 ## Where to find it
 
-The pricing controls are on the bundle Add/Edit form (route `bundles-edit.new`, path `/admin/products/bundles-new/edit/:id`) — see [[bundles-list-creation]] for the rest of the form.
+The pricing controls are on the bundle Add/Edit form (route `bundles-edit`, path `/admin/products/bundles/edit/:id`) — see [[bundles-list-creation]] for the rest of the form.
 
 ## What the merchant can do here
 

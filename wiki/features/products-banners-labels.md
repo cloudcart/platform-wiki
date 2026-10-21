@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Products → Banners Labels"
 route_name: product-banners.list
-route_path: /admin/products/banners-labels
+route_path: /admin/products/banners-labels, /admin/products/banners-labels/labels, /admin/products/banners-labels/edit/label/:id
 aliases: ["Banners and labels", "Product banners", "Product labels", "Image labels", "Text labels", "Банери", "Етикети"]
 tags: [marketing, products, banners-labels]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Speedex"
 route_name: apps.speedex.overview
-route_path: /admin/shipping/speedex
+route_path: /admin/shipping/speedex, /admin/shipping/speedex/settings, /admin/shipping/speedex/shipments, /admin/shipping/speedex/shipments-return
 aliases: ["Speedex", "Speedex Greece", "Speedex courier"]
 tags: [apps, shipping, courier, greece, omniship]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Video Slider Module"
 route_name: apps.video_slider_widget.overview
-route_path: /admin/apps/video_slider_widget
+route_path: /admin/apps/video_slider_widget, /admin/apps/video_slider_widget/settings
 aliases: ["Video Slider", "Video Slider Module", "Video carousel", "Video block", "enable disable button", "app active toggle"]
 tags: [apps, marketing, content, landing-pages, plan-gated]
 plan_gates: ["video_slider_widget"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Gensoft"
 route_name: apps.gensoft.overview
-route_path: /admin/apps/gensoft
+route_path: /admin/apps/gensoft, /admin/apps/gensoft/orders, /admin/apps/gensoft/import-history, /admin/apps/gensoft/import-history/:id
 aliases: ["Gensoft", "Gensoft ERP", "Gensoft integration", "GenSoft", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp, diagnostics, bulgaria]
 plan_gates: ["gensoft_total_products"]

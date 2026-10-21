@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Articles"
 route_name: blog-articles-list
-route_path: /admin/marketing/blog/articles
+route_path: /admin/marketing/blog/articles, /admin/marketing/blog/articles/add
 aliases: ["Blog articles", "Posts", "Blog posts", "Articles", "Статии", "Статии на блог", "Блог", "Публикации"]
 tags: [marketing, blog, content, seo, articles]
 plan_gates: ["blog_articles", "blog_categories"]

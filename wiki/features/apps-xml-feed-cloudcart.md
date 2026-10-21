@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → CloudCart"
 route_name: apps.cloudcart.overview
-route_path: /admin/apps/xml_feed/cloudcart
+route_path: /admin/apps/xml_feed/cloudcart, /admin/apps/xml_feed/cloudcart/status, /admin/apps/xml_feed/cloudcart/settings, /admin/apps/xml_feed/cloudcart/mapping, /admin/apps/xml_feed/cloudcart/frame
 aliases: ["CloudCart feed", "CloudCart native XML", "CloudCart full catalogue export", "native product feed"]
 tags: [apps, exports, xml, feed, native, cloudcart]
 plan_gates: []

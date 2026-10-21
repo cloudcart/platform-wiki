@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → R-Keeper"
 route_name: apps.rkeeper.overview
-route_path: /admin/apps/rkeeper
+route_path: /admin/apps/rkeeper, /admin/apps/rkeeper/settings, /admin/apps/rkeeper/status, /admin/apps/rkeeper/products, /admin/apps/rkeeper/import-history, /admin/apps/rkeeper/import-history/:id
 aliases: ["R-Keeper", "R-Keeper ERP", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp]
 plan_gates: []

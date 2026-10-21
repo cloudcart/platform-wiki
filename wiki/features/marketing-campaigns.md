@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns"
 route_name: campaigns
-route_path: /admin/marketing/campaigns
+route_path: /admin/marketing/campaigns, /admin/marketing/campaigns/configuration/channel/email/saved
 aliases: ["Campaigns", "Email campaigns", "Marketing automation", "Кампании", "Маркетингови кампании", "Имейл кампании"]
 tags: [marketing, campaigns, automation, email, sms, viber, web-push]
 plan_gates: ["abandoned_orders", "campaigns"]

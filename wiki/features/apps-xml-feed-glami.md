@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → Glami"
 route_name: apps.glami.overview
-route_path: /admin/apps/xml_feed/glami
+route_path: /admin/apps/xml_feed/glami, /admin/apps/xml_feed/glami/status, /admin/apps/xml_feed/glami/settings, /admin/apps/xml_feed/glami/mapping, /admin/apps/xml_feed/glami/frame
 aliases: ["Glami", "Glami feed", "Glami.bg", "Glami fashion", "Glami category mapping", "Glami size system", "Glami pixel"]
 tags: [apps, exports, xml, feed, fashion, price-comparison, glami]
 plan_gates: []

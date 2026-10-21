@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Settings → Files"
 route_name: files-index
-route_path: /admin/settings/files
+route_path: /admin/settings/files, /admin/settings/files/order-files
 aliases: ["Files", "File manager", "Filemanager", "User files", "Image playground", "Файлове", "Файлов мениджър"]
 tags: [settings, files, media, storage, cdn]
 plan_gates: ["storage"]

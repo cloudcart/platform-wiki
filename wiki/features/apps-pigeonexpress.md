@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Apps → Pigeon Express"
-route_name: apps.pigeonexpress
-route_path: /admin/apps/pigeonexpress
+route_name: apps.pigeonexpress.overview
+route_path: /admin/shipping/pigeonexpress, /admin/shipping/pigeonexpress/settings, /admin/shipping/pigeonexpress/payments, /admin/shipping/pigeonexpress/shipments
 aliases: ["Pigeon Express", "Pigeonexpress", "Pigeon Express courier", "Пиджън Експрес", "Pigeon shipping"]
 tags: [apps, shipping, courier, bulgaria, cod, omniship]
 plan_gates: []

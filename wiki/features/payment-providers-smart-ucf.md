@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Payment Providers → Smart UCF"
 route_name: apps.smart_ucf.settings
-route_path: /admin/payment-providers/smart_ucf
+route_path: /admin/payment-providers/smart_ucf, /admin/payment-providers/smart_ucf/promotions, /admin/payment-providers/smart_ucf/mapping
 aliases: ["SmartUcf", "Smart UCF", "UniCredit Consumer Financing", "UCF online", "UCF Bulbank", "Bulgarian consumer credit", "Bulgarian installment"]
 tags: [paymentproviders, payment-providers, smart-ucf, bulgaria, credit, leasing, installments, unicredit, redirect, invoicing]
 plan_gates: []

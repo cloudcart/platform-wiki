@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Payment Providers → Fibank"
 route_name: apps.fibank.overview
-route_path: /admin/payment-providers/fibank
+route_path: /admin/payment-providers/fibank, /admin/payment-providers/fibank/settings
 aliases: ["Fibank", "First Investment Bank", "Първа Инвестиционна Банка", "FIB", "Виртуален ПОС Fibank", "Плащане с карта - Fibank", "FibankService"]
 tags: [paymentproviders, payment-providers, fibank, card-gateway, bulgaria]
 plan_gates: []

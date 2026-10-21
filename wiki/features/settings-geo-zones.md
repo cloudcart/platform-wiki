@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Settings → Geo Zones"
 route_name: geo_zones.settings.main
-route_path: /admin/settings/geo-zones
+route_path: /admin/settings/geo-zones, /admin/settings/geo-zones/add, /admin/settings/geo-zones/edit/:id
 aliases: ["Geo Zones", "Geographic zones", "Shipping zones", "Tax zones", "Geo-зони", "Гео зони", "Региони"]
 tags: [settings, geo, shipping, tax, zones]
 plan_gates: []

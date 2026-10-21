@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → Skroutz"
 route_name: apps.skroutz.overview
-route_path: /admin/apps/xml_feed/skroutz
+route_path: /admin/apps/xml_feed/skroutz, /admin/apps/xml_feed/skroutz/status, /admin/apps/xml_feed/skroutz/settings, /admin/apps/xml_feed/skroutz/mapping, /admin/apps/xml_feed/skroutz/frame
 aliases: ["Skroutz", "Skroutz feed", "Skroutz.gr", "price comparison Greece", "Skroutz size color parameter"]
 tags: [apps, exports, xml, feed, price-comparison, greece, skroutz]
 plan_gates: []

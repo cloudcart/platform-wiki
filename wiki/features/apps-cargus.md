@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Cargus"
 route_name: apps.cargus.overview
-route_path: /admin/shipping/cargus
+route_path: /admin/shipping/cargus, /admin/shipping/cargus/settings
 aliases: ["Cargus", "Urgent Cargus", "Cargus courier", "Cargus Romania"]
 tags: [apps, shipping, courier, romania, omniship]
 plan_gates: []

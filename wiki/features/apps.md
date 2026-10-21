@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps"
 route_name: apps.all
-route_path: /admin/apps/:all?
+route_path: /admin/apps/:all?, /admin/apps
 aliases: []
 tags: [apps, hub]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Colibri ERP"
 route_name: apps.colibri.overview
-route_path: /admin/apps/colibri
+route_path: /admin/apps/colibri, /admin/apps/colibri/settings, /admin/apps/colibri/status, /admin/apps/colibri/products, /admin/apps/colibri/categories-mapping, /admin/apps/colibri/import-history, /admin/apps/colibri/import-history/:id
 aliases: ["Colibri ERP", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp]
 plan_gates: ["colibri", "colibri_total_products"]

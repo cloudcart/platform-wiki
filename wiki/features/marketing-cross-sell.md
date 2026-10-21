@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Cross-Sell & UpSell"
 route_name: admin.cross_sell.list
-route_path: /admin/marketing/cross-sell
+route_path: /admin/marketing/cross-sell, /admin/marketing/cross-sell/diagram/:id
 aliases: ["Cross Sell", "Cross-Sell", "UpSell", "Cross Sell & UpSell", "Cross sell offers", "Свързани продукти", "Кръстосани продажби"]
 tags: [marketing, cross-sell, upsell, recommendations, offers]
 plan_gates: ["cross_sells"]

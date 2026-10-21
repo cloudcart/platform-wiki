@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Settings → Geo polygons → List / Add / Edit"
-route_name: geo_polygons.settings.new
-route_path: /admin/settings/geo-polygons-new
+route_name: geo_polygons.settings
+route_path: /admin/settings/geo-polygons, /admin/settings/geo-polygons/edit/:id
 aliases: ["Geo polygons list", "Add polygon", "Edit polygon", "Polygon name field"]
 tags: [settings, geo, polygons, shipping, maps]
 plan_gates: []
@@ -20,16 +20,16 @@ The day-to-day screens of the Geo polygons feature: the **list** of saved polygo
 
 ## Where to find it
 
-Sidebar → Settings → **Geo polygons**. The list lives at `/admin/settings/geo-polygons-new`. From the list, **+ New Geo polygon** opens the Add form (`/admin/settings/geo-polygons-new/add`); clicking a polygon name opens the Edit form (`/admin/settings/geo-polygons-new/edit/:id`).
+Sidebar → Settings → **Geo polygons**. The list lives at `/admin/settings/geo-polygons`. From the list, **+ New Geo polygon** opens the Add form (`/admin/settings/geo-polygons/add`); clicking a polygon name opens the Edit form (`/admin/settings/geo-polygons/edit/:id`).
 
 The breadcrumb is built dynamically: **Settings → Geo polygons → (Add Polygon | Edit Polygon)** depending on the active route. A tabs strip shows a single "Polygons" tab, plus a conditional "Add Polygon" / "Edit Polygon" tab when on a create/edit route.
 
 | Label | Route name | Route path |
 |-------|------------|------------|
-| Geo polygons (root) | `geo_polygons.settings.main.new` | `/admin/settings/geo-polygons-new` |
-| List | `geo_polygons.settings.new` | `/admin/settings/geo-polygons-new` |
-| Add | `geo_polygons_add.settings.new` | `/admin/settings/geo-polygons-new/add` |
-| Edit | `geo_polygons_edit.settings.new` | `/admin/settings/geo-polygons-new/edit/:id` |
+| Geo polygons (root) | `geo_polygons.settings.main` | `/admin/settings/geo-polygons` |
+| List | `geo_polygons.settings` | `/admin/settings/geo-polygons` |
+| Add | `geo_polygons_add.settings` | `/admin/settings/geo-polygons/add` |
+| Edit | `geo_polygons_edit.settings` | `/admin/settings/geo-polygons/edit/:id` |
 
 ## What the merchant can do here
 

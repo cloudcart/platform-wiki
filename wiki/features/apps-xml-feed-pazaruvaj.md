@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → Pazaruvaj"
 route_name: apps.pazaruvaj.overview
-route_path: /admin/apps/xml_feed/pazaruvaj
+route_path: /admin/apps/xml_feed/pazaruvaj, /admin/apps/xml_feed/pazaruvaj/status, /admin/apps/xml_feed/pazaruvaj/settings, /admin/apps/xml_feed/pazaruvaj/mapping, /admin/apps/xml_feed/pazaruvaj/frame
 aliases: ["Pazaruvaj", "Пазарувай", "Pazaruvaj feed", "Pazaruvaj.com", "Pazaruvaj reviews", "Pazaruvaj Trusted Shop", "Pazaruvaj category mapping", "price comparison Bulgaria", "Пазарувай фийд", "Пазарувай отзиви"]
 tags: [apps, exports, xml, feed, price-comparison, bulgaria, pazaruvaj]
 plan_gates: []

@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Products → Bundles → Add / Edit bundle"
-route_name: bundles-add.new
-route_path: /admin/products/bundles-new/add
+route_name: bundles-add
+route_path: /admin/products/bundles/add
 aliases: ["Add bundle", "Edit bundle", "Bundle editor", "Bundle item rows", "Bundle creation"]
 tags: [apps, administration, products, bundles]
 plan_gates: ["bundles"]
@@ -20,9 +20,9 @@ This aspect covers the **mechanics of building and managing a bundle**: the list
 
 ## Where to find it
 
-- **List**: Sidebar → Products → **Bundles** (route `bundles-list.new`, path `/admin/products/bundles-new`).
-- **Add**: **+ Add bundle** button (route `bundles-add.new`, path `/admin/products/bundles-new/add`).
-- **Edit**: row → Edit (route `bundles-edit.new`, path `/admin/products/bundles-new/edit/:id`).
+- **List**: Sidebar → Products → **Bundles** (route `bundles-list`, path `/admin/products/bundles`).
+- **Add**: **+ Add bundle** button (route `bundles-add`, path `/admin/products/bundles/add`).
+- **Edit**: row → Edit (route `bundles-edit`, path `/admin/products/bundles/edit/:id`).
 
 ## What the merchant can do here
 

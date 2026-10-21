@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → ProfitShare"
 route_name: apps.profitshare.overview
-route_path: /admin/apps/xml_feed/profitshare
+route_path: /admin/apps/xml_feed/profitshare, /admin/apps/xml_feed/profitshare/status, /admin/apps/xml_feed/profitshare/settings, /admin/apps/xml_feed/profitshare/mapping, /admin/apps/xml_feed/profitshare/frame
 aliases: ["ProfitShare", "Profitshare", "ProfitShare feed", "affiliate network Romania", "profitshare.bg", "profitshare tracking"]
 tags: [apps, exports, csv, feed, affiliate, romania, profitshare]
 plan_gates: []

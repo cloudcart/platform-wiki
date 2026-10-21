@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Albanian Courier"
 route_name: apps.albanian_courier.overview
-route_path: /admin/shipping/albanian_courier
+route_path: /admin/shipping/albanian_courier, /admin/shipping/albanian_courier/settings, /admin/shipping/albanian_courier/shipments, /admin/shipping/albanian_courier/shipments-return
 aliases: ["Albanian Courier", "Albania courier"]
 tags: [apps, shipping, courier, albania, omniship]
 plan_gates: []

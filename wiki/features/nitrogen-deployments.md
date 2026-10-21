@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Nitrogen (Headless) → Deployments"
 route_name: nitrogen.deployments
-route_path: /admin/nitrogen/:storefrontId/deployments
+route_path: /admin/nitrogen/:storefrontId/deployments, /admin/nitrogen/:storefrontId/deployments/:deploymentId
 aliases: []
 tags: [nitrogen, deployments, staff-permission]
 plan_gates: []

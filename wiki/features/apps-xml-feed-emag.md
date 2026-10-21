@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → Emag"
 route_name: apps.emag.overview
-route_path: /admin/apps/xml_feed/emag
+route_path: /admin/apps/xml_feed/emag, /admin/apps/xml_feed/emag/status, /admin/apps/xml_feed/emag/settings, /admin/apps/xml_feed/emag/mapping, /admin/apps/xml_feed/emag/frame
 aliases: ["eMAG feed", "Emag XML feed", "eMAG product feed", "eMAG marketplace feed"]
 tags: [apps, exports, xml, feed, marketplace, emag]
 plan_gates: []

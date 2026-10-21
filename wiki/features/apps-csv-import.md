@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → CSV Import"
 route_name: apps.csv_import.overview
-route_path: /admin/apps/csv_import
+route_path: /admin/apps/csv_import, /admin/apps/csv_import/settings
 aliases: ["CSV Import", "Csv Import", "Bulk product import", "Spreadsheet import", "Excel import", "no enable disable button", "app has no active toggle"]
 tags: [apps, imports, csv, products, plan-gated]
 plan_gates: ["csv_import"]

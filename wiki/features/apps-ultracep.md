@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Ultracep"
 route_name: apps.ultracep.overview
-route_path: /admin/shipping/ultracep
+route_path: /admin/shipping/ultracep, /admin/shipping/ultracep/settings, /admin/shipping/ultracep/shipments, /admin/shipping/ultracep/shipments-return
 aliases: ["Ultracep", "Ultra C.E.P", "Ultra CEP", "Ultra C.E.P courier"]
 tags: [apps, shipping, courier, omniship]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO codes → Per-code form"
 route_name: discounts-code_pro-edit
-route_path: /admin/marketing/discounts/code-pro/:id/:codeId
+route_path: /admin/marketing/discounts/code-pro/:id/:codeId, /admin/marketing/discounts/code-pro/:id/create
 aliases: ["Code PRO form", "Per-code form", "Code PRO create form", "Code PRO edit form", "Conditions config row"]
 tags: [marketing, discounts, code-pro, form, conditions]
 plan_gates: ["discount-code-pro"]

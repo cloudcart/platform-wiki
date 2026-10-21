@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → Google"
 route_name: apps.google.overview
-route_path: /admin/apps/xml_feed/google
+route_path: /admin/apps/xml_feed/google, /admin/apps/xml_feed/google/status, /admin/apps/xml_feed/google/mapping, /admin/apps/xml_feed/google/frame
 aliases: ["Google feed", "Google Merchant Center feed", "Google Shopping XML feed", "g:google_product_category", "Google product feed"]
 tags: [apps, exports, xml, feed, google, shopping, merchant-center]
 plan_gates: []

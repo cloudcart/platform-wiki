@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Payment Providers → Revolut"
-route_name: ""
-route_path: ""
+route_name: apps.revolut.overview
+route_path: /admin/payment-providers/revolut, /admin/payment-providers/revolut/settings
 aliases: ["Revolut", "Revolut Pay", "Revolut Merchant", "Revolut Business"]
 tags: [paymentproviders, payment-providers, revolut, not-integrated]
 plan_gates: []

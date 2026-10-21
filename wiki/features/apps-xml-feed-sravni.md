@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → Sravni"
 route_name: apps.sravni.overview
-route_path: /admin/apps/xml_feed/sravni
+route_path: /admin/apps/xml_feed/sravni, /admin/apps/xml_feed/sravni/status, /admin/apps/xml_feed/sravni/settings, /admin/apps/xml_feed/sravni/mapping, /admin/apps/xml_feed/sravni/frame
 aliases: ["Sravni", "Sravni feed", "Sravni.ru", "price comparison Russia", "Сравни"]
 tags: [apps, exports, xml, feed, price-comparison, russia, sravni]
 plan_gates: []

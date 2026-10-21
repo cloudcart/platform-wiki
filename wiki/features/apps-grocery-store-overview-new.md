@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Apps → Grocery Store"
-route_name: apps.grocery_store.overview.new
-route_path: /admin/apps/grocery_store-new
+route_name: apps.grocery_store.overview
+route_path: /admin/apps/grocery_store
 aliases: ["Grocery Store Overview (modern)", "Grocery Store new", "Grocery overview new", "no enable disable button", "app has no active toggle"]
 tags: [apps, administration, grocery, storefront-mode, overview, modern-vue]
 plan_gates: []
@@ -22,9 +22,7 @@ For the full Grocery Store feature set, see [[apps-grocery-store-overview-new]] 
 
 ## Where to find it
 
-Sidebar → Apps → Grocery Store (when the new Vue is in use). Route: `/admin/apps/grocery_store-new`.
-
-The path `grocery_store-new` distinguishes it from the legacy `/admin/apps/grocery_store` route.
+Sidebar → Apps → Grocery Store. Route: `/admin/apps/grocery_store`.
 
 ## What the merchant can do here
 

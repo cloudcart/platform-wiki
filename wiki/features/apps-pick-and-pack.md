@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Pick and Pack"
 route_name: apps.pick_and_pack.overview
-route_path: /admin/apps/pick_and_pack
+route_path: /admin/apps/pick_and_pack, /admin/apps/pick_and_pack/create, /admin/apps/pick_and_pack/edit/:id
 aliases: ["Pick and Pack", "Pick & Pack", "Warehouse terminal", "Mobile warehouse app", "Складова система", "no enable disable button", "app has no active toggle"]
 tags: [apps, administration, fulfillment, warehouse, terminal]
 plan_gates: ["pick_and_pack_terminals"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Finale Inventory"
 route_name: apps.finaleinventory.overview
-route_path: /admin/apps/finaleinventory
+route_path: /admin/apps/finaleinventory, /admin/apps/finaleinventory/settings, /admin/apps/finaleinventory/status, /admin/apps/finaleinventory/products, /admin/apps/finaleinventory/import-history, /admin/apps/finaleinventory/import-history/:id
 aliases: ["Finale Inventory", "Finale Inventory ERP", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp]
 plan_gates: ["finaleinventory"]

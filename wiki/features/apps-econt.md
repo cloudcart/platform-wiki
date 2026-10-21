@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Econt"
 route_name: apps.econt.overview
-route_path: /admin/shipping/econt
+route_path: /admin/shipping/econt, /admin/shipping/econt/payments, /admin/shipping/econt/shipments-return
 aliases: ["Econt", "Econt Express", "Econt shipping", "Еконт", "Еконт Експрес"]
 tags: [apps, shipping, courier, bulgaria, omniship]
 plan_gates: [SHIPPING_PAYMENT_SYNC]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → DPD Bulgaria (Speedy)"
 route_name: apps.dpdbulgaria.overview
-route_path: /admin/shipping/dpdbulgaria
+route_path: /admin/shipping/dpdbulgaria, /admin/shipping/dpdbulgaria/settings, /admin/shipping/dpdbulgaria/payments, /admin/shipping/dpdbulgaria/shipments, /admin/shipping/dpdbulgaria/shipments-return, /admin/shipping/speedy, /admin/shipping/speedy/settings, /admin/shipping/speedy/payments, /admin/shipping/speedy/shipments, /admin/shipping/speedy/shipments-return
 aliases: ["DPD Bulgaria", "DPD BG", "DPD Bulgaria courier", "Speedy", "Спиди", "Speedy AD", "Speedy shipping", "Speedy APT", "Speedy office"]
 tags: [apps, shipping, courier, bulgaria, omniship]
 plan_gates: []

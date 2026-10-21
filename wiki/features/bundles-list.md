@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Products → Bundles"
-route_name: bundles-list.new
-route_path: /admin/products/bundles-new
+route_name: bundles-list
+route_path: /admin/products/bundles
 aliases: ["Bundles", "Product Bundles", "Bundle list", "Kit products", "Бундли"]
 tags: [apps, administration, products, bundles, cross-sell]
 plan_gates: ["bundles", "hidden_products"]
@@ -32,9 +32,9 @@ Sidebar → Products → **Bundles** (when the Bundles app is installed). Sub-pa
 
 | Sub-page | Route | Path |
 |----------|-------|------|
-| Bundles list | `bundles-list.new` | `/admin/products/bundles-new` |
-| Add bundle | `bundles-add.new` | `/admin/products/bundles-new/add` |
-| Edit bundle | `bundles-edit.new` | `/admin/products/bundles-new/edit/:id` |
+| Bundles list | `bundles-list` | `/admin/products/bundles` |
+| Add bundle | `bundles-add` | `/admin/products/bundles/add` |
+| Edit bundle | `bundles-edit` | `/admin/products/bundles/edit/:id` |
 
 ## What the merchant can do here
 

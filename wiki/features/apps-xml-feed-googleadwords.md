@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Apps → XML Feed → Google AdWords"
-route_name: apps.googleadwords.overview
-route_path: /admin/apps/xml_feed/googleadwords
+route_name: apps.google_adwords.overview
+route_path: /admin/apps/xml_feed/google_adwords, /admin/apps/xml_feed/google_adwords/status, /admin/apps/xml_feed/google_adwords/settings, /admin/apps/xml_feed/google_adwords/mapping, /admin/apps/xml_feed/google_adwords/frame
 aliases: ["Google AdWords", "Google Ads feed", "Google Ads dynamic remarketing", "google-adwords.csv", "dynamic remarketing feed"]
 tags: [apps, exports, csv, feed, google, ads, remarketing]
 plan_gates: []

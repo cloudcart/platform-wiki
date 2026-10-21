@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Size Chart → Conditions"
 route_name: apps.size_chart.settings
-route_path: /admin/apps/size_chart/conditions
+route_path: /admin/apps/size_chart/conditions, /admin/apps/size_chart/conditions/create, /admin/apps/size_chart/conditions/edit/:id
 aliases: ["Size Chart Conditions", "Size Chart rules", "Size Chart-to-product mapping"]
 tags: [apps, others, size-chart, conditions, mapping]
 plan_gates: []

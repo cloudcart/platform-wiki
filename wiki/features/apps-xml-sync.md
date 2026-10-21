@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Sync"
 route_name: apps.xml_sync
-route_path: /admin/apps/xml_sync
+route_path: /admin/apps/xml_sync, /admin/apps/xml_sync/add, /admin/apps/xml_sync/edit/:id
 aliases: ["XML Sync", "Xml Sync", "Recurring supplier feed sync", "Product feed sync", "no enable disable button", "app has no active toggle"]
 tags: [apps, imports, xml, products, recurring, sync, plan-gated]
 plan_gates: ["xml_sync_limit"]

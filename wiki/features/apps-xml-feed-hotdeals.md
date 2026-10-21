@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → Hotdeals"
 route_name: apps.hotdeals.overview
-route_path: /admin/apps/xml_feed/hotdeals
+route_path: /admin/apps/xml_feed/hotdeals, /admin/apps/xml_feed/hotdeals/status, /admin/apps/xml_feed/hotdeals/settings, /admin/apps/xml_feed/hotdeals/mapping, /admin/apps/xml_feed/hotdeals/frame
 aliases: ["Hotdeals", "Hotdeals.bg", "Hotdeals feed", "deals feed Bulgaria"]
 tags: [apps, exports, json, feed, deals, bulgaria, hotdeals]
 plan_gates: []

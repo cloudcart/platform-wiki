@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → Arukereso"
 route_name: apps.arukereso.overview
-route_path: /admin/apps/xml_feed/arukereso
+route_path: /admin/apps/xml_feed/arukereso, /admin/apps/xml_feed/arukereso/status, /admin/apps/xml_feed/arukereso/settings, /admin/apps/xml_feed/arukereso/mapping, /admin/apps/xml_feed/arukereso/frame
 aliases: ["Arukereso", "Árukereső", "Arukereso.hu", "Arukereso feed", "Arukereso reviews", "Arukereso Trusted Shop", "price comparison Hungary"]
 tags: [apps, exports, xml, feed, price-comparison, hungary, arukereso]
 plan_gates: []

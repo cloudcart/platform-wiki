@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Vali Computers"
 route_name: apps.vali_computers.overview
-route_path: /admin/apps/vali_computers
+route_path: /admin/apps/vali_computers, /admin/apps/vali_computers/settings, /admin/apps/vali_computers/status, /admin/apps/vali_computers/products, /admin/apps/vali_computers/categories-mapping, /admin/apps/vali_computers/import-history, /admin/apps/vali_computers/import-history/:id
 aliases: ["Vali Computers", "Vali Computers ERP", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp]
 plan_gates: []

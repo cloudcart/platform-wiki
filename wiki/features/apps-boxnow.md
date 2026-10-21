@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → BoxNow"
 route_name: apps.boxnow.overview
-route_path: /admin/shipping/boxnow
+route_path: /admin/shipping/boxnow, /admin/shipping/boxnow/settings, /admin/shipping/boxnow/shipments, /admin/shipping/boxnow/shipments-return
 aliases: ["BoxNow", "Box Now", "BoxNow locker", "Locker delivery", "Activate cash on delivery", "Активиране на наложен платеж", "lockers not showing at checkout", "локърите не се показват", "BoxNow not appearing at checkout", "why must COD be enabled for lockers"]
 tags: [apps, shipping, locker, multi-country, omniship]
 plan_gates: []

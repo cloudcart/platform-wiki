@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → DPD Romania"
 route_name: apps.dpdromania.overview
-route_path: /admin/shipping/dpdromania
+route_path: /admin/shipping/dpdromania, /admin/shipping/dpdromania/settings, /admin/shipping/dpdromania/payments, /admin/shipping/dpdromania/shipments, /admin/shipping/dpdromania/shipments-return
 aliases: ["DPD Romania", "DPD RO", "DPD Romania courier"]
 tags: [apps, shipping, courier, romania, omniship]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed"
 route_name: apps.{consumer}.overview / apps.{consumer}.settings / apps.{consumer}.status / apps.{consumer}.mapping (per-consumer routes — {consumer} = facebook, google, skroutz, glami, pazaruvaj, etc.)
-route_path: /admin/apps/xml_feed/{consumer} (e.g. /admin/apps/xml_feed/facebook, /admin/apps/xml_feed/google/settings)
+route_path: /admin/apps/xml_feed/{consumer} (e.g. /admin/apps/xml_feed/facebook, /admin/apps/xml_feed/google/settings), /admin/apps/xml_feed, /admin/apps/xml_feed/tiktok/status, /admin/apps/xml_feed/tiktok/mapping, /admin/apps/xml_feed/tiktok/frame
 aliases: ["XML Feed", "Predefined feed exports", "Price comparison feeds", "Pricerunner feed"]
 tags: [apps, exports, xml, feed, marketplace, price-comparison]
 plan_gates: []

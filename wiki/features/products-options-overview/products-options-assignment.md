@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Products → Options → Add / Edit → Applicable products"
-route_name: apps.product_options.edit.new
-route_path: /admin/products/options-new/:type/:id?
+route_name: apps.product_options.edit
+route_path: /admin/products/options/:type/:id?
 aliases: ["Product option assignment", "Option mapping", "Applicable products for option", "Приложими продукти"]
 tags: [apps, products, options, customisation]
 plan_gates: ["product_options"]

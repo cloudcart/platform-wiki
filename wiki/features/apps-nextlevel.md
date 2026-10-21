@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Next Level Delivery"
 route_name: apps.nextlevel.overview
-route_path: /admin/shipping/nextlevel
+route_path: /admin/shipping/nextlevel, /admin/shipping/nextlevel/settings, /admin/shipping/nextlevel/external/:id
 aliases: ["Next Level Delivery", "Nextlevel", "Next Level courier", "Некст Левъл", "Next Level куриер", "no enable disable button", "app has no active toggle"]
 tags: [apps, shipping, courier, bulgaria, nextlevel, omniship]
 plan_gates: []

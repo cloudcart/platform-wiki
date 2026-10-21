@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed Generator"
 route_name: apps.xml_feed_generator.overview
-route_path: /admin/xml-feed-generator/overview
+route_path: /admin/xml-feed-generator/overview, /admin/apps/xml-feed-generator, /admin/apps/xml-feed-generator/create, /admin/apps/xml-feed-generator/edit/:id
 aliases: ["XML Feed Generator", "Xml Feed Generator", "Outbound product feed", "Generic product XML feed", "Custom partner feed", "no enable disable button", "app has no active toggle"]
 tags: [apps, exports, xml, feed, plan-gated]
 plan_gates: ["xml_feed_generators", "xml_feed_generator_products"]

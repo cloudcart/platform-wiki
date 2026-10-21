@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Payment Providers → Raiffeisen Bank"
 route_name: apps.raiffeisen.overview
-route_path: /admin/payment-providers/kbc
+route_path: /admin/payment-providers/kbc, /admin/payment-providers/kbc/settings
 aliases: ["Raiffeisen", "Raiffeisen Bank", "Райфайзенбанк", "KBC Bank", "ОББ Райфайзен", "Виртуален ПОС Райфайзен", "Плащане с карта - Райфайзен", "RaiffeisenService"]
 tags: [paymentproviders, payment-providers, raiffeisen, kbc, card-gateway, bulgaria]
 plan_gates: []

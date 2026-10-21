@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → ACS Courier"
 route_name: apps.acscourier.overview
-route_path: /admin/shipping/acscourier
+route_path: /admin/shipping/acscourier, /admin/shipping/acscourier/settings, /admin/shipping/acscourier/pickuplist, /admin/shipping/acscourier/history, /admin/shipping/acscourier/shipments, /admin/shipping/acscourier/shipments-return
 aliases: ["ACS Courier", "ACS Greece", "ACS Cyprus", "ACS courier"]
 tags: [apps, shipping, courier, greece, cyprus, omniship]
 plan_gates: []

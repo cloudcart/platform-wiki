@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Analytics → Details"
 route_name: analytics.details.subView
-route_path: /admin/analytics/details/:box/:id
+route_path: /admin/analytics/details/:box/:id, /admin/analytics/details/:box
 aliases: ["Box details", "Drill-down", "Analytics drill-in", "Box details view", "View details", "Детайли", "Подробен изглед"]
 tags: [ccanalytics, analytics, details, drill-down]
 plan_gates: ["cc_analytics.allow_period_compare", "cc_analytics.compare_range"]

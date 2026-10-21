@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → ELS Logistic"
 route_name: apps.elslogistic.overview
-route_path: /admin/shipping/elslogistic
+route_path: /admin/shipping/elslogistic, /admin/shipping/elslogistic/settings, /admin/shipping/elslogistic/shipments, /admin/shipping/elslogistic/shipments-return
 aliases: ["ELS Logistic", "ELS courier"]
 tags: [apps, shipping, courier, omniship]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → PosMaster"
 route_name: apps.posmaster.overview
-route_path: /admin/apps/posmaster
+route_path: /admin/apps/posmaster, /admin/apps/posmaster/settings, /admin/apps/posmaster/status, /admin/apps/posmaster/products, /admin/apps/posmaster/import-history, /admin/apps/posmaster/import-history/:id
 aliases: ["PosMaster", "Pos Master", "PosMaster ERP", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp, pos, retail]
 plan_gates: []

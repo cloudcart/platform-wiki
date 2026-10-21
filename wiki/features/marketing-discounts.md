@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts"
 route_name: discounts-list
-route_path: /admin/marketing/discounts
+route_path: /admin/marketing/discounts, /admin/marketing/discounts/edit/:id
 aliases: ["Discounts", "Promo codes", "Coupons", "Coupon codes", "Sales", "Promotions", "Промо кодове", "Отстъпки", "Купони"]
 tags: [marketing, discounts, coupons, promo-codes, promotions]
 plan_gates: ["total_discounts", "discount_global", "discount_fixed", "discount_coupon", "discount_quantity", "discount_banner", "discount-code-pro", "discount-code-pro-generator"]

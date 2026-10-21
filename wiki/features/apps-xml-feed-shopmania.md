@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → ShopMania"
 route_name: apps.shopmania.overview
-route_path: /admin/apps/xml_feed/shopmania
+route_path: /admin/apps/xml_feed/shopmania, /admin/apps/xml_feed/shopmania/status, /admin/apps/xml_feed/shopmania/settings, /admin/apps/xml_feed/shopmania/mapping, /admin/apps/xml_feed/shopmania/frame
 aliases: ["ShopMania", "ShopMania feed", "ShopMania price comparison", "ShopMania Romania"]
 tags: [apps, exports, xml, feed, price-comparison, romania, shopmania]
 plan_gates: []

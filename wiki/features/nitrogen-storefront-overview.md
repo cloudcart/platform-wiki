@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Nitrogen (Headless)"
 route_name: nitrogen.storefront.overview
-route_path: /admin/nitrogen/:storefrontId
+route_path: /admin/nitrogen/:storefrontId, /admin/nitrogen/:storefrontId/general, /admin/nitrogen/:storefrontId/environment, /admin/nitrogen/:storefrontId/nova, /admin/nitrogen/:storefrontId/api, /admin/nitrogen/:storefrontId/domains
 aliases: []
 tags: [nitrogen, staff-permission]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → N18 Audit"
 route_name: apps.n18_audit.overview
-route_path: /admin/apps/n18_audit
+route_path: /admin/apps/n18_audit, /admin/apps/n18_audit/list
 aliases: ["N18 Audit", "N18 fiscal audit", "Naredba N18", "Регистър Наредба Н-18", "no enable disable button", "app has no active toggle"]
 tags: [apps, administration, fiscal, audit, compliance, bulgaria]
 plan_gates: []

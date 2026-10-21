@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Multilang → Create → Step"
 route_name: apps.multilang.create
-route_path: /admin/apps/multilang/create/:type
+route_path: /admin/apps/multilang/create/:type, /admin/apps/multilang/create/step/:step
 aliases: ["Multilang Create", "Create sister site", "Link existing site", "Multilang wizard"]
 tags: [apps, administration, multilang, wizard, create, sister-site]
 plan_gates: []

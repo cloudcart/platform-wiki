@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → FaceBook"
 route_name: apps.facebook.overview
-route_path: /admin/apps/xml_feed/facebook
+route_path: /admin/apps/xml_feed/facebook, /admin/apps/xml_feed/facebook/status, /admin/apps/xml_feed/facebook/mapping, /admin/apps/xml_feed/facebook/frame
 aliases: ["Facebook feed", "Meta catalog feed", "Facebook product catalog", "Facebook Dynamic Ads feed", "Facebook CAPI", "Conversions API", "Instagram Shopping feed"]
 tags: [apps, exports, xml, feed, facebook, meta, catalog, capi]
 plan_gates: []

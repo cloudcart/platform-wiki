@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Universum"
 route_name: apps.universum.overview
-route_path: /admin/apps/universum
+route_path: /admin/apps/universum, /admin/apps/universum/settings, /admin/apps/universum/category-mapping, /admin/apps/universum/status, /admin/apps/universum/products, /admin/apps/universum/import-history, /admin/apps/universum/import-history/:id
 aliases: ["Universum", "Universum ERP", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp, accounting]
 plan_gates: []

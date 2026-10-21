@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → FanCourier"
 route_name: apps.fancourier.overview
-route_path: /admin/shipping/fancourier
+route_path: /admin/shipping/fancourier, /admin/shipping/fancourier/settings, /admin/shipping/fancourier/shipments, /admin/shipping/fancourier/shipments-return
 aliases: ["FanCourier", "Fan Courier", "Fan Courier Romania"]
 tags: [apps, shipping, courier, romania, omniship]
 plan_gates: []

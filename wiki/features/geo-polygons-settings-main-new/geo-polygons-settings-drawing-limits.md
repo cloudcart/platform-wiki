@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Settings → Geo polygons → Drawing module & limits"
-route_name: geo_polygons_add.settings.new
-route_path: /admin/settings/geo-polygons-new/add
+route_name: geo_polygons_add.settings
+route_path: /admin/settings/geo-polygons/add
 aliases: ["Polygon drawing tool", "Google draw map", "One outline per polygon", "Polygon drawing limits"]
 tags: [settings, geo, polygons, shipping, maps]
 plan_gates: []
@@ -20,7 +20,7 @@ How the embedded Google Map drawing tool works on the Add / Edit form, and the h
 
 ## Where to find it
 
-On the Add / Edit form at `/admin/settings/geo-polygons-new/add` (or `/edit/:id`) — the map module block sits below the **Polygon name** field. See [[geo-polygons-settings-list-form]] for the surrounding form.
+On the Add / Edit form at `/admin/settings/geo-polygons/add` (or `/edit/:id`) — the map module block sits below the **Polygon name** field. See [[geo-polygons-settings-list-form]] for the surrounding form.
 
 The block is a card containing a help paragraph + the Google draw-map component bound to the form's `area`. The help text reads verbatim: *"Use the small buttons located in the upper left corner of the map to outline the polygon. Note you can only have one field on one polygon. You cannot make more than one outline. Change the polygon color from the rectangles on the right side of the map."*
 

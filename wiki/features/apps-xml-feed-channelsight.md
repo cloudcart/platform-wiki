@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → ChannelSight"
 route_name: apps.channelsight.overview
-route_path: /admin/apps/xml_feed/channelsight
+route_path: /admin/apps/xml_feed/channelsight, /admin/apps/xml_feed/channelsight/status, /admin/apps/xml_feed/channelsight/settings, /admin/apps/xml_feed/channelsight/mapping, /admin/apps/xml_feed/channelsight/frame
 aliases: ["ChannelSight", "ChannelSight feed", "Where to Buy", "buy online channel feed"]
 tags: [apps, exports, xml, feed, where-to-buy, channelsight]
 plan_gates: []

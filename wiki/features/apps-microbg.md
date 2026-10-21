@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → MicroBG"
 route_name: apps.microbg.overview
-route_path: /admin/apps/microbg/overview
+route_path: /admin/apps/microbg/overview, /admin/apps/microbg
 aliases: ["MicroBG", "Micro.bg", "micro.bg", "MicroBG ERP", "Микро БГ", "no enable disable button", "app has no active toggle"]
 tags: [apps, erp, bulgaria, accounting, inventory-sync, order-sync]
 plan_gates: []

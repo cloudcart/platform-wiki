@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Apps → XML Feed → CommerceConnector"
-route_name: apps.commerceconnector.overview
-route_path: /admin/apps/xml_feed/commerceconnector
+route_name: apps.commerce_connector.overview
+route_path: /admin/apps/xml_feed/commerce_connector, /admin/apps/xml_feed/commerce_connector/status, /admin/apps/xml_feed/commerce_connector/settings, /admin/apps/xml_feed/commerce_connector/mapping, /admin/apps/xml_feed/commerce_connector/frame
 aliases: ["CommerceConnector", "Commerce Connector", "CommerceConnector feed", "where to buy CommerceConnector"]
 tags: [apps, exports, csv, feed, where-to-buy, commerceconnector]
 plan_gates: []

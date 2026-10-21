@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Microinvest"
 route_name: apps.microinvest.overview
-route_path: /admin/apps/microinvest
+route_path: /admin/apps/microinvest, /admin/apps/microinvest/status, /admin/apps/microinvest/products, /admin/apps/microinvest/import-history, /admin/apps/microinvest/import-history/:id
 aliases: ["Microinvest", "Микроинвест", "Microinvest Warehouse Pro", "Microinvest ERP", "Microinvest integration", "enable disable button", "app active toggle"]
 tags: [apps, erp, accounting, bulgaria, retail]
 plan_gates: ["microinvest_total_products"]

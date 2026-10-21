@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → DHL"
 route_name: apps.dhl.overview
-route_path: /admin/shipping/dhl
+route_path: /admin/shipping/dhl, /admin/shipping/dhl/settings
 aliases: ["DHL", "DHL eCommerce", "DHL Parcel", "DHL courier"]
 tags: [apps, shipping, courier, international, omniship]
 plan_gates: []

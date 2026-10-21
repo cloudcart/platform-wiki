@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Zeron"
 route_name: apps.zeron.overview
-route_path: /admin/apps/zeron
+route_path: /admin/apps/zeron, /admin/apps/zeron/settings, /admin/apps/zeron/status, /admin/apps/zeron/products, /admin/apps/zeron/import-history, /admin/apps/zeron/import-history/:id
 aliases: ["Zeron", "Zeron ERP", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp]
 plan_gates: []

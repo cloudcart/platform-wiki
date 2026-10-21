@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers"
 route_name: subscribers.list
-route_path: /admin/marketing/subscribers
+route_path: /admin/marketing/subscribers, /admin/marketing/subscribers/:id
 aliases: ["Subscribers", "Newsletter subscribers", "Audience", "Абонати", "Маркетинг абонати"]
 tags: [marketing, subscribers, channels, contacts]
 plan_gates: ["subscribers"]

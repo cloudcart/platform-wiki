@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Apps → TikTok Dynamic Ads"
-route_name: apps.tiktok.overview
-route_path: /admin/apps/tiktok
+route_name: apps.tiktok_pixel.overview
+route_path: /admin/apps/tiktok_pixel, /admin/apps/tiktok_pixel/settings
 aliases: ["TikTok Dynamic Ads", "TikTok Pixel", "TikTok tracking pixel", "TikTok conversion tracking", "TikTok catalog feed", "app.xml_feed.tiktok"]
 tags: [apps, social, tiktok, tracking, pixel, capi, feed, dynamic-ads, analytics]
 plan_gates: []

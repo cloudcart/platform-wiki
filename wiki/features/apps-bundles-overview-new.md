@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Apps → Bundles → Overview (modern)"
-route_name: apps.bundles.overview.new
-route_path: /admin/products/bundles-new
+route_name: apps.bundles.overview
+route_path: /admin/products/bundles/overview
 aliases: ["Bundles Overview (modern)", "Bundles new", "no enable disable button", "app has no active toggle"]
 tags: [apps, administration, bundles, overview, modern-vue]
 plan_gates: ["bundles", "hidden_products"]
@@ -24,7 +24,7 @@ For the full Bundles feature set, see [[bundles-list]].
 
 ## Where to find it
 
-Sidebar → Apps → Bundles (modern Vue). Route: `/admin/products/bundles-new`.
+Sidebar → Apps → Bundles (modern Vue). Route: `/admin/products/bundles/overview`.
 
 Modern Vue components (per `CcDomain/Applications/Pages/Bundles/`):
 - `ApplicationsBundlesMainPage.vue` — overview / hub.

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → TCS Courier"
 route_name: apps.tcscourier.overview
-route_path: /admin/shipping/tcscourier
+route_path: /admin/shipping/tcscourier, /admin/shipping/tcscourier/settings, /admin/shipping/tcscourier/shipments, /admin/shipping/tcscourier/shipments-return
 aliases: ["TCS Courier", "Tcscourier"]
 tags: [apps, shipping, courier, greece, omniship]
 plan_gates: []

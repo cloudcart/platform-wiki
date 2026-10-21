@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Products → Bundles → Plan gates & sync"
-route_name: bundles-list.new
-route_path: /admin/products/bundles-new
+route_name: bundles-list
+route_path: /admin/products/bundles
 aliases: ["Bundle plan gates", "Bundle limit", "Hidden bundle", "Bundle storefront sync", "Bundle banner exclusion"]
 tags: [apps, administration, products, bundles, plan-gates]
 plan_gates: ["bundles", "hidden_products"]
@@ -20,7 +20,7 @@ This aspect covers the **plan-feature gates** on bundles (the dual app-install +
 
 ## Where to find it
 
-The gates surface on the Bundles list and editor (route `bundles-list.new`, path `/admin/products/bundles-new`). The app-install gate sits on `/admin/apps/bundles/install`.
+The gates surface on the Bundles list and editor (route `bundles-list`, path `/admin/products/bundles`). The app-install gate sits on `/admin/apps/bundles/install`.
 
 ## What the merchant can do here
 

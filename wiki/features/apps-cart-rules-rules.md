@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Cart Rules → Rules"
 route_name: apps.cart-rules.settings
-route_path: /admin/apps/cart-rules/rules
+route_path: /admin/apps/cart-rules/rules, /admin/apps/cart-rules/rules/:id
 aliases: ["Cart Rules list", "Rules list", "Rule editor", "Create cart rule"]
 tags: [apps, marketing, automation, rules-engine, list]
 plan_gates: ["cart_rules_total", "cart_rules_range", "cart_rules_conditions", "cart_rules_actions"]

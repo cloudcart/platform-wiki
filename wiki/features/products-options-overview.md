@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Products → Options"
-route_name: apps.product_options.overview.new
-route_path: /admin/products/options-new
+route_name: apps.product_options.overview
+route_path: /admin/products/options/overview
 aliases: ["Product Options", "Per-product Options", "Custom product options", "Опции"]
 tags: [apps, administration, products, options, customisation]
 plan_gates: ["product_options"]
@@ -28,9 +28,9 @@ Sidebar → Products → **Options** (visible only when the Product Options app 
 
 | Sub-page | Route |
 |----------|-------|
-| Options list (default) | `apps.product_options.settings.new` (index route at `/admin/products/options-new`) |
-| Overview | `apps.product_options.overview.new` (`/admin/products/options-new/overview`) |
-| Add / Edit option | `apps.product_options.edit.new` (path `:type/:id?` — `type=create` or `type=edit` + `id`) |
+| Options list (default) | `apps.product_options.settings` (index route at `/admin/products/options`) |
+| Overview | `apps.product_options.overview` (`/admin/products/options/overview`) |
+| Add / Edit option | `apps.product_options.edit` (path `:type/:id?` — `type=create` or `type=edit` + `id`) |
 
 ## What the merchant can do here
 

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Withdraw from contract"
 route_name: apps.aftercare.overview
-route_path: /admin/apps/aftercare
+route_path: /admin/apps/aftercare, /admin/orders/aftercare/:id
 aliases: ["Withdraw from contract", "Withdrawal from contract", "Отказ от договора", "Отказ от договор", "Right of withdrawal", "EU withdrawal button", "Aftercare", "Aftercare Pro", "withdrawal request", "online withdrawal statement", "Directive 2023/2673", "electronic withdrawal function", "Article 11a", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, compliance, eu, withdrawal, returns, orders, beta]
 plan_gates: ["aftercare_pro"]

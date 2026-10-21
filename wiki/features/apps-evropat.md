@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Evropat"
 route_name: apps.evropat.overview
-route_path: /admin/shipping/evropat
+route_path: /admin/shipping/evropat, /admin/shipping/evropat/settings, /admin/shipping/evropat/addresses, /admin/shipping/evropat/shipments, /admin/shipping/evropat/shipments-return
 aliases: ["Evropat", "Evropat courier"]
 tags: [apps, shipping, courier, bulgaria, omniship]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Selmatic"
 route_name: apps.selmatic.overview
-route_path: /admin/apps/selmatic
+route_path: /admin/apps/selmatic, /admin/apps/selmatic/settings, /admin/apps/selmatic/status, /admin/apps/selmatic/products, /admin/apps/selmatic/categories-mapping, /admin/apps/selmatic/drive-list, /admin/apps/selmatic/import-history, /admin/apps/selmatic/import-history/:id
 aliases: ["Selmatic", "Selmatic ERP", "Selmatic Bulgaria", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp, accounting, bulgaria]
 plan_gates: []

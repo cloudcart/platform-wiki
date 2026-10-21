@@ -2,7 +2,7 @@
 type: concept
 nav_path: "Settings → Metaobjects → a metaobject definition → Entries"
 route_name: metafields.entries
-route_path: /admin/settings/metafields/metaobjects/{definitionId}/entries
+route_path: /admin/settings/metafields/metaobjects/{definitionId}/entries, /admin/settings/metafields/metaobjects/:definitionId/entries/new, /admin/settings/metafields/metaobjects/:definitionId/entries/:entryId
 aliases: ["Metaobject definition", "Metaobject entries", "Metaobject entry", "Metaobject handle", "Display name field", "Active draft status", "publishable metaobject", "Used in", "metaobjectUpsert", "Дефиниция на метаобект", "Записи на метаобект", "Чернова и активен запис"]
 tags: [metaobjects, custom-data, entries, concepts]
 plan_gates: []

@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Settings → Geo polygons → Zone integration & runtime matching"
-route_name: geo_polygons.settings.new
-route_path: /admin/settings/geo-polygons-new
+route_name: geo_polygons.settings
+route_path: /admin/settings/geo-polygons
 aliases: ["Polygon geo zone integration", "OPERATION_POLYGON", "Polygon address matching", "Polygon storage shape"]
 tags: [settings, geo, polygons, shipping, maps]
 plan_gates: []

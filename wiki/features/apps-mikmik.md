@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Mikmik"
 route_name: apps.mikmik.overview
-route_path: /admin/shipping/mikmik
+route_path: /admin/shipping/mikmik, /admin/shipping/mikmik/settings
 aliases: ["Mikmik", "Mik Mik courier", "MikMik"]
 tags: [apps, shipping, courier, western-balkans, omniship]
 plan_gates: []

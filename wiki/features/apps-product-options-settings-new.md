@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Products → Options → Settings (modern)"
-route_name: apps.product_options.settings.new
-route_path: /admin/products/options-new
+route_name: apps.product_options.settings
+route_path: /admin/products/options
 aliases: ["Product Options Settings (modern)", "Options settings new", "no enable disable button", "app has no active toggle"]
 tags: [apps, administration, product-options, settings, modern-vue]
 plan_gates: []
@@ -24,7 +24,7 @@ For the full Product Options feature set, see [[products-options-overview]].
 
 ## Where to find it
 
-Sidebar → Products → Options (modern Vue). The Settings (`apps.product_options.settings.new`) is the index route at `/admin/products/options-new`. Separately, the Overview tab (`apps.product_options.overview.new`) is at `/admin/products/options-new/overview`.
+Sidebar → Products → Options (modern Vue). The Settings (`apps.product_options.settings`) is the index route at `/admin/products/options`. Separately, the Overview tab (`apps.product_options.overview`) is at `/admin/products/options/overview`.
 
 ## What the merchant can do here
 

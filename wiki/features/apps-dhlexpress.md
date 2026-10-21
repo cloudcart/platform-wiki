@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → DHL Express"
 route_name: apps.dhlexpress.overview
-route_path: /admin/shipping/dhlexpress
+route_path: /admin/shipping/dhlexpress, /admin/shipping/dhlexpress/settings, /admin/shipping/dhlexpress/shipments, /admin/shipping/dhlexpress/shipments-return
 aliases: ["DHL Express", "DHL Time Definite", "DHL premium"]
 tags: [apps, shipping, courier, international, premium, omniship]
 plan_gates: []

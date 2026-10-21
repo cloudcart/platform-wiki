@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Polycomp"
 route_name: apps.polycomp.overview
-route_path: /admin/apps/polycomp
+route_path: /admin/apps/polycomp, /admin/apps/polycomp/settings, /admin/apps/polycomp/status, /admin/apps/polycomp/products, /admin/apps/polycomp/categories-mapping, /admin/apps/polycomp/import-history, /admin/apps/polycomp/import-history/:id
 aliases: ["Polycomp", "Polycomp ERP", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp]
 plan_gates: ["polycomp_total_products"]

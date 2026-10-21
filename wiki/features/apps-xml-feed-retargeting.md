@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → Retargeting"
 route_name: apps.retargeting.overview
-route_path: /admin/apps/xml_feed/retargeting
+route_path: /admin/apps/xml_feed/retargeting, /admin/apps/xml_feed/retargeting/status, /admin/apps/xml_feed/retargeting/settings, /admin/apps/xml_feed/retargeting/mapping, /admin/apps/xml_feed/retargeting/frame
 aliases: ["Retargeting", "Retargeting.biz", "Retargeting feed", "behavioural retargeting", "product recommendations feed"]
 tags: [apps, exports, json, csv, feed, retargeting, marketing]
 plan_gates: []

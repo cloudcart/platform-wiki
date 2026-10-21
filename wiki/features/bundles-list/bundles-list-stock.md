@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Products → Bundles → Stock & availability"
-route_name: bundles-list.new
-route_path: /admin/products/bundles-new
+route_name: bundles-list
+route_path: /admin/products/bundles
 aliases: ["Bundle stock", "Bundle availability", "Bundle out of stock", "Bundle max quantity", "Bundle min stock"]
 tags: [apps, administration, products, bundles, inventory]
 plan_gates: ["bundles"]
@@ -22,7 +22,7 @@ The inventory-side concept (the min-across-children rule, child-flag-wins, auto-
 
 ## Where to find it
 
-Availability surfaces on the Bundles list (route `bundles-list.new`, path `/admin/products/bundles-new`) and on the bundle's storefront listing. There is no separate stock-editing field on the bundle — the merchant edits the constituents' stock via [[products-inventory]].
+Availability surfaces on the Bundles list (route `bundles-list`, path `/admin/products/bundles`) and on the bundle's storefront listing. There is no separate stock-editing field on the bundle — the merchant edits the constituents' stock via [[products-inventory]].
 
 ## What the merchant can do here
 

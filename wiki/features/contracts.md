@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Details → Contracts"
 route_name: contracts
-route_path: /admin/details/contracts
+route_path: /admin/details/contracts, /admin/details/contracts/:id
 aliases: ["Contracts", "LTA", "Long-term agreement", "LTA contract", "Договори", "Дългосрочен договор", "Договор с CloudCart"]
 tags: [base, details, contracts, plans, lta]
 plan_gates: []

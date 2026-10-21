@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → GLS"
 route_name: apps.gls.overview
-route_path: /admin/shipping/gls
+route_path: /admin/shipping/gls, /admin/shipping/gls/settings
 aliases: ["GLS", "General Logistics Systems", "GLS Europe", "GLS courier"]
 tags: [apps, shipping, courier, europe, omniship]
 plan_gates: []

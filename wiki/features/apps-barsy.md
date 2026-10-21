@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Barsy"
 route_name: apps.barsy.overview
-route_path: /admin/apps/barsy
+route_path: /admin/apps/barsy, /admin/apps/barsy/settings, /admin/apps/barsy/status, /admin/apps/barsy/products, /admin/apps/barsy/modificators, /admin/apps/barsy/import-history, /admin/apps/barsy/import-history/:id, /admin/apps/barsy/orders
 aliases: ["Barsy", "Barsy ERP", "Barsy retail", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp, retail]
 plan_gates: []

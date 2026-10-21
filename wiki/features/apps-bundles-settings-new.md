@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Apps → Bundles → Settings (modern)"
-route_name: apps.bundles.settings.new
-route_path: /admin/products/bundles-new
+route_name: apps.bundles.settings
+route_path: /admin/products/bundles
 aliases: ["Bundles Settings (modern)", "Bundles config new"]
 tags: [apps, administration, bundles, settings, modern-vue]
 plan_gates: []
@@ -20,7 +20,7 @@ For the full Bundles feature set, see [[bundles-list]] and [[apps-bundles-overvi
 
 ## Where to find it
 
-Sidebar → Apps → Bundles → **Settings tab**. Route: `/admin/products/bundles-new` (the same path as the Overview hub — `apps.bundles.settings.new` is registered at the Bundles parent route, with `bundles-list.new`, `bundles-add.new`, and `bundles-edit.new/:id` as children).
+Sidebar → Apps → Bundles → **Settings tab**. Route: `/admin/products/bundles` (`apps.bundles.settings` is the Bundles parent route, with `bundles-list`, `bundles-add` and `bundles-edit` as children; the Overview tab is `/admin/products/bundles/overview`). Until the Vue pages moved, these paths had a `-new` suffix.
 
 ## What the merchant can do here
 

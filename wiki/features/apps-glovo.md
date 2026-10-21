@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Glovo"
 route_name: apps.glovo.overview
-route_path: /admin/shipping/glovo
+route_path: /admin/shipping/glovo, /admin/shipping/glovo/settings, /admin/shipping/glovo/stores
 aliases: ["Glovo", "Glovo delivery", "On-demand delivery"]
 tags: [apps, shipping, on-demand, last-mile, omniship]
 plan_gates: []

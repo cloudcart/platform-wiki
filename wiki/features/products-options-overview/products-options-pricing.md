@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Products → Options → Add / Edit → price impact"
-route_name: apps.product_options.edit.new
-route_path: /admin/products/options-new/:type/:id?
+route_name: apps.product_options.edit
+route_path: /admin/products/options/:type/:id?
 aliases: ["Product option pricing", "Option price impact", "Option price calculation", "Цена на опция"]
 tags: [apps, products, options, pricing, customisation]
 plan_gates: ["product_options"]

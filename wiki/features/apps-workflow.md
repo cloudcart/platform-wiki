@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Workflow"
 route_name: apps.workflow.overview
-route_path: /admin/apps/workflow
+route_path: /admin/apps/workflow, /admin/apps/workflow/settings, /admin/apps/workflow/status, /admin/apps/workflow/products, /admin/apps/workflow/import-history, /admin/apps/workflow/import-history/:id
 aliases: ["Workflow", "Workflow ERP", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp]
 plan_gates: ["workflow_total_products"]

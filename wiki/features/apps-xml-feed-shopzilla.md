@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → ShopZilla"
 route_name: apps.shopzilla.overview
-route_path: /admin/apps/xml_feed/shopzilla
+route_path: /admin/apps/xml_feed/shopzilla, /admin/apps/xml_feed/shopzilla/status, /admin/apps/xml_feed/shopzilla/settings, /admin/apps/xml_feed/shopzilla/mapping, /admin/apps/xml_feed/shopzilla/frame
 aliases: ["ShopZilla", "ShopZilla feed", "ShopZilla category mapping", "ShopZilla condition", "price comparison"]
 tags: [apps, exports, xml, feed, price-comparison, shopzilla]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Sendcloud"
 route_name: apps.sendcloud.overview
-route_path: /admin/shipping/sendcloud
+route_path: /admin/shipping/sendcloud, /admin/shipping/sendcloud/settings, /admin/shipping/sendcloud/external/:id
 aliases: ["Sendcloud", "Send cloud", "Shipping aggregator", "Multi-carrier shipping", "no enable disable button", "app has no active toggle"]
 tags: [apps, shipping, aggregator, multi-carrier, europe, omniship]
 plan_gates: []

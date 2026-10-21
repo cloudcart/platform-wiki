@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → D-Express"
 route_name: apps.dexpress.overview
-route_path: /admin/shipping/dexpress
+route_path: /admin/shipping/dexpress, /admin/shipping/dexpress/settings
 aliases: ["D-Express", "D Express", "DExpress courier"]
 tags: [apps, shipping, courier, balkans, omniship]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Payment Providers → BNP Paribas Personal Finance"
 route_name: apps.bnp.settings
-route_path: /admin/payment-providers/bnp
+route_path: /admin/payment-providers/bnp, /admin/payment-providers/bnp/promotions, /admin/payment-providers/bnp/mapping
 aliases: ["BNP", "BNP Paribas", "BNP Personal Finance", "Postbank PF", "PF online shop", "Bulgarian retail credit", "Bulgarian leasing"]
 tags: [paymentproviders, payment-providers, bnp, bulgaria, credit, leasing, installments, postbank, ecom]
 plan_gates: []

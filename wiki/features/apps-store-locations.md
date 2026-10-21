@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Store Locations"
 route_name: apps.store_locations.overview
-route_path: /admin/apps/store_locations
+route_path: /admin/apps/store_locations, /admin/apps/store_locations/zones
 aliases: ["Store Locations", "Warehouses", "Multi-warehouse", "Geo-based inventory", "Локации", "no enable disable button", "app has no active toggle"]
 tags: [apps, administration, inventory, multi-warehouse, geo]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → Trendo"
 route_name: apps.trendo.overview
-route_path: /admin/apps/xml_feed/trendo
+route_path: /admin/apps/xml_feed/trendo, /admin/apps/xml_feed/trendo/status, /admin/apps/xml_feed/trendo/settings, /admin/apps/xml_feed/trendo/mapping, /admin/apps/xml_feed/trendo/frame
 aliases: ["Trendo", "Trendo feed", "Trendo fashion feed"]
 tags: [apps, exports, xml, feed, fashion, trendo]
 plan_gates: []

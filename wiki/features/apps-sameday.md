@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Sameday"
 route_name: apps.sameday.overview
-route_path: /admin/shipping/sameday
+route_path: /admin/shipping/sameday, /admin/shipping/sameday/settings, /admin/shipping/sameday/shipments, /admin/shipping/sameday/shipments-return
 aliases: ["Sameday", "Sameday Courier", "Sameday Romania", "Sameday EasyBox"]
 tags: [apps, shipping, courier, romania, bulgaria, locker, omniship]
 plan_gates: []

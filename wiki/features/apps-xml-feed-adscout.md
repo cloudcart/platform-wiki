@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Apps → XML Feed → AdScout"
-route_name: apps.adscout.overview
-route_path: /admin/apps/xml_feed/adscout
+route_name: apps.ad_scout.overview
+route_path: /admin/apps/xml_feed/ad_scout, /admin/apps/xml_feed/ad_scout/status, /admin/apps/xml_feed/ad_scout/settings, /admin/apps/xml_feed/ad_scout/mapping, /admin/apps/xml_feed/ad_scout/frame
 aliases: ["AdScout", "AdScout feed", "AdScout api key domain code"]
 tags: [apps, exports, csv, feed, ads, adscout]
 plan_gates: []

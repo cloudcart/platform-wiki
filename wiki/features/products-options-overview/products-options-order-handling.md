@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Products → Options → order-line behaviour"
-route_name: apps.product_options.edit.new
-route_path: /admin/products/options-new/:type/:id?
+route_name: apps.product_options.edit
+route_path: /admin/products/options/:type/:id?
 aliases: ["Product option order handling", "Option values on order line", "Required option checkout", "Option file uploads", "Опции в поръчка"]
 tags: [apps, products, options, orders, customisation]
 plan_gates: ["product_options"]

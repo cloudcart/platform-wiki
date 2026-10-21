@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Import"
 route_name: apps.xml_import
-route_path: /admin/apps/xml_import
+route_path: /admin/apps/xml_import, /admin/apps/xml_import/add, /admin/apps/xml_import/edit/:id
 aliases: ["XML Import", "Xml Import", "Product feed import", "Supplier feed import (one-time)", "no enable disable button", "app has no active toggle"]
 tags: [apps, imports, xml, products, plan-gated]
 plan_gates: ["xml_import", "xml_import_limit", "xml_import_total_products"]

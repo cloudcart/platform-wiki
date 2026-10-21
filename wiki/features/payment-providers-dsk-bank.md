@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Payment Providers → DSK Bank"
 route_name: apps.dsk_bank.overview
-route_path: /admin/payment-providers/dsk_bank
+route_path: /admin/payment-providers/dsk_bank, /admin/payment-providers/dsk_bank/settings
 aliases: ["DSK Bank", "DSK Bank card gateway", "Виртуален ПОС DSK", "ПОС терминал ДСК", "Плащане с карта - ДСК", "DskBank"]
 tags: [paymentproviders, payment-providers, dsk-bank, card-gateway, bulgaria]
 plan_gates: []

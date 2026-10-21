@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → Compari"
 route_name: apps.compari.overview
-route_path: /admin/apps/xml_feed/compari
+route_path: /admin/apps/xml_feed/compari, /admin/apps/xml_feed/compari/status, /admin/apps/xml_feed/compari/settings, /admin/apps/xml_feed/compari/mapping, /admin/apps/xml_feed/compari/frame
 aliases: ["Compari", "Compari.hu", "Compari feed", "Árukereső Compari", "Compari reviews", "Compari Trusted Shop", "Compari Унгария"]
 tags: [apps, exports, xml, feed, price-comparison, hungary, compari]
 plan_gates: []

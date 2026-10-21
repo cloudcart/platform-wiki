@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Products → Categories"
 route_name: categories.settings
-route_path: /admin/products/categories
+route_path: /admin/products/categories, /admin/products/categories/organize
 aliases: ["Categories", "Category tree", "Product categories", "Категории", "Категории на продуктите"]
 tags: [products, categories, taxonomy, navigation]
 plan_gates: ["categories", "category_properties"]

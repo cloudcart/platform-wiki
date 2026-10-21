@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Brands Distribution"
 route_name: apps.brands-distribution.overview
-route_path: /admin/apps/brands-distribution
+route_path: /admin/apps/brands-distribution, /admin/apps/brands-distribution/settings, /admin/apps/brands-distribution/status, /admin/apps/brands-distribution/products, /admin/apps/brands-distribution/categories-mapping, /admin/apps/brands-distribution/import-history, /admin/apps/brands-distribution/import-history/:id
 aliases: ["Brands Distribution", "Brands Distribution ERP", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp]
 plan_gates: ["brands-distribution_total_products"]

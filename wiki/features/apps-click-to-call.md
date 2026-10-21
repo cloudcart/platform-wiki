@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Click to Call"
 route_name: apps.click-to-call.overview
-route_path: /admin/apps/click-to-call
+route_path: /admin/apps/click-to-call, /admin/apps/click-to-call/settings
 aliases: ["Click to Call", "Phone module", "Call button", "Натисни за обаждане", "enable disable button", "app active toggle"]
 tags: [apps, marketing, conversion, phone, module]
 plan_gates: []

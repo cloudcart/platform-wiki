@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Aura Search"
 route_name: apps.advanced_search.dashboard
-route_path: /admin/apps/advanced_search/dashboard
+route_path: /admin/apps/advanced_search/dashboard, /admin/apps/advanced_search/analysis/nohits, /admin/apps/advanced_search/analysis/noclick, /admin/apps/advanced_search/analysis/lowconversion, /admin/apps/advanced_search/optimization/stopwords, /admin/apps/advanced_search/analytics, /admin/apps/advanced_search/analytics/nohits, /admin/apps/advanced_search/usage/bot, /admin/apps/advanced_search/usage/backend, /admin/apps/advanced_search/statistic, /admin/apps/advanced_search/stopwords, /admin/apps/advanced_search/pinned
 aliases: ["Aura Search", "Advanced Search", "AI search", "AI Semantic Search", "Storefront search app", "Search engine app", "search autocomplete", "enable disable button", "app active toggle", "missing enable button", "Аура търсене", "Разширено търсене", "Търсачка на магазина", "AI търсене"]
 tags: [apps, others, search, ai, analytics, merchandising]
 plan_gates: ["advanced_search", "advanced_search_packs"]

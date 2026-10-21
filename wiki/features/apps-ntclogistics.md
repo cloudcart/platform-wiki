@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → NTC Logistics"
 route_name: apps.ntclogistics.overview
-route_path: /admin/shipping/ntclogistics
+route_path: /admin/shipping/ntclogistics, /admin/shipping/ntclogistics/settings, /admin/shipping/ntclogistics/shipments, /admin/shipping/ntclogistics/shipments-return
 aliases: ["NTC Logistics", "NTC courier", "Ntclogistics"]
 tags: [apps, shipping, courier, montenegro, omniship]
 plan_gates: []

@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Settings → Geo polygons → Delete cascade"
-route_name: geo_polygons.settings.new
-route_path: /admin/settings/geo-polygons-new
+route_name: geo_polygons.settings
+route_path: /admin/settings/geo-polygons
 aliases: ["Polygon delete cascade", "ON DELETE CASCADE polygon", "Silent rule loss geo zone", "Deleting a polygon in use"]
 tags: [settings, geo, polygons, shipping, maps]
 plan_gates: []

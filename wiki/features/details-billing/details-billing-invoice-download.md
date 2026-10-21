@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Details → Billing → Invoice download"
 route_name: billing-list
-route_path: /admin/details/billing
+route_path: /admin/details/billing, /admin/details/invoices
 aliases: ["Billing invoice download", "Download invoice PDF", "Transaction vs invoice", "Invoice link on billing", "Изтегляне на фактура"]
 tags: [accountdetails, details, billing, transactions, invoice]
 plan_gates: []

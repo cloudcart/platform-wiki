@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Products → Variants"
 route_name: variants-index.new
-route_path: /admin/products/variants
+route_path: /admin/products/variants, /admin/products/variants/options/:id
 aliases: []
 tags: [products, variants]
 plan_gates: ["multi_variants", "variants.listing"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Versus ERP"
 route_name: apps.versus_erp.overview
-route_path: /admin/apps/versus-erp
+route_path: /admin/apps/versus-erp, /admin/apps/versus-erp/settings, /admin/apps/versus-erp/status, /admin/apps/versus-erp/products, /admin/apps/versus-erp/categories-mapping, /admin/apps/versus-erp/import-history, /admin/apps/versus-erp/import-history/:id
 aliases: ["Versus ERP", "Versus ERP ERP", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp]
 plan_gates: ["versus_erp_total_products"]

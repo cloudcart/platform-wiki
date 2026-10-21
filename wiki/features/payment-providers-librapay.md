@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Payment Providers → LibraPay"
 route_name: apps.libra_pay.overview
-route_path: /admin/payment-providers/libra_pay
+route_path: /admin/payment-providers/libra_pay, /admin/payment-providers/libra_pay/settings
 aliases: ["LibraPay", "Libra Pay", "LibraBank", "Libra Internet Bank", "Romanian card gateway", "Плащане с карта - Romania", "LibraPayService"]
 tags: [paymentproviders, payment-providers, librapay, card-gateway, romania, cross-border]
 plan_gates: []

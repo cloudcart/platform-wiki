@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → XML Feed → Criteo"
 route_name: apps.criteo.overview
-route_path: /admin/apps/xml_feed/criteo
+route_path: /admin/apps/xml_feed/criteo, /admin/apps/xml_feed/criteo/status, /admin/apps/xml_feed/criteo/settings, /admin/apps/xml_feed/criteo/mapping, /admin/apps/xml_feed/criteo/frame
 aliases: ["Criteo", "Criteo feed", "Criteo dynamic ads", "Criteo retargeting feed"]
 tags: [apps, exports, xml, feed, ads, retargeting, criteo]
 plan_gates: []

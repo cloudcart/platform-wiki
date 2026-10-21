@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Apps → Also"
 route_name: apps.also.overview
-route_path: /admin/apps/also
+route_path: /admin/apps/also, /admin/apps/also/settings, /admin/apps/also/status, /admin/apps/also/products, /admin/apps/also/categories-mapping, /admin/apps/also/import-history, /admin/apps/also/import-history/:id
 aliases: ["Also", "Also ERP", "enable disable button", "app active toggle", "missing enable button"]
 tags: [apps, erp]
 plan_gates: ["also", "also_total_products"]
