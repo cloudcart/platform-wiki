@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Draft"
 route_name: campaigns-draft
-route_path: /admin/marketing-new/campaigns/draft
+route_path: /admin/marketing/campaigns/draft
 aliases: ["Draft campaigns", "Saved drafts", "Inactive campaigns", "Stopped campaigns", "Чернови", "Спрени кампании", "Неактивни кампании"]
 tags: [marketing, campaigns, draft, inactive]
 plan_gates: ["abandoned_orders", "campaigns"]
@@ -30,8 +30,8 @@ The two tabs are separate routes with separate controllers but identical table s
 
 | Tab | Route name | Route path | Filter rule |
 |-----|------------|------------|-------------|
-| **Draft** | `campaigns-draft` | `/admin/marketing-new/campaigns/draft` | `active = 2` AND `archived_at IS NULL` |
-| **Inactive** | `campaigns-inactive` | `/admin/marketing-new/campaigns/inactive` | `active = 0` AND `archived_at IS NULL` |
+| **Draft** | `campaigns-draft` | `/admin/marketing/campaigns/draft` | `active = 2` AND `archived_at IS NULL` |
+| **Inactive** | `campaigns-inactive` | `/admin/marketing/campaigns/inactive` | `active = 0` AND `archived_at IS NULL` |
 
 The campaign list's tab control (Active / Inactive / Archived / Draft) drives these routes — all four tabs render the same list component; clicking a tab swaps the URL and re-queries the matching list endpoint.
 

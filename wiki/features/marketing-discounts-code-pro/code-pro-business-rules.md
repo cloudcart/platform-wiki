@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO codes → Business rules"
 route_name: discounts-code_pro-edit
-route_path: /admin/marketing-new/discounts/code-pro/:id/:codeId
+route_path: /admin/marketing/discounts/code-pro/:id/:codeId
 aliases: ["Code PRO business rules", "Code PRO save flow", "Code PRO barcode mode", "Code PRO stacking", "Code PRO bulk operations"]
 tags: [marketing, discounts, code-pro, business-rules, save-flow]
 plan_gates: ["discount-code-pro"]
@@ -23,7 +23,7 @@ For the form layout see [[code-pro-form]]. For field definitions see [[code-pro-
 
 ## Where to find it
 
-These rules apply on the per-code form save (`/admin/marketing-new/discounts/code-pro/:id/:codeId`), on the bulk-toggle / bulk-delete actions in the table action bar at `/admin/marketing-new/discounts/code-pro/:id`, and on the JSON-API v2 path (see [[code-pro-endpoints-api]]) — same rules, same side-effects.
+These rules apply on the per-code form save (`/admin/marketing/discounts/code-pro/:id/:codeId`), on the bulk-toggle / bulk-delete actions in the table action bar at `/admin/marketing/discounts/code-pro/:id`, and on the JSON-API v2 path (see [[code-pro-endpoints-api]]) — same rules, same side-effects.
 
 ## What the merchant can do here
 
@@ -98,7 +98,7 @@ There is no separate input control for `code_prefix` — see [[code-pro-fields]]
 
 ### Bulk operations
 
-The list at `/admin/marketing-new/discounts/code-pro/:id` supports bulk status toggle and bulk delete from the table action bar. The merchant ticks multiple rows and uses the action selector:
+The list at `/admin/marketing/discounts/code-pro/:id` supports bulk status toggle and bulk delete from the table action bar. The merchant ticks multiple rows and uses the action selector:
 
 - **Set status active** / **Set status unactive** → POST to `/admin/api/core/discounts/code-pro/:id/status` with `{ ids: [...], status: 1|0 }`.
 - **Delete** → DELETE to `/admin/api/core/discounts/code-pro/:id?ids[]=...`.

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns"
 route_name: campaigns
-route_path: /admin/marketing-new/campaigns
+route_path: /admin/marketing/campaigns
 aliases: ["Campaigns", "Email campaigns", "Marketing automation", "Кампании", "Маркетингови кампании", "Имейл кампании"]
 tags: [marketing, campaigns, automation, email, sms, viber, web-push]
 plan_gates: ["abandoned_orders", "campaigns"]
@@ -23,7 +23,7 @@ The list shows campaigns split across four status tabs (**Active**, **Inactive**
 
 Sidebar → **Marketing** → **Campaigns** (under the Campaigns dropdown).
 
-The base route `/admin/marketing-new/campaigns` redirects to `/admin/marketing-new/campaigns/active`. Each status tab is a distinct route.
+The base route `/admin/marketing/campaigns` redirects to `/admin/marketing/campaigns/active`. Each status tab is a distinct route.
 
 ## Sub-pages (in this cluster)
 
@@ -41,17 +41,17 @@ Drill into the aspect page that matches the question rather than reading every p
 
 | Label | Route name | Route path |
 |-------|------------|------------|
-| Campaigns (Active default) | `campaigns` | `/admin/marketing-new/campaigns` |
-| Active list | `campaigns-active` | `/admin/marketing-new/campaigns/active` |
-| Inactive list | `campaigns-inactive` | `/admin/marketing-new/campaigns/inactive` |
-| Archived list | `campaigns-archived` | `/admin/marketing-new/campaigns/archived` |
-| Draft list | `campaigns-draft` | `/admin/marketing-new/campaigns/draft` |
-| Saved email templates | `campaigns-email-saved-templates` | `/admin/marketing-new/campaigns/configuration/channel/email/saved` |
-| Channels | `campaigns-channels` | `/admin/marketing-new/campaigns/channels` |
-| Anti-spam policy | `campaigns-policy` | `/admin/marketing-new/campaigns/policy` |
-| Create | `campaigns-create` | `/admin/marketing-new/campaigns/create/:type(regular\|automated)` |
-| Edit | `campaigns-edit` | `/admin/marketing-new/campaigns/edit/:type(regular\|automated)/:id` |
-| Statistics | `campaigns-statistics` | `/admin/marketing-new/campaigns/statistics/:id` |
+| Campaigns (Active default) | `campaigns` | `/admin/marketing/campaigns` |
+| Active list | `campaigns-active` | `/admin/marketing/campaigns/active` |
+| Inactive list | `campaigns-inactive` | `/admin/marketing/campaigns/inactive` |
+| Archived list | `campaigns-archived` | `/admin/marketing/campaigns/archived` |
+| Draft list | `campaigns-draft` | `/admin/marketing/campaigns/draft` |
+| Saved email templates | `campaigns-email-saved-templates` | `/admin/marketing/campaigns/configuration/channel/email/saved` |
+| Channels | `campaigns-channels` | `/admin/marketing/campaigns/channels` |
+| Anti-spam policy | `campaigns-policy` | `/admin/marketing/campaigns/policy` |
+| Create | `campaigns-create` | `/admin/marketing/campaigns/create/:type(regular\|automated)` |
+| Edit | `campaigns-edit` | `/admin/marketing/campaigns/edit/:type(regular\|automated)/:id` |
+| Statistics | `campaigns-statistics` | `/admin/marketing/campaigns/statistics/:id` |
 
 ## What the merchant can do here
 

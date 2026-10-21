@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Email → Configuration wizard"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Email setup wizard", "Email configuration modal", "Email channel 4-step setup", "Profile step", "Domain step", "Sender email step", "Edit Profile", "Edit Domain", "Edit Email"]
 tags: [marketing, channels, email, setup, wizard, elastic-email]
 plan_gates: ["campaign.channel.email"]

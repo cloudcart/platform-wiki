@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Web Push → Settings"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Web Push popup", "Web Push prompt", "WebPush opt-in popup", "Subscription prompt only on successful purchase page", "Two-stage push prompt", "Уеб пуш попъп", "Уеб пуш покана"]
 tags: [marketing, channels, web-push, popup, prompt, storefront, ux]
 plan_gates: ["campaign.channel.web_push"]
@@ -23,7 +23,7 @@ The two-stage design is deliberate. The native browser prompt is **one-shot per 
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing-new/campaigns/channels`) → **Web Push** channel card → **Settings** (sliders icon). Title — *"Settings - Web Push"*. Body stacks **three `CcCards`** vertically (Checkout-only mode / Overlay / Popup).
+Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing/campaigns/channels`) → **Web Push** channel card → **Settings** (sliders icon). Title — *"Settings - Web Push"*. Body stacks **three `CcCards`** vertically (Checkout-only mode / Overlay / Popup).
 
 ## What the merchant can do here
 

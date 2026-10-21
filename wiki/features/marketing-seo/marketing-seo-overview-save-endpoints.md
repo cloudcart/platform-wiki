@@ -2,8 +2,8 @@
 type: feature
 nav_path: "Marketing → Seo → Save endpoints"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
-aliases: ["SEO save endpoints", "Main SEO API routes", "SEO settings load endpoint", "SEO per-card POST routes", "SEO legacy add-this route", "SEO API крайни точки"]
+route_path: /admin/marketing/seo
+aliases: ["SEO save endpoints", "Main SEO API routes", "SEO settings load endpoint", "SEO per-card POST routes", "SEO add-this route", "SEO API крайни точки"]
 tags: [marketing, seo, api, routes, integration]
 plan_gates: []
 created: 2026-06-10
@@ -21,7 +21,7 @@ This aspect documents the **request plumbing** behind the Main SEO screen: the s
 
 ## Where to find it
 
-Sidebar → Marketing → **SEO**. Route name `seo-main`, path `/admin/marketing-new/seo`. The endpoints below are called by that screen; the per-card save UX (Save / Revert, confirm modal) is on [[marketing-seo-overview-card-save]].
+Sidebar → Marketing → **SEO**. Route name `seo-main`, path `/admin/marketing/seo`. The endpoints below are called by that screen; the per-card save UX (Save / Revert, confirm modal) is on [[marketing-seo-overview-card-save]].
 
 ## What the merchant can do here
 
@@ -53,9 +53,9 @@ The **Sitemap URL** and **RSS feed URL** fields are read-only — there is no sa
 
 ## Business rules
 
-### The Sharing card posts to a legacy route
+### The Sharing card's route
 
-The Sharing card is the **only** card whose POST does NOT live under `/admin/api/core/seo/settings/*`. It hits the legacy route `/admin/marketing/seo/add-this` instead, handled by the legacy settings handler. The screen reuses the same wrapper UX, but the underlying save path differs — relevant when a Sharing save fails while the other cards succeed. See [[marketing-seo-sharing]].
+The Sharing card posts to `/admin/api/core/seo/settings/add-this`, but the Core admin API defines no `add-this` route beside the other cards' routes (verify — on 2026-10-21 production has no handler at this address; the legacy `seo/add-this` route was removed with the Smarty SEO pages). See [[marketing-seo-sharing]].
 
 ### Canonical save is body-less and URL-constrained
 
@@ -75,7 +75,7 @@ Because the whole screen hydrates from the single `GET /admin/api/core/seo/setti
 - [[marketing-seo-overview-card-save]] — the per-card Save / Revert UX these endpoints back.
 - [[marketing-seo-canonical]] — body-less canonical-activity route.
 - [[marketing-seo-robots]] — unvalidated robot-txt route + `update_robots` timestamp.
-- [[marketing-seo-sharing]] — legacy add-this route.
+- [[marketing-seo-sharing]] — the Sharing card and its `add-this` save.
 - [[marketing-seo-rss]] — rss-feed route.
 
 ## Open questions

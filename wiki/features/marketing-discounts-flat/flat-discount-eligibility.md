@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Flat → Eligibility"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Flat discount eligibility", "Flat discount date range", "Flat customer groups", "Flat geo zone", "Flat only_customer", "Flat max_uses", "Flat maxused_user", "discounts_used_statuses", "Flat auto-disable UTC", "Flat activation cooldown", "Flat plan gates", "discount_global", "discount_coupon"]
 tags: [marketing, discounts, flat, eligibility, plan-gates, cooldown]
 plan_gates: ["discount_global", "discount_coupon"]

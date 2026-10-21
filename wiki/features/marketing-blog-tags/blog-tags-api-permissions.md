@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Tags → API, plan & permissions"
 route_name: blog-tags
-route_path: /admin/marketing-new/blog/tags
+route_path: /admin/marketing/blog/tags
 aliases: ["Blog tag API", "Blog tag endpoints", "marketing.blog_tags", "Blog tag permission", "Blog tag plan gate", "Blog tag PATCH", "API за блог тагове", "Права за блог тагове"]
 tags: [marketing, blog, tags, taxonomy, content, api, plan-gates, permissions]
 plan_gates: []
@@ -21,7 +21,7 @@ This aspect covers the non-UI access controls around blog tags: programmatic man
 
 ## Where to find it
 
-- **Admin**: Sidebar → **Marketing** → **Blog** → **Tags** (`/admin/marketing-new/blog/tags`).
+- **Admin**: Sidebar → **Marketing** → **Blog** → **Tags** (`/admin/marketing/blog/tags`).
 - **Permissions**: the granular `marketing.blog_tags` toggle on the admin's role — see [[settings-staff]].
 - **API**: JSON-API v2 tag resource — see [[api-tags]].
 

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Percent → Validity"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Percent discount validity", "Percent discount date rules", "Percent discount activation cooldown", "Percent discount uses counter"]
 tags: [marketing, discounts, percent, validity, dates]
 plan_gates: ["discount_global", "discount_coupon"]

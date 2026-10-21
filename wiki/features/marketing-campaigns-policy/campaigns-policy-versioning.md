@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Policy → Versioning"
 route_name: campaigns-policy
-route_path: /admin/marketing-new/campaigns/policy
+route_path: /admin/marketing/campaigns/policy
 aliases: ["Policy versioning", "Anti spam policy hash", "Policy content hash", "Force re-acceptance", "Policy locale fallback", "md5 policy hash"]
 tags: [marketing, campaigns, policy, compliance, anti-spam, gdpr, versioning]
 plan_gates: []

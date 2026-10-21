@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Log → Storage & snapshots"
 route_name: segments.core_new.log
-route_path: /admin/marketing-new/segments/log/:id
+route_path: /admin/marketing/segments/log/:id
 aliases: ["Segment log storage", "Segment log audit trail", "Segment log snapshots", "Segment log retention", "Сегмент лог съхранение"]
 tags: [marketing, segments, log, audit, storage]
 plan_gates: ["segments"]
@@ -20,7 +20,7 @@ This page explains **what the Segment log actually stores and why it can be trus
 
 ## Where to find it
 
-The merchant never sees the storage directly — it backs the table at `/admin/marketing-new/segments/log/:id` (see [[segments-log-table-ui]]) and the subscriber-detail log tab on the [[marketing-subscribers]] panel.
+The merchant never sees the storage directly — it backs the table at `/admin/marketing/segments/log/:id` (see [[segments-log-table-ui]]) and the subscriber-detail log tab on the [[marketing-subscribers]] panel.
 
 ## What the merchant can do here
 

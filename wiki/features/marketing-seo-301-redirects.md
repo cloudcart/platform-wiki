@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Seo → 301 Redirects"
 route_name: seo-301-redirects
-route_path: /admin/marketing-new/seo/301-redirects
+route_path: /admin/marketing/seo/301-redirects
 aliases: ["301 Redirects", "URL redirects", "Per-URL redirects", "SEO redirects", "301 пренасочвания", "Пренасочвания", "URL пренасочвания"]
 tags: [marketing, seo, redirects, migration, url-management]
 plan_gates: []
@@ -27,7 +27,7 @@ The platform also auto-creates 301 redirects in some cases (renaming a product s
 
 ## Where to find it
 
-Sidebar → Marketing → SEO → **301 redirects**. Route name `seo-301-redirects`, path `/admin/marketing-new/seo/301-redirects`. Page title "301 Redirects", breadcrumb "Marketing → 301 Redirects".
+Sidebar → Marketing → SEO → **301 redirects**. Route name `seo-301-redirects`, path `/admin/marketing/seo/301-redirects`. Page title "301 Redirects", breadcrumb "Marketing → 301 Redirects".
 
 ## What the merchant can do here
 

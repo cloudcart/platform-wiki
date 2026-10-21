@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Countdown"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/countdown
+route_path: /admin/marketing/discounts/create/countdown
 aliases: ["Countdown discount", "Flash sale discount", "Timed discount", "Urgency timer", "Countdown timer", "Отстъпка с обратно броене", "Таймер за отстъпка", "Флаш разпродажба"]
 tags: [marketing, discounts, countdown, flash-sale, urgency-timer]
 plan_gates: ["total_discounts"]
@@ -25,7 +25,7 @@ A Countdown is a `flat`-or-`percent` whole-order discount stored as `type = 'cou
 
 ## Where to find it
 
-From the [[marketing-discounts]] list, click **+ Add discount** and pick the **Countdown discount** type card from the type-picker modal. The form opens at `/admin/marketing-new/discounts/create/countdown`. The breadcrumb reads **Marketing → Discounts → Create discount**.
+From the [[marketing-discounts]] list, click **+ Add discount** and pick the **Countdown discount** type card from the type-picker modal. The form opens at `/admin/marketing/discounts/create/countdown`. The breadcrumb reads **Marketing → Discounts → Create discount**.
 
 The type-picker card description reads: *"With this discount you will be able to lower the price of the entire order for a certain amount of time."*
 
@@ -62,7 +62,7 @@ This feature is split into 6 aspect pages, each covering one well-scoped slice. 
 Per-aspect breakdown:
 
 - General settings (`active`, `name`, `type`, `type_value`), target (`all` / `order_over`), timer + popup fields (`countdown_minutes`, `countdown_description`, `countdown_popup_effect`), limits, `only_customer`, customer groups, date range, `force_save` — see [[countdown-discount-editor]].
-- Endpoints: create at `/admin/marketing-new/discounts/create/countdown`, edit at `/admin/marketing-new/discounts/edit/{id}`, save via POST `/admin/api/discounts`, storefront popup at `/checkout/countdown-discount-popup` (route `checkout.countdown_discount_popup`).
+- Endpoints: create at `/admin/marketing/discounts/create/countdown`, edit at `/admin/marketing/discounts/edit/{id}`, save via POST `/admin/api/discounts`, storefront popup at `/checkout/countdown-discount-popup` (route `checkout.countdown_discount_popup`).
 
 ## Business rules
 

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Comment → Manage modal"
 route_name: blog-comments
-route_path: /admin/marketing-new/blog/comment
+route_path: /admin/marketing/blog/comment
 aliases: ["Manage comment modal", "Comment manage modal", "Comment status modal", "Управление на коментар"]
 tags: [marketing, blog, comments, moderation, content]
 plan_gates: ["blog_comments"]

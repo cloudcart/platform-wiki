@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Email → Settings"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Email channel settings modal", "Sending emails to unverified subscribers", "unconfirmed_send", "Email channel unverified send", "Изпращане на имейли към непотвърдени абонати"]
 tags: [marketing, channels, email, settings, unverified, unconfirmed-send]
 plan_gates: ["campaign.channel.email"]

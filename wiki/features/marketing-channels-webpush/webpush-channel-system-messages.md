@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Web Push → System messages"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Web Push system messages", "WebPush transactional templates", "order_status_change web push", "order_status_fulfillment_change web push", "Системни съобщения уеб пуш"]
 tags: [marketing, channels, web-push, system-messages, transactional, internal-events]
 plan_gates: ["campaign.channel.web_push"]

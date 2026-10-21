@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Row actions"
 route_name: campaigns-archived
-route_path: /admin/marketing-new/campaigns/archived
+route_path: /admin/marketing/campaigns/archived
 aliases: ["Campaign row actions", "Archive campaign action", "Copy campaign action", "Delete campaign action", "Bulk delete campaigns"]
 tags: [marketing, campaigns, list, actions, bulk]
 plan_gates: ["campaigns"]

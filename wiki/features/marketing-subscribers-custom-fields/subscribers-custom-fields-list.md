@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → Custom Fields → List"
 route_name: subscribers-fields-list-new
-route_path: /admin/marketing-new/subscribers/fields
+route_path: /admin/marketing/subscribers/fields
 aliases: ["Subscriber custom fields list", "Subscriber custom fields table", "Custom fields list page", "Subscriber fields sort order", "Subscriber fields reorder"]
 tags: [marketing, subscribers, custom-fields, list]
 plan_gates: []
@@ -21,7 +21,7 @@ The **list view** of all subscriber custom fields the store has defined — the 
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Subscribers** → **Custom fields**. Route: `/admin/marketing-new/subscribers/fields`. Breadcrumb: Marketing → Subscribers → Custom fields.
+Sidebar → **Marketing** → **Subscribers** → **Custom fields**. Route: `/admin/marketing/subscribers/fields`. Breadcrumb: Marketing → Subscribers → Custom fields.
 
 ## What the merchant can do here
 

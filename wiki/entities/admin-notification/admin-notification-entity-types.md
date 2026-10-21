@@ -32,7 +32,7 @@ Each has a `mail_<label>` setting on [[settings-admin-notifications]]. Default i
 |------|--------------------|----------------|
 | **Contact request** | `mail_contact` | A visitor submits the storefront contact form. |
 | **Order Payment Status Change** | `mail_order_payment_status_change` | An [[order|Order]]'s payment status changes (e.g., pending → paid). |
-| **Order Status Change** | `mail_order_status_change` | An Order's general status changes (e.g., pending → shipped). |
+| **Order Status Change** | `mail_order_status_change` | An Order's general status changes (e.g., pending → paid). |
 | **New Customer Registration** | `mail_new_customer_register` | A new [[customer|Customer]] account is created on the storefront. |
 | **New Order Add** | `mail_order_add` | A new Order is placed. |
 | **Customer Newsletter Subscribe** | `mail_customer_newsletter_subscribe` | A customer subscribes to the store's newsletter. |

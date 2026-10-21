@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Tags → Storefront & SEO"
 route_name: blog-tags
-route_path: /admin/marketing-new/blog/tags
+route_path: /admin/marketing/blog/tags
 aliases: ["Blog tag storefront URL", "Blog tag page", "/blog/tag/<slug>", "Blog tag SEO", "Blog tag sitemap", "Blog tag no redirect", "URL на таг на блог", "SEO на блог тагове"]
 tags: [marketing, blog, tags, taxonomy, content, seo]
 plan_gates: []
@@ -21,7 +21,7 @@ This aspect covers what a blog tag does on the customer-facing storefront and th
 
 ## Where to find it
 
-The admin-side tag management is at Sidebar → **Marketing** → **Blog** → **Tags** (`/admin/marketing-new/blog/tags`). The storefront output appears at the public URL `/blog/tag/<slug>` (rendered by the storefront blog templates — see [[blog-filter]]) and inside the "More articles tagged …" related-content modules on article pages.
+The admin-side tag management is at Sidebar → **Marketing** → **Blog** → **Tags** (`/admin/marketing/blog/tags`). The storefront output appears at the public URL `/blog/tag/<slug>` (rendered by the storefront blog templates — see [[blog-filter]]) and inside the "More articles tagged …" related-content modules on article pages.
 
 ## What the merchant can do here
 

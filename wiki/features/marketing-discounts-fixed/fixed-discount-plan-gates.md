@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Products → Plan gates & cooldown"
 route_name: discounts-products
-route_path: /admin/marketing-new/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id
 aliases: ["Fixed discount plan gates", "discount_fixed quota", "total_discounts", "Fixed discount cooldown", "Not supported by plan"]
 tags: [marketing, discounts, fixed, plan-gates, cooldown, permission]
 plan_gates: ["discount_fixed", "total_discounts"]
@@ -27,7 +27,7 @@ The plan-gate enforcement surfaces in three places:
 
 - **Discount-type picker** (when creating a new discount from [[marketing-discounts]]) — the Fixed-type card is grayed out and labeled *"Not supported by plan"* when the merchant's plan lacks access or has hit the cap.
 - **Create endpoint response** — the create call itself returns HTTP 403 with *"Not supported by plan"* if the merchant bypasses the picker (e.g., via a direct URL or the JSON-API v2 path).
-- **Inline / parent toggle on `/admin/marketing-new/discounts/products/:id`** — the cooldown message *"You've already activated this discount…"* appears as a toast next to the Active switch.
+- **Inline / parent toggle on `/admin/marketing/discounts/products/:id`** — the cooldown message *"You've already activated this discount…"* appears as a toast next to the Active switch.
 
 ## What the merchant can do here
 

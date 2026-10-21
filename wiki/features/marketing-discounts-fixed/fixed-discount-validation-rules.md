@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Products → Validation rules"
 route_name: discounts-products
-route_path: /admin/marketing-new/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id
 aliases: ["Fixed discount validation", "fixed_price ≤ catalog", "MSRP mode validation", "Fixed discount uniqueness"]
 tags: [marketing, discounts, fixed, validation, msrp]
 plan_gates: []
@@ -21,7 +21,7 @@ This aspect documents **every rejection** a merchant can hit when saving a Fixed
 
 ## Where to find it
 
-Validation rejections surface on the same Fixed-discount products page documented in [[fixed-discount-product-modal]] — `/admin/marketing-new/discounts/products/:id`. Errors appear as inline toasts and per-field highlights inside the per-product price modal. Parent-discount-level rejections (date range, MSRP toggle) surface on the parent Fixed-discount create / edit form.
+Validation rejections surface on the same Fixed-discount products page documented in [[fixed-discount-product-modal]] — `/admin/marketing/discounts/products/:id`. Errors appear as inline toasts and per-field highlights inside the per-product price modal. Parent-discount-level rejections (date range, MSRP toggle) surface on the parent Fixed-discount create / edit form.
 
 ## What the merchant can do here
 

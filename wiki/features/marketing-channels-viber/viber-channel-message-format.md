@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Viber → Message format"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Viber message format", "Viber Business Message structure", "Viber 1000 chars", "Viber image button", "Viber send request shape", "omni/1/advanced", "Verified business badge"]
 tags: [marketing, channels, viber, message-format, infobip]
 plan_gates: ["viber_messages"]

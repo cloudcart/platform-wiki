@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers"
 route_name: subscribers.list
-route_path: /admin/marketing-new/subscribers
+route_path: /admin/marketing/subscribers
 aliases: ["Subscribers", "Newsletter subscribers", "Audience", "Абонати", "Маркетинг абонати"]
 tags: [marketing, subscribers, channels, contacts]
 plan_gates: ["subscribers"]
@@ -22,10 +22,10 @@ A subscriber is **distinct from a customer** (see [[subscriber-vs-customer]]) �
 
 Sidebar → **Marketing** → **Subscribers**.
 
-The route is `/admin/marketing-new/subscribers`. Adjacent routes:
+The route is `/admin/marketing/subscribers`. Adjacent routes:
 
-- `/admin/marketing-new/subscribers/fields` — custom fields applied to subscribers ([[marketing-subscribers-custom-fields]]).
-- `/admin/marketing-new/subscribers/:id` — single subscriber detail view (loads inline as a modal — see [[subscribers-detail-modal]]).
+- `/admin/marketing/subscribers/fields` — custom fields applied to subscribers ([[marketing-subscribers-custom-fields]]).
+- `/admin/marketing/subscribers/:id` — single subscriber detail view (loads inline as a modal — see [[subscribers-detail-modal]]).
 
 ## Sub-pages (in this cluster)
 

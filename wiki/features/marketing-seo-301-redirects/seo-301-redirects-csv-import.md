@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Seo → 301 Redirects → CSV import"
 route_name: seo-301-redirects
-route_path: /admin/marketing-new/seo/301-redirects
+route_path: /admin/marketing/seo/301-redirects
 aliases: ["Import 301 redirects from CSV", "Bulk import redirects", "ImportRedirects job", "Three-step import wizard", "Импорт на пренасочвания", "CSV пренасочвания"]
 tags: [marketing, seo, redirects, csv, import, background-jobs]
 plan_gates: []

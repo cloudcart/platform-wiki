@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Email → Send pipeline"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Email send pipeline", "Email pre-flight checks", "Email merge tags", "$verify_url", "$subscriber_email", "Saved templates", "Predefined templates", "Email test send", "Demo email", "message_html validation", "Local image paste rejected", "UTM injection email"]
 tags: [marketing, channels, email, send, templates, merge-tags, utm, validation]
 plan_gates: ["campaign.channel.email"]
@@ -21,7 +21,7 @@ Once the channel is configured ([[email-channel-setup-wizard]]) and verified ([[
 
 ## Where to find it
 
-- **Saved templates** live on a separate route — `campaigns-email-saved-templates` (`/admin/marketing-new/campaigns/configuration/channel/email/saved`).
+- **Saved templates** live on a separate route — `campaigns-email-saved-templates` (`/admin/marketing/campaigns/configuration/channel/email/saved`).
 - **Predefined templates** appear in the campaign editor's template picker alongside saved templates.
 - **Demo / test send** is invoked from the campaign action editor (see [[marketing-campaigns-edit]]).
 - **Pre-flight failures** appear as log rows on the campaign log with explicit error messages.

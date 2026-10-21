@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → Channels"
 route_name: subscribers.channels
-route_path: /admin/marketing-new/subscribers/:id/channels
+route_path: /admin/marketing/subscribers/:id/channels
 aliases: ["Subscriber channels", "Subscriber channel identifiers", "Channel merge", "Subscriber merge", "Subscriber identity resolution"]
 tags: [marketing, subscribers, channels, merge, identity]
 plan_gates: ["subscribers"]

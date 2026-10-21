@@ -28,37 +28,22 @@ This page documents **how an [[order|Order]]'s Shipping Status moves** through i
 ### The flow
 
 ```
-not_fulfilled → fulfilled → shipped → delivered
+not_fulfilled ⇄ fulfilled
 ```
 
-The canonical negative branch:
-
-```
-(any state) → returned
-```
+There are only these two values. Nothing comes after `fulfilled`: a courier's tracking events do not change the shipping status, delivery is recorded only as the expected **Delivery date** entered with the fulfilment, and a parcel that comes back is a separate return record ([[orders-details-returns]]).
 
 ### Transition triggers
 
-| Transition | Typical trigger |
-|------------|-----------------|
-| `not_fulfilled` → `fulfilled` | Merchant clicks **Fulfill products** on [[orders-details-shipping]], which issues the waybill (see [[orders-shipping-waybill]]). The reverse is the **Mark as unfulfilled** button on the same row. |
-| `fulfilled` → `shipped` | Courier integration webhook (parcel scanned at pickup) or manual merchant action. |
-| `shipped` → `delivered` | Courier integration webhook (delivery confirmation). |
-| `delivered` → `returned` | Courier integration webhook (return-to-sender event) or manual merchant action when handling a return. |
-| `fulfilled` / `shipped` → `returned` | Courier reports the parcel was undeliverable or refused at delivery. |
-
-### Transitions are NOT strictly state-machine-enforced
-
-The merchant can in principle move from any Shipping Status to any other from the admin (the status pill on [[orders-details]] accepts any value). The platform expects transitions to follow the positive flow, but out-of-order moves (e.g., `delivered` → `not_fulfilled`) are technically possible — they signal a data-quality issue and may confuse downstream analytics, but the platform does not block them.
-
-### `returned` is NOT strictly terminal
-
-The merchant can manually transition back to `shipped` / `delivered` if the parcel is re-sent after a return. Some courier integrations (Econt, Speedy) report `returned` and then a subsequent re-delivery event re-flips the status. The platform does not block the reverse transition.
+| Transition | Trigger |
+|------------|---------|
+| `not_fulfilled` → `fulfilled` | The merchant clicks **Fulfill products** on [[orders-details-shipping]]: a courier waybill ([[orders-shipping-waybill]]), or a manual record of the dispatch for shipping methods without a courier integration. Also picking **Fulfilled** in the order's status menu (shipping methods without a courier integration only), and automatically when an order with only digital products becomes paid. |
+| `fulfilled` → `not_fulfilled` | **Mark as unfulfilled** on the same row, or picking **Not fulfilled** in the status menu (shipping methods without a courier integration only). Automatically when a fulfilled order moves to a negative status (cancelled, refunded …). |
 
 ### Manual stores vs courier-integrated stores
 
-- **Manual** (no courier integration): the merchant moves the Shipping Status by hand. Most stores stop at `fulfilled` once the parcel is handed to the courier and don't track `shipped` / `delivered` per-order.
-- **Integrated**: the courier integration ([[shipping-provider-mechanism]]) drives the Shipping Status via webhooks. The merchant sets `fulfilled` (or it's set automatically on waybill issue), and the rest of the lifecycle is sync'd from the courier's tracking system.
+- **Without a courier integration**: the merchant records the dispatch with **Fulfill products**, or picks the value in the status menu.
+- **With a courier integration**: issuing the waybill fulfils the order (below). The status menu does not offer the shipping values; the courier's own tracking status, where an integration keeps one, is shown in that integration's shipments list (for example [[econt-shipments]]), not as the order's shipping status.
 
 ### Auto-fulfill on waybill issue (every courier integration)
 

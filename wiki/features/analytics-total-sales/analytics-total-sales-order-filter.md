@@ -24,7 +24,7 @@ The behaviour is driven by **Settings → Analytics settings**, statuses_title: 
 
 ## What the merchant can do here
 
-- Add or remove order statuses from the analytics-counted set (e.g. add `delivered` so delivered orders count toward revenue).
+- Add or remove statuses from the analytics-counted set (e.g. remove `pending` so unpaid orders no longer count).
 - Understand that any status they tick which isn't a valid analytics status is silently dropped.
 
 ## Settings & fields
@@ -37,7 +37,7 @@ Every Orders-category analytics box runs through the shared match filter, which 
 2. `date ∈ [from-startOfDay, to-endOfDay]` — `dateFrom` / `dateTo` parsed in **store timezone**, then converted to UTC for the match. The time-bucket projections themselves run with `timezone: <store-tz>`, so per-bucket cutoffs land at local midnight.
 3. **Order statuses configured for analytics** — pulled from the merchant's `cc_analytics.statuses` configuration.
 
-The **default set** (if the merchant hasn't customised) is `paid`, `completed`, `pending`, `authorized` (payment) and `fulfilled` (fulfillment). Any custom selection is intersected with the valid-statuses dropdown — invalid keys are silently dropped. A merchant who wants `delivered` to count must add it under Settings → Analytics settings; otherwise `delivered`-only orders are invisible to this box.
+The **default set** (if the merchant hasn't customised) is `paid`, `completed`, `pending`, `authorized` (payment) and `fulfilled` (fulfillment). Any custom selection is intersected with the valid-statuses dropdown — invalid keys are silently dropped. The dropdown offers the order statuses except chargebacked, disputed, timed out, failed and voided, plus the two shipping statuses, `not_fulfilled` and `fulfilled` ([[shipping-status-values]]).
 
 ### Currency / units
 
@@ -51,8 +51,8 @@ The configured status list is expanded into a status-vs-fulfillment OR clause at
 
 - `paid`, `completed`, `authorized` → matched as `status IN [...]`.
 - `pending` → matched ONLY when `status=pending AND status_fulfillment=not_fulfilled`. A pending order whose fulfillment has progressed is excluded even though the merchant ticked `pending`.
-- `fulfilled` → matched as `status_fulfillment=fulfilled AND status NOT IN <any-status-the-merchant-DESELECTED>`. Shipped orders count regardless of financial status, EXCEPT when that financial status is one the merchant explicitly removed (e.g. a fulfilled-but-cancelled order is excluded if `cancelled` was deselected).
-- Other fulfillment statuses (`not_fulfilled`, `partly_fulfilled`) are matched on `status_fulfillment` directly.
+- `fulfilled` → matched as `status_fulfillment=fulfilled AND status NOT IN <any-status-the-merchant-DESELECTED>`. Fulfilled orders count regardless of financial status, EXCEPT when that financial status is one the merchant explicitly removed (e.g. a fulfilled-but-cancelled order is excluded if `cancelled` was deselected).
+- `not_fulfilled`, the other shipping status, is matched on `status_fulfillment` directly.
 
 ### Which money field is summed
 

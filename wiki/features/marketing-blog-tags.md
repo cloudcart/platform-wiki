@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Tags"
 route_name: blog-tags
-route_path: /admin/marketing-new/blog/tags
+route_path: /admin/marketing/blog/tags
 aliases: ["Blog tags", "Article tags", "Тагове на блог", "Етикети на статии", "Блог етикети"]
 tags: [marketing, blog, tags, taxonomy, content]
 plan_gates: []
@@ -32,7 +32,7 @@ This topic is split into focused aspect pages; this hub gives the overview and p
 
 Sidebar → **Marketing** → **Blog** → **Tags**.
 
-Route name `blog-tags`; path `/admin/marketing-new/blog/tags`; component `MarketingBlogTagsPage`. Header icon is the tag icon (`far fa-tag`). The breadcrumb reads "Marketing → Article tags".
+Route name `blog-tags`; path `/admin/marketing/blog/tags`; component `MarketingBlogTagsPage`. Header icon is the tag icon (`far fa-tag`). The breadcrumb reads "Marketing → Article tags".
 
 Unlike Blog Articles or Categories, this is a **centrally managed** tag list — the merchant CAN create, edit, and delete tags from this page without touching individual articles. (Compare with [[products-tags]], which has no central admin and is only edited from per-product editors.) The list is also auto-populated as soon as a merchant types a new tag into the [[marketing-blog-articles]] editor — auto-create on first use (see [[blog-tags-lifecycle]]).
 

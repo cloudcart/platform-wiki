@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → UpSell & Cross-sell → Cross-Sell List → Validation"
 route_name: admin.cross_sell.list
-route_path: /admin/marketing-new/cross-sell
+route_path: /admin/marketing/cross-sell
 aliases: ["Cross-Sell validation", "Cross-Sell required fields", "Cross-Sell offer field rules", "Cross-Sell products limit", "Cross-Sell discount type validation"]
 tags: [marketing, cross-sell, validation, fields]
 plan_gates: []
@@ -21,7 +21,7 @@ This aspect documents the **required-field set** the platform enforces when a me
 
 ## Where to find it
 
-The validation runs server-side on the Cross-Sell store / update endpoint reached when the merchant saves the offer in the editor (opened from the Cross-Sell List at `/admin/marketing-new/cross-sell`). Errors surface inline on the modal fields.
+The validation runs server-side on the Cross-Sell store / update endpoint reached when the merchant saves the offer in the editor (opened from the Cross-Sell List at `/admin/marketing/cross-sell`). Errors surface inline on the modal fields.
 
 ## What the merchant can do here
 

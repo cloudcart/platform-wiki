@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Comment → Permissions & plan"
 route_name: blog-comments
-route_path: /admin/marketing-new/blog/comment
+route_path: /admin/marketing/blog/comment
 aliases: ["Comment permissions", "Comment plan gate", "blog_comments gate", "marketing.blog_comments permission", "Права за коментари"]
 tags: [marketing, blog, comments, moderation, content, permissions, plan-gates]
 plan_gates: ["blog_comments"]

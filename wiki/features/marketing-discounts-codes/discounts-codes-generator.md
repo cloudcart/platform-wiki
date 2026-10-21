@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Container codes → Generator"
 route_name: discounts-codes_list
-route_path: /admin/marketing-new/discounts/codes
+route_path: /admin/marketing/discounts/codes
 aliases: ["Container codes generator", "Generate codes modal", "Bulk code generation", "Code shape and uniqueness", "Генериране на промо кодове", "1000 кода на заявка"]
 tags: [marketing, discounts, coupons, container, generated-codes, generator]
 plan_gates: ["discount_coupon"]
@@ -21,7 +21,7 @@ The generator is how the merchant mass-creates single-use Container codes. It pr
 
 ## Where to find it
 
-The bulk-generator modal is opened from the *Generate codes* action on the Container codes list page (`/admin/marketing-new/discounts/codes`). It saves in a single transaction. To generate **flat-amount** Container codes, the merchant uses the legacy generator URL `/admin/discounts/generate-codes` (the modern modal sends percent only — see below).
+The bulk-generator modal is opened from the *Generate codes* action on the Container codes list page (`/admin/marketing/discounts/codes`). It saves in a single transaction. To generate **flat-amount** Container codes, the merchant uses the legacy generator URL `/admin/discounts/generate-codes` (the modern modal sends percent only — see below).
 
 ## What the merchant can do here
 

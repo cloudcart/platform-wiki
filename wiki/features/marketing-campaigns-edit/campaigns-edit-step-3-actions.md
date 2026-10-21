@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Edit → Step 3 (Actions)"
 route_name: campaigns-edit
-route_path: /admin/marketing-new/campaigns/edit/:type(regular|automated)/:id
+route_path: /admin/marketing/campaigns/edit/:type(regular|automated)/:id
 aliases: ["Campaign action step", "Action type", "Execute after", "Set message", "Per-channel state preservation", "Funnel builder", "Channel credit banner"]
 tags: [marketing, campaigns, edit, action-step, step-3]
 plan_gates: []

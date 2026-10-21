@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Business rules"
 route_name: campaigns
-route_path: /admin/marketing-new/campaigns
+route_path: /admin/marketing/campaigns
 aliases: ["Campaigns business rules", "Campaign validation", "Campaign quota", "Anti-spam policy gate", "Channel suspension", "Last-touch attribution", "Title uniqueness", "Campaign autosave"]
 tags: [marketing, campaigns, rules, validation, quota, attribution]
 plan_gates: ["campaigns"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Flat → Stacking"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/code
+route_path: /admin/marketing/discounts/create/code
 aliases: ["Flat discount stacking", "code_apply flat", "apply_regular_price flat", "Flat percent winner-takes-all", "Flat plus quantity tier", "Flat plus cart rules", "Flat 10000 combinations cap", "Flat silent rejection"]
 tags: [marketing, discounts, flat, stacking, code_apply, apply_regular_price]
 plan_gates: ["discount_global", "discount_coupon"]

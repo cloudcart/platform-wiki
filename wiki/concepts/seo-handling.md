@@ -38,9 +38,9 @@ This concept is split into 7 aspect pages, each covering one well-scoped slice. 
 
 - [[seo-sitemap-robots]] — `/sitemap.xml` (sitemap-index, 1-hour cache, 1,000 URLs per sub-sitemap, `.xml.gz` variant) + `/robots.txt` pipeline (merchant body + platform-appended `Disallow: /checkout|/cart|/wishlist|/bbt` block + `Crawl-Delay: 3`, 5-minute cache).
 - [[seo-canonical-noindex]] — `<link rel="canonical">` self-canonical rule + special cases; `<meta name="robots" content="noindex">` on filtered/sorted pages over the `noindex_query_limit` threshold (0-5); pagination word ("Page", "Страница", etc.) prepended to paginated meta.
-- [[seo-meta-tags]] — `<title>` / `<meta name="description">` four-step fallback chain (per-entity → per-section → language file → English); per-section meta on [[marketing-seo-meta]] (per-language + per-theme); legacy 16-section escape hatch (`marketing-seo-meta=old` cookie, verify).
+- [[seo-meta-tags]] — `<title>` / `<meta name="description">` four-step fallback chain (per-entity → per-section → language file → English); per-section meta on [[marketing-seo-meta]] (per-language + per-theme); the other sections have no screen since the legacy page was removed (2026-10-21).
 - [[seo-301-redirects]] — per-URL 301 redirect manager (24-hour cache, wildcards via `*`, marketing-param preservation `fbclid|gclid|gclsrc|msclkid|utm_*|dclid|zanpid`, CSV import with 2FA gate); auto-tracked URL handle history (30-day TTL); prefix optimization for 7 named prefixes.
-- [[seo-sharing-rss]] — dead AddThis module (only `og:image` matters); sharing card POSTs to legacy `/admin/marketing/seo/add-this` route; `/feed` RSS 2.0 (products-only, no cache, `rss_feed_count` 1-100 default 20).
+- [[seo-sharing-rss]] — dead AddThis module (only `og:image` matters); sharing card POSTs to `/admin/api/core/seo/settings/add-this` (no handler on 2026-10-21, verify); `/feed` RSS 2.0 (products-only, no cache, `rss_feed_count` 1-100 default 20).
 - [[seo-plan-overrides]] — trial / `plan_expired` / development stores serve hard-coded `User-agent: *` + `Disallow: /`; `cc-demo` plan stores always emit `<meta name="robots" content="noindex, nofollow">`.
 - [[seo-route-catalog]] — verbatim lists of indexable routes / noindex-eligible routes / always-noindex routes / robots-meta-exempt routes.
 
@@ -48,7 +48,7 @@ This concept is split into 7 aspect pages, each covering one well-scoped slice. 
 
 - **Sitemap per-file cap is 1,000 URLs** (verify) — not 20,000 → [[seo-sitemap-robots]].
 - **Robots.txt save bumps `Last-Modified` on every save**, even no-op → [[seo-sitemap-robots]].
-- **Sharing card POSTs to LEGACY** `/admin/marketing/seo/add-this` (verify) → [[seo-sharing-rss]].
+- **Sharing card's save route** `/admin/api/core/seo/settings/add-this` has no handler on 2026-10-21 (verify) → [[seo-sharing-rss]].
 - **RSS item body** includes 300-char-truncated description + store contact / social block (verify) → [[seo-sharing-rss]].
 - **Redirect prefix optimization** only for `product, category, vendor, blog, article, page, selection` → [[seo-301-redirects]].
 - **Corrupted `noindex_query_limit` defaults to 1**, not 0 (verify) → [[seo-canonical-noindex]].

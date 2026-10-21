@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Email notifications → Abandoned-cart recovery"
 route_name: marketing-mails-list
-route_path: /admin/marketing-new/omnichannel/mails/list
+route_path: /admin/marketing/omnichannel/mails/list
 aliases: ["Abandoned cart recovery", "Abandoned cart email", "abandoned_restore_link", "abandoned_remainder", "abandoned_remainder_interval", "Cart restore link", "Изоставена количка", "Възстановяване на количка", "Имейл за изоставена количка"]
 tags: [marketing, omnichannel, email, notifications, abandoned-cart, recovery]
 plan_gates: ["abandoned_orders"]
@@ -21,7 +21,7 @@ The `abandoned_restore_link` mail is the **single highest-marketing-impact** tra
 
 ## Where to find it
 
-- The **template** is edited from the **Email notifications** list at `/admin/marketing-new/omnichannel/mails/list` (row labelled `abandoned_restore_link`). See [[omnichannel-mails-editor-modal]].
+- The **template** is edited from the **Email notifications** list at `/admin/marketing/omnichannel/mails/list` (row labelled `abandoned_restore_link`). See [[omnichannel-mails-editor-modal]].
 - The **send settings** (`abandoned_remainder`, `abandoned_remainder_interval`) live under **platform Settings**, NOT on this Vue page (verify exact admin route).
 - The **plan gate** `abandoned_orders` is upsold at [[plan-features]].
 

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → SEO → Sharing → Social-share toolbar"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["Share product toolbar", "Social sharing toolbar", "AddThis toolbar", "AddThis share module", "Share buttons module", "Sharing module layout", "Custom toolbar code", "Споделяне на продукт лента", "Социална лента за споделяне"]
 tags: [marketing, seo, sharing, distribution]
 plan_gates: []
@@ -22,7 +22,7 @@ The **"Share product"** half of the Sharing card configures a built-in **social-
 
 ## Where to find it
 
-Sidebar → Marketing → **SEO** → **"Share product"** card → the top two groups of controls (master switch + visual switches, then the layout selects), above the **Main sharing picture** tile. Route `/admin/marketing-new/seo`.
+Sidebar → Marketing → **SEO** → **"Share product"** card → the top two groups of controls (master switch + visual switches, then the layout selects), above the **Main sharing picture** tile. Route `/admin/marketing/seo`.
 
 ## What the merchant can do here
 

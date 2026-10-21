@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Comment → Status model"
 route_name: blog-comments
-route_path: /admin/marketing-new/blog/comment
+route_path: /admin/marketing/blog/comment
 aliases: ["Comment status model", "Comment fields", "Comment status transitions", "Comment cascade delete", "Delete vs spam", "Статус на коментар"]
 tags: [marketing, blog, comments, moderation, content]
 plan_gates: ["blog_comments"]

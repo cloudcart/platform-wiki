@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Quantity → Tier evaluation"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/quantity
+route_path: /admin/marketing/discounts/create/quantity
 aliases: ["Quantity tier matching", "Quantity discount tier algorithm", "Buy more pay less tier evaluation", "≥ quantity wins"]
 tags: [marketing, discounts, quantity, cart, evaluation]
 plan_gates: []
@@ -21,7 +21,7 @@ This aspect documents **how the platform picks a tier** when a customer's cart c
 
 ## Where to find it
 
-Tier evaluation is **server-side at cart-time**; there is no admin screen that surfaces it directly. The merchant configures tiers on the form documented in [[quantity-discount-form]] at `/admin/marketing-new/discounts/create/quantity` (or `/admin/marketing-new/discounts/edit/{id}`). The cart-side ladder render is documented in [[quantity-discount-storefront-display]].
+Tier evaluation is **server-side at cart-time**; there is no admin screen that surfaces it directly. The merchant configures tiers on the form documented in [[quantity-discount-form]] at `/admin/marketing/discounts/create/quantity` (or `/admin/marketing/discounts/edit/{id}`). The cart-side ladder render is documented in [[quantity-discount-storefront-display]].
 
 ## What the merchant can do here
 

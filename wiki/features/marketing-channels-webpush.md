@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Web Push"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Web Push", "Web push notifications", "Browser push", "Browser notifications", "Уеб пуш", "Пуш известия", "Browser push notifications"]
 tags: [marketing, channels, web-push, vapid, pwa, browser-push]
 plan_gates: ["campaign.channel.web_push"]
@@ -23,7 +23,7 @@ The channel is **delivery-free for CloudCart** — the actual push delivery is h
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing-new/campaigns/channels`) → find the **Web Push** channel card. The card's actions (Install, Activate/Deactivate, Settings, System Message, Usage, Logs) open modals over the channels page — Web Push settings render in the `MarketingChannelsSettingsModalWebPush` sub-component.
+Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing/campaigns/channels`) → find the **Web Push** channel card. The card's actions (Install, Activate/Deactivate, Settings, System Message, Usage, Logs) open modals over the channels page — Web Push settings render in the `MarketingChannelsSettingsModalWebPush` sub-component.
 
 Channel mapping key: `web_push`. Actions hit the channels API (base `/admin/api/core/marketing/campaigns/channels`): status via `POST /{type}/status`, usage via `GET /{type}/usage`, logs via `/{mapping}/logs-list`, settings via `/{type}/settings`. Install / uninstall is handled through the applications API (`/admin/api/core/applications`). The storefront subscribe endpoint is `POST /web-push-subscribe` (route `campaigns.channels.channel.web_push.subscribe`).
 

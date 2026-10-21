@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Category → SEO, URL handle & sitemap"
 route_name: blog-categories
-route_path: /admin/marketing-new/blog/category
+route_path: /admin/marketing/blog/category
 aliases: ["Blog category SEO", "Blog category URL handle", "Blog category slug", "Blog category cover image", "Blog category sitemap", "Blog category 301 redirect", "SEO на блог категория"]
 tags: [marketing, blog, content, categories, seo]
 plan_gates: ["blog_categories"]

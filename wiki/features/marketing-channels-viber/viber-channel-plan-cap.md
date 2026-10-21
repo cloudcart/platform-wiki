@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Viber → Plan cap"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Viber plan cap", "viber_messages", "Viber usage", "Viber quota", "Buy more Viber credits", "Viber pricing", "viber_messages_subscription"]
 tags: [marketing, channels, viber, plan-cap, billing]
 plan_gates: ["viber_messages"]

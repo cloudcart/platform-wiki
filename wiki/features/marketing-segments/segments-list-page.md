@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → List page"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Segments list", "Segment table", "Segment list view"]
 tags: [marketing, segments, list, polling]
 plan_gates: ["segments"]
@@ -21,7 +21,7 @@ This aspect documents the **list view** itself — what each column shows, the p
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Segments**. Route `/admin/marketing-new/segments`.
+Sidebar → **Marketing** → **Segments**. Route `/admin/marketing/segments`.
 
 ## What the merchant can do here
 
@@ -53,7 +53,7 @@ Sidebar → **Marketing** → **Segments**. Route `/admin/marketing-new/segments
 
 Each segment row exposes two actions on the right edge:
 
-- **Log** button (with a chart-bar icon and the label "Log") — routes to `/admin/marketing-new/segments/log/:id` (see [[marketing-segments-log]]). The Log query param is pre-populated with `page=1&perpage=25` so the URL is canonical from the start.
+- **Log** button (with a chart-bar icon and the label "Log") — routes to `/admin/marketing/segments/log/:id` (see [[marketing-segments-log]]). The Log query param is pre-populated with `page=1&perpage=25` so the URL is canonical from the start.
 - **Delete** button — with the confirmation copy *"Delete row?"*. Clicking confirms and removes the segment. On success the row disappears (optimistic remove). On failure (typically because a campaign references the segment), the toast surfaces the server message *"You can't delete the segment because it is used in campaigns: :names"*.
 
 There is **no inline Edit pencil button** on the segment row — clicking the **segment name** opens [[marketing-segments-editor]]. The row's status badge (icon left of the name) clicks through to nothing — it's a visual indicator only.

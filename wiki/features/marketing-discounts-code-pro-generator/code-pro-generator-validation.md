@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO → Generator → Validation"
 route_name: discounts-code_pro-generator
-route_path: /admin/marketing-new/discounts/code-pro/:id/generator
+route_path: /admin/marketing/discounts/code-pro/:id/generator
 aliases: ["Generator validation", "Generator errors", "Generator error messages"]
 tags: [marketing, discounts, coupons, code-pro, bulk-generation, validation]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
@@ -21,7 +21,7 @@ This aspect catalogues every validation gate that fires when the merchant clicks
 
 ## Where to find it
 
-These validation messages surface on the bulk-generator page: **Marketing → Discounts → Code PRO → "Generate codes" toolbar button** — route name `discounts-code_pro-generator`, path `/admin/marketing-new/discounts/code-pro/:id/generator`. Errors render inline next to the offending input; the page scrolls to the first error field on failure.
+These validation messages surface on the bulk-generator page: **Marketing → Discounts → Code PRO → "Generate codes" toolbar button** — route name `discounts-code_pro-generator`, path `/admin/marketing/discounts/code-pro/:id/generator`. Errors render inline next to the offending input; the page scrolls to the first error field on failure.
 
 ## What the merchant can do here
 

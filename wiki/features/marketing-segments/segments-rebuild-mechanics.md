@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Rebuild mechanics"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Segment rebuild", "Segment cadence", "set_subscriber_to_segment", "set_subscribers_to_single_segment", "subscribers.max_id", "SegmentExists cache"]
 tags: [marketing, segments, background-jobs, queues, events]
 plan_gates: ["segments", "subscribers"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Log → Batch vs single rows"
 route_name: segments.core_new.log
-route_path: /admin/marketing-new/segments/log/:id
+route_path: /admin/marketing/segments/log/:id
 aliases: ["Segment log batch rows", "Segment log head rows", "Segment log drill-down", "Segment log single vs batch", "Сегмент лог пакетни записи"]
 tags: [marketing, segments, log, audit, batch]
 plan_gates: ["segments"]
@@ -20,7 +20,7 @@ This page explains **why a 1,000-subscriber rebuild shows up as one "Added subsc
 
 ## Where to find it
 
-These row types render in the **Action** / **Subscriber** columns of the Segment log table at `/admin/marketing-new/segments/log/:id` — see [[segments-log-table-ui]]. A `head` row shows the batch label and a dash in the Subscriber column.
+These row types render in the **Action** / **Subscriber** columns of the Segment log table at `/admin/marketing/segments/log/:id` — see [[segments-log-table-ui]]. A `head` row shows the batch label and a dash in the Subscriber column.
 
 ## What the merchant can do here
 

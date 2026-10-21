@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Email notifications → Variables"
 route_name: marketing-mails-list
-route_path: /admin/marketing-new/omnichannel/mails/list
+route_path: /admin/marketing/omnichannel/mails/list
 aliases: ["Customer mail variables", "Mail allowed_vars", "Mail allowed_subject_vars", "required_subject_vars", "Variable allow-list", "Имейл променливи", "Допустими променливи в шаблон"]
 tags: [marketing, omnichannel, email, notifications, variables, templating]
 plan_gates: []
@@ -21,7 +21,7 @@ Each [[omnichannel-mails-labels|mail label]] declares a fixed **allow-list of va
 
 ## Where to find it
 
-The variables legend appears in the right-hand panel of the **template editor modal** at `/admin/marketing-new/omnichannel/mails/list` (click any row's Name to open). See [[omnichannel-mails-editor-modal]].
+The variables legend appears in the right-hand panel of the **template editor modal** at `/admin/marketing/omnichannel/mails/list` (click any row's Name to open). See [[omnichannel-mails-editor-modal]].
 
 ## What the merchant can do here
 

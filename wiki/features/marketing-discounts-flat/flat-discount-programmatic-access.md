@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Flat → Programmatic access"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Flat discount API", "Flat discount JSON-API v2", "Flat discount GraphQL", "Flat discount webhooks", "Flat discount side effects", "Flat discount audit log", "Flat discount attachment regeneration"]
 tags: [marketing, discounts, flat, api, json-api-v2, graphql, webhooks]
 plan_gates: ["discount_global", "discount_coupon"]

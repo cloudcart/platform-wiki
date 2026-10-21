@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → Detail modal"
 route_name: subscribers.list
-route_path: /admin/marketing-new/subscribers
+route_path: /admin/marketing/subscribers
 aliases: ["Subscriber details", "Subscriber detail modal", "Subscriber view", "Subscriber details panel"]
 tags: [marketing, subscribers, detail, modal]
 plan_gates: ["subscribers"]

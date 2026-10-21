@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Draft → Unsaved-changes guard"
 route_name: campaigns-draft
-route_path: /admin/marketing-new/campaigns/draft
+route_path: /admin/marketing/campaigns/draft
 aliases: ["CampaignDraftGuard modal", "Leave draft campaign modal", "Draft auto-save", "Save draft button", "beforeunload dialog", "Draft snapshot diff"]
 tags: [marketing, campaigns, draft, unsaved-changes]
 plan_gates: ["abandoned_orders", "campaigns"]

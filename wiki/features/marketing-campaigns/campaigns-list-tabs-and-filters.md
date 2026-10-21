@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Tabs & filters"
 route_name: campaigns-active
-route_path: /admin/marketing-new/campaigns/active
+route_path: /admin/marketing/campaigns/active
 aliases: ["Campaigns list tabs", "Campaigns channel filter", "Campaigns table columns", "Campaign status enum", "Campaign progress enum"]
 tags: [marketing, campaigns, list, filters]
 plan_gates: ["campaigns"]
@@ -21,7 +21,7 @@ This aspect catalogues the navigation surface of the Campaigns list page: the fo
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Campaigns**. The base route `/admin/marketing-new/campaigns` redirects to `/admin/marketing-new/campaigns/active`.
+Sidebar → **Marketing** → **Campaigns**. The base route `/admin/marketing/campaigns` redirects to `/admin/marketing/campaigns/active`.
 
 ## What the merchant can do here
 

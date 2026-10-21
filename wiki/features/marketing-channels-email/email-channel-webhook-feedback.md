@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Email → Delivery webhook"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Email delivery webhook", "Elastic Email feedback loop", "AbuseReport handler", "Email bounce handler", "Email open/click webhook", "Email status mapping", "HARD_BOUNCED", "CampaignChannelsLog status"]
 tags: [marketing, channels, email, webhook, elastic-email, deliverability, bounce, abuse, unsubscribe]
 plan_gates: ["campaign.channel.email"]

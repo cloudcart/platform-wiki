@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Articles → Add / Edit"
 route_name: blog-articles-edit
-route_path: /admin/marketing-new/blog/articles/edit/:id
+route_path: /admin/marketing/blog/articles/edit/:id
 aliases: ["Blog article editor", "Add article", "Edit article", "Article editor", "Редактор на статия", "Нова статия", "Редакция на статия"]
 tags: [marketing, blog, content, articles, editor]
 plan_gates: ["blog_articles"]
@@ -27,8 +27,8 @@ Routes:
 
 | Label | Route name | Route path |
 |-------|------------|------------|
-| Add | `blog-articles-add` | `/admin/marketing-new/blog/articles/add` |
-| Edit | `blog-articles-edit` | `/admin/marketing-new/blog/articles/edit/:id` |
+| Add | `blog-articles-add` | `/admin/marketing/blog/articles/add` |
+| Edit | `blog-articles-edit` | `/admin/marketing/blog/articles/edit/:id` |
 
 ## What the merchant can do here
 

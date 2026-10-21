@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO → Generator → Business rules"
 route_name: discounts-code_pro-generator
-route_path: /admin/marketing-new/discounts/code-pro/:id/generator
+route_path: /admin/marketing/discounts/code-pro/:id/generator
 aliases: ["Generator business rules", "Generator plan cap", "Generator shared terms", "Generator transaction"]
 tags: [marketing, discounts, coupons, code-pro, bulk-generation, plan-gates]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
@@ -21,7 +21,7 @@ This aspect documents the **business-rule layer** of the Code PRO generator that
 
 ## Where to find it
 
-This aspect describes behaviours that fire when the merchant clicks Save on the bulk-generator page. Navigation to the screen itself: **Marketing → Discounts → Code PRO → "Generate codes" toolbar button** — route name `discounts-code_pro-generator`, path `/admin/marketing-new/discounts/code-pro/:id/generator`. See [[code-pro-generator-form-layout]] for the on-screen layout.
+This aspect describes behaviours that fire when the merchant clicks Save on the bulk-generator page. Navigation to the screen itself: **Marketing → Discounts → Code PRO → "Generate codes" toolbar button** — route name `discounts-code_pro-generator`, path `/admin/marketing/discounts/code-pro/:id/generator`. See [[code-pro-generator-form-layout]] for the on-screen layout.
 
 ## What the merchant can do here
 

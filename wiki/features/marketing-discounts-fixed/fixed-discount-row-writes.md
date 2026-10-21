@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Products → Row writes"
 route_name: discounts-products
-route_path: /admin/marketing-new/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id
 aliases: ["product_to_discount rows", "Fixed discount row writes", "Per-variant attachment", "Customer-group fan-out", "save denormalization"]
 tags: [marketing, discounts, fixed, persistence, side-effects]
 plan_gates: []
@@ -23,7 +23,7 @@ For what the merchant types into the form, see [[fixed-discount-product-modal]].
 
 ## Where to find it
 
-The row-write pipeline runs automatically whenever a Fixed-discount price is saved, toggled, or deleted from the Fixed-discount products page (`/admin/marketing-new/discounts/products/:id`). There is no "row inspection" UI — the rows are visible only via the JSON-API v2 `product-to-discount` resource (see [[fixed-discount-api-access]]) or as their storefront side effects (see [[fixed-discount-storefront-display]]).
+The row-write pipeline runs automatically whenever a Fixed-discount price is saved, toggled, or deleted from the Fixed-discount products page (`/admin/marketing/discounts/products/:id`). There is no "row inspection" UI — the rows are visible only via the JSON-API v2 `product-to-discount` resource (see [[fixed-discount-api-access]]) or as their storefront side effects (see [[fixed-discount-storefront-display]]).
 
 ## What the merchant can do here
 

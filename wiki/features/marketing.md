@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing"
 route_name: marketing
-route_path: /admin/marketing-new
+route_path: /admin/marketing
 aliases: ["Marketing", "Marketing suite", "Маркетинг", "Маркетингова сюита"]
 tags: [marketing, hub, navigation]
 plan_gates: []
@@ -20,7 +20,7 @@ Top-level sidebar pillar that groups every revenue-growth tool in one place: the
 
 Top-level sidebar entry **Marketing** (5th pillar after Dashboard / Orders / Products / Customers, depending on enabled apps).
 
-Clicking the pillar opens its dropdown of sub-entries; clicking the "Marketing" label itself routes to `admin.marketing.dashboard` (the legacy marketing dashboard). The new Marketing Suite is reached via the first child link, **Marketing suite** (`/admin/marketing-new/dashboard`) — the merchant-recommended surface (see [[marketing-dashboard]]). Both dashboards are wired and reachable; the legacy one is soft-deprecated, not removed.
+Clicking the pillar opens its dropdown of sub-entries. The dashboard is the first child link, **Marketing suite** (`/admin/marketing/dashboard`, see [[marketing-dashboard]]). The legacy Smarty marketing dashboard was removed on 2026-10-21; its old address redirects to the Vue section.
 
 ## What the merchant can do here
 
@@ -67,13 +67,13 @@ The Marketing pillar is shown to a staff member whose role grants any of these p
 
 Each sub-screen then has its own gate that cascades down — e.g. the **Blog** dropdown needs `marketing` / `marketing.blog_articles` / `marketing.blog_categories` / `marketing.blog_comments`; **Subscribers** needs `marketing` / `marketing.subscribers.all` / `marketing.subscribers`. So a marketing role can be narrowed to "Blog only" or "Newsletter only" by gating the deeper keys.
 
-### Two parallel UIs — legacy vs new
+### One UI since 2026-10-21
 
-Several sub-screens have BOTH a legacy version AND a new version under `/admin/marketing-new/...`. The merchant lands on the new version by default; a per-section cookie set to `old` provides an opt-back-to-legacy escape hatch — keys `marketing-campaigns`, `marketing-channels`, `marketing-discounts`, `marketing-segments`, `marketing-subscribers`. Each is toggled by the "Switch to old version" / "Try the new version" link at the top of the new page. **No persistent server-side preference** stores the choice — clearing cookies resets to the new UI.
+The Marketing section is the Vue admin under `/admin/marketing/...` (until 2026-10-21 it was `/admin/marketing-new/...`; old links redirect permanently). The legacy Smarty screens it replaced (campaign, channel, segment and subscriber lists, custom fields, subscribe-form lists, discounts, blog, SEO, mail templates, up-sell and cross-sell, the old dashboard) were removed the same day: their URLs redirect permanently to the Vue pages, and the "Switch to old version" link and its `old` cookies are gone. Still served by the older pages: predefined campaigns, template groups, predefined e-mail templates, the campaign form, channel settings panels, the subscribe-form builder, the page builder (landing pages), admin notifications and the Buy button.
 
 ### Anti-spam policy gates outbound marketing
 
-Before the merchant can open the **Channels** screen, the **Saved email templates** screen, or send any campaign, they must accept the **anti-spam policy** (see [[marketing-campaigns-policy]]). It is a one-time accept that persists in the `campaigns` app's `anti_spam_policy` setting; until accepted, opening those screens redirects to `/admin/marketing-new/campaigns/policy`.
+Before the merchant can open the **Channels** screen, the **Saved email templates** screen, or send any campaign, they must accept the **anti-spam policy** (see [[marketing-campaigns-policy]]). It is a one-time accept that persists in the `campaigns` app's `anti_spam_policy` setting; until accepted, opening those screens redirects to `/admin/marketing/campaigns/policy`.
 
 ### The Marketing Suite is plan-aware
 

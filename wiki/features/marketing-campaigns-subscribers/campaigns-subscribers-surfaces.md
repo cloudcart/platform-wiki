@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Subscribers → Surfaces"
 route_name: subscribers.list
-route_path: /admin/marketing-new/subscribers?filter[campaign]={campaign_id}
+route_path: /admin/marketing/subscribers?filter[campaign]={campaign_id}
 aliases: ["Campaign subscribers surfaces", "Campaign subscribers panel vs redirect", "Subscribers list filtered by campaign"]
 tags: [marketing, campaigns, subscribers, recipients]
 plan_gates: ["abandoned_orders", "campaigns"]

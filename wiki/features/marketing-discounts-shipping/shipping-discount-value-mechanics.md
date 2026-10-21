@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Shipping → Value mechanics"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Free shipping value mechanics", "Shipping discount totals lines", "Free shipping cart totals", "Shipping discount carrier quote", "Free shipping COD"]
 tags: [marketing, discounts, shipping, totals, cart, value-type]
 plan_gates: ["discount_global", "discount_coupon"]
@@ -23,7 +23,7 @@ The merchant cares because the carrier quote varies per zone, weight, shipping p
 
 ## Where to find it
 
-The value-type behaviour is determined by setting **Discount type → Free shipping** on the Create / Edit form at `/admin/marketing-new/discounts/create/global` (or `create/code` for the coupon variant). See [[marketing-discounts-shipping]] for the entry-surface flow.
+The value-type behaviour is determined by setting **Discount type → Free shipping** on the Create / Edit form at `/admin/marketing/discounts/create/global` (or `create/code` for the coupon variant). See [[marketing-discounts-shipping]] for the entry-surface flow.
 
 ## What the merchant can do here
 

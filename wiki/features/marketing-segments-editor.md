@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Editor"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Segment editor", "Segment conditions editor", "Segment condition builder", "Edit segment", "Create segment", "Сегмент редактор", "Редактор на сегмент", "Условия за сегмент", "Конструктор на сегмент"]
 tags: [marketing, segments, editor, condition-builder]
 plan_gates: ["segments", "subscribers", "subscribers-rfm"]
@@ -26,7 +26,7 @@ From the [[marketing-segments]] list:
 - Click **Edit conditions** on any segment row — opens the editor pre-filled with that segment's existing condition tree.
 - Click directly on the segment name in some places — opens the editor in Edit mode.
 
-The route stays on `/admin/marketing-new/segments`. The modal pushes `?modal=create` or `?modal=edit&id=:id` (or sometimes `?id=:id`) into the URL so the editor state survives refresh and back/forward. Closing the modal removes those query params and returns to the segment list.
+The route stays on `/admin/marketing/segments`. The modal pushes `?modal=create` or `?modal=edit&id=:id` (or sometimes `?id=:id`) into the URL so the editor state survives refresh and back/forward. Closing the modal removes those query params and returns to the segment list.
 
 ## Sub-pages (in this cluster)
 

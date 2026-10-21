@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Reputation → Sync cadence"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Reputation sync", "Reputation sync cadence", "12-hour reputation sync", "Reputation snapshot", "Reputation cache miss live fallback", "Синхронизация на репутация", "Снимка на репутация"]
 tags: [marketing, channels, reputation, sync, background-job, email]
 plan_gates: ["campaign.channel.email"]

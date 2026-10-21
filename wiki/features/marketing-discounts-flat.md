@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Flat"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Flat discount", "Fixed amount discount", "Amount-off discount", "Cart amount discount", "Money-off promotion", "-X EUR off", "Сума отстъпка", "Фиксирана сума отстъпка"]
 tags: [marketing, discounts, flat]
 plan_gates: ["discount_global", "discount_coupon"]
@@ -22,8 +22,8 @@ Together with the **Percentage discount** (see [[marketing-discounts-percent]]),
 
 **Sidebar → Marketing → Discounts → + Add discount.** The type-picker modal shows ten cards.
 
-- **For a cart-wide / no-code promotion** ("20 EUR off any order"): click the **Global discount** card. The route is `/admin/marketing-new/discounts/create/global`. In the form, set "Discount type" to **Fixed amount**.
-- **For a promo-code-driven discount** ("20 EUR off with code WELCOME20"): click the **Discount with promo code** card. The route is `/admin/marketing-new/discounts/create/code`. In the form, set "Discount type" to **Fixed amount**.
+- **For a cart-wide / no-code promotion** ("20 EUR off any order"): click the **Global discount** card. The route is `/admin/marketing/discounts/create/global`. In the form, set "Discount type" to **Fixed amount**.
+- **For a promo-code-driven discount** ("20 EUR off with code WELCOME20"): click the **Discount with promo code** card. The route is `/admin/marketing/discounts/create/code`. In the form, set "Discount type" to **Fixed amount**.
 
 In both cases, the same backend `flat` type is created — the only difference is whether `code` is set. The list view labels the discount with its target-link summary (e.g., "10 EUR off orders over 50 EUR").
 

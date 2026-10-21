@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Dashboard → Data freshness & permissions"
 route_name: marketing-dashboard
-route_path: /admin/marketing-new/dashboard
+route_path: /admin/marketing/dashboard
 aliases: ["Marketing dashboard freshness", "Marketing dashboard cache TTL", "6-hour collector job marketing", "Dashboard snapshot table", "Marketing dashboard moderator permissions", "Marketing API permissions", "Stale dashboard data", "Plan gating marketing dashboard"]
 tags: [marketing, dashboard, caching, scheduled-job, freshness, permissions]
 plan_gates: []

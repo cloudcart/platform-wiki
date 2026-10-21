@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Usage"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Channel usage", "Plan usage", "Email usage", "SMS usage", "Viber usage", "Web Push usage", "Channel quota", "Send limit", "Потребление", "Използване", "Лимит на канал", "Изпратени съобщения"]
 tags: [marketing, channels, usage, monitoring, quota, plan]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Viber"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Viber", "Viber Business Messages", "Viber channel", "Viber for Business", "Вайбър канал", "Viber съобщения"]
 tags: [marketing, channels, viber, infobip, business-messages]
 plan_gates: ["viber_messages"]
@@ -29,7 +29,7 @@ Because Viber Business is a paid channel both for CloudCart (InfoBip charges per
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing-new/campaigns/channels`) → **Viber** card. The card's actions (Install, Activate/Deactivate, Settings, System Message, Usage, Logs) open modals over the channels page — Viber settings render in the `MarketingChannelsSettingsModalViber` sub-component.
+Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing/campaigns/channels`) → **Viber** card. The card's actions (Install, Activate/Deactivate, Settings, System Message, Usage, Logs) open modals over the channels page — Viber settings render in the `MarketingChannelsSettingsModalViber` sub-component.
 
 Channel mapping key: `viber_message`. Actions hit the channels API (base `/admin/api/core/marketing/campaigns/channels`):
 

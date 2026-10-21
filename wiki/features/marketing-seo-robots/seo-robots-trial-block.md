@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → SEO → Robots.txt → Trial-store block"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["Robots.txt trial block", "Disallow all override", "Trial store not indexed", "plan_expired robots", "Development robots.txt", "Why isn't my store on Google", "Робот файл триал блокиране"]
 tags: [marketing, seo, robots, plan-gates, trial]
 plan_gates: []

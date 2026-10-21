@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Products → Per-product modal"
 route_name: discounts-products
-route_path: /admin/marketing-new/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id
 aliases: ["Fixed discount product modal", "Common price vs Multiple price", "Add product to Fixed discount"]
 tags: [marketing, discounts, fixed, modal, ui]
 plan_gates: ["discount_fixed", "total_discounts"]
@@ -25,7 +25,7 @@ For what gets written when the modal saves, see [[fixed-discount-row-writes]]; f
 
 From [[marketing-discounts]] → click "Products" on any Fixed-type row. The list of attached products is the page body; the **+ Add product** button (or a row click) opens the modal.
 
-Route: `/admin/marketing-new/discounts/products/:id` (route name `discounts-products`).
+Route: `/admin/marketing/discounts/products/:id` (route name `discounts-products`).
 
 ## What the merchant can do here
 

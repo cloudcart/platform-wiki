@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Container codes → List view"
 route_name: discounts-codes_list
-route_path: /admin/marketing-new/discounts/codes
+route_path: /admin/marketing/discounts/codes
 aliases: ["Container codes list view", "Container codes row actions", "Container codes bulk actions", "Container codes columns", "Списък с промо кодове", "Масови действия върху промо кодове"]
 tags: [marketing, discounts, coupons, container, list-view, bulk-actions]
 plan_gates: ["discount_coupon"]
@@ -21,7 +21,7 @@ The list view is what the merchant sees when they open **Promo code management**
 
 ## Where to find it
 
-From any Container-discount row in the [[marketing-discounts]] table, click "Promo code management". The list loads at `/admin/marketing-new/discounts/codes`; the breadcrumb reads "Marketing → Discounts → Container codes".
+From any Container-discount row in the [[marketing-discounts]] table, click "Promo code management". The list loads at `/admin/marketing/discounts/codes`; the breadcrumb reads "Marketing → Discounts → Container codes".
 
 ## What the merchant can do here
 

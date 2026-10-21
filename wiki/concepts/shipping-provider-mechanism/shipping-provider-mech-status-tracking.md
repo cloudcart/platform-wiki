@@ -15,7 +15,7 @@ source_count: 1
 
 ## Definition
 
-**Status tracking** is the post-dispatch half of the mechanism: after a waybill is issued ([[shipping-provider-mech-waybill]]), the carrier reports delivery progress back to CloudCart, the platform flips the order's [[shipping-status]], and the merchant + customer see live updates. **Overrides** are the cross-cutting side rules that bend the standard pipeline — Cart Rules can hide / force shipping methods, customer groups can see different method sets, the default selection at checkout is controlled in [[settings-cart]], and methods with order history can't be deleted.
+**Status tracking** is the post-dispatch half of the mechanism: issuing a waybill ([[shipping-provider-mech-waybill]]) sets the order's [[shipping-status]] to **Fulfilled** and the customer gets the shipment email. From then on the parcel's progress is the carrier's own tracking status, which some courier integrations show for each shipment; the order's shipping status has only two values and does not follow it. **Overrides** are the cross-cutting side rules that bend the standard pipeline — Cart Rules can hide / force shipping methods, customer groups can see different method sets, the default selection at checkout is controlled in [[settings-cart]], and methods with order history can't be deleted.
 
 This page collects every "after the carrier is configured and quoting works" rule in one place — the things merchants encounter once orders are flowing.
 
@@ -23,8 +23,8 @@ This page collects every "after the carrier is configured and quoting works" rul
 
 Covered:
 
-- Webhook-driven status updates + polling fallback.
-- Status-driven customer notification emails.
+- The carrier's tracking status vs the order's shipping status.
+- The customer email on fulfilment.
 - Cart Rules override (force, modify, COD surcharge).
 - Customer-group restrictions on method visibility.
 - Default-selection rules at checkout.
@@ -39,30 +39,20 @@ Not covered:
 
 ## Contrasts
 
-- **Webhook vs. polling**: carriers with mature APIs push status updates via webhooks at key events. For carriers without webhooks, the platform polls the tracking API on a periodic schedule. Webhook = near-real-time; polling = delayed but works for everyone.
-- **`shipping-status` (the enum) vs. status label (the displayed string)**: the underlying enum is fixed (e.g., `dispatched`, `in_transit`, `delivered`). [[settings-statuses]] Shipping tab lets the merchant rename the *displayed label* without changing the enum — useful for storefront localisation and tone (e.g., "Sent on its way" vs. "Dispatched").
+- **Carrier tracking status vs. shipping status**: the carrier's statuses (picked up, in transit, delivered, returned …) belong to the shipment and are shown in the courier integration where it keeps them. The order's shipping status is `not_fulfilled` or `fulfilled` only, and a waybill makes it `fulfilled`.
+- **`shipping-status` (the value) vs. status label (the displayed string)**: the two values are fixed. The [[settings-statuses]] Shipping tab lets the merchant rename their *displayed labels* without changing the value — useful for storefront tone (e.g., "Sent on its way" instead of "Fulfilled").
 - **Cart Rules override vs. method configuration**: method configuration (per-method Geo Zone, customer groups, pricing) decides which methods are eligible by default. Cart Rules sit *after* discounts and can force a specific method, modify the shipping line, or add COD surcharges *on this cart only* — they're per-cart overrides on top of the per-method config.
 - **Default carrier (settings-cart) vs. method ordering (settings-shipping)**: [[settings-cart]] picks which method auto-selects at checkout when multiple are eligible. The order methods appear in the checkout picker is configured separately on [[settings-shipping]] (drag-reorder). Both are merchant-facing UX decisions and don't affect pricing.
 
 ## Where it applies
 
-### Webhook-driven status updates
+### Carrier tracking
 
-After waybill generation, the carrier's API can push status updates back to CloudCart via webhook callbacks at key delivery events:
+After the waybill, the carrier tracks the parcel: picked up, in transit, out for delivery, delivered, or failed and returned. Where a courier integration keeps this status, it is shown for each shipment in that integration's shipments list, for example Econt's *Pending pickup / In transit / Delivered / Failed / Returned* ([[econt-shipments]]). It does not change the order's shipping status, which stays **Fulfilled**. Delivery is recorded on the order only as the expected **Delivery date** entered with the fulfilment, and a parcel that comes back is handled as a return ([[orders-details-returns]]). (verify — how often each integration refreshes the carrier status.)
 
-- Package picked up by the courier.
-- In transit.
-- Out for delivery.
-- Delivered (signature captured if required).
-- Failed / returned.
+### Customer notification on fulfilment
 
-Each status update flips the order's [[shipping-status]] enum. For carriers without webhooks, the platform polls the carrier's tracking API on a periodic schedule. (verify — exact polling cadence per carrier.)
-
-### Status-driven customer notification emails
-
-The [[settings-statuses]] Shipping tab lets the merchant rename labels AND toggle customer-notification emails per status — e.g., "Out for delivery" email enabled, "Picked up" silent. The merchant can craft a per-status template; the platform fires the email when the status flip happens.
-
-This is how customers see "Your order is out for delivery" emails. See [[notification-delivery]] for the full notification pipeline.
+Shipping statuses have no per-status notification switch. When the order is fulfilled (by a waybill, **Fulfill products** or the status menu), the customer gets the shipment email, provided the order's Notify-customer flag is on. Un-fulfilling sends no email. See [[shipping-status-side-effects]] and [[notification-delivery]].
 
 ### Cart Rules override
 
@@ -95,8 +85,8 @@ For "I can't delete this method" support tickets, the answer is always the same:
 ## Related
 
 - [[shipping-provider-mechanism]] — hub.
-- [[shipping-status]] — the enum tracking dispatch and delivery.
-- [[settings-statuses]] — Shipping tab; rename labels + toggle notification emails.
+- [[shipping-status]] — the two values: not fulfilled / fulfilled.
+- [[settings-statuses]] — Shipping tab; rename the two labels.
 - [[notification-delivery]] — the full notification pipeline.
 - [[shipping-provider-mech-waybill]] — the action that initiates tracking.
 - [[apps-cart-rules]] — Cart Rules engine.

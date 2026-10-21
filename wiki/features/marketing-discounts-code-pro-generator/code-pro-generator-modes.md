@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO → Generator → Modes"
 route_name: discounts-code_pro-generator
-route_path: /admin/marketing-new/discounts/code-pro/:id/generator
+route_path: /admin/marketing/discounts/code-pro/:id/generator
 aliases: ["Generator modes", "Range mode", "Random mode", "Generator strategies"]
 tags: [marketing, discounts, coupons, code-pro, bulk-generation]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
@@ -21,7 +21,7 @@ The Code PRO generator produces code strings in one of **two modes**: **Range** 
 
 ## Where to find it
 
-The mode picker lives on the bulk-generator page: **Marketing → Discounts → Code PRO → "Generate codes" toolbar button** — route name `discounts-code_pro-generator`, path `/admin/marketing-new/discounts/code-pro/:id/generator`. Inside the "Code settings" box, the **Generator type** dropdown switches between Range and Random parameter sets — see [[code-pro-generator-form-layout]] for the on-screen layout.
+The mode picker lives on the bulk-generator page: **Marketing → Discounts → Code PRO → "Generate codes" toolbar button** — route name `discounts-code_pro-generator`, path `/admin/marketing/discounts/code-pro/:id/generator`. Inside the "Code settings" box, the **Generator type** dropdown switches between Range and Random parameter sets — see [[code-pro-generator-form-layout]] for the on-screen layout.
 
 ## What the merchant can do here
 

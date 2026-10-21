@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Dashboard → RFM & Discounts"
 route_name: marketing-dashboard
-route_path: /admin/marketing-new/dashboard
+route_path: /admin/marketing/dashboard
 aliases: ["RFM Analysis dashboard", "BumpCart performance", "Cart rules performance dashboard", "Product Reviews row", "RFM heatmap", "RFM upsell overlay", "Recency Frequency Monetary", "Преглед на отзиви"]
 tags: [marketing, dashboard, rfm, bumpcart, cart-rules, reviews, segmentation]
 plan_gates: ["rfm_analysis"]

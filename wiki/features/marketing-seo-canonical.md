@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → SEO → Canonical tag"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["Canonical tag", "Canonical URL", "rel canonical", "Self-canonical", "Каноничен таг", "Каноничен URL"]
 tags: [marketing, seo, canonical, indexing]
 plan_gates: []

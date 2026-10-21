@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Statistics → Per-step table"
 route_name: campaigns-statistics
-route_path: /admin/marketing-new/campaigns/statistics/:id
+route_path: /admin/marketing/campaigns/statistics/:id
 aliases: ["Per-step table", "Campaign step statistics", "Per-action statistics", "Step funnel table", "Sent opened clicked per step"]
 tags: [marketing, campaigns, statistics, steps]
 plan_gates: ["abandoned_orders", "campaigns"]

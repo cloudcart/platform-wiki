@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Category → List & modal"
 route_name: blog-categories
-route_path: /admin/marketing-new/blog/category
+route_path: /admin/marketing/blog/category
 aliases: ["Blog category list", "Blog categories list", "Add blog category", "Edit blog category", "Blog category modal", "Списък категории на блог"]
 tags: [marketing, blog, content, categories, taxonomy]
 plan_gates: ["blog_categories"]
@@ -23,7 +23,7 @@ The **list screen** is the entry point for managing blog categories, and the **s
 
 Sidebar → **Marketing** → **Blog** → **Category**.
 
-Route name `blog-categories`; path `/admin/marketing-new/blog/category`. Header icon is the typewriter.
+Route name `blog-categories`; path `/admin/marketing/blog/category`. Header icon is the typewriter.
 
 ## What the merchant can do here
 

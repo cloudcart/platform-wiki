@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Editor → Validation"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Segment editor validation", "Segment editor error store", "Segment condition manager validation", "Allowed combinations check", "Legacy key normalisation", "Meta endpoint cache"]
 tags: [marketing, segments, editor, validation, error-handling]
 plan_gates: []

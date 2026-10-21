@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → SMS Msg Hub → DLR webhook"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["SMS MsgHub DLR", "MsgHub delivery report", "MsgHub webhook", "MsgHub Viber clarification", "MsgHub anti-spam policy"]
 tags: [marketing, channels, sms, msghub, dlr, webhook]
 plan_gates: ["campaign.channel.sms_msghub_message"]

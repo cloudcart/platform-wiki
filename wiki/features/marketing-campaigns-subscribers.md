@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Subscribers"
 route_name: subscribers.list
-route_path: /admin/marketing-new/subscribers?filter[campaign]={campaign_id}
+route_path: /admin/marketing/subscribers?filter[campaign]={campaign_id}
 aliases: ["Campaign subscribers", "Campaign recipients", "Subscribers in this campaign", "Funnel members", "Получатели на кампания", "Абонати в кампания"]
 tags: [marketing, campaigns, subscribers, recipients]
 plan_gates: ["abandoned_orders", "campaigns"]

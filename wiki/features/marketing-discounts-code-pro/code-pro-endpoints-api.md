@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO codes → Endpoints & API"
 route_name: discounts-code_pro-list
-route_path: /admin/marketing-new/discounts/code-pro/:id
+route_path: /admin/marketing/discounts/code-pro/:id
 aliases: ["Code PRO endpoints", "Code PRO JSON-API v2", "Code PRO programmatic access", "Code PRO bulk-generate cap"]
 tags: [marketing, discounts, code-pro, api, endpoints, json-api-v2]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
@@ -50,7 +50,7 @@ Base: `/admin/api/core/discounts`. Authenticated via the admin session; protecte
 | Generate codes | `/code-pro/{id}/generate` | POST → [[marketing-discounts-code-pro-generator]] |
 | Export to CSV | `/code-pro/{id}/export` | GET → [[marketing-discounts-code-pro-export]] |
 
-There is also a legacy single-toggle endpoint: `GET /admin/discounts/code-pro/{discount_id}/status/{code_id}/{status?}` — toggles a single code's `active` flag and returns updated row HTML for the inline grid renderer. The modern Vue page uses the unified `POST.../status` with `{ ids: [code_id], status: 1|0 }` instead.
+The legacy single-toggle endpoint (`GET /admin/discounts/code-pro/{discount_id}/status/{code_id}/{status?}`) was removed with the Smarty discount pages on 2026-10-21. The Vue page toggles codes with `POST.../status` and `{ ids: [code_id], status: 1|0 }`.
 
 ### JSON-API v2 surface
 

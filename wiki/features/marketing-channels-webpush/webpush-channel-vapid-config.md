@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Web Push → VAPID configuration"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["VAPID keys", "VAPID identity", "Voluntary Application Server Identification", "webpush:vapid", "VAPID_PUBLIC_KEY", "VAPID_PRIVATE_KEY", "Платформа VAPID ключове"]
 tags: [marketing, channels, web-push, vapid, platform-config, signing]
 plan_gates: ["campaign.channel.web_push"]

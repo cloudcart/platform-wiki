@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Auto-suspension"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Channel auto-suspend", "Channel suspension", "Suspended channel", "Spam threshold", "Bounce threshold", "Reputation suspend", "cc_denied", "Спрян канал", "Подозрителен канал"]
 tags: [marketing, channels, suspension, reputation, spam, bounce]
 plan_gates: []

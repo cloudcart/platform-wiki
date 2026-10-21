@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → System messages → Variables"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["System message variables", "Merge tags", "Transactional variables", "Variables legend", "Add variable"]
 tags: [marketing, channels, system-messages, variables, merge-tags]
 plan_gates: []

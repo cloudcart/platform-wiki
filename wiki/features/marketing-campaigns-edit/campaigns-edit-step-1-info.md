@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Edit → Step 1 (Main settings)"
 route_name: campaigns-edit
-route_path: /admin/marketing-new/campaigns/edit/:type(regular|automated)/:id
+route_path: /admin/marketing/campaigns/edit/:type(regular|automated)/:id
 aliases: ["Campaign main settings", "Campaign title", "Start delay", "Repeat campaign", "Use existing subscribers"]
 tags: [marketing, campaigns, edit, step-1]
 plan_gates: []

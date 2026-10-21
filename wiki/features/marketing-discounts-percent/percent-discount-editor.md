@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Percent → Editor"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Percent discount editor", "Percent discount form", "Discount with promo code form"]
 tags: [marketing, discounts, percent, editor]
 plan_gates: ["discount_global", "discount_coupon"]
@@ -23,8 +23,8 @@ The Percent editor is the admin form where the merchant configures a no-code or 
 
 From [[marketing-discounts]], click **+ Add discount** to open the type-picker modal. Two cards open the Percent editor:
 
-- **Global discount** card → route `/admin/marketing-new/discounts/create/global` (route name `discounts-create`, query `type=global`). For a cart-wide no-code Percent.
-- **Discount with promo code** card → route `/admin/marketing-new/discounts/create/code` (route name `discounts-create`, query `type=code`). For a promo-code-driven Percent. Adds the **Generate a discount code** + **Region** blocks.
+- **Global discount** card → route `/admin/marketing/discounts/create/global` (route name `discounts-create`, query `type=global`). For a cart-wide no-code Percent.
+- **Discount with promo code** card → route `/admin/marketing/discounts/create/code` (route name `discounts-create`, query `type=code`). For a promo-code-driven Percent. Adds the **Generate a discount code** + **Region** blocks.
 
 Once on the form, the merchant sets **Discount type → Percentage** in the General settings block.
 

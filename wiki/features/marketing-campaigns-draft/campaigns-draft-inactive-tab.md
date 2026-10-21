@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Draft → Inactive tab"
 route_name: campaigns-inactive
-route_path: /admin/marketing-new/campaigns/inactive
+route_path: /admin/marketing/campaigns/inactive
 aliases: ["Inactive campaigns tab", "Stopped campaigns list", "Paused campaigns", "Спрени кампании", "Неактивни кампании"]
 tags: [marketing, campaigns, inactive, list]
 plan_gates: ["abandoned_orders", "campaigns"]
@@ -34,7 +34,7 @@ Sidebar → **Marketing** → **Campaigns** → click the **Inactive** tab.
 | Setting | Value |
 |---------|-------|
 | Route name | `campaigns-inactive` |
-| Route path | `/admin/marketing-new/campaigns/inactive` |
+| Route path | `/admin/marketing/campaigns/inactive` |
 | Filter rule | `active = 0` AND `archived_at IS NULL` |
 
 ## What the merchant can do here

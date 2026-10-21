@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Seo → 301 Redirects → Middleware & cache"
 route_name: seo-301-redirects
-route_path: /admin/marketing-new/seo/301-redirects
+route_path: /admin/marketing/seo/301-redirects
 aliases: ["Redirect middleware", "has_301_redirects setting", "redirects301 cache", "24-hour redirect cache", "Bulk delete redirects", "Storefront 301 lookup"]
 tags: [marketing, seo, redirects, middleware, cache, performance]
 plan_gates: []

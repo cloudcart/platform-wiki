@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Seo → 301 Redirects → Auto-tracking & cascade"
 route_name: seo-301-redirects
-route_path: /admin/marketing-new/seo/301-redirects
+route_path: /admin/marketing/seo/301-redirects
 aliases: ["URL handle history", "30-day TTL on slug rename", "Auto-redirect on rename", "Entity-delete cascade redirects", "Implicit 301 on product rename", "Auto-tracking redirects"]
 tags: [marketing, seo, redirects, auto-tracking, cascade, lifecycle]
 plan_gates: []

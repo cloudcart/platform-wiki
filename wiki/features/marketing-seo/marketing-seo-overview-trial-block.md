@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Seo → Trial-store crawl block"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["Trial store not on Google", "New store not indexed", "Disallow all on trial", "Trial robots override", "Demo store noindex", "Expired store crawl block", "Защо магазинът ми не е в Google"]
 tags: [marketing, seo, robots, trial, indexing, plan-gate]
 plan_gates: []

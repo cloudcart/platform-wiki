@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Editor → Save pipeline"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Segment editor save", "Segment editor save pipeline", "Segment editor side effects", "Segment editor rename endpoint", "set_subscribers_to_single_segment", "Programmatic segments"]
 tags: [marketing, segments, editor, save, side-effects, queue]
 plan_gates: []

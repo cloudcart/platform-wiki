@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Edit"
 route_name: campaigns-edit
-route_path: /admin/marketing-new/campaigns/edit/:type(regular|automated)/:id
+route_path: /admin/marketing/campaigns/edit/:type(regular|automated)/:id
 aliases: ["Edit campaign", "Campaign editor", "Setup campaign", "Configure campaign", "Редакция на кампания", "Настройка на кампания"]
 tags: [marketing, campaigns, edit]
 plan_gates: ["abandoned_orders", "campaigns"]
@@ -29,7 +29,7 @@ The route is type-aware: `regular` and `automated` campaigns each use a distinct
 
 | Route name | Route path |
 |------------|------------|
-| `campaigns-edit` (Vue page) | `/admin/marketing-new/campaigns/edit/:type(regular\|automated)/:id` |
+| `campaigns-edit` (Vue page) | `/admin/marketing/campaigns/edit/:type(regular\|automated)/:id` |
 | `apiMarketingCampaigns.update` (PUT save target) | `/admin/api/core/marketing/campaigns/{id}` |
 | `apiMarketingCampaigns.status` (activation target) | `/admin/api/core/marketing/campaigns/status/{id}/{status}` |
 

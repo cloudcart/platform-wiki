@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Email notifications → Template editor"
 route_name: marketing-mails-list
-route_path: /admin/marketing-new/omnichannel/mails/list
+route_path: /admin/marketing/omnichannel/mails/list
 aliases: ["Customer mail template editor", "CampaignEmailTemplateScratchModal", "Unlayer designer for customer mails", "Send example email", "Test email", "Тестов имейл", "Редактор на имейл шаблон"]
 tags: [marketing, omnichannel, email, notifications, editor, unlayer]
 plan_gates: ["change_email_notifications", "test_mail"]
@@ -21,7 +21,7 @@ The template editor modal is the **shared editor** between this page and the cam
 
 ## Where to find it
 
-Open from the **Email notifications** list at `/admin/marketing-new/omnichannel/mails/list` by clicking any row's **Name** cell.
+Open from the **Email notifications** list at `/admin/marketing/omnichannel/mails/list` by clicking any row's **Name** cell.
 
 The modal title is **"Email template"** (BG **"Имейл шаблон"**), or **"Edit template"** when editing a saved scratch template.
 

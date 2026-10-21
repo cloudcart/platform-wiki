@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO → Generator → Fields"
 route_name: discounts-code_pro-generator
-route_path: /admin/marketing-new/discounts/code-pro/:id/generator
+route_path: /admin/marketing/discounts/code-pro/:id/generator
 aliases: ["Generator fields", "Generator backend keys", "Code PRO generator field reference"]
 tags: [marketing, discounts, coupons, code-pro, bulk-generation]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
@@ -21,7 +21,7 @@ This aspect is the **field-level reference** for the Code PRO bulk generator: ev
 
 ## Where to find it
 
-Every field documented here lives on the bulk-generator page: **Marketing → Discounts → Code PRO → "Generate codes" toolbar button** — route name `discounts-code_pro-generator`, path `/admin/marketing-new/discounts/code-pro/:id/generator`. See [[code-pro-generator-form-layout]] for the settings-box layout that groups these fields visually.
+Every field documented here lives on the bulk-generator page: **Marketing → Discounts → Code PRO → "Generate codes" toolbar button** — route name `discounts-code_pro-generator`, path `/admin/marketing/discounts/code-pro/:id/generator`. See [[code-pro-generator-form-layout]] for the settings-box layout that groups these fields visually.
 
 ## What the merchant can do here
 

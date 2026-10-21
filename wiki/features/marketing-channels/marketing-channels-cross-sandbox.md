@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Sandbox & pre-flight gates"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Channel sandbox", "Sandbox mode", "Sandbox URL", "Webhook redirect for testing", "Anti-spam policy gate", "Channel pre-flight check", "Тестов режим канал", "Sandbox канали"]
 tags: [marketing, channels, sandbox, testing, anti-spam, pre-flight]
 plan_gates: []
@@ -24,7 +24,7 @@ The two cross-cutting gates that determine whether a channel-bound action can ru
 Sidebar → **Marketing** → **Channels** → **Channels setup**.
 
 - **Sandbox** — collapsible band at the bottom of each channel card; on/off switch + one text input (*"Webhook post url"*) + **Submit** button.
-- **Anti-spam policy gate** — if not yet accepted, navigating to the Channels setup route redirects to `/admin/marketing-new/campaigns/policy` ([[marketing-campaigns-policy]]) BEFORE the merchant ever sees the channels page.
+- **Anti-spam policy gate** — if not yet accepted, navigating to the Channels setup route redirects to `/admin/marketing/campaigns/policy` ([[marketing-campaigns-policy]]) BEFORE the merchant ever sees the channels page.
 - **Pre-flight checks** — surfaced on the [[marketing-campaigns|Campaign]] page during launch, not on the Channels setup page itself.
 
 ## What the merchant can do here

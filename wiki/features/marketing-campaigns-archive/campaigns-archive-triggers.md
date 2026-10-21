@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Archived → Triggers"
 route_name: campaigns-archived
-route_path: /admin/marketing-new/campaigns/archived
+route_path: /admin/marketing/campaigns/archived
 aliases: ["How a campaign gets archived", "Auto-archive on completion", "Manual archive", "Regular campaign auto-archive", "Stop before archive error"]
 tags: [marketing, campaigns, archive, lifecycle, auto-archive]
 plan_gates: ["abandoned_orders", "campaigns"]

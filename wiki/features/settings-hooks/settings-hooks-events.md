@@ -86,7 +86,7 @@ Each nested section has its own serialiser, so the shape is stable across both o
 
 ## Business rules
 
-- **Status CODE, not status label.** When `order.updated` fires on a status transition, the payload carries the order's **status code** (e.g. `paid`, `pending`, `shipped`) — not the renamed merchant-facing label. Receivers must map codes to their own vocabulary. See [[settings-statuses]].
+- **Status CODE, not status label.** When `order.updated` fires on a status transition, the payload carries the order's **status code** (e.g. `paid`, `pending`, `completed`) and its shipping status as `status_fulfillment` (`not_fulfilled` / `fulfilled`) — not the renamed merchant-facing labels. Receivers must map codes to their own vocabulary. See [[settings-statuses]].
 - **Stock-only product changes still fire `product.updated`.** A bulk inventory edit or an ERP sync that touches only the `quantity` field fans out `product.updated` — see [[inventory-tracking]]. Receivers must be idempotent because this event is chatty.
 - **`product.*` events fire ONLY from admin-panel saves.** REST API v2 writes, background imports (CSV / XML / ERP), smart-collection re-evaluation, and storefront stock decrement do **not** fire `product.created` / `product.updated` — the search index still re-syncs, but webhook receivers see only admin-panel changes. An integration that writes products via the API will NOT receive its own webhook. See [[products-known-issues]].
 - **`order.updated` fires on most order edits — but not all.** It fires on status change, line-item edits, address edits, and payment actions; it does **not** fire on archive / unarchive, the customer-info edit, a payment-method change, or while the order is still a draft. See [[order-pipeline-stage-5-edit]].

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Plan caps & credits"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Channel plan caps", "Channel send quota", "Usage alert", "Buy more credits", "Self-credentials", "Viber self-credentials", "Кредити канал", "Лимит канал"]
 tags: [marketing, channels, plan-caps, credits, usage, self-credentials]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]

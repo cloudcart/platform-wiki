@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Statistics → Conversion attribution"
 route_name: campaigns-statistics
-route_path: /admin/marketing-new/campaigns/statistics/:id
+route_path: /admin/marketing/campaigns/statistics/:id
 aliases: ["Conversion attribution", "Campaign revenue attribution", "Last-touch attribution", "cc_campaign_id", "cc_campaign_action_id", "revenue_statuses"]
 tags: [marketing, campaigns, statistics, attribution, revenue]
 plan_gates: ["abandoned_orders", "campaigns"]

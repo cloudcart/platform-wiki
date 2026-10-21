@@ -23,7 +23,7 @@ Covered:
 
 - The four-step fallback chain: per-entity override → per-section meta → base language file → English fallback.
 - Per-section meta storage: per-language AND per-theme.
-- Why the new Vue page exposes only 5 section blocks while the legacy Smarty page exposed 16 (the other 11 still exist in the underlying translation namespace; legacy escape hatch via `marketing-seo-meta=old` cookie — verify).
+- Why the new Vue page exposes only 5 section blocks while the legacy Smarty page exposed 16 (the other 11 still exist in the underlying translation namespace; the legacy page was removed on 2026-10-21, so they have no screen).
 - The "section meta is the fallback, not the override" rule that confuses merchants.
 - The global Save model on [[marketing-seo-meta]] (one Save button saves all five sections at once) vs. the per-card model on [[marketing-seo]].
 
@@ -36,7 +36,7 @@ Not covered here:
 ## Contrasts
 
 - **Per-section meta vs. per-entity meta** — per-section meta ([[marketing-seo-meta]]) is the **fallback** for Home / Contacts / Products / Vendors / Blog index pages. Per-entity meta lives on each product / category / vendor / CMS page / blog article's OWN admin editor and **overrides** the section default. Merchants who edit `seo.product.title` on [[marketing-seo-meta]] are setting the fallback for product pages that have no per-product meta — NOT setting the meta for any single product.
-- **Legacy Smarty 16 sections vs. new Vue 5 sections** — the legacy version exposed 16 section blocks (account, cart, checkout, login, register, etc.); the new Vue page only exposes 5. The other 11 still exist in the underlying translation namespace and can be edited via the legacy escape hatch (`marketing-seo-meta=old` cookie — verify).
+- **Legacy Smarty 16 sections vs. new Vue 5 sections** — the legacy version exposed 16 section blocks (account, cart, checkout, login, register, etc.); the new Vue page only exposes 5. The other 11 still exist in the underlying translation namespace; since the legacy page was removed on 2026-10-21 they have no screen.
 - **Per-card Save ([[marketing-seo]]) vs. Global Save ([[marketing-seo-meta]])** — [[marketing-seo]] saves each card independently. [[marketing-seo-meta]] has ONE global Save button at the bottom that saves all five sections together.
 
 ## Where it applies
@@ -50,7 +50,7 @@ Not covered here:
 3. **Base language file** (platform default for the storefront's current language).
 4. **English fallback**.
 
-Leaving a section meta blank just falls back to the platform default for that language. The legacy Smarty version of this page exposed 16 section blocks (account, cart, checkout, login, register, etc.); the new Vue page only exposes 5 — the other 11 sections still exist in the underlying translation namespace and can be edited via the legacy escape hatch (`marketing-seo-meta=old` cookie) (verify).
+Leaving a section meta blank just falls back to the platform default for that language. The legacy Smarty version of this page exposed 16 section blocks (account, cart, checkout, login, register, etc.); the new Vue page only exposes 5 — the other 11 sections still exist in the underlying translation namespace, but since the legacy page was removed on 2026-10-21 no screen edits them.
 
 ### Per-entity meta — on the entity editor, not here
 

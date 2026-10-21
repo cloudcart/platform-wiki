@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Shipping → Examples"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Free shipping examples", "Free shipping recipes", "Free shipping over X", "VIP free shipping", "Black Friday free shipping", "Free shipping by region"]
 tags: [marketing, discounts, shipping, examples, recipes]
 plan_gates: ["discount_global", "discount_coupon"]
@@ -21,7 +21,7 @@ This page collects the **most-asked Free-shipping configurations** with the exac
 
 ## Where to find it
 
-All recipes are created on the Create / Edit form at `/admin/marketing-new/discounts/create/global` (no-code) or `/admin/marketing-new/discounts/create/code` (coupon). See [[marketing-discounts-shipping]].
+All recipes are created on the Create / Edit form at `/admin/marketing/discounts/create/global` (no-code) or `/admin/marketing/discounts/create/code` (coupon). See [[marketing-discounts-shipping]].
 
 ## What the merchant can do here
 

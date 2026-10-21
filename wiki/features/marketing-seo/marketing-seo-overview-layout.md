@@ -2,8 +2,8 @@
 type: feature
 nav_path: "Marketing → Seo → Page layout"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
-aliases: ["Main SEO layout", "SEO page layout", "SEO seven cards", "SEO escape hatch cookie", "SEO page navigation", "Оформление на SEO страница"]
+route_path: /admin/marketing/seo
+aliases: ["Main SEO layout", "SEO page layout", "SEO seven cards", "SEO page navigation", "Оформление на SEO страница"]
 tags: [marketing, seo, layout, navigation]
 plan_gates: []
 created: 2026-06-10
@@ -17,13 +17,13 @@ source_count: 4
 
 ## Purpose
 
-This aspect documents how the Main SEO screen is **laid out and reached** — where it lives in the sidebar, the seven-card structure, the legacy fallback cookie, and the precise list of what the merchant can and cannot do on this screen (as opposed to on the related SEO sub-screens). For what each card actually does, drill into that card's deep-dive page; this aspect is purely the page-level frame.
+This aspect documents how the Main SEO screen is **laid out and reached** — where it lives in the sidebar, the seven-card structure, and the precise list of what the merchant can and cannot do on this screen (as opposed to on the related SEO sub-screens). For what each card actually does, drill into that card's deep-dive page; this aspect is purely the page-level frame.
 
 ## Where to find it
 
-Sidebar → Marketing → **SEO** (the first SEO sub-entry, labelled "Main SEO"). Route name `seo-main`, path `/admin/marketing-new/seo`. The page header shows the Searchengin brand icon (`fa-brands fa-searchengin`) and the title "Main SEO settings". The breadcrumb reads "Marketing → SEO settings".
+Sidebar → Marketing → **SEO** (the first SEO sub-entry, labelled "Main SEO"). Route name `seo-main`, path `/admin/marketing/seo`. The page header shows the Searchengin brand icon (`fa-brands fa-searchengin`) and the title "Main SEO settings". The breadcrumb reads "Marketing → SEO settings".
 
-The page is the new Vue rewrite of the legacy `/admin/marketing/seo` Smarty page. The legacy version is preserved as an escape hatch: setting the cookie `marketing-seo-main=old` falls back to the old Smarty page. This is the same escape-hatch pattern used by the sibling SEO screens (for example `marketing-301-redirects=old` on [[marketing-seo-301-redirects]]).
+The page is the Vue rewrite of the legacy Smarty SEO page. The legacy page, its `marketing-seo-main=old` cookie and the same cookies of the sibling SEO screens (for example [[marketing-seo-301-redirects]]) were removed on 2026-10-21.
 
 ## What the merchant can do here
 
@@ -54,7 +54,6 @@ This aspect has no settings of its own — it documents the frame, not the contr
 
 - The seven cards render top-to-bottom in the fixed order above; the order is not configurable.
 - Each card saves independently — there is no global submit. The save model is its own aspect: see [[marketing-seo-overview-card-save]].
-- The legacy escape-hatch cookie (`marketing-seo-main=old`) is a temporary fallback for the Vue rewrite; it is not a documented merchant feature and should not be promoted to merchants.
 
 ## Related
 

@@ -90,7 +90,7 @@ The page does not have a plan-tier gate. Every merchant on every CloudCart plan 
 
 ### Status labels are NOT translatable from this page
 
-The merchant-facing order / shipping / payment status names (e.g., "Pending", "Paid", "Shipped") have their own override UI on [[settings-statuses]]. They do not appear as translation keys on this Translations page. Merchants asking "where do I rename Pending to Чакаща?" should be directed to [[settings-statuses]], not here.
+The merchant-facing order / shipping / payment status names (e.g., "Pending", "Paid", "Fulfilled") have their own override UI on [[settings-statuses]]. They do not appear as translation keys on this Translations page. Merchants asking "where do I rename Pending to Чакаща?" should be directed to [[settings-statuses]], not here.
 
 ### Invoice text + admin notification subjects are SEPARATE systems
 

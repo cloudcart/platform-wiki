@@ -21,7 +21,7 @@ This aspect documents the two access gates on the UpSell feature: the **`upsells
 
 ## Where to find it
 
-The remaining-slots counter is shown on the **Add UpSell** button in the UpSell List header (`/admin/marketing-new/up-sell`), fed by an AJAX call to `admin.common.remaining/upsell`. The app gate runs as middleware on every UpSell admin route.
+The remaining-slots counter is shown on the **Add UpSell** button in the UpSell List header (`/admin/marketing/up-sell`), fed by an AJAX call to `admin.common.remaining/upsell`. The app gate runs as middleware on every UpSell admin route.
 
 ## What the merchant can do here
 

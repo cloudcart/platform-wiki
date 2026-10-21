@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Products"
 route_name: discounts-products
-route_path: /admin/marketing-new/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id
 aliases: ["Discount products", "Fixed discount product list", "Product picker for fixed discount", "Продукти в отстъпката", "Продукти за фиксирана цена"]
 tags: [marketing, discounts, fixed, products, product-picker]
 plan_gates: ["discount_fixed"]
@@ -31,7 +31,7 @@ This topic is split into 5 aspect pages — drill into the one that matches the 
 
 ## Where to find it
 
-From the [[marketing-discounts]] list, the **Products** link on any **Fixed**-type discount row opens this page. The breadcrumb reads "Marketing → Discounts → Products". The route is `/admin/marketing-new/discounts/products/:id` where `:id` is the parent discount's id. The modern Vue page replaces the legacy products listing; the legacy URL `/admin/discounts/products/{discount_id}` continues to drive the same underlying API.
+From the [[marketing-discounts]] list, the **Products** link on any **Fixed**-type discount row opens this page. The breadcrumb reads "Marketing → Discounts → Products". The route is `/admin/marketing/discounts/products/:id` where `:id` is the parent discount's id. The modern Vue page replaces the legacy products listing; the legacy URL `/admin/discounts/products/{discount_id}` continues to drive the same underlying API.
 
 ## What the merchant can do here
 

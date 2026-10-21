@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Percent → Programmatic access"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Percent discount API", "Percent discount GraphQL", "Percent discount JSON-API v2", "Percent discount webhooks"]
 tags: [marketing, discounts, percent, api, graphql, webhooks]
 plan_gates: ["discount_global", "discount_coupon"]

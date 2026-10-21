@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Editor → Modal layout"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Segment editor modal layout", "Segment editor regions", "Segment editor toolbar", "Segment editor header"]
 tags: [marketing, segments, editor, modal]
 plan_gates: []
@@ -27,7 +27,7 @@ From the [[marketing-segments]] list:
 - **Edit conditions** on any row → opens this modal pre-filled with that segment's conditions.
 - Clicking the segment name in some places also opens it in Edit mode.
 
-The route stays on `/admin/marketing-new/segments`. The modal pushes `?modal=create` or `?modal=edit&id=:id` (sometimes `?id=:id`) into the URL so the editor state survives refresh and back/forward. Closing the modal removes those query params and returns to the segment list.
+The route stays on `/admin/marketing/segments`. The modal pushes `?modal=create` or `?modal=edit&id=:id` (sometimes `?id=:id`) into the URL so the editor state survives refresh and back/forward. Closing the modal removes those query params and returns to the segment list.
 
 The modal is large (size `xll`). Backdrop-click and Escape are **disabled** — the flags `no-close-on-backdrop` and `no-close-on-escape` are both true. The merchant must explicitly click Cancel or Save to close, so accidentally clicking off the modal does not lose the in-progress condition tree.
 

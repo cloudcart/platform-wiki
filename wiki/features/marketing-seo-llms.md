@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → SEO → Llms.txt file"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["llms.txt", "Llms.txt file", "LLM instructions", "AI assistant instructions", "AI crawler file", "llmstxt.org", "tell ChatGPT about my store", "AI shopping assistants", "llms.txt файл", "инструкции за изкуствен интелект", "AI асистенти", "какво вижда ChatGPT за магазина"]
 tags: [marketing, seo, llms, ai, discoverability]
 plan_gates: []
@@ -20,7 +20,7 @@ The merchant writes it in **Markdown**, in their own words. It is not a catalogu
 
 ## Where to find it
 
-Sidebar → **Marketing → SEO** (`/admin/marketing-new/seo`) → the **Llms.txt file** card. It is a plain 10-row text area, saved with the card's own **Save** button like every other card on that screen — see [[marketing-seo-overview-card-save]].
+Sidebar → **Marketing → SEO** (`/admin/marketing/seo`) → the **Llms.txt file** card. It is a plain 10-row text area, saved with the card's own **Save** button like every other card on that screen — see [[marketing-seo-overview-card-save]].
 
 The published result is at `https://<store-domain>/llms.txt`.
 

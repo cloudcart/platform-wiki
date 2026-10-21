@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Subscribers"
 route_name: segments.core_new.subscribers
-route_path: /admin/marketing-new/segments/:id/subscribers
+route_path: /admin/marketing/segments/:id/subscribers
 aliases: ["Subscribers in segment", "Segment subscribers", "Who matches this segment", "Members of segment", "Абонати в сегмент", "Абонатите в сегмента"]
 tags: [marketing, segments, subscribers, condition-builder]
 plan_gates: ["segments"]
@@ -39,7 +39,7 @@ This page is large enough that it is split into focused aspect pages. This hub g
 
 From the [[marketing-segments]] list, click the subscriber-count number on any segment row. The breadcrumb reads "Marketing → Segments → \<segment name\>". The header reads "Subscribers" with the description "Subscribers in segment: \<segment name\>". The segment name is truncated to 50 characters in the breadcrumb if longer.
 
-The URL is `/admin/marketing-new/segments/:id/subscribers` and carries `filters[segment][]=:id` as a forced filter so the table only ever shows subscribers attached to this one segment (see [[segments-subscribers-data-source]]). The merchant can also bookmark the URL — the segment filter is applied on mount regardless of query string.
+The URL is `/admin/marketing/segments/:id/subscribers` and carries `filters[segment][]=:id` as a forced filter so the table only ever shows subscribers attached to this one segment (see [[segments-subscribers-data-source]]). The merchant can also bookmark the URL — the segment filter is applied on mount regardless of query string.
 
 ## What the merchant can do here
 

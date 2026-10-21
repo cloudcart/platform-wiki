@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Dashboard"
 route_name: marketing-dashboard
-route_path: /admin/marketing-new/dashboard
+route_path: /admin/marketing/dashboard
 aliases: ["Marketing Suite", "Marketing Suite Dashboard", "Marketing dashboard", "Маркетингова сюита", "Маркетингов дашборд"]
 tags: [marketing, dashboard, kpi, analytics]
 plan_gates: ["rfm_analysis"]
@@ -23,7 +23,7 @@ This is the **landing page** of the new Vue-based Marketing area — opening "Ma
 
 Sidebar → **Marketing** → **Marketing suite**.
 
-The route is `/admin/marketing-new/dashboard`. The parent `marketing` route (`/admin/marketing-new`) redirects here by default.
+The route is `/admin/marketing/dashboard`. The parent `marketing` route (`/admin/marketing`) redirects here by default.
 
 ## What the merchant can do here
 

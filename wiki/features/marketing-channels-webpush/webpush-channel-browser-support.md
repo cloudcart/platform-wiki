@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Web Push → Browser support"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Web Push browser support", "Web Push Safari", "Web Push iOS", "PWA Web Push", "Web Push compatibility", "In-app browser Web Push", "Уеб пуш съвместимост", "Web push PWA Safari"]
 tags: [marketing, channels, web-push, browser-support, pwa, safari, ios, compatibility]
 plan_gates: ["campaign.channel.web_push"]

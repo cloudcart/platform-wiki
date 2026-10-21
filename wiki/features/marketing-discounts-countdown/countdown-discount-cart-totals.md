@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Countdown → Cart totals + stacking"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/countdown
+route_path: /admin/marketing/discounts/create/countdown
 aliases: ["Countdown cart totals", "Countdown stacking", "Countdown discount group", "Countdown per-product attachment", "Countdown order rows"]
 tags: [marketing, discounts, countdown, cart-totals, stacking]
 plan_gates: []

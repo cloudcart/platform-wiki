@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Quantity → Stacking"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/quantity
+route_path: /admin/marketing/discounts/create/quantity
 aliases: ["Quantity discount stacking", "Quantity vs Fixed discount", "Quantity + promo code", "Quantity discount priority", "code_apply Quantity"]
 tags: [marketing, discounts, quantity, stacking, priority, cart]
 plan_gates: []
@@ -21,7 +21,7 @@ This aspect documents what happens at cart-time when a Quantity-tier line **also
 
 ## Where to find it
 
-Stacking behaviour is cart-side; there is no admin UI screen that toggles it. The relevant inputs sit on different discount surfaces — Quantity tiers on the form at `/admin/marketing-new/discounts/create/quantity` (see [[quantity-discount-form]]), Fixed discounts on [[marketing-discounts-fixed]], promo codes on [[marketing-discounts-codes]] / [[marketing-discounts-code-pro]], and Cart Rules at [[apps-cart-rules]].
+Stacking behaviour is cart-side; there is no admin UI screen that toggles it. The relevant inputs sit on different discount surfaces — Quantity tiers on the form at `/admin/marketing/discounts/create/quantity` (see [[quantity-discount-form]]), Fixed discounts on [[marketing-discounts-fixed]], promo codes on [[marketing-discounts-codes]] / [[marketing-discounts-code-pro]], and Cart Rules at [[apps-cart-rules]].
 
 ## What the merchant can do here
 

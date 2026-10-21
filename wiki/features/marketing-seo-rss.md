@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → SEO → RSS Feed"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["RSS file", "RSS feed", "Products RSS", "RSS syndication", "Feed URL", "Product feed", "RSS файл", "РСС файл", "РСС feed", "Канал за продукти", "Продуктов поток"]
 tags: [marketing, seo, rss, distribution]
 plan_gates: []
@@ -25,7 +25,7 @@ The feed is platform-generated. The merchant cannot edit the XML body, the item 
 
 ## Where to find it
 
-Sidebar → Marketing → **SEO** → scroll to the bottom, the **"RSS file"** card. Route is `/admin/marketing-new/seo`. The card has its own inline Save / Revert bar that appears only after the merchant changes the count.
+Sidebar → Marketing → **SEO** → scroll to the bottom, the **"RSS file"** card. Route is `/admin/marketing/seo`. The card has its own inline Save / Revert bar that appears only after the merchant changes the count.
 
 ## What the merchant can do here
 

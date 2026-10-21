@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → Custom Fields → Field types"
 route_name: subscribers-fields-list-new
-route_path: /admin/marketing-new/subscribers/fields
+route_path: /admin/marketing/subscribers/fields
 aliases: ["Subscriber custom field types", "Selection vs text fields", "Subscriber field type locked", "Dropdown radio checkbox text textarea phone", "Subscriber field families"]
 tags: [marketing, subscribers, custom-fields, types]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Edit → Validation rules"
 route_name: campaigns-edit
-route_path: /admin/marketing-new/campaigns/edit/:type(regular|automated)/:id
+route_path: /admin/marketing/campaigns/edit/:type(regular|automated)/:id
 aliases: ["Campaign edit validators", "Pre-flight checks", "Save cascade", "Max action steps", "Edit-only-in-draft", "Title uniqueness", "?edit=1", "Plan-tier campaign quota"]
 tags: [marketing, campaigns, edit, validation, business-rules]
 plan_gates: ["campaigns", "viber_messages"]

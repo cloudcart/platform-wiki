@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → Subscribe Forms → Builder"
 route_name: subscribe-forms.form
-route_path: /admin/marketing-new/subscribers/subscribe-forms/form/:id?
+route_path: /admin/marketing/subscribers/subscribe-forms/form/:id?
 aliases: ["Subscribe form builder", "Form builder iframe", "Subscribe forms editor", "Визуален редактор за форми"]
 tags: [marketing, subscribers, forms, builder, popup, embedded, storefront]
 plan_gates: ["subscriber_forms"]
@@ -21,7 +21,7 @@ The drag-and-drop visual editor where the merchant composes a subscribe form: st
 
 ## Where to find it
 
-Opened from [[subscribe-forms-list]] by clicking **Add form** or an existing form's row name. Route: `/admin/marketing-new/subscribers/subscribe-forms/form/:id?`. The breadcrumb reads Marketing → Subscribe forms → Edit form (existing) or New form (no `:id`).
+Opened from [[subscribe-forms-list]] by clicking **Add form** or an existing form's row name. Route: `/admin/marketing/subscribers/subscribe-forms/form/:id?`. The breadcrumb reads Marketing → Subscribe forms → Edit form (existing) or New form (no `:id`).
 
 ## What the merchant can do here
 

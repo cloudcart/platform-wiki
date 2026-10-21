@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Email → Elastic Email account"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Elastic Email sub-account", "Email channel master account", "account_token", "Reset configuration", "Email channel credentials", "Sub-account provisioning"]
 tags: [marketing, channels, email, elastic-email, sub-account, credentials, reset]
 plan_gates: ["campaign.channel.email"]

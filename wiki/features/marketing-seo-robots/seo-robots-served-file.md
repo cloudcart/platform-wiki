@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → SEO → Robots.txt → Served file"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["robots.txt served file", "Assembled robots.txt", "Robots.txt appended block", "Robots.txt platform default", "Robots.txt cache", "Robots.txt Last-Modified", "What crawlers actually see"]
 tags: [marketing, seo, robots, storefront, cache]
 plan_gates: []

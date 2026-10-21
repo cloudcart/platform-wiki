@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Comment → Submission"
 route_name: blog-comments
-route_path: /admin/marketing-new/blog/comment
+route_path: /admin/marketing/blog/comment
 aliases: ["Comment submission", "Comment submit validation", "Comment rate limit", "Comment storefront visibility", "Изпращане на коментар"]
 tags: [marketing, blog, comments, moderation, content, storefront]
 plan_gates: ["blog_comments"]

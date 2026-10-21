@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Dashboard → Welcome & setup steps"
 route_name: marketing-dashboard
-route_path: /admin/marketing-new/dashboard
+route_path: /admin/marketing/dashboard
 aliases: ["Marketing setup checklist", "5-step setup", "Welcome card", "Marketing onboarding steps", "Setup Complete badge", "Стъпки за настройка", "Маркетинг приветствие"]
 tags: [marketing, dashboard, onboarding, setup, checklist]
 plan_gates: []

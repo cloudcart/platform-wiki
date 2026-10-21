@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Products → Modal flow"
 route_name: discounts-products
-route_path: /admin/marketing-new/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id
 aliases: ["Discount product modal", "Add product to discount modal", "Edit product discount prices modal", "Common price vs Multiple price", "Product picker for Fixed discount", "Модал за продукт в отстъпка", "Обща цена / Множество цени"]
 tags: [marketing, discounts, fixed, products, modal, product-picker, pricing-mode]
 plan_gates: ["discount_fixed"]

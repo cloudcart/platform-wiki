@@ -37,7 +37,7 @@ When `hasIndustryCompare: true` on the box config AND the merchant's plan grants
 
 ### Hardcoded status filter (why the badge can disagree with the headline)
 
-The weekly site-industry pipeline (`SiteIndustryTotalSales.json`) **ignores the merchant's analytics-statuses configuration** and ALWAYS uses `status IN [paid, completed, authorized] OR (pending AND not_fulfilled) OR fulfilled`. So a merchant who added `delivered` to their analytics statuses (see [[analytics-total-sales-order-filter]]) will see the headline include `delivered` orders, while the industry-compare badge benchmarks against a count that excludes them. The two numbers are computed on different status sets by design.
+The weekly site-industry pipeline (`SiteIndustryTotalSales.json`) **ignores the merchant's analytics-statuses configuration** and ALWAYS uses `status IN [paid, completed, authorized] OR (pending AND not_fulfilled) OR fulfilled`. So a merchant who added `refunded` to their analytics statuses (see [[analytics-total-sales-order-filter]]) will see the headline include refunded orders, while the industry-compare badge benchmarks against a count that excludes them. The two numbers are computed on different status sets by design.
 
 ### Weekly, UTC granularity
 

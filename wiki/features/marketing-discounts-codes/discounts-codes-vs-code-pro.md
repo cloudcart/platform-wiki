@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Container codes → vs Code PRO"
 route_name: discounts-codes_list
-route_path: /admin/marketing-new/discounts/codes
+route_path: /admin/marketing/discounts/codes
 aliases: ["Container codes vs Code PRO", "Which coupon engine", "Single-use vs multi-code engine", "Контейнерни кодове или Code PRO", "Избор на купон механизъм"]
 tags: [marketing, discounts, coupons, container, code-pro, comparison]
 plan_gates: ["discount_coupon"]
@@ -21,7 +21,7 @@ CloudCart has two bulk-coupon engines, and merchants regularly ask which to use.
 
 ## Where to find it
 
-Container codes live under a Container discount at `/admin/marketing-new/discounts/codes` (see [[discounts-codes-list-view]]). Code PRO is a separate discount type — see [[marketing-discounts-code-pro]] and its generator [[marketing-discounts-code-pro-generator]].
+Container codes live under a Container discount at `/admin/marketing/discounts/codes` (see [[discounts-codes-list-view]]). Code PRO is a separate discount type — see [[marketing-discounts-code-pro]] and its generator [[marketing-discounts-code-pro-generator]].
 
 ## What the merchant can do here
 

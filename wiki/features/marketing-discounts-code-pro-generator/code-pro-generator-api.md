@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO → Generator → JSON-API v2"
 route_name: discounts-code_pro-generator
-route_path: /admin/marketing-new/discounts/code-pro/:id/generator
+route_path: /admin/marketing/discounts/code-pro/:id/generator
 aliases: ["Generator API", "POST /generate", "Code PRO generator JSON-API", "API generator divergence"]
 tags: [marketing, discounts, coupons, code-pro, bulk-generation, api, json-api-v2]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]

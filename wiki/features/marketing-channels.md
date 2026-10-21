@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Channels", "Channels setup", "Communication channels", "Marketing channels", "Channel configuration", "Канали", "Настройка на канали", "Комуникационни канали"]
 tags: [marketing, channels, campaigns, setup, integrations]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]
@@ -21,9 +21,9 @@ The channel mapping keys (`email`, `sms_msghub_message`, `sms_nth_message`, `vib
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Channels** (dropdown) → **Channels setup**. The route is `/admin/marketing-new/campaigns/channels`.
+Sidebar → **Marketing** → **Channels** (dropdown) → **Channels setup**. The route is `/admin/marketing/campaigns/channels`.
 
-A `beforeEnter` guard requires the merchant to have accepted the [[marketing-campaigns-policy|anti-spam policy]] first — if `campaigns.anti_spam_policy_accepted` is falsy, the merchant is redirected to `/admin/marketing-new/campaigns/policy` before they ever see the channels page. See [[marketing-channels-cross-sandbox]] for the gate.
+A `beforeEnter` guard requires the merchant to have accepted the [[marketing-campaigns-policy|anti-spam policy]] first — if `campaigns.anti_spam_policy_accepted` is falsy, the merchant is redirected to `/admin/marketing/campaigns/policy` before they ever see the channels page. See [[marketing-channels-cross-sandbox]] for the gate.
 
 A second entry, **Email notifications**, sits beside this one under the same Channels dropdown and routes to the transactional Email notifications list at [[marketing-omnichannel-mails-list]] — those are per-event customer emails (order confirmation, welcome, etc.) and are not configured here.
 

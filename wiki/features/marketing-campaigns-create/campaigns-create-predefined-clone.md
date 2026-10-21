@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Create campaign → Predefined clone"
 route_name: campaigns-create
-route_path: /admin/marketing-new/campaigns/create/:type(regular|automated)
+route_path: /admin/marketing/campaigns/create/:type(regular|automated)
 aliases: ["Create from predefined", "Predefined campaign clone", "Predefined catalog filtering", "Required-channels gate", "Predefined campaign channel check", "Клониране на предефинирана кампания"]
 tags: [marketing, campaigns, create]
 plan_gates: ["abandoned_orders", "campaigns"]

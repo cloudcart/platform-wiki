@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → AI Assistant drawer"
 route_name: campaigns
-route_path: /admin/marketing-new/campaigns
+route_path: /admin/marketing/campaigns
 aliases: ["AI Campaign Assistant", "Campaign suggestions drawer", "Seasonal suggestions", "Trending suggestions", "Behaviour suggestions"]
 tags: [marketing, campaigns, ai, suggestions, drawer]
 plan_gates: ["campaigns"]

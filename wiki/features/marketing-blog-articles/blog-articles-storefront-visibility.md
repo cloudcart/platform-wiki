@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Articles → Storefront visibility"
 route_name: blog-articles-list
-route_path: /admin/marketing-new/blog/articles
+route_path: /admin/marketing/blog/articles
 aliases: ["Article visibility", "Article publishing", "Publish toggle", "Publish date", "Scheduled publishing", "Comment routing", "Comment throttle", "Storefront blog URLs", "Видимост на статия", "Публикуване на статия"]
 tags: [marketing, blog, articles, storefront, publishing, comments]
 plan_gates: ["blog_articles"]

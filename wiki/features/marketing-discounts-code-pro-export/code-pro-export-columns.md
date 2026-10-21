@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO codes → Export → Columns"
 route_name: discounts-code_pro-list
-route_path: /admin/marketing-new/discounts/code-pro/:id
+route_path: /admin/marketing/discounts/code-pro/:id
 aliases: ["Code PRO export columns", "Export CSV column layout", "56 columns", "Condition columns export"]
 tags: [marketing, discounts, code-pro, export, csv]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Subscribers → Add subscribers"
 route_name: segments.core_new.subscribers
-route_path: /admin/marketing-new/segments/:id/subscribers
+route_path: /admin/marketing/segments/:id/subscribers
 aliases: ["Add subscribers to segment", "Manually pin subscriber to segment", "Manual segment entry", "Add subscribers panel", "Ръчно добавяне на абонат в сегмент"]
 tags: [marketing, segments, subscribers, manual-add]
 plan_gates: ["segments"]
@@ -20,7 +20,7 @@ The **Add subscribers** action lets the merchant pin specific subscribers (e.g. 
 
 ## Where to find it
 
-The green **Add subscribers** button sits top-right on the Subscribers-in-segment page (`/admin/marketing-new/segments/:id/subscribers`). Clicking it opens a side popup (size `md`, title "Add subscribers to segment").
+The green **Add subscribers** button sits top-right on the Subscribers-in-segment page (`/admin/marketing/segments/:id/subscribers`). Clicking it opens a side popup (size `md`, title "Add subscribers to segment").
 
 ## What the merchant can do here
 

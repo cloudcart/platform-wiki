@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → UpSell & Cross-sell → UpSell offer editor"
 route_name: up-sell.diagram
-route_path: /admin/marketing-new/up-sell/diagram/:id
+route_path: /admin/marketing/up-sell/diagram/:id
 aliases: ["UpSell Diagram", "UpSell offer editor", "Edit UpSell offer", "UpSell offer detail", "Диаграма на UpSell офертата", "UpSell редактор на оферта"]
 tags: [marketing, upsell, cross-sell, offer, editor]
 plan_gates: ["upsells"]
@@ -22,8 +22,8 @@ The UpSell **diagram** page is where the merchant views and edits a **single UpS
 ## Where to find it
 
 - Sidebar → Marketing → **UpSell** → click an offer row in the list ([[marketing-up-sell-list]]) to open its diagram page; or **+ Add UpSell** to create a new one.
-- Route: `/admin/marketing-new/up-sell/diagram/:id`.
-- The Cross-Sell equivalent is the analogous editor at `/admin/marketing-new/cross-sell/diagram/:id` — same page shape, but a Cross-Sell offer is defined by **target-condition groups + action groups** rather than a single trigger/offer product pair (see [[marketing-cross-sell]]).
+- Route: `/admin/marketing/up-sell/diagram/:id`.
+- The Cross-Sell equivalent is the analogous editor at `/admin/marketing/cross-sell/diagram/:id` — same page shape, but a Cross-Sell offer is defined by **target-condition groups + action groups** rather than a single trigger/offer product pair (see [[marketing-cross-sell]]).
 
 ## What the merchant can do here
 

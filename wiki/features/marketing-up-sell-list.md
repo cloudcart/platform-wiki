@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → UpSell & Cross-sell → UpSell List"
 route_name: admin.up_sell.list
-route_path: /admin/marketing-new/up-sell
+route_path: /admin/marketing/up-sell
 aliases: ["UpSell list", "UpSell offers", "Списък UpSell", "Списък оферти UpSell", "Замяна с по-добър продукт"]
 tags: [marketing, upsell, cross-sell, list, offers]
 plan_gates: ["upsells"]
@@ -24,7 +24,7 @@ UpSell is distinct from [[marketing-cross-sell-list]] in three key ways:
 
 ## Where to find it
 
-Sidebar → Marketing → **UpSell** (`up_sell.header.title` = *"UpSell"*). Direct URL: `/admin/marketing-new/up-sell`. The middleware gating all admin UpSell routes is `cc_apps_purchase:up_cross_sell` — the merchant must have the Up/Cross-Sell app installed (see [[apps-up-cross-sell]]).
+Sidebar → Marketing → **UpSell** (`up_sell.header.title` = *"UpSell"*). Direct URL: `/admin/marketing/up-sell`. The middleware gating all admin UpSell routes is `cc_apps_purchase:up_cross_sell` — the merchant must have the Up/Cross-Sell app installed (see [[apps-up-cross-sell]]).
 
 The page provides the offer table, the Status and Event filter dropdowns, bulk delete, and the "Add UpSell" button that opens the offer editor.
 

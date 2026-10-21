@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Archived"
 route_name: campaigns-archived
-route_path: /admin/marketing-new/campaigns/archived
+route_path: /admin/marketing/campaigns/archived
 aliases: ["Archived campaigns", "Old campaigns", "Campaign archive", "Archive campaign", "Unarchive campaign", "Архивирани кампании", "Архив на кампании"]
 tags: [marketing, campaigns, archive, archived]
 plan_gates: ["abandoned_orders", "campaigns"]
@@ -23,7 +23,7 @@ This tab + the `archive` / `unarchive` actions are what give the campaign list i
 
 Sidebar → **Marketing** → **Campaigns** → **Archived** tab.
 
-The page is a separate tab on the campaigns list (route `campaigns-archived`, path `/admin/marketing-new/campaigns/archived`, rendering `MarketingCampaignsListPage`). Selecting it shows only campaigns whose `archived_at` is non-null. All four list tabs (Active / Inactive / Archived / Draft) render the same list component; clicking a tab swaps the URL and re-queries.
+The page is a separate tab on the campaigns list (route `campaigns-archived`, path `/admin/marketing/campaigns/archived`, rendering `MarketingCampaignsListPage`). Selecting it shows only campaigns whose `archived_at` is non-null. All four list tabs (Active / Inactive / Archived / Draft) render the same list component; clicking a tab swaps the URL and re-queries.
 
 ## What the merchant can do here
 

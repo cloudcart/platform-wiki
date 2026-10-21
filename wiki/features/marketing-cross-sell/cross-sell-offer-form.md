@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Cross-Sell & UpSell → Offer form"
 route_name: admin.cross_sell.diagram
-route_path: /admin/marketing-new/cross-sell/diagram/{id?}
+route_path: /admin/marketing/cross-sell/diagram/{id?}
 aliases: ["Cross-Sell offer form", "Cross-Sell create form", "Cross-Sell edit form", "Cross-Sell seven boxes", "Cross-Sell visual settings", "Cross-Sell date range"]
 tags: [marketing, cross-sell, form, fields, diagram]
 plan_gates: ["cross_sells"]
@@ -23,7 +23,7 @@ This is the **create / edit form** for a single Cross-Sell offer — the screen 
 
 - Sidebar → Marketing → **Cross-Sell & UpSell** → **Add Cross Sell** (on the list — see [[marketing-cross-sell-list]]).
 - The button routes to the visual diagram editor (`admin.cross_sell.diagram`). Each node in the diagram opens this field set in a **side-panel form**. The legacy `admin.cross_sell.edit` route still exists for direct form access but is not surfaced from the list.
-- Direct: `/admin/marketing-new/cross-sell/diagram/{id?}`.
+- Direct: `/admin/marketing/cross-sell/diagram/{id?}`.
 
 ## What the merchant can do here
 

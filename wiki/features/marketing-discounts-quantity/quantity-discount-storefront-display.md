@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Quantity → Storefront display"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/quantity
+route_path: /admin/marketing/discounts/create/quantity
 aliases: ["Quantity discount product page", "Quantity tier ladder", "Volume discount storefront", "Quantity discount radio selectors", "Quantity discount unit price label"]
 tags: [marketing, discounts, quantity, storefront, product-page]
 plan_gates: []
@@ -21,7 +21,7 @@ This aspect documents what the customer sees on the **storefront product detail 
 
 ## Where to find it
 
-Rendering happens on the **storefront product detail page** for any product that has at least one tier configured. It is automatic — there is no admin toggle for "show / hide tier ladder". The merchant configures tiers at `/admin/marketing-new/discounts/create/quantity` (see [[quantity-discount-form]]); the storefront picks them up from the product automatically. The admin-side counterpart is [[orders-details]], where the merchant viewing an existing order sees the saved per-line tier price.
+Rendering happens on the **storefront product detail page** for any product that has at least one tier configured. It is automatic — there is no admin toggle for "show / hide tier ladder". The merchant configures tiers at `/admin/marketing/discounts/create/quantity` (see [[quantity-discount-form]]); the storefront picks them up from the product automatically. The admin-side counterpart is [[orders-details]], where the merchant viewing an existing order sees the saved per-line tier price.
 
 ## What the merchant can do here
 

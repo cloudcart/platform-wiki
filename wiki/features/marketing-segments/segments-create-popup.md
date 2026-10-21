@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Create-segment popup"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Create new segment", "Add segment modal", "Segment templates", "Generate with AI"]
 tags: [marketing, segments, ai, templates]
 plan_gates: ["segments"]

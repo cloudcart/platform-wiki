@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Logs"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Channel logs", "Per-channel logs", "Delivery logs", "Message logs", "Send history", "Channel send log", "Channel delivery history", "Логове на канал", "История на изпращания", "История на съобщенията", "Лог на доставките"]
 tags: [marketing, channels, logs, delivery, statistics, history]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]
@@ -30,11 +30,11 @@ This topic is split into 6 aspect pages — drill into the aspect that matches t
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Channels** → **Channels setup** → click any channel card's **Logs** button. The modal opens over the channel list — it has no route of its own. Parent route is `/admin/marketing-new/campaigns/channels`.
+Sidebar → **Marketing** → **Channels** → **Channels setup** → click any channel card's **Logs** button. The modal opens over the channel list — it has no route of its own. Parent route is `/admin/marketing/campaigns/channels`.
 
 The modal title reflects the channel: *"Email - Logs"*, *"Viber Message - Logs"*, *"Web Push - Logs"*, *"SMS Message - Logs"*.
 
-The parent channels page enforces the [[marketing-campaigns-policy|anti-spam policy]] acceptance gate — a merchant who hasn't accepted the policy is redirected to `/admin/marketing-new/campaigns/policy` before they can see the channels list, including any of its Logs modals.
+The parent channels page enforces the [[marketing-campaigns-policy|anti-spam policy]] acceptance gate — a merchant who hasn't accepted the policy is redirected to `/admin/marketing/campaigns/policy` before they can see the channels list, including any of its Logs modals.
 
 ## What the merchant can do here
 

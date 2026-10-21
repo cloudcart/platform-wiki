@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → SMS → DLR webhook"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["SMS NTH DLR", "NTH webhook", "NTH delivery report", "NTH status mapping", "NTH anti-spam policy"]
 tags: [marketing, channels, sms, nth, dlr, webhook, status]
 plan_gates: ["campaign.channel.sms_nth_message"]
@@ -20,7 +20,7 @@ This aspect documents **how NTH reports delivery back to CloudCart**: the DLR (d
 
 ## Where to find it
 
-The DLR webhook is a backend endpoint — NTH posts to the per-store URL (`/web-hook/sms-nth-message?site_id=...`), not a screen. The merchant observes the **resulting statuses** in the **Logs** modal on the SMS channel card under Sidebar → **Marketing** → **Channels** → **Channels setup** (`campaigns-channels`, `/admin/marketing-new/campaigns/channels`). The anti-spam policy prompt appears in the **Install** flow on that same card.
+The DLR webhook is a backend endpoint — NTH posts to the per-store URL (`/web-hook/sms-nth-message?site_id=...`), not a screen. The merchant observes the **resulting statuses** in the **Logs** modal on the SMS channel card under Sidebar → **Marketing** → **Channels** → **Channels setup** (`campaigns-channels`, `/admin/marketing/campaigns/channels`). The anti-spam policy prompt appears in the **Install** flow on that same card.
 
 ## What the merchant can do here
 

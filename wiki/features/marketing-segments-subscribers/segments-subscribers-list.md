@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Subscribers → List & filters"
 route_name: segments.core_new.subscribers
-route_path: /admin/marketing-new/segments/:id/subscribers
+route_path: /admin/marketing/segments/:id/subscribers
 aliases: ["Segment subscriber list", "Subscriber table in segment", "Filter subscribers in segment", "Sort segment subscribers", "Таблица с абонати в сегмент"]
 tags: [marketing, segments, subscribers, list, filters]
 plan_gates: ["segments"]
@@ -20,7 +20,7 @@ The subscriber table is the core of the **Subscribers in segment** page — the 
 
 ## Where to find it
 
-The table fills the body of `/admin/marketing-new/segments/:id/subscribers`, reached by clicking the subscriber-count number on any segment row in the [[marketing-segments]] list. It paginates at **25 rows per page** by default.
+The table fills the body of `/admin/marketing/segments/:id/subscribers`, reached by clicking the subscriber-count number on any segment row in the [[marketing-segments]] list. It paginates at **25 rows per page** by default.
 
 ## What the merchant can do here
 

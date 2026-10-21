@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Articles → List"
 route_name: blog-articles-list
-route_path: /admin/marketing-new/blog/articles
+route_path: /admin/marketing/blog/articles
 aliases: ["Blog articles list", "Articles list", "Posts list", "Списък със статии", "Блог статии списък"]
 tags: [marketing, blog, content, articles, list]
 plan_gates: ["blog_articles"]
@@ -23,7 +23,7 @@ The **list screen** is the entry point for the merchant's blog: it shows every a
 
 Sidebar → **Marketing** → **Blog** → **Articles**.
 
-Route: `/admin/marketing-new/blog/articles` (route name `blog-articles-list`). Header icon: the typewriter icon.
+Route: `/admin/marketing/blog/articles` (route name `blog-articles-list`). Header icon: the typewriter icon.
 
 ## What the merchant can do here
 
@@ -45,9 +45,9 @@ Route: `/admin/marketing-new/blog/articles` (route name `blog-articles-list`). H
 
 | Label | Route name | Route path |
 |-------|------------|------------|
-| List | `blog-articles-list` | `/admin/marketing-new/blog/articles` |
-| Add | `blog-articles-add` | `/admin/marketing-new/blog/articles/add` |
-| Edit | `blog-articles-edit` | `/admin/marketing-new/blog/articles/edit/:id` |
+| List | `blog-articles-list` | `/admin/marketing/blog/articles` |
+| Add | `blog-articles-add` | `/admin/marketing/blog/articles/add` |
+| Edit | `blog-articles-edit` | `/admin/marketing/blog/articles/edit/:id` |
 
 ### List columns
 

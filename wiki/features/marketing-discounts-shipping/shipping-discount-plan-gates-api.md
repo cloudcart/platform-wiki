@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Shipping → Plan gates & API"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Free shipping plan gates", "Shipping discount API", "Shipping discount webhooks", "Shipping discount cooldown", "discount_global", "discount_coupon"]
 tags: [marketing, discounts, shipping, plan-gates, api, webhooks, cooldown]
 plan_gates: ["discount_global", "discount_coupon"]

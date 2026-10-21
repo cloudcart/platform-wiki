@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Web Push → Delivery webhook"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Web Push DLR", "Web Push delivery report", "dlrUrl", "WebPush webhook", "campaigns.channels.channel.web_push.webhook", "Web Push delivery status", "Уеб пуш доклад за доставка"]
 tags: [marketing, channels, web-push, webhook, dlr, delivery-report, bounced]
 plan_gates: ["campaign.channel.web_push"]

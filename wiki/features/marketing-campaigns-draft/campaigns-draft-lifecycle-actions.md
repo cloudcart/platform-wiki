@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Draft → Lifecycle actions"
 route_name: campaigns-draft
-route_path: /admin/marketing-new/campaigns/draft
+route_path: /admin/marketing/campaigns/draft
 aliases: ["Campaign row actions", "Archive Draft", "Delete Draft", "Soft delete vs hard delete campaign", "Plan campaign quota", "Subscribers retained on stop", "Mid-funnel resume"]
 tags: [marketing, campaigns, draft, lifecycle, archive, delete, copy]
 plan_gates: ["abandoned_orders", "campaigns"]
@@ -28,8 +28,8 @@ The row actions on the Draft and Inactive tabs — **Edit**, **Copy**, **Archive
 
 Row actions cell on either tab:
 
-- [[campaigns-draft-tab|Draft tab]] (`/admin/marketing-new/campaigns/draft`) — Edit, Copy, Archive, Delete.
-- [[campaigns-draft-inactive-tab|Inactive tab]] (`/admin/marketing-new/campaigns/inactive`) — Edit, Copy, Archive, Delete + Status toggle.
+- [[campaigns-draft-tab|Draft tab]] (`/admin/marketing/campaigns/draft`) — Edit, Copy, Archive, Delete.
+- [[campaigns-draft-inactive-tab|Inactive tab]] (`/admin/marketing/campaigns/inactive`) — Edit, Copy, Archive, Delete + Status toggle.
 
 ## What the merchant can do here
 

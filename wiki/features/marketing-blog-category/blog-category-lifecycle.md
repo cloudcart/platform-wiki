@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Category → Structure & lifecycle"
 route_name: blog-categories
-route_path: /admin/marketing-new/blog/category
+route_path: /admin/marketing/blog/category
 aliases: ["Blog category lifecycle", "Blog category hierarchy", "Blog category delete", "Orphaned blog articles", "500 article cap", "Auto-create blog category on import", "Структура на блог категория"]
 tags: [marketing, blog, content, categories, taxonomy]
 plan_gates: ["blog_categories"]

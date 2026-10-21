@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Shipping → Eligibility"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Free shipping eligibility", "Shipping discount target", "Shipping discount order_over", "Free shipping conditions", "Free shipping restrictions"]
 tags: [marketing, discounts, shipping, eligibility, conditions]
 plan_gates: ["discount_global", "discount_coupon"]
@@ -23,7 +23,7 @@ If the merchant ticket is *"my free-shipping promo isn't applying on this cart"*
 
 ## Where to find it
 
-All eligibility fields live on the Create / Edit form at `/admin/marketing-new/discounts/create/global` (or `/create/code` for the code variant). See [[marketing-discounts-shipping]] for the entry-surface flow.
+All eligibility fields live on the Create / Edit form at `/admin/marketing/discounts/create/global` (or `/create/code` for the code variant). See [[marketing-discounts-shipping]] for the entry-surface flow.
 
 ## What the merchant can do here
 

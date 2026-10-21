@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Statistics"
 route_name: campaigns-statistics
-route_path: /admin/marketing-new/campaigns/statistics/:id
+route_path: /admin/marketing/campaigns/statistics/:id
 aliases: ["Campaign statistics", "Campaign analytics", "Performance dashboard (per campaign)", "Open rate / click rate / conversion rate", "Статистика на кампания", "Аналитика на кампания"]
 tags: [marketing, campaigns, statistics, analytics]
 plan_gates: ["abandoned_orders", "campaigns"]
@@ -26,7 +26,7 @@ The route is per-campaign:
 
 | Route name | Method | Route path |
 |------------|--------|------------|
-| `campaigns-statistics` (Vue page) | — | `/admin/marketing-new/campaigns/statistics/:id` |
+| `campaigns-statistics` (Vue page) | — | `/admin/marketing/campaigns/statistics/:id` |
 
 The page is a full-screen content view (not a side-panel). The breadcrumb reads: **Campaigns → Statistics → {campaign title}**.
 

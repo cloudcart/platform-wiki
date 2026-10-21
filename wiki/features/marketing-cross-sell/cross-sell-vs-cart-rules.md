@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Cross-Sell & UpSell → Engine comparison & gates"
 route_name: admin.cross_sell.list
-route_path: /admin/marketing-new/cross-sell
+route_path: /admin/marketing/cross-sell
 aliases: ["Cross-Sell vs Cart Rules", "Cross-Sell engine model", "Cross-Sell plan gate", "cross_sells plan gate", "Cross-Sell gateway app", "up_cross_sell middleware"]
 tags: [marketing, cross-sell, cart-rules, plan-gates, engine]
 plan_gates: ["cross_sells"]
@@ -21,7 +21,7 @@ Cross-Sell is structurally close to [[apps-cart-rules]] but serves a different p
 
 ## Where to find it
 
-The gating surfaces in two places: the [[apps-up-cross-sell]] gateway app (must be installed) and the plan-limit error on the list at Sidebar → Marketing → **Cross-Sell & UpSell** when the offer cap is hit. The install gateway at `/admin/apps/up_cross_sell` opens the Vue manager at `/admin/marketing-new/cross-sell`.
+The gating surfaces in two places: the [[apps-up-cross-sell]] gateway app (must be installed) and the plan-limit error on the list at Sidebar → Marketing → **Cross-Sell & UpSell** when the offer cap is hit. The install gateway at `/admin/apps/up_cross_sell` opens the Vue manager at `/admin/marketing/cross-sell`.
 
 ## What the merchant can do here
 
@@ -57,7 +57,7 @@ Both gates must pass: the gateway **app** (a non-plan `cc_apps_purchase` middlew
 
 ### Admin-only, no public API
 
-The module is a Vue admin app with **no JSON-API access** — offers are admin-only (managed in `/admin/marketing-new/cross-sell`, not via the storefront API).
+The module is a Vue admin app with **no JSON-API access** — offers are admin-only (managed in `/admin/marketing/cross-sell`, not via the storefront API).
 
 ## Related
 

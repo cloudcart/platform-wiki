@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Shipping → Stacking"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Free shipping stacking", "Shipping discount code_apply", "Shipping discount selection", "One shipping discount per cart", "Free shipping coupon stacking"]
 tags: [marketing, discounts, shipping, stacking, code_apply, selection]
 plan_gates: ["discount_global", "discount_coupon"]

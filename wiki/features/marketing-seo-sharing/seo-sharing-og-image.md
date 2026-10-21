@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → SEO → Sharing → Default Open Graph image"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["Main sharing picture", "Default og:image", "og:image default", "Open Graph image", "Cover image for sharing", "Facebook share preview image", "Снимка за споделяне", "OG изображение по подразбиране", "Споделяне снимка"]
 tags: [marketing, seo, sharing, open-graph, distribution]
 plan_gates: []
@@ -22,7 +22,7 @@ This is the single field on the whole Sharing card that has a real, theme-indepe
 
 ## Where to find it
 
-Sidebar → Marketing → **SEO** → **"Share a product"** card → the **Main sharing picture** tile at the bottom of the card (below the toolbar layout selects, after the last horizontal rule). Route `/admin/marketing-new/seo`. The tile is a 160 × 100 px thumbnail with a trash icon (clear) and a rotate icon (reopen picker).
+Sidebar → Marketing → **SEO** → **"Share a product"** card → the **Main sharing picture** tile at the bottom of the card (below the toolbar layout selects, after the last horizontal rule). Route `/admin/marketing/seo`. The tile is a 160 × 100 px thumbnail with a trash icon (clear) and a rotate icon (reopen picker).
 
 ## What the merchant can do here
 

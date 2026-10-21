@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Countdown → Editor"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/countdown
+route_path: /admin/marketing/discounts/create/countdown
 aliases: ["Countdown discount editor", "Countdown form", "Countdown create form"]
 tags: [marketing, discounts, countdown, editor]
 plan_gates: ["discount_global", "total_discounts"]
@@ -21,7 +21,7 @@ The Countdown editor is the admin form where the merchant configures the single 
 
 ## Where to find it
 
-From [[marketing-discounts]], click **+ Add discount** → **Countdown discount** in the type-picker modal. The form opens at `/admin/marketing-new/discounts/create/countdown` (or `/admin/marketing-new/discounts/edit/{id}` when editing the existing one). Breadcrumb: **Marketing → Discounts → Create discount**. If a Countdown already exists (even inactive), the save fails — see [[countdown-discount-single-instance]].
+From [[marketing-discounts]], click **+ Add discount** → **Countdown discount** in the type-picker modal. The form opens at `/admin/marketing/discounts/create/countdown` (or `/admin/marketing/discounts/edit/{id}` when editing the existing one). Breadcrumb: **Marketing → Discounts → Create discount**. If a Countdown already exists (even inactive), the save fails — see [[countdown-discount-single-instance]].
 
 ## What the merchant can do here
 

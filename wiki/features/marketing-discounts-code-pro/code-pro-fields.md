@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO codes → Fields & validation"
 route_name: discounts-code_pro-edit
-route_path: /admin/marketing-new/discounts/code-pro/:id/:codeId
+route_path: /admin/marketing/discounts/code-pro/:id/:codeId
 aliases: ["Code PRO fields", "Code PRO validation", "Code PRO field reference", "Code PRO listing columns"]
 tags: [marketing, discounts, code-pro, fields, validation, reference]
 plan_gates: ["discount-code-pro"]
@@ -21,7 +21,7 @@ This page is the **citation-level reference** for the per-code form. Every field
 
 ## Where to find it
 
-The fields documented here are submitted by the form at `/admin/marketing-new/discounts/code-pro/:id/:codeId` (see [[code-pro-form]]). The validation strings come from the `code_pro.validation.*` translation keys; the listing columns are rendered by the `CcTable` on `/admin/marketing-new/discounts/code-pro/:id`.
+The fields documented here are submitted by the form at `/admin/marketing/discounts/code-pro/:id/:codeId` (see [[code-pro-form]]). The validation strings come from the `code_pro.validation.*` translation keys; the listing columns are rendered by the `CcTable` on `/admin/marketing/discounts/code-pro/:id`.
 
 ## What the merchant can do here
 

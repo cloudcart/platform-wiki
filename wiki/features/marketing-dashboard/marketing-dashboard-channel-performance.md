@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Dashboard → Channel performance"
 route_name: marketing-dashboard
-route_path: /admin/marketing-new/dashboard
+route_path: /admin/marketing/dashboard
 aliases: ["Channel performance row", "Email Viber SMS Webpush stats", "Per-channel Sent Delivered Revenue", "Activate channel CTA", "Канали — производителност"]
 tags: [marketing, dashboard, channels, email, sms, viber, webpush]
 plan_gates: []

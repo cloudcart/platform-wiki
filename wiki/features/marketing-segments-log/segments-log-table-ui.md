@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Log → Table & navigation"
 route_name: segments.core_new.log
-route_path: /admin/marketing-new/segments/log/:id
+route_path: /admin/marketing/segments/log/:id
 aliases: ["Segment log table", "Segment log columns", "Segment log pagination", "Segment log subscriber modal", "Таблица на сегмент лог"]
 tags: [marketing, segments, log, audit, ui]
 plan_gates: ["segments"]
@@ -20,7 +20,7 @@ This is the screen the merchant actually looks at: the paginated table that list
 
 ## Where to find it
 
-The table fills the body of `/admin/marketing-new/segments/log/:id`, reached by clicking the **Log** link on a segment row in the [[marketing-segments]] list. The header shows the segment name (truncated to 50 characters) and a chart-bar icon.
+The table fills the body of `/admin/marketing/segments/log/:id`, reached by clicking the **Log** link on a segment row in the [[marketing-segments]] list. The header shows the segment name (truncated to 50 characters) and a chart-bar icon.
 
 ## What the merchant can do here
 

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Products → Fields & validation"
 route_name: discounts-products
-route_path: /admin/marketing-new/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id
 aliases: ["Discount product fields", "Discount product validation", "Discount product error messages", "Price must be at least 1", "Invalid MSRP for discount", "Variant already exists in discount", "Полета на отстъпката за продукт", "Грешки при запис на отстъпка"]
 tags: [marketing, discounts, fixed, products, fields, validation, errors]
 plan_gates: ["discount_fixed"]
@@ -21,7 +21,7 @@ This page is the **field-by-field reference** for the Discount products page and
 
 ## Where to find it
 
-Marketing → Discounts → (click **Products** on a Fixed-type discount row). The list and its modal both live at `/admin/marketing-new/discounts/products/:id`.
+Marketing → Discounts → (click **Products** on a Fixed-type discount row). The list and its modal both live at `/admin/marketing/discounts/products/:id`.
 
 ## What the merchant can do here
 

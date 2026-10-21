@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Countdown → Single-instance rule"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/countdown
+route_path: /admin/marketing/discounts/create/countdown
 aliases: ["Countdown uniqueness", "One Countdown per store", "Countdown discount already exists", "Countdown plan gating", "Countdown cooldown"]
 tags: [marketing, discounts, countdown, uniqueness, plan-gates]
 plan_gates: ["discount_global", "total_discounts"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Seo"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["Main SEO settings", "SEO settings", "SEO", "Marketing SEO", "Главни SEO настройки", "СЕО", "Сео настройки"]
 tags: [marketing, seo, sitemap, robots, canonical, rss, sharing]
 plan_gates: []
@@ -24,7 +24,7 @@ This page does NOT contain per-page meta titles/descriptions for specific sectio
 
 Page-level aspects (cross-cutting, NOT per-card) — drill into the one that matches the question:
 
-- [[marketing-seo-overview-layout]] — where to find the screen, the seven-card layout, the legacy escape-hatch cookie, and what the merchant can / cannot do here.
+- [[marketing-seo-overview-layout]] — where to find the screen, the seven-card layout, and what the merchant can / cannot do here.
 - [[marketing-seo-overview-card-save]] — the independent per-card Save / Revert model, dirty detection, the Robots confirm modal, and the Canonical instant-save exception.
 - [[marketing-seo-overview-settings-map]] — the complete field-by-field reference table (every control, default, and validation rule) across all seven cards.
 - [[marketing-seo-overview-save-endpoints]] — the per-card save routes, the single on-mount load, and the one card that posts to the legacy route.
@@ -43,7 +43,7 @@ Per-card deep dives (one card = one page):
 
 ## Where to find it
 
-Sidebar → Marketing → **SEO** (the first SEO sub-entry, labelled "Main SEO"). Route name `seo-main`, path `/admin/marketing-new/seo`. The page header shows the Searchengin brand icon (`fa-brands fa-searchengin`) and the title "Main SEO settings". Breadcrumb reads "Marketing → SEO settings". The page is the new Vue rewrite of the legacy `/admin/marketing/seo` Smarty page; full navigation + the escape-hatch cookie are on [[marketing-seo-overview-layout]].
+Sidebar → Marketing → **SEO** (the first SEO sub-entry, labelled "Main SEO"). Route name `seo-main`, path `/admin/marketing/seo`. The page header shows the Searchengin brand icon (`fa-brands fa-searchengin`) and the title "Main SEO settings". Breadcrumb reads "Marketing → SEO settings". The page is the new Vue rewrite of the legacy `/admin/marketing/seo` Smarty page; full navigation + the escape-hatch cookie are on [[marketing-seo-overview-layout]].
 
 ## What the merchant can do here
 

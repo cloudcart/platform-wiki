@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Articles"
 route_name: blog-articles-list
-route_path: /admin/marketing-new/blog/articles
+route_path: /admin/marketing/blog/articles
 aliases: ["Blog articles", "Posts", "Blog posts", "Articles", "Статии", "Статии на блог", "Блог", "Публикации"]
 tags: [marketing, blog, content, seo, articles]
 plan_gates: ["blog_articles", "blog_categories"]
@@ -22,7 +22,7 @@ Articles drive **organic traffic** (Google indexes the slug + content + SEO meta
 
 Sidebar → **Marketing** → **Blog** → **Articles**.
 
-The base route is `/admin/marketing-new/blog/articles`. The header icon is the typewriter icon.
+The base route is `/admin/marketing/blog/articles`. The header icon is the typewriter icon.
 
 ## Sub-pages (in this cluster)
 
@@ -39,9 +39,9 @@ This feature is split into 6 aspect pages. Drill into the one that matches the q
 
 | Label | Route name | Route path |
 |-------|------------|------------|
-| List | `blog-articles-list` | `/admin/marketing-new/blog/articles` |
-| Add | `blog-articles-add` | `/admin/marketing-new/blog/articles/add` |
-| Edit | `blog-articles-edit` | `/admin/marketing-new/blog/articles/edit/:id` |
+| List | `blog-articles-list` | `/admin/marketing/blog/articles` |
+| Add | `blog-articles-add` | `/admin/marketing/blog/articles/add` |
+| Edit | `blog-articles-edit` | `/admin/marketing/blog/articles/edit/:id` |
 
 ## What the merchant can do here
 

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Articles → Business rules"
 route_name: blog-articles-list
-route_path: /admin/marketing-new/blog/articles
+route_path: /admin/marketing/blog/articles
 aliases: ["Article validation", "Article business rules", "Tag caps", "500-per-category cap", "Plan caps for articles", "Granular blog permissions", "Article permissions"]
 tags: [marketing, blog, articles, rules, validation, plan-gates, permissions]
 plan_gates: ["blog_articles", "blog_categories"]

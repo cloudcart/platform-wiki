@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Flat → Value mechanics"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Flat type_value", "Flat amount in cents", "Flat discount amount cap", "Flat amount validator", "Matched subtotal flat", "Strictly-greater order_over flat", "Per-customer cap flat code", "Flat code rejected at checkout"]
 tags: [marketing, discounts, flat, type_value, cents, validation]
 plan_gates: ["discount_global", "discount_coupon"]

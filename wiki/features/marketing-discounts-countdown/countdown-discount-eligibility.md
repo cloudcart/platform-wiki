@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Countdown → Eligibility"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/countdown
+route_path: /admin/marketing/discounts/create/countdown
 aliases: ["Countdown eligibility", "Countdown validity check", "Countdown discount target", "Countdown order_over threshold", "Countdown only_customer"]
 tags: [marketing, discounts, countdown, eligibility, validity-check]
 plan_gates: []

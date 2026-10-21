@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → UpSell & Cross-sell → UpSell List → Row & bulk actions"
 route_name: up-sell.list
-route_path: /admin/marketing-new/up-sell
+route_path: /admin/marketing/up-sell
 aliases: ["UpSell create", "UpSell edit", "UpSell active toggle", "UpSell delete", "UpSell bulk delete", "Действия върху UpSell оферта"]
 tags: [marketing, upsell, list, actions, bulk]
 plan_gates: ["upsells"]
@@ -21,7 +21,7 @@ This aspect covers the **actions** the merchant takes from the UpSell List: crea
 
 ## Where to find it
 
-All actions originate from the offer table at Sidebar → Marketing → **UpSell** (`/admin/marketing-new/up-sell`). Per-row actions sit on the row (title link, Active switch, delete); a checkbox column enables the table's built-in **bulk delete**.
+All actions originate from the offer table at Sidebar → Marketing → **UpSell** (`/admin/marketing/up-sell`). Per-row actions sit on the row (title link, Active switch, delete); a checkbox column enables the table's built-in **bulk delete**.
 
 ## What the merchant can do here
 
@@ -31,7 +31,7 @@ The **"Add UpSell"** button (with a remaining-slots counter) opens the **offer e
 
 ### Edit an existing offer
 
-Click a row's title → the offer's **diagram page** (`/admin/marketing-new/up-sell/diagram/:id`) → the **Edit** button opens the edit modal. There is no separate row-level edit button.
+Click a row's title → the offer's **diagram page** (`/admin/marketing/up-sell/diagram/:id`) → the **Edit** button opens the edit modal. There is no separate row-level edit button.
 
 ### Toggle active per row
 

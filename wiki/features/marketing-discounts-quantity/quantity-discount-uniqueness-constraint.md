@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Quantity → Uniqueness constraint"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/quantity
+route_path: /admin/marketing/discounts/create/quantity
 aliases: ["Quantity discount one per product", "Volume discount conflict", "A volume discount with this product already exists", "Product is already in use", "Quantity discount delete cascade"]
 tags: [marketing, discounts, quantity, validation, constraints]
 plan_gates: []
@@ -21,7 +21,7 @@ This aspect documents the **uniqueness constraint** on Quantity discounts — a 
 
 ## Where to find it
 
-The conflict surfaces on the **Customer buys** product picker on the Quantity create / edit form (`/admin/marketing-new/discounts/create/quantity` — see [[quantity-discount-form]]) and in the create / update endpoint response when the form is bypassed. The list of existing Quantity discounts is [[marketing-discounts]] — that's where the merchant finds (and deletes) the conflicting record.
+The conflict surfaces on the **Customer buys** product picker on the Quantity create / edit form (`/admin/marketing/discounts/create/quantity` — see [[quantity-discount-form]]) and in the create / update endpoint response when the form is bypassed. The list of existing Quantity discounts is [[marketing-discounts]] — that's where the merchant finds (and deletes) the conflicting record.
 
 ## What the merchant can do here
 

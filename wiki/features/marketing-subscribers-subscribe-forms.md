@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → Subscribe Forms"
 route_name: subscribe-forms.list
-route_path: /admin/marketing-new/subscribers/subscribe-forms
+route_path: /admin/marketing/subscribers/subscribe-forms
 aliases: ["Subscribe Forms", "Subscription forms", "Newsletter popup", "Lead-capture forms", "Форми за абонамент", "Поп-ъп форми"]
 tags: [marketing, subscribers, forms, popup, storefront]
 plan_gates: ["subscriber_forms"]
@@ -25,8 +25,8 @@ Sidebar → **Marketing** → **Subscribers** → **Subscribe Forms**.
 
 Routes:
 
-- List view: `/admin/marketing-new/subscribers/subscribe-forms`.
-- Form editor: `/admin/marketing-new/subscribers/subscribe-forms/form/:id?`.
+- List view: `/admin/marketing/subscribers/subscribe-forms`.
+- Form editor: `/admin/marketing/subscribers/subscribe-forms/form/:id?`.
 
 Both gated by the plan's `subscriber_forms` feature key.
 

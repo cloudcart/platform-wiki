@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Viber → System messages"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Viber system messages", "Viber templates", "Viber transactional messages", "Viber per-event templates", "viber_system_messages", "Viber editor image button"]
 tags: [marketing, channels, viber, system-messages, templates]
 plan_gates: ["viber_messages"]

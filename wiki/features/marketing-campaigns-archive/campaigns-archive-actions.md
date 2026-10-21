@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Archived → Actions"
 route_name: campaigns-archived
-route_path: /admin/marketing-new/campaigns/archived
+route_path: /admin/marketing/campaigns/archived
 aliases: ["Archive icon", "Unarchive icon", "Delete campaign icon", "Bulk delete campaigns", "Campaign archive endpoint", "archive/{id}/{action}"]
 tags: [marketing, campaigns, archive, actions, bulk-delete]
 plan_gates: ["abandoned_orders", "campaigns"]
@@ -24,7 +24,7 @@ This page documents the actions-column affordances on the campaign list as they 
 The actions cell at the right of each campaign row, on the relevant tab:
 
 - **Archive** icon — on the Active / Inactive / Draft tabs.
-- **Unarchive** + **Delete** icons — on the Archived tab (`/admin/marketing-new/campaigns/archived`).
+- **Unarchive** + **Delete** icons — on the Archived tab (`/admin/marketing/campaigns/archived`).
 - **Bulk-delete** bar — at the bottom of the page, Archived tab only.
 
 ## What the merchant can do here

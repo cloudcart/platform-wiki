@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → SEO → Sitemap"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["Sitemap", "Sitemap.xml", "XML sitemap", "Site map", "Карта на сайта", "Сайтмап", "XML карта"]
 tags: [marketing, seo, sitemap, crawl-directives]
 plan_gates: []
@@ -22,7 +22,7 @@ The card does NOT let the merchant edit, regenerate, or filter the sitemap — i
 
 Sidebar → Marketing → **SEO** → Main SEO settings → the **Sitemap.xml file** card (the fourth card on the page, between **Pagination word in meta** and **Robots.txt**).
 
-The card sits on the new Vue page. A `marketing-seo-main=old` cookie falls back to the legacy `/admin/marketing/seo` page.
+The card sits on the Vue page. The legacy Smarty page and its `marketing-seo-main=old` cookie were removed on 2026-10-21.
 
 ## What the merchant can do here
 

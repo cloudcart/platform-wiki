@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → SMS"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["SMS NTH", "SMS NTH Mobile", "SMS channel NTH", "NTH SMS", "SMS канал NTH", "SMS чрез NTH"]
 tags: [marketing, channels, sms, nth, nth-mobile]
 plan_gates: ["campaign.channel.sms_nth_message"]
@@ -32,7 +32,7 @@ This page is the **hub** for the SMS NTH cluster. It gives the orientation; each
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing-new/campaigns/channels`) → find the **SMS** channel card. The card exposes its actions (Install, Activate/Deactivate, Usage, Logs) inline — they open modals over the channels page rather than navigating to separate routes. The channel is **not installed by default**; the merchant clicks **Install** (one-click — no domain, DNS, or credentials to set up). See [[sms-nth-overview]] for the full card UI surface.
+Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing/campaigns/channels`) → find the **SMS** channel card. The card exposes its actions (Install, Activate/Deactivate, Usage, Logs) inline — they open modals over the channels page rather than navigating to separate routes. The channel is **not installed by default**; the merchant clicks **Install** (one-click — no domain, DNS, or credentials to set up). See [[sms-nth-overview]] for the full card UI surface.
 
 Channel mapping key: `sms_nth_message`. Actions hit the channels API (base `/admin/api/core/marketing/campaigns/channels`): status via `POST /{type}/status`, usage via `GET /{type}/usage`, logs via `/{mapping}/logs-list`, settings via `/{type}/settings`. Install/uninstall is handled through the applications API (`/admin/api/core/applications`).
 

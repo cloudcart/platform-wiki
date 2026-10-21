@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Types & action steps"
 route_name: campaigns
-route_path: /admin/marketing-new/campaigns
+route_path: /admin/marketing/campaigns
 aliases: ["Regular vs Automated campaign", "Campaign action types", "Campaign step actions", "Trigger conditions", "Completion conditions"]
 tags: [marketing, campaigns, types, actions, automation]
 plan_gates: ["campaigns"]

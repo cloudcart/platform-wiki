@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Products → List view"
 route_name: discounts-products
-route_path: /admin/marketing-new/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id
 aliases: ["Discount products list view", "Discount products row actions", "Discount products bulk actions", "Discount products filter sort", "Списък с продукти в отстъпката", "Масови действия върху продукти в отстъпка"]
 tags: [marketing, discounts, fixed, products, list-view, bulk-actions]
 plan_gates: ["discount_fixed"]
@@ -21,7 +21,7 @@ The list view is the **first thing the merchant sees** when they click **Product
 
 ## Where to find it
 
-Marketing → Discounts → (click **Products** on a Fixed-type discount row) → list view loads at `/admin/marketing-new/discounts/products/:id`. The breadcrumb reads "Marketing → Discounts → Products".
+Marketing → Discounts → (click **Products** on a Fixed-type discount row) → list view loads at `/admin/marketing/discounts/products/:id`. The breadcrumb reads "Marketing → Discounts → Products".
 
 ## What the merchant can do here
 

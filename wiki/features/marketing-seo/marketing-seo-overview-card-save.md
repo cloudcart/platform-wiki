@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Seo → Per-card save model"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["SEO per-card save", "SEO Save Revert", "SEO independent card save", "SEO dirty detection", "Canonical instant save", "Robots confirm modal", "Запазване по карта SEO"]
 tags: [marketing, seo, save, ux]
 plan_gates: []
@@ -21,7 +21,7 @@ This aspect documents **how saving works on the Main SEO screen** — specifical
 
 ## Where to find it
 
-Sidebar → Marketing → **SEO**. Route name `seo-main`, path `/admin/marketing-new/seo`. The save controls described here appear inline on each of the seven cards on that screen; full layout is on [[marketing-seo-overview-layout]].
+Sidebar → Marketing → **SEO**. Route name `seo-main`, path `/admin/marketing/seo`. The save controls described here appear inline on each of the seven cards on that screen; full layout is on [[marketing-seo-overview-layout]].
 
 ## What the merchant can do here
 

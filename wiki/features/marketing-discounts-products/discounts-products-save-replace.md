@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Products → Save & replace flow"
 route_name: discounts-products
-route_path: /admin/marketing-new/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id
 aliases: ["Discount products save flow", "Discount products full replace", "product_to_discount row writes", "ProductUpdated event for discount", "ProductsSearchEnginesSync on discount save", "Запис на отстъпка — пълна замяна", "Edit на отстъпка изтрива варианти"]
 tags: [marketing, discounts, fixed, products, save-flow, events, transaction, full-replace]
 plan_gates: ["discount_fixed"]
@@ -23,7 +23,7 @@ This matters most for "I edited my discount and now some variants are missing" t
 
 ## Where to find it
 
-The save flow is invoked by the merchant through the modal at `/admin/marketing-new/discounts/products/:id` — there is no separate UI for it. The list-page status toggle and remove actions run shorter variants of the same flow.
+The save flow is invoked by the merchant through the modal at `/admin/marketing/discounts/products/:id` — there is no separate UI for it. The list-page status toggle and remove actions run shorter variants of the same flow.
 
 ## What the merchant can do here
 

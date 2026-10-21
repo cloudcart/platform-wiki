@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO → Generator"
 route_name: discounts-code_pro-generator
-route_path: /admin/marketing-new/discounts/code-pro/:id/generator
+route_path: /admin/marketing/discounts/code-pro/:id/generator
 aliases: ["Code PRO generator", "Bulk code generator", "Codes generation", "Генериране на кодове", "Генератор на кодове"]
 tags: [marketing, discounts, coupons, code-pro, bulk-generation]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
@@ -26,7 +26,7 @@ The generator is **plan-gated** on the `discount-code-pro-generator` feature val
 
 ## Where to find it
 
-From the [[marketing-discounts-code-pro]] list inside any Code PRO discount, click "Generate codes" (the toolbar button labelled with a list icon — `fa-list`). The breadcrumb reads "Marketing → Discounts → Code PRO → Generator". The route name is `discounts-code_pro-generator`, the path is `/admin/marketing-new/discounts/code-pro/:id/generator`.
+From the [[marketing-discounts-code-pro]] list inside any Code PRO discount, click "Generate codes" (the toolbar button labelled with a list icon — `fa-list`). The breadcrumb reads "Marketing → Discounts → Code PRO → Generator". The route name is `discounts-code_pro-generator`, the path is `/admin/marketing/discounts/code-pro/:id/generator`.
 
 The generator is **the only way to produce more than a few Code PRO codes efficiently** — the per-code form ([[code-pro-form]]) creates one code per save.
 

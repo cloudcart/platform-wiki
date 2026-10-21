@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → SEO → Robots.txt → Editor card"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["Robots.txt editor", "Robots.txt card", "Robots.txt textarea", "Robots confirm modal", "Are you sure robots modal", "Save robots.txt", "Робот файл редактор"]
 tags: [marketing, seo, robots, editor, permissions]
 plan_gates: []
@@ -23,7 +23,7 @@ The card edits **only the merchant-supplied portion** of the file. It never show
 
 ## Where to find it
 
-Sidebar → Marketing → **SEO** → Main SEO settings → the **Robots.txt file** card (the fifth card on the page, immediately below the Sitemap card). The card sits on the new Vue page. A `marketing-seo-main=old` cookie falls back to the legacy `/admin/marketing/seo` Smarty page.
+Sidebar → Marketing → **SEO** → Main SEO settings → the **Robots.txt file** card (the fifth card on the page, immediately below the Sitemap card). The card sits on the Vue page. The legacy Smarty page and its `marketing-seo-main=old` cookie were removed on 2026-10-21.
 
 ## What the merchant can do here
 

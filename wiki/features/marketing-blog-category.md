@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Category"
 route_name: blog-categories
-route_path: /admin/marketing-new/blog/category
+route_path: /admin/marketing/blog/category
 aliases: ["Blog categories", "Blog category", "Blog sections", "Blogs", "Категории на блог", "Блог категории", "Блогове"]
 tags: [marketing, blog, content, categories, taxonomy]
 plan_gates: ["blog_categories"]
@@ -32,7 +32,7 @@ This feature is split into 5 aspect pages, each covering one well-scoped slice. 
 
 Sidebar → **Marketing** → **Blog** → **Category**.
 
-Route name `blog-categories`; path `/admin/marketing-new/blog/category`. Header icon is the typewriter. There is no separate Add / Edit screen — both create and edit happen inside a modal opened from the list. The modal mechanics live on [[blog-category-list]].
+Route name `blog-categories`; path `/admin/marketing/blog/category`. Header icon is the typewriter. There is no separate Add / Edit screen — both create and edit happen inside a modal opened from the list. The modal mechanics live on [[blog-category-list]].
 
 ## What the merchant can do here
 

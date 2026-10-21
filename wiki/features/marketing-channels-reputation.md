@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Reputation"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Channel reputation", "Email reputation", "Reputation rate", "Sender reputation", "Репутация", "Репутация на канал", "Репутация на имейл канал"]
 tags: [marketing, channels, reputation, monitoring, email, deliverability]
 plan_gates: ["campaign.channel.email"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Comment → Anti-spam"
 route_name: blog-comments
-route_path: /admin/marketing-new/blog/comment
+route_path: /admin/marketing/blog/comment
 aliases: ["Comment anti-spam", "Comment spam filtering", "Disqus replacement", "Facebook comments replacement", "Спам коментари"]
 tags: [marketing, blog, comments, moderation, content, spam]
 plan_gates: ["blog_comments"]

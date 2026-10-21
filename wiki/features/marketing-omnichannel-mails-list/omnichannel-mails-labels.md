@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Email notifications → Mail labels"
 route_name: marketing-mails-list
-route_path: /admin/marketing-new/omnichannel/mails/list
+route_path: /admin/marketing/omnichannel/mails/list
 aliases: ["Customer mail labels", "Transactional email types", "Mail label catalogue", "Customer notification events", "Имейл етикети", "Видове клиентски имейли"]
 tags: [marketing, omnichannel, email, notifications, transactional, labels]
 plan_gates: []
@@ -21,7 +21,7 @@ This page catalogues the **fixed set of platform mail labels** that drive transa
 
 ## Where to find it
 
-Each label appears as one row in the list at `/admin/marketing-new/omnichannel/mails/list`. Sidebar → **Marketing** → **Channels** → **Email notifications**.
+Each label appears as one row in the list at `/admin/marketing/omnichannel/mails/list`. Sidebar → **Marketing** → **Channels** → **Email notifications**.
 
 ## What the merchant can do here
 

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → System messages"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["System messages", "Channel system messages", "Transactional templates", "Per-channel system messages", "Системни съобщения", "Системни шаблони", "Транзакционни съобщения за канал"]
 tags: [marketing, channels, system-messages, transactional, templates]
 plan_gates: ["viber_messages", "campaign.channel.web_push"]
@@ -22,7 +22,7 @@ This modal is only exposed on the **Viber** and **Web Push** channel cards. Emai
 
 ## Where to find it
 
-Sidebar -> **Marketing** -> **Channels** -> **Channels setup** -> click the **Viber** or **Web Push** card -> click **System messages**. The modal opens over the channels list — it does not have its own route. The parent route is `/admin/marketing-new/campaigns/channels`. Modal title is built dynamically: *"System messages - {Channel Name}"*.
+Sidebar -> **Marketing** -> **Channels** -> **Channels setup** -> click the **Viber** or **Web Push** card -> click **System messages**. The modal opens over the channels list — it does not have its own route. The parent route is `/admin/marketing/campaigns/channels`. Modal title is built dynamically: *"System messages - {Channel Name}"*.
 
 ## What the merchant can do here
 

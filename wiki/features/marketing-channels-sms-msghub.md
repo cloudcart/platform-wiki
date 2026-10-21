@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → SMS Msg Hub"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["SMS Msg Hub", "SMS MsgHub", "SMS Link Mobility", "MsgHub", "SMS канал MsgHub", "SMS чрез MsgHub"]
 tags: [marketing, channels, sms, msghub, link-mobility]
 plan_gates: ["campaign.channel.sms_msghub_message"]
@@ -30,7 +30,7 @@ This page is the **hub** for the SMS MsgHub cluster. It gives the orientation; e
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing-new/campaigns/channels`) → find the **SMS Msg Hub** channel card. The card exposes its actions (Install, Activate/Deactivate toggle, Usage, Logs) inline — they open modals over the channels page rather than navigating to separate routes. The channel is **not installed by default**; the merchant clicks **Install** (one-click — no domain or credentials to set up). See [[sms-msghub-overview]] for the full card UI surface.
+Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing/campaigns/channels`) → find the **SMS Msg Hub** channel card. The card exposes its actions (Install, Activate/Deactivate toggle, Usage, Logs) inline — they open modals over the channels page rather than navigating to separate routes. The channel is **not installed by default**; the merchant clicks **Install** (one-click — no domain or credentials to set up). See [[sms-msghub-overview]] for the full card UI surface.
 
 ## What the merchant can do here
 

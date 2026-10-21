@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Policy"
 route_name: campaigns-policy
-route_path: /admin/marketing-new/campaigns/policy
+route_path: /admin/marketing/campaigns/policy
 aliases: ["Anti spam policy", "Anti-spam policy", "Campaign policy", "Spam policy", "Анти-спам политика", "Политика срещу спам"]
 tags: [marketing, campaigns, policy, compliance, anti-spam, gdpr]
 plan_gates: []
@@ -22,15 +22,15 @@ This page is a hub. It is split into six aspect pages — see **Sub-pages** belo
 
 ## Where to find it
 
-The policy page is reached **automatically** the first time the merchant tries to enter any campaign-area screen. Direct route: `/admin/marketing-new/campaigns/policy`, component `MarketingPolicyAntySpamPage`. The merchant doesn't typically navigate here on purpose — they hit it as a redirect when clicking Marketing → Campaigns / Channels / Saved templates before having accepted the policy. The `campaigns-channels` route (`/admin/marketing-new/campaigns/channels`) is also guarded and bounces here. See [[campaigns-policy-enforcement]] for the two enforcement layers and [[campaigns-policy-redirect]] for how the original destination is preserved.
+The policy page is reached **automatically** the first time the merchant tries to enter any campaign-area screen. Direct route: `/admin/marketing/campaigns/policy`, component `MarketingPolicyAntySpamPage`. The merchant doesn't typically navigate here on purpose — they hit it as a redirect when clicking Marketing → Campaigns / Channels / Saved templates before having accepted the policy. The `campaigns-channels` route (`/admin/marketing/campaigns/channels`) is also guarded and bounces here. See [[campaigns-policy-enforcement]] for the two enforcement layers and [[campaigns-policy-redirect]] for how the original destination is preserved.
 
 ### Sub-screens
 
 | Label | Route name | Route path |
 |-------|------------|------------|
-| Policy | `campaigns-policy` | `/admin/marketing-new/campaigns/policy` |
+| Policy | `campaigns-policy` | `/admin/marketing/campaigns/policy` |
 
-The policy page itself is just this one route. (A legacy stub also listed `campaigns-policy` mapped to `/admin/marketing-new/campaigns/channels`, but that route is actually `campaigns-channels` — see [[marketing]].)
+The policy page itself is just this one route. (A legacy stub also listed `campaigns-policy` mapped to `/admin/marketing/campaigns/channels`, but that route is actually `campaigns-channels` — see [[marketing]].)
 
 ## What the merchant can do here
 

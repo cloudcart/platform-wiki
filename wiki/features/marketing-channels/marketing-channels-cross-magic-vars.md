@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Template vars & subscriber feedback"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Channel template variables", "Magic links in campaigns", "Unsubscribe url variable", "Cart url variable", "Auto-verified subscribers", "Subscriber removal on fail", "Triggered products limit"]
 tags: [marketing, channels, template-variables, subscriber-feedback, unsubscribe]
 plan_gates: []

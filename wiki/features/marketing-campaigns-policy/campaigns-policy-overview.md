@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Policy → Overview"
 route_name: campaigns-policy
-route_path: /admin/marketing-new/campaigns/policy
+route_path: /admin/marketing/campaigns/policy
 aliases: ["Anti spam policy overview", "Campaign policy gate", "When the anti-spam policy appears", "Per-store policy acceptance"]
 tags: [marketing, campaigns, policy, compliance, anti-spam, gdpr]
 plan_gates: []
@@ -22,7 +22,7 @@ By accepting, the merchant agrees not to spam, not to send to non-opted-in lists
 
 ## Where to find it
 
-The policy page is reached **automatically** the first time the merchant tries to enter any campaign-area screen — direct route `/admin/marketing-new/campaigns/policy`. The merchant doesn't navigate here on purpose; they hit it as a redirect when clicking Marketing → Campaigns / Channels / Saved templates before having accepted. See [[campaigns-policy-enforcement]] for the redirect mechanics.
+The policy page is reached **automatically** the first time the merchant tries to enter any campaign-area screen — direct route `/admin/marketing/campaigns/policy`. The merchant doesn't navigate here on purpose; they hit it as a redirect when clicking Marketing → Campaigns / Channels / Saved templates before having accepted. See [[campaigns-policy-enforcement]] for the redirect mechanics.
 
 ## What the merchant can do here
 

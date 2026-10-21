@@ -17,7 +17,7 @@ source_count: 1
 
 **Waybill generation** is the per-order merchant action that issues a tracking label via the carrier's API once the order is ready to ship. Across carriers the document goes by different names — *Bill of Lading* (Econt), *AWB* (international), *shipping label*, *товарителница* — but the lifecycle is identical: the merchant clicks the waybill action on the order, the platform packages the order data into a carrier-specific API request, the carrier returns a tracking number + a printable label, and the platform records both on the order and surfaces them to the customer.
 
-This is the moment the order transitions from "I owe a package" to "the carrier has it" — the [[shipping-status]] enum flips to `dispatched` (or the carrier's equivalent), and from this point on the carrier's webhooks ([[shipping-provider-mech-status-tracking]]) drive further status updates.
+This is the moment the order transitions from "I owe a package" to "the carrier has it" — the order's [[shipping-status]] becomes `fulfilled` (**Fulfilled**) if it is not already. From then on the parcel's progress is the carrier's own tracking status, which does not change the order's shipping status ([[shipping-provider-mech-status-tracking]]).
 
 ## Scope
 
@@ -53,7 +53,7 @@ After the order is paid, the merchant generates a waybill via [[orders-shipping-
 1. **Merchant opens the order** in [[orders-details]] and clicks the waybill action.
 2. **The platform calls the carrier's `createBillOfLading` / `createAWB` / equivalent API** with the order data — see "What data is sent" below.
 3. **The carrier returns a tracking number** + a printable label, which the platform stores on the order and surfaces in the order details + the customer's order-confirmation page.
-4. **The order's [[shipping-status]] flips to `dispatched`** (or the carrier's equivalent enum value).
+4. **The order's [[shipping-status]] becomes `fulfilled`**, unless it already was ([[shipping-status-lifecycle]]).
 5. **The merchant prints the label** (returned as a PDF / ZPL file by some carriers) and attaches it to the package; the carrier picks up the package per the configured pickup schedule.
 
 ### What data is sent in the API request
@@ -89,7 +89,7 @@ The carrier responds with:
 
 - **Tracking number** — stored on the order; rendered as a clickable link in the order admin and the customer's order page (link goes to the carrier's tracking site).
 - **Label file** — PDF (most carriers) or ZPL (label-printer format used by some carriers). The merchant downloads / prints the file and attaches it to the parcel.
-- **Status update** — the carrier acknowledges the waybill was created; CloudCart flips [[shipping-status]] to `dispatched`.
+- **Confirmation** — the carrier acknowledges the waybill was created; CloudCart sets [[shipping-status]] to `fulfilled` in the same save.
 
 If the carrier API rejects the request (invalid pickup point, oversized package, expired credentials, etc.), the platform surfaces the carrier's error inline on the order so the merchant can correct and retry.
 
@@ -101,7 +101,7 @@ Some carriers also offer **return waybills** for customer-initiated returns — 
 
 - [[shipping-provider-mechanism]] — hub.
 - [[orders-shipping-waybill]] — the per-order action UI.
-- [[shipping-status]] — the enum flipped to `dispatched` after a successful waybill.
+- [[shipping-status]] — set to `fulfilled` by a successful waybill.
 - [[shipping-provider-delivery-channels-waybill]] — sister entity-side documentation of channels + waybill mapping.
 - [[shipping-provider-mech-configuration]] — sender address book + carrier credentials feeding the request.
 - [[orders-details]] — per-order edit hub where the action lives.

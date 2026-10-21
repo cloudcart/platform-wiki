@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → System messages → Fields & validation"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["System message fields", "Channel template fields", "Character limits", "Per-channel validation", "Template validation rules"]
 tags: [marketing, channels, system-messages, validation, fields]
 plan_gates: ["viber_messages", "campaign.channel.web_push"]

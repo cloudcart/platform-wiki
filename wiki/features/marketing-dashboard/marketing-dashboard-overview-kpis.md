@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Dashboard → Overview KPIs"
 route_name: marketing-dashboard
-route_path: /admin/marketing-new/dashboard
+route_path: /admin/marketing/dashboard
 aliases: ["Marketing Overview KPIs", "Marketing-results KPIs", "Open rate dashboard", "Conversion rate dashboard", "Date range picker marketing", "Compare period", "Compare year", "KPI tiles", "Маркетинг KPI"]
 tags: [marketing, dashboard, kpi, overview, results, date-range]
 plan_gates: ["allow_period_compare"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → System messages → Write with AI"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Write with AI", "AI assist for system messages", "Cloudio AI", "AI generation of templates", "MINI_MODEL template generation"]
 tags: [marketing, channels, system-messages, ai, cloudio]
 plan_gates: []

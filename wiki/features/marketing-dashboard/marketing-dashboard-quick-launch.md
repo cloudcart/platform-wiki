@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Dashboard → Quick-launch tiles"
 route_name: marketing-dashboard
-route_path: /admin/marketing-new/dashboard
+route_path: /admin/marketing/dashboard
 aliases: ["Marketing activities row", "Quick-launch tiles", "New Campaign tile", "New Segment tile", "New Popup tile", "New Discount tile", "Cross-sell tile", "Маркетинг бързи действия"]
 tags: [marketing, dashboard, quick-launch, modal, navigation]
 plan_gates: []

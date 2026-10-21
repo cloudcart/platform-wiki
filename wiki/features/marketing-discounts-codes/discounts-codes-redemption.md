@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Container codes → Redemption"
 route_name: discounts-codes_list
-route_path: /admin/marketing-new/discounts/codes
+route_path: /admin/marketing/discounts/codes
 aliases: ["Container code redemption", "Cart-link auto-apply", "Single-use coupon redemption", "Container code stacking", "Прилагане на промо код", "Линк за автоматично прилагане"]
 tags: [marketing, discounts, coupons, container, redemption, cart]
 plan_gates: ["discount_coupon"]
@@ -21,7 +21,7 @@ This aspect covers what happens **after** codes are generated: how the merchant 
 
 ## Where to find it
 
-Redemption happens on the storefront cart / checkout, not in the admin panel. The merchant's touch-point is the Container codes list (`/admin/marketing-new/discounts/codes`), where each row exposes the click-to-copy cart link.
+Redemption happens on the storefront cart / checkout, not in the admin panel. The merchant's touch-point is the Container codes list (`/admin/marketing/discounts/codes`), where each row exposes the click-to-copy cart link.
 
 ## What the merchant can do here
 

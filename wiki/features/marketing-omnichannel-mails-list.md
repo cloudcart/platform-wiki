@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Email notifications"
 route_name: marketing-mails-list
-route_path: /admin/marketing-new/omnichannel/mails/list
+route_path: /admin/marketing/omnichannel/mails/list
 aliases: ["Email notifications", "Customer emails", "Transactional emails", "Customer mails", "Имейл известия", "Транзакционни имейли", "Имейли към клиенти"]
 tags: [marketing, omnichannel, email, notifications, transactional]
 plan_gates: ["change_email_notifications", "abandoned_orders"]
@@ -25,7 +25,7 @@ This is one of two screens reached from **Channels** in the sidebar — its sibl
 
 Sidebar → **Marketing** → **Channels** → **Email notifications**.
 
-Route: `/admin/marketing-new/omnichannel/mails/list`, component `MarketingMailsListPage`. The legacy sidebar link routes to `/admin/marketing/omnichannel/mails/list` — the modern Vue page lives under `/admin/marketing-new/...`.
+Route: `/admin/marketing/omnichannel/mails/list`, component `MarketingMailsListPage`; the sidebar link opens it. The legacy Smarty list was removed on 2026-10-21.
 
 The page header reads **"Email notifications"** (BG: **"Имейл известия"**) with an envelope icon.
 

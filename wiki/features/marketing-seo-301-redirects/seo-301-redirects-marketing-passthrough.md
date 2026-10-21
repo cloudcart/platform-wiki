@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Seo → 301 Redirects → Marketing pass-through"
 route_name: seo-301-redirects
-route_path: /admin/marketing-new/seo/301-redirects
+route_path: /admin/marketing/seo/301-redirects
 aliases: ["Preserve UTM on redirect", "fbclid gclid passthrough", "Marketing tracking params on 301", "Manual scheme strip", "External auto-prepend http", "Location header normalisation"]
 tags: [marketing, seo, redirects, utm, tracking, analytics]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Cross-Sell & UpSell → Display modes & discounts"
 route_name: admin.cross_sell.diagram
-route_path: /admin/marketing-new/cross-sell/diagram/{id?}
+route_path: /admin/marketing/cross-sell/diagram/{id?}
 aliases: ["Cross-Sell display type", "Cross-Sell popup vs add to cart", "Cross-Sell discount type", "Cross-Sell free product", "Cross-Sell free shipping offer", "Cross-Sell action conditions"]
 tags: [marketing, cross-sell, display, discounts, actions]
 plan_gates: ["cross_sells"]

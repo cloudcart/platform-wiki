@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → Lifecycle"
 route_name: subscribers.list
-route_path: /admin/marketing-new/subscribers
+route_path: /admin/marketing/subscribers
 aliases: ["Subscriber lifecycle", "Subscriber sources", "Subscriber webhooks", "Subscriber GDPR erasure", "Subscriber plan cap", "Subscriber marketing consent"]
 tags: [marketing, subscribers, lifecycle, gdpr, webhooks, plan-cap, sources]
 plan_gates: ["subscribers"]
@@ -125,7 +125,7 @@ When a customer exercises their GDPR right to erasure, the platform runs the sub
 
 ### Custom fields — per-subscriber attributes
 
-Subscribers support arbitrary **custom fields** defined at `/admin/marketing-new/subscribers/fields` ([[marketing-subscribers-custom-fields]]). Once defined they appear in subscribe forms ([[marketing-subscribers-subscribe-forms]]) and as the `subscriber.custom_field` segment condition (*"where custom field ':field' is ':options'"*). These are distinct from [[customer]] custom fields, which the `customer.custom_field` condition reads.
+Subscribers support arbitrary **custom fields** defined at `/admin/marketing/subscribers/fields` ([[marketing-subscribers-custom-fields]]). Once defined they appear in subscribe forms ([[marketing-subscribers-subscribe-forms]]) and as the `subscriber.custom_field` segment condition (*"where custom field ':field' is ':options'"*). These are distinct from [[customer]] custom fields, which the `customer.custom_field` condition reads.
 
 ## Related
 

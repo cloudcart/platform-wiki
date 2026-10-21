@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → Custom Fields → Create / Edit modal"
 route_name: subscribers-fields-list-new
-route_path: /admin/marketing-new/subscribers/fields
+route_path: /admin/marketing/subscribers/fields
 aliases: ["Subscriber custom field modal", "Create field modal", "Edit field modal", "Subscriber field settings", "Subscriber field option values"]
 tags: [marketing, subscribers, custom-fields, modal, validation]
 plan_gates: []
@@ -21,7 +21,7 @@ The **modal where the merchant defines or edits a single subscriber custom field
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Subscribers** → **Custom fields** → **Add custom field** (or click a field name to edit). The modal opens over the list page at `/admin/marketing-new/subscribers/fields`.
+Sidebar → **Marketing** → **Subscribers** → **Custom fields** → **Add custom field** (or click a field name to edit). The modal opens over the list page at `/admin/marketing/subscribers/fields`.
 
 ## What the merchant can do here
 

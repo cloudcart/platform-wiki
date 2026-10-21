@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → SMS → Overview"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["SMS NTH overview", "SMS NTH card", "SMS NTH UI surfaces", "NTH vs MsgHub", "SMS NTH install"]
 tags: [marketing, channels, sms, nth, lifecycle, ui]
 plan_gates: ["campaign.channel.sms_nth_message"]
@@ -20,7 +20,7 @@ This aspect covers the **channel-card UI surface** of SMS NTH — what the merch
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Channels** → **Channels setup** (`campaigns-channels`, `/admin/marketing-new/campaigns/channels`) → the **SMS** channel card. All actions open as modals over the channels page; there are no separate routes.
+Sidebar → **Marketing** → **Channels** → **Channels setup** (`campaigns-channels`, `/admin/marketing/campaigns/channels`) → the **SMS** channel card. All actions open as modals over the channels page; there are no separate routes.
 
 ## What the merchant can do here
 

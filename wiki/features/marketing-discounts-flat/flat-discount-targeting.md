@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Flat → Targeting"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Flat discount target", "Flat discount settings field", "Flat order_over", "Flat product target", "Flat category target", "Flat vendor target", "Flat smart collection target", "Flat category+vendor", "Flat discount distribution", "Cent-fix on first matched line", "force_save flat"]
 tags: [marketing, discounts, flat, targeting, settings, distribution]
 plan_gates: ["discount_global", "discount_coupon"]

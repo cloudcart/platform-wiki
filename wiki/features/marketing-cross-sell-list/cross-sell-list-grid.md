@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → UpSell & Cross-sell → Cross-Sell List → Grid & metrics"
 route_name: admin.cross_sell.list
-route_path: /admin/marketing-new/cross-sell
+route_path: /admin/marketing/cross-sell
 aliases: ["Cross-Sell list grid", "Cross-Sell list columns", "Cross-Sell sales metrics", "Cross-Sell success rate", "Cross-Sell offer table"]
 tags: [marketing, cross-sell, list, metrics, grid]
 plan_gates: []
@@ -21,7 +21,7 @@ This aspect documents the **offer table itself** — the paginated grid that lis
 
 ## Where to find it
 
-Sidebar → Marketing → **Cross-Sell** (`/admin/marketing-new/cross-sell`, route `admin.cross_sell.list`). The grid is the body of the list page. Each row is one **master** record (roots only, `parent = 1`), sorted by `id DESC` by default.
+Sidebar → Marketing → **Cross-Sell** (`/admin/marketing/cross-sell`, route `admin.cross_sell.list`). The grid is the body of the list page. Each row is one **master** record (roots only, `parent = 1`), sorted by `id DESC` by default.
 
 ## What the merchant can do here
 

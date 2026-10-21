@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Tags → Lifecycle & sanitization"
 route_name: blog-tags
-route_path: /admin/marketing-new/blog/tags
+route_path: /admin/marketing/blog/tags
 aliases: ["Blog tag auto-create", "Blog tag lowercase", "Blog tag caps", "Blog tag delete cascade", "Blog tag sanitization", "Автоматично създаване на тагове", "Изтриване на таг"]
 tags: [marketing, blog, tags, taxonomy, content]
 plan_gates: []
@@ -23,7 +23,7 @@ This aspect documents how blog tags come into existence, how their names are cle
 
 This behaviour spans two screens (no dedicated screen of its own):
 
-- Sidebar → **Marketing** → **Blog** → **Tags** (`/admin/marketing-new/blog/tags`) — the "+ Add tag" pre-create path + delete + bulk-delete.
+- Sidebar → **Marketing** → **Blog** → **Tags** (`/admin/marketing/blog/tags`) — the "+ Add tag" pre-create path + delete + bulk-delete.
 - Sidebar → **Marketing** → **Blog** → **Articles** ([[marketing-blog-articles]]) — the Tags multi-select that auto-creates tags on save, and where the per-article caps are enforced.
 
 ## What the merchant can do here

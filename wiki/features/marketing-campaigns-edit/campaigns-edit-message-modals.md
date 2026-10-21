@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Edit → Message modals"
 route_name: campaigns-edit
-route_path: /admin/marketing-new/campaigns/edit/:type(regular|automated)/:id
+route_path: /admin/marketing/campaigns/edit/:type(regular|automated)/:id
 aliases: ["Viber message editor", "SMS message editor", "Web Push editor", "Campaign message settings modal", "Variables legend", "Mobile phone preview", "Write with AI", "Channel settings modal"]
 tags: [marketing, campaigns, edit, messages, modals]
 plan_gates: []

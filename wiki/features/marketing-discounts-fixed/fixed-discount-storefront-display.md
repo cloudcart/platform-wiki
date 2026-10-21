@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Products → Storefront display"
 route_name: discounts-products
-route_path: /admin/marketing-new/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id
 aliases: ["Fixed discount storefront", "was / now rendering", "Save X EUR label", "Variant-grid build"]
 tags: [marketing, discounts, fixed, storefront, rendering]
 plan_gates: []
@@ -21,7 +21,7 @@ This aspect documents **what the customer sees** once a Fixed-discount price is 
 
 ## Where to find it
 
-The storefront rendering happens automatically on every product card, category listing, and product-detail page where an active `product_to_discount` row matches the current customer-group + active date window. There is no merchant-side admin screen for the read-path — the merchant verifies behaviour by visiting the storefront or inspecting the saved rows via the JSON-API v2 path in [[fixed-discount-api-access]]. The variant-grid build documented here runs when the admin modal at `/admin/marketing-new/discounts/products/:id` opens for an existing Fixed-discount + product pair.
+The storefront rendering happens automatically on every product card, category listing, and product-detail page where an active `product_to_discount` row matches the current customer-group + active date window. There is no merchant-side admin screen for the read-path — the merchant verifies behaviour by visiting the storefront or inspecting the saved rows via the JSON-API v2 path in [[fixed-discount-api-access]]. The variant-grid build documented here runs when the admin modal at `/admin/marketing/discounts/products/:id` opens for an existing Fixed-discount + product pair.
 
 ## What the merchant can do here
 

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO codes → Export → File format"
 route_name: discounts-code_pro-list
-route_path: /admin/marketing-new/discounts/code-pro/:id
+route_path: /admin/marketing/discounts/code-pro/:id
 aliases: ["Code PRO export file format", "Export CSV encoding", "UTF-8 BOM export", "Streamed CSV export", "Export filename discount-codes-pro.csv"]
 tags: [marketing, discounts, code-pro, export, csv]
 plan_gates: []

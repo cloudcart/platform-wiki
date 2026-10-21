@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO codes"
 route_name: discounts-code_pro-list
-route_path: /admin/marketing-new/discounts/code-pro/:id
+route_path: /admin/marketing/discounts/code-pro/:id
 aliases: ["Discount code PRO", "Code PRO codes", "Code PRO management", "Multi-code campaign", "Промо кодове ПРО", "Управление на кодове"]
 tags: [marketing, discounts, coupons, code-pro, multi-code-campaigns]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
@@ -23,15 +23,15 @@ This hub is the navigation pivot; the detail lives on the six aspect pages below
 
 ## Where to find it
 
-From the [[marketing-discounts]] list, click the "Codes management (N)" link on any **Code PRO** discount row. The breadcrumb reads "Marketing → Discounts → Code PRO codes". The modern Vue route is `/admin/marketing-new/discounts/code-pro/:id` (the legacy URL `/admin/discounts/code-pro/{discount_id}` still works).
+From the [[marketing-discounts]] list, click the "Codes management (N)" link on any **Code PRO** discount row. The breadcrumb reads "Marketing → Discounts → Code PRO codes". The modern Vue route is `/admin/marketing/discounts/code-pro/:id` (the old URL `/admin/discounts/code-pro/{discount_id}` redirects to it).
 
 Sub-screens hang off this list:
 
 | Sub-screen | Route name (Vue) | Route path |
 |------------|------------------|------------|
-| Create a code | `discounts-code_pro-create` | `/admin/marketing-new/discounts/code-pro/:id/create` |
-| Edit a code | `discounts-code_pro-edit` | `/admin/marketing-new/discounts/code-pro/:id/:codeId` |
-| Bulk-generate codes | `discounts-code_pro-generator` | `/admin/marketing-new/discounts/code-pro/:id/generator` |
+| Create a code | `discounts-code_pro-create` | `/admin/marketing/discounts/code-pro/:id/create` |
+| Edit a code | `discounts-code_pro-edit` | `/admin/marketing/discounts/code-pro/:id/:codeId` |
+| Bulk-generate codes | `discounts-code_pro-generator` | `/admin/marketing/discounts/code-pro/:id/generator` |
 | Export the codes to CSV | (toolbar anchor, no route) | `GET /admin/api/core/discounts/code-pro/{id}/export` |
 
 The generator and exporter are sibling pages: [[marketing-discounts-code-pro-generator]] and [[marketing-discounts-code-pro-export]].

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → SMS → Settings"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["SMS NTH settings", "NTH config", "NTH request shape", "NTH Basic Auth", "NTH validation rules", "NTH sandbox"]
 tags: [marketing, channels, sms, nth, settings, config]
 plan_gates: ["campaign.channel.sms_nth_message"]
@@ -20,7 +20,7 @@ This aspect documents the **configuration** behind SMS NTH: the platform-level (
 
 ## Where to find it
 
-Platform-level config lives in the platform code (env-driven) and is **not merchant-visible**. The per-merchant settings (install / active / sandbox) live on the **SMS** channel card under Sidebar → **Marketing** → **Channels** → **Channels setup** (`campaigns-channels`, `/admin/marketing-new/campaigns/channels`). There is **no** per-channel Settings modal — see the UI-surface matrix on [[sms-nth-overview]].
+Platform-level config lives in the platform code (env-driven) and is **not merchant-visible**. The per-merchant settings (install / active / sandbox) live on the **SMS** channel card under Sidebar → **Marketing** → **Channels** → **Channels setup** (`campaigns-channels`, `/admin/marketing/campaigns/channels`). There is **no** per-channel Settings modal — see the UI-surface matrix on [[sms-nth-overview]].
 
 ## What the merchant can do here
 

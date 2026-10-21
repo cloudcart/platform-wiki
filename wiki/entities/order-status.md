@@ -12,7 +12,7 @@ source_count: 5
 
 ## Identity
 
-An **Order Status** is the enum value on every [[order|Order]] that tracks **where the order is in the workflow** — placed, paid, shipped, completed, cancelled, refunded, etc. It is the merchant's primary "what's happening with this order?" signal. The platform defines **11 canonical statuses** (4 positive + 7 negative) that drive nearly every downstream rule — revenue reports, stock decrement, discount-uses counting, action-button availability, accounting-document issuance, customer notification, and webhook fan-out. The merchant can additionally **add custom statuses** via [[settings-statuses]] (Orders tab) and **rename built-in labels** for store-specific terminology, but the underlying 11 codes remain stable across all stores.
+An **Order Status** is the enum value on every [[order|Order]] that tracks **where the order is in the workflow** — placed, authorized, paid, completed, cancelled, refunded, etc. It is the merchant's primary "what's happening with this order?" signal. The platform defines **11 canonical statuses** (4 positive + 7 negative) that drive nearly every downstream rule — revenue reports, stock decrement, discount-uses counting, action-button availability, accounting-document issuance, customer notification, and webhook fan-out. The merchant can additionally **add custom statuses** via [[settings-statuses]] (Orders tab) and **rename built-in labels** for store-specific terminology, but the underlying 11 codes remain stable across all stores.
 
 Order Status is **distinct from** [[payment-status]] (which tracks the money — 13 separate enum values) and from [[shipping-status]] (which tracks fulfillment — 2 values: `not_fulfilled` / `fulfilled`). Together, the three statuses answer three different questions: Order Status = "where is this order in the workflow?", Payment Status = "where is the money?", and Shipping Status = "where is the package?". They move independently — an order can be `status = completed` while its payment is `refunded` (refund issued after marking the order completed). See [[order-status-workflow]] for the full interaction model.
 
@@ -65,7 +65,7 @@ The 11 canonical values, draft sub-state, and pill colours live on [[order-statu
 
 - [[order]] — every Order has exactly one Order Status.
 - [[payment-status]] — the separate enum tracking the money lifecycle (13 values, independent of Order Status).
-- [[shipping-status]] — the separate enum tracking fulfillment (2+ values, independent).
+- [[shipping-status]] — the separate enum tracking fulfillment (2 values: `not_fulfilled` / `fulfilled`, independent).
 - [[discount]] — counted-status rule (default `paid`, `completed`, `fulfilled`) for the discount uses-counter.
 - [[invoice]] / [[credit-note]] — accounting documents whose issuance is gated by Order Status.
 

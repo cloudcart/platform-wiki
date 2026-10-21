@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → Subscribe Forms → Submit button & confirmation"
 route_name: subscribe-forms.form
-route_path: /admin/marketing-new/subscribers/subscribe-forms/form/:id?
+route_path: /admin/marketing/subscribers/subscribe-forms/form/:id?
 aliases: ["Subscribe form submit button", "Subscribe form button action", "Submit form and display confirmation info", "Submit form and go to url", "Form button action type", "actionType", "Success page", "Confirmation page", "Subscribe form thank you page", "What the button does", "Бутон на формата за абониране", "Изпрати формата и покажи потвърждение", "Изпрати формата и отиди на url"]
 tags: [marketing, subscribers, forms, button, confirmation, submission]
 plan_gates: ["subscriber_forms"]

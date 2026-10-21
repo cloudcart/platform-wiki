@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Email notifications → Toggles & gating"
 route_name: marketing-mails-list
-route_path: /admin/marketing-new/omnichannel/mails/list
+route_path: /admin/marketing/omnichannel/mails/list
 aliases: ["customer_email_notifications", "Send notifications to customers", "Per-mail Active flag", "Forced-on mail labels", "Customer notification kill switch", "Имейл известия глобален превключвател"]
 tags: [marketing, omnichannel, email, notifications, gating, toggles]
 plan_gates: []
@@ -21,7 +21,7 @@ Two layers of on/off control gate every customer-mail send. This page documents 
 
 ## Where to find it
 
-The global toggle sits in the page header at `/admin/marketing-new/omnichannel/mails/list`, labelled **"Send notifications to customers"** (BG **"Изпращай известия до клиенти"**).
+The global toggle sits in the page header at `/admin/marketing/omnichannel/mails/list`, labelled **"Send notifications to customers"** (BG **"Изпращай известия до клиенти"**).
 
 The per-mail Active flag is **NOT** surfaced as a column on the modern Vue list — it's a legacy-admin field that survives on the `Mail` model.
 

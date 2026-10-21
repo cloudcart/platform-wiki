@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Web Push → Subscription flow"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Web Push subscribe", "/web-push-subscribe", "WebPush subscription endpoint", "Browser push subscription", "p256dh auth keys", "Уеб пуш абонамент"]
 tags: [marketing, channels, web-push, subscription, storefront, subscriber]
 plan_gates: ["campaign.channel.web_push"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Policy → Page UI"
 route_name: campaigns-policy
-route_path: /admin/marketing-new/campaigns/policy
+route_path: /admin/marketing/campaigns/policy
 aliases: ["Anti spam policy page", "Policy page layout", "Policy iframe", "Accept button flow", "MarketingPolicyAntySpamPage"]
 tags: [marketing, campaigns, policy, compliance, anti-spam, ui]
 plan_gates: []
@@ -16,11 +16,11 @@ source_count: 2
 
 ## Purpose
 
-This page documents the **modern Vue policy page** — how the Anti-Spam Policy is rendered and how the one-click Accept flow behaves on the client. The modern admin renders the policy as a single full-page view (not a modal). The page component is `MarketingPolicyAntySpamPage`, mounted at route `campaigns-policy` (`/admin/marketing-new/campaigns/policy`).
+This page documents the **modern Vue policy page** — how the Anti-Spam Policy is rendered and how the one-click Accept flow behaves on the client. The modern admin renders the policy as a single full-page view (not a modal). The page component is `MarketingPolicyAntySpamPage`, mounted at route `campaigns-policy` (`/admin/marketing/campaigns/policy`).
 
 ## Where to find it
 
-Same route as the gate itself — `/admin/marketing-new/campaigns/policy`. Reached as a redirect from any campaign-area screen before acceptance (see [[campaigns-policy-enforcement]]).
+Same route as the gate itself — `/admin/marketing/campaigns/policy`. Reached as a redirect from any campaign-area screen before acceptance (see [[campaigns-policy-enforcement]]).
 
 ## What the merchant can do here
 

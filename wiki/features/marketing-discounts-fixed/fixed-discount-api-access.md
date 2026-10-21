@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Products → API access"
 route_name: discounts-products
-route_path: /admin/marketing-new/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id
 aliases: ["Fixed discount API", "Fixed discount JSON-API v2", "Fixed discount GraphQL", "product-to-discount endpoint"]
 tags: [marketing, discounts, fixed, api, json-api-v2, graphql]
 plan_gates: ["discount_fixed", "total_discounts"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Statistics → Logs modal"
 route_name: campaigns-statistics
-route_path: /admin/marketing-new/campaigns/statistics/:id
+route_path: /admin/marketing/campaigns/statistics/:id
 aliases: ["Statistics Logs Modal", "Per-step logs modal", "Campaign log modal", "Preview message modal", "Subscriber details modal (campaign log)"]
 tags: [marketing, campaigns, statistics, logs, modal]
 plan_gates: ["abandoned_orders", "campaigns"]

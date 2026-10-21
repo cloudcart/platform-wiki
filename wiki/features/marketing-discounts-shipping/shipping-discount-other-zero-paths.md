@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Shipping → Other zero-paths"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Free shipping other paths", "Has free shipping flag", "Receiver pays hidden", "Cross-sell free shipping", "Payment shipping discount", "Order modification free shipping", "Cart rule free_shipping action"]
 tags: [marketing, discounts, shipping, cross-sell, payment, waybill, cart-rule]
 plan_gates: []

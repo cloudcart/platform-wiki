@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Draft → Entry paths and state machine"
 route_name: campaigns-draft
-route_path: /admin/marketing-new/campaigns/draft
+route_path: /admin/marketing/campaigns/draft
 aliases: ["Campaign status state machine", "Draft entry paths", "active=0 active=1 active=2", "How campaigns become Draft", "Campaign status transitions"]
 tags: [marketing, campaigns, draft, state-machine]
 plan_gates: ["abandoned_orders", "campaigns"]

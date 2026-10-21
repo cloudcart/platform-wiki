@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Products → Business rules"
 route_name: discounts-products
-route_path: /admin/marketing-new/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id
 aliases: ["Discount products business rules", "Fixed discount type guard", "Default fixed discount singleton", "Customer-group fan-out for discount products", "MSRP save EUR display", "Picker only active products", "Бизнес правила за продукти в отстъпка"]
 tags: [marketing, discounts, fixed, products, business-rules, msrp, customer-groups, plan-gates]
 plan_gates: ["discount_fixed"]
@@ -23,7 +23,7 @@ These rules are the most common source of support tickets where the merchant say
 
 ## Where to find it
 
-The rules apply to Marketing → Discounts → (click **Products** on a Fixed-type discount row) → list at `/admin/marketing-new/discounts/products/:id` and its modal. Several of them depend on parent-discount settings that live on the [[marketing-discounts-fixed]] edit form.
+The rules apply to Marketing → Discounts → (click **Products** on a Fixed-type discount row) → list at `/admin/marketing/discounts/products/:id` and its modal. Several of them depend on parent-discount settings that live on the [[marketing-discounts-fixed]] edit form.
 
 ## What the merchant can do here
 
@@ -42,7 +42,7 @@ This page documents behaviour driven by parent-discount settings (MSRP mode, cus
 
 ### Discount-type guard
 
-The parent record must be of type `fixed` — the controller hard-filters to that type. Visiting `/admin/marketing-new/discounts/products/<some-non-fixed-id>` returns 404. (Quantity discounts have their own products-management UI; this page is shared under the same modern Vue route name, but the backend rejects mismatched types.)
+The parent record must be of type `fixed` — the controller hard-filters to that type. Visiting `/admin/marketing/discounts/products/<some-non-fixed-id>` returns 404. (Quantity discounts have their own products-management UI; this page is shared under the same modern Vue route name, but the backend rejects mismatched types.)
 
 ### Product picker only returns active products
 

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Condition vocabulary"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Segment conditions", "Segmentation conditions", "Condition vocabulary", "AND composition", "Allowed combinations"]
 tags: [marketing, segments, conditions, rules]
 plan_gates: ["subscribers-rfm"]

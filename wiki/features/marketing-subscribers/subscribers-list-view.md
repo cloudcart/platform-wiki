@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → List view"
 route_name: subscribers.list
-route_path: /admin/marketing-new/subscribers
+route_path: /admin/marketing/subscribers
 aliases: ["Subscribers list", "Subscribers table", "Subscribers filters", "Subscribers header"]
 tags: [marketing, subscribers, list, filters]
 plan_gates: ["subscribers"]
@@ -21,7 +21,7 @@ The list view is the merchant's primary surface for browsing the audience pool. 
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Subscribers**. Route `/admin/marketing-new/subscribers`.
+Sidebar → **Marketing** → **Subscribers**. Route `/admin/marketing/subscribers`.
 
 ## What the merchant can do here
 

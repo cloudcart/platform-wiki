@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Subscribers → Data source & gating"
 route_name: segments.core_new.subscribers
-route_path: /admin/marketing-new/segments/:id/subscribers
+route_path: /admin/marketing/segments/:id/subscribers
 aliases: ["Segment subscriber data source", "Forced segment filter", "Segment subscribers plan limit", "Subscriber limit on segment", "Why is my segment audience capped", "Заключен филтър по сегмент"]
 tags: [marketing, segments, subscribers, plan-gating, data-source]
 plan_gates: ["segments", "subscribers"]
@@ -20,7 +20,7 @@ This aspect explains where the Subscribers-in-segment table gets its data, why i
 
 ## Where to find it
 
-The behaviours here are not buttons — they govern the page at `/admin/marketing-new/segments/:id/subscribers` as a whole. The plan-limit notice appears on the [[marketing-segments-editor|segment editor modal]]; the forced segment filter is applied on mount whenever the page loads.
+The behaviours here are not buttons — they govern the page at `/admin/marketing/segments/:id/subscribers` as a whole. The plan-limit notice appears on the [[marketing-segments-editor|segment editor modal]]; the forced segment filter is applied on mount whenever the page loads.
 
 ## What the merchant can do here
 

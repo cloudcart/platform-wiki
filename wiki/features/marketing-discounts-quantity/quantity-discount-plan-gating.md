@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Quantity → Plan gating"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/quantity
+route_path: /admin/marketing/discounts/create/quantity
 aliases: ["Quantity discount plan limit", "discount_quantity gate", "Quantity discount API access", "Quantity discount not supported by plan", "Quantity discount un-validated fields"]
 tags: [marketing, discounts, quantity, plan-gates, json-api-v2, graphql]
 plan_gates: ["discount_quantity", "total_discounts"]

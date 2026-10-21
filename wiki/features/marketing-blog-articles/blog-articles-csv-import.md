@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Articles → Add via CSV"
 route_name: blog-articles-list
-route_path: /admin/marketing-new/blog/articles
+route_path: /admin/marketing/blog/articles
 aliases: ["Add via CSV", "Blog CSV import", "Import articles from CSV", "Bulk import articles", "Внасяне на статии от CSV", "Импорт на статии"]
 tags: [marketing, blog, articles, import, csv, apps]
 plan_gates: ["blog_articles"]

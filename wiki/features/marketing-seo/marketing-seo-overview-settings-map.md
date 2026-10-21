@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Seo → Settings map"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["SEO settings map", "Main SEO field reference", "SEO fields table", "SEO validation rules", "Карта на SEO настройки", "SEO полета справка"]
 tags: [marketing, seo, fields, validation, reference]
 plan_gates: []
@@ -21,7 +21,7 @@ This aspect is the **single field-by-field reference table** for every control o
 
 ## Where to find it
 
-Sidebar → Marketing → **SEO**. Route name `seo-main`, path `/admin/marketing-new/seo`. Each field below appears on its card within that screen; the layout is on [[marketing-seo-overview-layout]].
+Sidebar → Marketing → **SEO**. Route name `seo-main`, path `/admin/marketing/seo`. Each field below appears on its card within that screen; the layout is on [[marketing-seo-overview-layout]].
 
 ## What the merchant can do here
 

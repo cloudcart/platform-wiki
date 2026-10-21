@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Viber → DLR & status"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Viber DLR", "Viber delivery report", "Viber status mapping", "InfoBip DLR webhook", "Viber SEEN status", "Cascade-to-prior-pending"]
 tags: [marketing, channels, viber, dlr, status, webhook]
 plan_gates: ["viber_messages"]

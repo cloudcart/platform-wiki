@@ -24,7 +24,7 @@ This entity is split into 6 aspect pages, each covering one well-scoped slice. T
 
 - [[seo-meta-fields]] — the catalogue of meta fields (meta_title, meta_description, og_image, canonical_url, no_index_meta) and what each one renders in the storefront HTML.
 - [[seo-meta-fallback-chain]] — the 4-layer priority order (per-entity → section → language file → English) + auto-generation + blank-field semantics.
-- [[seo-meta-section-defaults]] — the [[marketing-seo-meta]] Vue page (5 exposed sections, missing 11+ sections, legacy-cookie escape hatch, single global Save, no SERP preview / no length validation).
+- [[seo-meta-section-defaults]] — the [[marketing-seo-meta]] Vue page (5 exposed sections, 11+ sections without a screen, single global Save, no SERP preview / no length validation).
 - [[seo-meta-per-entity]] — per-entity meta storage on Product / Category / Vendor / CMS Page / Blog Article (column on the entity row, edited inside the parent editor).
 - [[seo-meta-multilang-storage]] — per-language + per-theme storage as Translation rows, the `is_translated` flag, translation cache invalidation on save.
 - [[seo-meta-canonical-noindex]] — the `canonical_url` and `no_index_meta` fields on CMS Pages, no-inheritance rule, OG-image-dimension non-validation, permission and plan gates.

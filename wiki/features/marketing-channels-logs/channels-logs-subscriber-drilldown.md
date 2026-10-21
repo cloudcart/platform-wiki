@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Logs → Subscriber details"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Channel logs subscriber drill-down", "Channel logs subscriber details", "Deleted subscriber log row", "Subscriber does not accept marketing warning", "accept_marketing warning", "SubscriberChannel flags from log"]
 tags: [marketing, channels, logs, subscribers, drilldown]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]

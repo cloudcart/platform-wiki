@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Shipping"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Shipping discount", "Free shipping discount", "Free shipping", "Free delivery", "Безплатна доставка", "Отстъпка за доставка", "Безплатна доставка над"]
 tags: [marketing, discounts, shipping, free-shipping]
 plan_gates: ["discount_global", "discount_coupon"]
@@ -41,8 +41,8 @@ This feature is split into 7 aspect pages, each covering one well-scoped slice.
 
 A "Free shipping" discount is **not a separate type card** in the type-picker — it is always reached *through* one of two cards. From the [[marketing-discounts]] list, click **+ Add discount**, then:
 
-- **Global discount** card (no-code free shipping) — opens the form at `/admin/marketing-new/discounts/create/global` (`type=global`). Inside, set the discount **type** to **Free shipping** (the *Discount type* select offers Fixed amount / Percentage / Free shipping).
-- **Discount with code** card (free-shipping coupon) — opens `/admin/marketing-new/discounts/create/code` (`type=code`). Same form plus the **Generate a discount code** and **Regions** blocks; again pick **Free shipping** inside.
+- **Global discount** card (no-code free shipping) — opens the form at `/admin/marketing/discounts/create/global` (`type=global`). Inside, set the discount **type** to **Free shipping** (the *Discount type* select offers Fixed amount / Percentage / Free shipping).
+- **Discount with code** card (free-shipping coupon) — opens `/admin/marketing/discounts/create/code` (`type=code`). Same form plus the **Generate a discount code** and **Regions** blocks; again pick **Free shipping** inside.
 
 The breadcrumb reads "Marketing → Discounts → Create discount".
 
@@ -82,9 +82,9 @@ Field-by-field tables are deferred to the aspect pages so each table can stay cl
 
 | Action | Route path |
 |--------|------------|
-| Create form (global / no-code) | `/admin/marketing-new/discounts/create/global` |
-| Create form (code-based) | `/admin/marketing-new/discounts/create/code` |
-| Edit form | `/admin/marketing-new/discounts/edit/{id}` |
+| Create form (global / no-code) | `/admin/marketing/discounts/create/global` |
+| Create form (code-based) | `/admin/marketing/discounts/create/code` |
+| Edit form | `/admin/marketing/discounts/edit/{id}` |
 | Save (admin API) | `POST /admin/api/discounts` |
 | JSON-API v2 CRUD | `<store>/api/v2/discounts` (resource [[api-discounts]]) |
 

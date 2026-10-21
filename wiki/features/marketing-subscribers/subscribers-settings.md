@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → Settings & limits"
 route_name: subscribers.settings
-route_path: /admin/marketing-new/subscribers/settings
+route_path: /admin/marketing/subscribers/settings
 aliases: ["Subscribers settings", "Subscriber RFM settings", "GDPR marketing setting", "Bestseller interval", "Subscriber limits modal", "Subscribers plan cap"]
 tags: [marketing, subscribers, settings, rfm, plan-cap]
 plan_gates: ["subscribers", "subscribers-rfm"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Percent → Stacking"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Percent discount stacking", "code_apply", "apply_regular_price", "Percent + Flat winner-takes-all"]
 tags: [marketing, discounts, percent, stacking]
 plan_gates: ["discount_global", "discount_coupon"]

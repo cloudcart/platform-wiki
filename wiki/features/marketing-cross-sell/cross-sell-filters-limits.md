@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Cross-Sell & UpSell → Filters & limits"
 route_name: admin.cross_sell.diagram
-route_path: /admin/marketing-new/cross-sell/diagram/{id?}
+route_path: /admin/marketing/cross-sell/diagram/{id?}
 aliases: ["Cross-Sell hide filters", "Cross-Sell hide cart products", "Cross-Sell hide out of stock", "Cross-Sell products limit", "Cross-Sell max user views", "Cross-Sell product settings"]
 tags: [marketing, cross-sell, filters, limits, product-settings]
 plan_gates: ["cross_sells"]

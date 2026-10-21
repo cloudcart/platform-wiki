@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → SMS Msg Hub → Send pipeline"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["SMS MsgHub send pipeline", "MsgHub synchronous send", "MsgHub status mapping", "MsgHub pre-flight checks", "MsgHub plan-cap pre-flight"]
 tags: [marketing, channels, sms, msghub, send]
 plan_gates: ["campaign.channel.sms_msghub_message"]

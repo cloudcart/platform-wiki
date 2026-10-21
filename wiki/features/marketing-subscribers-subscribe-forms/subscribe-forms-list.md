@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → Subscribe Forms → List view"
 route_name: subscribe-forms.list
-route_path: /admin/marketing-new/subscribers/subscribe-forms
+route_path: /admin/marketing/subscribers/subscribe-forms
 aliases: ["Subscribe forms list", "Subscribe forms admin list", "Списък с форми за абонамент"]
 tags: [marketing, subscribers, forms, popup, storefront, admin]
 plan_gates: ["subscriber_forms"]
@@ -21,7 +21,7 @@ The admin index for all subscribe forms on the store. From this single page the 
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Subscribers** → **Subscribe Forms**. Route: `/admin/marketing-new/subscribers/subscribe-forms` (route name `subscribe-forms.list`). Plan-gated by the `subscriber_forms` feature key.
+Sidebar → **Marketing** → **Subscribers** → **Subscribe Forms**. Route: `/admin/marketing/subscribers/subscribe-forms` (route name `subscribe-forms.list`). Plan-gated by the `subscriber_forms` feature key.
 
 ## What the merchant can do here
 

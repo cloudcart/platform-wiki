@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → System messages → Business rules"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["System messages business rules", "Template status switch", "Language fallback for templates", "Anti-spam policy gate", "Channel active gate"]
 tags: [marketing, channels, system-messages, business-rules, language-fallback]
 plan_gates: []
@@ -77,7 +77,7 @@ A System message template that's toggled ON, on a channel that's NOT installed o
 
 ### Anti-spam policy gate
 
-The parent channels page enforces the [[marketing-campaigns-policy|anti-spam policy]] acceptance before any of its modals (including System messages) can open. A merchant who hasn't accepted the policy is redirected to `/admin/marketing-new/campaigns/policy` before they can see the channels list.
+The parent channels page enforces the [[marketing-campaigns-policy|anti-spam policy]] acceptance before any of its modals (including System messages) can open. A merchant who hasn't accepted the policy is redirected to `/admin/marketing/campaigns/policy` before they can see the channels list.
 
 ### Mapping normalization — dash and underscore both accepted
 

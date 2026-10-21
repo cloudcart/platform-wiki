@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Usage → Engagement window"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["30-day engagement window", "Clicks Opened window", "opened_url seen_message aggregation", "UTC day boundary", "Title date range", "format.date display", "Прозорец на ангажираност", "30 дни"]
 tags: [marketing, channels, usage, engagement, clicks, opens, date-range]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]

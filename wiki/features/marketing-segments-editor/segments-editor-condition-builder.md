@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Editor → Condition builder"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Segment condition group", "Segment condition row", "Segment tree builder", "Nested conditions", "Composite key disambiguation", "parent::child"]
 tags: [marketing, segments, editor, condition-builder, tree]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → Import"
 route_name: subscribers.import
-route_path: /admin/marketing-new/subscribers/import
+route_path: /admin/marketing/subscribers/import
 aliases: ["Subscribers import", "CSV import subscribers", "Import wizard", "Bulk subscriber import"]
 tags: [marketing, subscribers, import, csv, bulk]
 plan_gates: ["subscribers"]

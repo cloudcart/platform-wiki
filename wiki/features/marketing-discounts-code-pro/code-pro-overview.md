@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO codes → Overview"
 route_name: discounts-code_pro-list
-route_path: /admin/marketing-new/discounts/code-pro/:id
+route_path: /admin/marketing/discounts/code-pro/:id
 aliases: ["Code PRO overview", "Code PRO vs Container", "Code PRO mini-campaigns", "Code PRO plan gates"]
 tags: [marketing, discounts, code-pro, overview, plan-gates]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Subscribers → Detail & log modals"
 route_name: segments.core_new.subscribers
-route_path: /admin/marketing-new/segments/:id/subscribers
+route_path: /admin/marketing/segments/:id/subscribers
 aliases: ["Subscriber details modal", "Subscriber logs modal", "Subscriber log in segment", "View subscriber from segment", "Модал с детайли за абонат"]
 tags: [marketing, segments, subscribers, modals, log]
 plan_gates: ["segments"]
@@ -20,7 +20,7 @@ Two read-only modals let the merchant inspect a single subscriber without leavin
 
 ## Where to find it
 
-Both open from rows in the subscriber table (see [[segments-subscribers-list]]) on `/admin/marketing-new/segments/:id/subscribers`:
+Both open from rows in the subscriber table (see [[segments-subscribers-list]]) on `/admin/marketing/segments/:id/subscribers`:
 
 - **Subscriber details modal** — click the subscriber's **name**.
 - **Subscriber logs modal** — click the **Log** button on the row.

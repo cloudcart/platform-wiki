@@ -2,8 +2,8 @@
 type: feature
 nav_path: "Marketing → Subscribers → Custom Fields → Downstream surfaces"
 route_name: subscribers-fields-list-new
-route_path: /admin/marketing-new/subscribers/fields
-aliases: ["Subscriber custom fields downstream", "Where subscriber custom fields appear", "Subscriber custom fields deletion", "Subscriber vs customer field namespace", "Subscriber custom fields legacy admin"]
+route_path: /admin/marketing/subscribers/fields
+aliases: ["Subscriber custom fields downstream", "Where subscriber custom fields appear", "Subscriber custom fields deletion", "Subscriber vs customer field namespace", "Subscriber custom fields old admin"]
 tags: [marketing, subscribers, custom-fields, segments, deletion]
 plan_gates: []
 created: 2026-06-10
@@ -21,7 +21,7 @@ A defined subscriber custom field is only useful because of where it surfaces. T
 
 ## Where to find it
 
-The field definitions are managed at Sidebar → **Marketing** → **Subscribers** → **Custom fields** (`/admin/marketing-new/subscribers/fields`). Their downstream surfaces are reached from:
+The field definitions are managed at Sidebar → **Marketing** → **Subscribers** → **Custom fields** (`/admin/marketing/subscribers/fields`). Their downstream surfaces are reached from:
 
 - [[marketing-subscribers-subscribe-forms]] — the subscribe-form builder's *Custom fields* picker.
 - [[marketing-subscribers]] — a subscriber's detail / profile view.
@@ -74,7 +74,7 @@ Even without deleting the whole field, removing a single option in the editor de
 
 ### Legacy admin
 
-A legacy version of the same screen exists at `/admin/subscribers/fields` (old admin). It exposes additional toggles per field (`active`, `required`) not present in the modern Vue page — on the modern path, newly-created fields are always set `active = 1`, and per-field `required` is set on the **subscribe form** that uses the field (not on the field definition itself). Merchants should use the modern screen; the legacy URL remains for backwards compatibility.
+The legacy screen at `/admin/subscribers/fields`, which had per-field `active` and `required` toggles, was removed on 2026-10-21; its address redirects to the Vue page. On the Vue page, newly created fields are always `active = 1`, and `required` is set on the **subscribe form** that uses the field, not on the field definition.
 
 ## Related
 

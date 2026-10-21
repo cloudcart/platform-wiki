@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Percent → Plan gates"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Percent discount plan gates", "discount_global quota", "discount_coupon quota", "Percent HTTP 403"]
 tags: [marketing, discounts, percent, plan-gates]
 plan_gates: ["discount_global", "discount_coupon"]

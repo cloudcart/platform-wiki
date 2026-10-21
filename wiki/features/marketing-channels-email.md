@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Email"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Email channel", "Email setup", "Elastic Email", "Email marketing channel", "Имейл канал", "Настройка на имейл"]
 tags: [marketing, channels, email, elastic-email, dkim, spf]
 plan_gates: ["campaign.channel.email"]
@@ -23,9 +23,9 @@ To send any production email, the merchant must complete a **four-step setup**: 
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing-new/campaigns/channels`) → click the **Email** channel card → **Configure** opens the email setup as a modal over the channels page. There is no separate route per step — the modal advances internally, driven by a `current_step` value. The modal's step keys are `profile` → `domain` → `verify` → `email`.
+Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing/campaigns/channels`) → click the **Email** channel card → **Configure** opens the email setup as a modal over the channels page. There is no separate route per step — the modal advances internally, driven by a `current_step` value. The modal's step keys are `profile` → `domain` → `verify` → `email`.
 
-**Saved email templates** live on a separate route, `campaigns-email-saved-templates` (`/admin/marketing-new/campaigns/configuration/channel/email/saved`).
+**Saved email templates** live on a separate route, `campaigns-email-saved-templates` (`/admin/marketing/campaigns/configuration/channel/email/saved`).
 
 ## Sub-pages (in this cluster)
 

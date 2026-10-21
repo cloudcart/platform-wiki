@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Email → Reputation & suspend"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Email channel reputation", "Email auto-suspend", "SUSPENDED_SPAM", "SUSPENDED_BOUNCED", "SUSPENDED_OPEN", "suspend recovery", "manual_allowed_suspended", "Reputation impact email"]
 tags: [marketing, channels, email, reputation, suspend, deliverability]
 plan_gates: ["campaign.channel.email"]

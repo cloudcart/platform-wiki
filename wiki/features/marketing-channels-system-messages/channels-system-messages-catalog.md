@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → System messages → Event catalog"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["System messages event catalog", "Viber system events", "Web Push system events", "Transactional template catalog"]
 tags: [marketing, channels, system-messages, transactional, viber, web-push]
 plan_gates: ["viber_messages", "campaign.channel.web_push"]

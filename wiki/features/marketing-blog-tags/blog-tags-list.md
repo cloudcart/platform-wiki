@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Tags → List & modal"
 route_name: blog-tags
-route_path: /admin/marketing-new/blog/tags
+route_path: /admin/marketing/blog/tags
 aliases: ["Blog tags list", "Add tag", "Edit tag", "Blog tag modal", "Tag list columns", "Списък с тагове на блог", "Добавяне на таг"]
 tags: [marketing, blog, tags, taxonomy, content]
 plan_gates: []
@@ -23,7 +23,7 @@ This is the **central admin screen** where the merchant sees every blog tag in o
 
 Sidebar → **Marketing** → **Blog** → **Tags**.
 
-Route name `blog-tags`; path `/admin/marketing-new/blog/tags`; component `MarketingBlogTagsPage`. Header icon is the tag icon (`far fa-tag`). The breadcrumb reads "Marketing → Article tags".
+Route name `blog-tags`; path `/admin/marketing/blog/tags`; component `MarketingBlogTagsPage`. Header icon is the tag icon (`far fa-tag`). The breadcrumb reads "Marketing → Article tags".
 
 ## What the merchant can do here
 

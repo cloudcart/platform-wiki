@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Percent → Fields"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Percent discount fields", "Percent discount validation", "Percent backend keys"]
 tags: [marketing, discounts, percent, fields, validation]
 plan_gates: ["discount_global", "discount_coupon"]
@@ -21,7 +21,7 @@ This page catalogues every visible field, backend key, default, and validation s
 
 ## Where to find it
 
-The fields all live on the same admin form documented in [[percent-discount-editor]] — opened via [[marketing-discounts]] → **+ Add discount** → **Global discount** card (no-code, `/admin/marketing-new/discounts/create/global`) or **Discount with promo code** card (`/admin/marketing-new/discounts/create/code`). The code-specific block (`code`, `code_format`, `code_apply`, `apply_regular_price`, `geo_zone_id`, `all_regions`) appears only on the "Discount with promo code" entry.
+The fields all live on the same admin form documented in [[percent-discount-editor]] — opened via [[marketing-discounts]] → **+ Add discount** → **Global discount** card (no-code, `/admin/marketing/discounts/create/global`) or **Discount with promo code** card (`/admin/marketing/discounts/create/code`). The code-specific block (`code`, `code_format`, `code_apply`, `apply_regular_price`, `geo_zone_id`, `all_regions`) appears only on the "Discount with promo code" entry.
 
 ## What the merchant can do here
 

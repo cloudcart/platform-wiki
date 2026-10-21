@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → UpSell & Cross-sell → UpSell List → Offer table"
 route_name: admin.up_sell.list
-route_path: /admin/marketing-new/up-sell
+route_path: /admin/marketing/up-sell
 aliases: ["UpSell offer table", "UpSell list columns", "UpSell list metrics", "UpSell status filter", "UpSell list empty state", "Колони на UpSell списъка"]
 tags: [marketing, upsell, list, metrics, columns]
 plan_gates: ["upsells"]
@@ -21,7 +21,7 @@ The **offer table** is the main body of the UpSell List: a server-side AJAX-pagi
 
 ## Where to find it
 
-Sidebar → Marketing → **UpSell** → the table fills the page body. Direct URL: `/admin/marketing-new/up-sell`. Rows are sorted by `id DESC` by default; most metric columns are click-sortable.
+Sidebar → Marketing → **UpSell** → the table fills the page body. Direct URL: `/admin/marketing/up-sell`. Rows are sorted by `id DESC` by default; most metric columns are click-sortable.
 
 ## What the merchant can do here
 

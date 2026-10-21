@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Editor → Operators & values"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Segment editor operators", "Segment editor value controls", "Segment condition operator vocabulary", "Segment condition value kinds", "Value control vocabulary"]
 tags: [marketing, segments, editor, operators, value-controls]
 plan_gates: []

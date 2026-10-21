@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Logs → Status vocabulary"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Channel logs status", "Channel logs status enum", "Channel logs status pill", "Channel logs status colour", "BOUNCED vs HARD_BOUNCED", "DELIVERED status", "Channel logs delivery status", "translateStatus"]
 tags: [marketing, channels, logs, status, vocabulary]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]

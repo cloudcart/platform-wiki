@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → UpSell & Cross-sell → Cross-Sell List"
 route_name: admin.cross_sell.list
-route_path: /admin/marketing-new/cross-sell
+route_path: /admin/marketing/cross-sell
 aliases: ["Cross-Sell list", "Cross-Sell offers", "Списък кръстосани продажби", "Списък оферти Cross-Sell", "Свързани продукти списък"]
 tags: [marketing, cross-sell, upsell, list, offers]
 plan_gates: []
@@ -29,7 +29,7 @@ This page is the **LIST view** — it shows aggregate records. For the rule engi
 
 ## Where to find it
 
-Sidebar → Marketing → **Cross-Sell** (`cross_sell.header.title` = *"Cross Sell"*). Direct URL: `/admin/marketing-new/cross-sell`. Middleware: `cc_apps_purchase:up_cross_sell` — the Up/Cross-Sell app must be installed (see [[apps-up-cross-sell]]).
+Sidebar → Marketing → **Cross-Sell** (`cross_sell.header.title` = *"Cross Sell"*). Direct URL: `/admin/marketing/cross-sell`. Middleware: `cc_apps_purchase:up_cross_sell` — the Up/Cross-Sell app must be installed (see [[apps-up-cross-sell]]).
 
 ## What the merchant can do here
 

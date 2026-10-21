@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Viber → Send pipeline"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Viber send pipeline", "Viber dispatch", "Viber retry", "Viber omni/1/advanced", "Service vs promo routing", "bulkId Viber", "viber_message campaign action"]
 tags: [marketing, channels, viber, infobip, send, retry]
 plan_gates: ["viber_messages"]

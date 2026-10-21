@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Quantity → Form"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/quantity
+route_path: /admin/marketing/discounts/create/quantity
 aliases: ["Quantity discount form", "Volume discount form", "Quantity discount fields", "Quantity discount editor"]
 tags: [marketing, discounts, quantity, form, validation]
 plan_gates: ["discount_quantity"]
@@ -24,8 +24,8 @@ This aspect documents the **create / edit form** for a Quantity discount — whi
 Path:
 
 - From [[marketing-discounts]] → **+ Add discount** → pick the **Quantity discount** card.
-- The card routes to `discounts-create` with the URL `/admin/marketing-new/discounts/create/quantity` (`type` URL param `quantity` drives the layout).
-- After save, the merchant lands on `/admin/marketing-new/discounts/edit/{id}` (same component, route-name `discounts-edit`).
+- The card routes to `discounts-create` with the URL `/admin/marketing/discounts/create/quantity` (`type` URL param `quantity` drives the layout).
+- After save, the merchant lands on `/admin/marketing/discounts/edit/{id}` (same component, route-name `discounts-edit`).
 
 The card's blurb on the type-picker modal reads:
 

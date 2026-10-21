@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO codes → Checkout behaviour"
 route_name: discounts-code_pro-edit
-route_path: /admin/marketing-new/discounts/code-pro/:id/:codeId
+route_path: /admin/marketing/discounts/code-pro/:id/:codeId
 aliases: ["Code PRO checkout", "Code PRO active scope", "Code PRO uses counter", "Code PRO replacement semantics", "Code PRO lookup"]
 tags: [marketing, discounts, code-pro, checkout, redemption]
 plan_gates: ["discount-code-pro"]

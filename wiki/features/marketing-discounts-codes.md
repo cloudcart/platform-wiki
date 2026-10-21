@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Container codes"
 route_name: discounts-codes_list
-route_path: /admin/marketing-new/discounts/codes
+route_path: /admin/marketing/discounts/codes
 aliases: ["Container codes", "Promo code management", "Generated coupons", "Bulk single-use codes", "Промо кодове", "Управление на промо кодове", "Контейнерни кодове"]
 tags: [marketing, discounts, coupons, container, generated-codes]
 plan_gates: ["discount_coupon"]
@@ -22,7 +22,7 @@ This page is large enough that it is split into six aspect pages. Drill into the
 
 ## Where to find it
 
-The Container codes list sits one level under the Discounts page. From any Container-discount row in the [[marketing-discounts]] table, click "Promo code management" — the breadcrumb is "Marketing → Discounts → Container codes" and the route is `discounts-codes_list` at `/admin/marketing-new/discounts/codes`. The codes shown are the store's generated Container codes (entity: [[discount-code]]).
+The Container codes list sits one level under the Discounts page. From any Container-discount row in the [[marketing-discounts]] table, click "Promo code management" — the breadcrumb is "Marketing → Discounts → Container codes" and the route is `discounts-codes_list` at `/admin/marketing/discounts/codes`. The codes shown are the store's generated Container codes (entity: [[discount-code]]).
 
 ### Creating the Container parent first
 

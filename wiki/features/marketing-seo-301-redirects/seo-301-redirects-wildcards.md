@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Seo → 301 Redirects → Wildcards & lookup"
 route_name: seo-301-redirects
-route_path: /admin/marketing-new/seo/301-redirects
+route_path: /admin/marketing/seo/301-redirects
 aliases: ["Wildcard in old_url", "Old URL wildcards", "Asterisk wildcard 301", "7 named prefix fast-path", "Old URL LIKE matching", "Trailing slash 301"]
 tags: [marketing, seo, redirects, wildcards, performance, lookup]
 plan_gates: []

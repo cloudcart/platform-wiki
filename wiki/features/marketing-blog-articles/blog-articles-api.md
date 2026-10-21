@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Articles → API"
 route_name: blog-articles-list
-route_path: /admin/marketing-new/blog/articles
+route_path: /admin/marketing/blog/articles
 aliases: ["Articles API access", "Blog API write paths", "Posts API behavior", "Programmatic articles", "API на блог статии", "Програмен достъп до статии"]
 tags: [marketing, blog, articles, api, json-api-v2]
 plan_gates: ["blog_articles"]

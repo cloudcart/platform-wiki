@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Statistics → KPI cards"
 route_name: campaigns-statistics
-route_path: /admin/marketing-new/campaigns/statistics/:id
+route_path: /admin/marketing/campaigns/statistics/:id
 aliases: ["Campaign KPI cards", "Reached subscribers", "Open rate", "Click rate", "Conversion rate", "Turnover card", "Headline campaign metrics"]
 tags: [marketing, campaigns, statistics, kpi]
 plan_gates: ["abandoned_orders", "campaigns"]

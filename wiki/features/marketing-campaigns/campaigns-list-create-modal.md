@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Create modal"
 route_name: campaigns-create
-route_path: /admin/marketing-new/campaigns/create/:type(regular|automated)
+route_path: /admin/marketing/campaigns/create/:type(regular|automated)
 aliases: ["Create campaign modal", "Regular vs Automated tab", "Predefined automated catalog", "+ Create campaign button"]
 tags: [marketing, campaigns, create, modal, predefined]
 plan_gates: ["campaigns"]
@@ -21,7 +21,7 @@ The **+ Create campaign** modal is the entry point for every new campaign. It ex
 
 ## Where to find it
 
-The modal opens from the **+ Create campaign** button in the top-right action area of the [[marketing-campaigns]] list (size `lg`). It is also bound to the `campaigns-create` route — navigating to `/admin/marketing-new/campaigns/create/:type` opens the same modal pre-set to the URL `type`. The modal is wired to a shared composable `useCampaigns` so it can also open from sibling routes (e.g., the AI Assistant header button can open it pre-set to `automated`).
+The modal opens from the **+ Create campaign** button in the top-right action area of the [[marketing-campaigns]] list (size `lg`). It is also bound to the `campaigns-create` route — navigating to `/admin/marketing/campaigns/create/:type` opens the same modal pre-set to the URL `type`. The modal is wired to a shared composable `useCampaigns` so it can also open from sibling routes (e.g., the AI Assistant header button can open it pre-set to `automated`).
 
 ## What the merchant can do here
 

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Usage → Threshold alert"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["80% usage alert", "Channel cap warning", "Usage alert notification", "campaign.channel.usage notification", "USAGE_ALERT_PERCENTAGE", "Self-credentials alert suppression", "Предупреждение за лимит", "80 процента уведомление"]
 tags: [marketing, channels, usage, alert, notification, threshold]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Segments", "Customer segments", "Subscriber segments", "Сегменти", "Клиентски сегменти"]
 tags: [marketing, segments, subscribers, targeting]
 plan_gates: ["segments", "subscribers", "subscribers-rfm"]
@@ -23,7 +23,7 @@ Segments are the **primary audience-selection object** in CloudCart marketing: e
 
 Sidebar → **Marketing** → **Segments**.
 
-Route `/admin/marketing-new/segments`. The page lists every segment with its subscriber count, campaign count, last-generated timestamp, and active state.
+Route `/admin/marketing/segments`. The page lists every segment with its subscriber count, campaign count, last-generated timestamp, and active state.
 
 ## Sub-pages (in this cluster)
 

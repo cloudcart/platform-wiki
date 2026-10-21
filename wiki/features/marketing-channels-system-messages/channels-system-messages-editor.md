@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → System messages → Editor"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["System message editor", "Template editor", "Per-template configuration modal", "Channel template editor"]
 tags: [marketing, channels, system-messages, editor, preview]
 plan_gates: ["viber_messages", "campaign.channel.web_push"]

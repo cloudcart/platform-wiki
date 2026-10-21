@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → SEO → Sharing → Storage & save mechanics"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["Sharing save mechanics", "add-this endpoint", "AddThis save endpoint", "og_image_url storage", "Sharing module storage", "enabled 0 strip quirk", "Sharing validation map", "Споделяне запис", "Споделяне валидация"]
 tags: [marketing, seo, sharing, distribution]
 plan_gates: []
@@ -20,7 +20,7 @@ This aspect documents **how the Sharing card persists** — the two separate sto
 
 ## Where to find it
 
-There is no separate UI for this — it is the save behaviour behind the **"Share product"** card on Sidebar → Marketing → **SEO** (`/admin/marketing-new/seo`). The card uses the shared inline **Save / Revert** wrapper; Save toast is "Saved Successfully".
+There is no separate UI for this — it is the save behaviour behind the **"Share product"** card on Sidebar → Marketing → **SEO** (`/admin/marketing/seo`). The card uses the shared inline **Save / Revert** wrapper; Save toast is "Saved Successfully".
 
 ## What the merchant can do here
 
@@ -53,9 +53,9 @@ The module's `_default_settings` also stores values the Vue UI does **not** expo
 
 On save, the module toggles go to the theme-scoped module settings row; `og_image_url` is the only write to the global settings table. The practical consequence: switching theme can reset the toolbar config but the default `og:image` always survives — see [[seo-sharing-og-image]].
 
-### The Sharing card uses a LEGACY endpoint
+### The Sharing card's save endpoint
 
-The merchant-saves POST goes to `/admin/marketing/seo/add-this` (the legacy sitecp router), NOT the modern `/admin/api/core/seo/settings/*` path that the other six SEO cards use. The Core admin API does not expose a sharing endpoint at all — the Vue page reaches into the legacy route directly. This is why a Sharing save can fail while the other cards on the same screen succeed.
+The merchant-saves POST goes to `/admin/api/core/seo/settings/add-this`, beside the other six SEO cards' `/admin/api/core/seo/settings/*` routes. The Core admin API lists no `add-this` route among them (verify — on 2026-10-21 production has no handler at this address; the legacy `seo/add-this` route was removed with the Smarty SEO pages).
 
 ### `enabled = 0` is treated specially on save
 

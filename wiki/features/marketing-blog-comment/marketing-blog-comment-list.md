@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Comment → List"
 route_name: blog-comments
-route_path: /admin/marketing-new/blog/comment
+route_path: /admin/marketing/blog/comment
 aliases: ["Blog comments list", "Comment list", "Comment queue list", "Comment moderation list", "Списък с коментари"]
 tags: [marketing, blog, comments, moderation, content]
 plan_gates: ["blog_comments"]
@@ -21,7 +21,7 @@ The **list screen** is the moderation queue surface itself: a table of every com
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Blog** → **Comment** (route name `blog-comments`, path `/admin/marketing-new/blog/comment`). Also reachable pre-filtered by article via the "Comments (N)" button on each [[marketing-blog-articles]] row.
+Sidebar → **Marketing** → **Blog** → **Comment** (route name `blog-comments`, path `/admin/marketing/blog/comment`). Also reachable pre-filtered by article via the "Comments (N)" button on each [[marketing-blog-articles]] row.
 
 ## What the merchant can do here
 

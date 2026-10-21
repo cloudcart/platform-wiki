@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → SEO → Sharing"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["Share a product", "Social sharing", "AddThis", "AddThis share", "Sharing module", "Share module", "Cover image for sharing", "Open Graph image", "og:image default", "Споделяне на продукт", "Социално споделяне", "Споделяй продукт", "Снимка за споделяне", "OG изображение"]
 tags: [marketing, seo, sharing, distribution]
 plan_gates: []
@@ -25,7 +25,7 @@ Practical guidance: on any modern storefront theme, ignore every toolbar toggle 
 
 ## Where to find it
 
-Sidebar → Marketing → **SEO** → scroll to the **"Share a product"** card. Route is `/admin/marketing-new/seo`. The card has its own inline Save / Revert bar that appears only after the merchant changes a field.
+Sidebar → Marketing → **SEO** → scroll to the **"Share a product"** card. Route is `/admin/marketing/seo`. The card has its own inline Save / Revert bar that appears only after the merchant changes a field.
 
 ## What the merchant can do here
 
@@ -56,7 +56,7 @@ The card uses the shared **Save / Revert** wrapper — both buttons appear in an
 
 - [[seo-sharing-og-image]] — the default `og:image` (`Main sharing picture`): what it falls back for, where it kicks in, the "broken Facebook preview" support pattern, the 1200 × 630 recommendation.
 - [[seo-sharing-toolbar]] — the AddThis-style social-share toolbar: every toggle, Custom-format HTML override, and why the toolbar is hard-disabled on every modern theme.
-- [[seo-sharing-storage-save]] — storage + save mechanics: the two-store split, the legacy `/add-this` endpoint, the validation map, the `enabled = 0` strip quirk, the non-UI colour/language defaults.
+- [[seo-sharing-storage-save]] — storage + save mechanics: the two-store split, the `add-this` endpoint, the validation map, the `enabled = 0` strip quirk, the non-UI colour/language defaults.
 
 ## Related
 

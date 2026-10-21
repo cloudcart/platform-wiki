@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts"
 route_name: discounts-list
-route_path: /admin/marketing-new/discounts
+route_path: /admin/marketing/discounts
 aliases: ["Discounts", "Promo codes", "Coupons", "Coupon codes", "Sales", "Promotions", "Промо кодове", "Отстъпки", "Купони"]
 tags: [marketing, discounts, coupons, promo-codes, promotions]
 plan_gates: ["total_discounts", "discount_global", "discount_fixed", "discount_coupon", "discount_quantity", "discount_banner", "discount-code-pro", "discount-code-pro-generator"]
@@ -20,7 +20,7 @@ This page is the **hub** for the entire Discounts area. Each discount **type** h
 
 ## Where to find it
 
-**Sidebar → Marketing → Discounts.** The breadcrumb reads "Marketing → Discounts". The route is `/admin/marketing-new/discounts` (modern Vue UI). The legacy URL `/admin/discounts/` still works and continues to drive the same backend, but the modern Vue listing is the default merchant experience (toggled via the `marketing-discounts` cookie — set to `old` to fall back).
+**Sidebar → Marketing → Discounts.** The breadcrumb reads "Marketing → Discounts". The route is `/admin/marketing/discounts` (modern Vue UI). The old address `/admin/discounts/` redirects permanently to it; the legacy Smarty discount pages were removed on 2026-10-21.
 
 ## What the merchant can do here
 
@@ -71,14 +71,14 @@ Behaviour that applies uniformly across every discount type:
 
 | Label | Route name | Route path |
 |-------|------------|------------|
-| Discounts list | `discounts-list` | `/admin/marketing-new/discounts` |
-| Create | `discounts-create` | `/admin/marketing-new/discounts/create/:type` |
-| Edit | `discounts-edit` | `/admin/marketing-new/discounts/edit/:id` |
-| Fixed-discount products | `discounts-products` | `/admin/marketing-new/discounts/products/:id` |
-| Code PRO codes list | `discounts-code_pro-list` | `/admin/marketing-new/discounts/code-pro/:id` |
-| Code PRO bulk generator | `discounts-code_pro-generator` | `/admin/marketing-new/discounts/code-pro/:id/generator` |
-| Code PRO create / edit code | `discounts-code_pro-create` / `-edit` | `/admin/marketing-new/discounts/code-pro/:id/create` (or `/:codeId`) |
-| Container codes list | `discounts-codes_list` | `/admin/marketing-new/discounts/codes` |
+| Discounts list | `discounts-list` | `/admin/marketing/discounts` |
+| Create | `discounts-create` | `/admin/marketing/discounts/create/:type` |
+| Edit | `discounts-edit` | `/admin/marketing/discounts/edit/:id` |
+| Fixed-discount products | `discounts-products` | `/admin/marketing/discounts/products/:id` |
+| Code PRO codes list | `discounts-code_pro-list` | `/admin/marketing/discounts/code-pro/:id` |
+| Code PRO bulk generator | `discounts-code_pro-generator` | `/admin/marketing/discounts/code-pro/:id/generator` |
+| Code PRO create / edit code | `discounts-code_pro-create` / `-edit` | `/admin/marketing/discounts/code-pro/:id/create` (or `/:codeId`) |
+| Container codes list | `discounts-codes_list` | `/admin/marketing/discounts/codes` |
 
 The backend API is namespaced under `admin.api.discounts.*` — CRUD + sub-routes for `products/{id}` (Fixed), `code-pro/{id}` (PRO), and `codes` (Container).
 

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → UpSell & Cross-sell → UpSell List → Storefront firing"
 route_name: admin.up_sell.list
-route_path: /admin/marketing-new/up-sell
+route_path: /admin/marketing/up-sell
 aliases: ["UpSell popup firing", "UpSell in-stock gate", "UpSell already-in-cart filter", "UpSell view counter", "UpSell counters", "Кога се показва UpSell popup"]
 tags: [marketing, upsell, storefront, counters, popup]
 plan_gates: ["upsells"]
@@ -21,7 +21,7 @@ This aspect explains **when an UpSell popup actually shows to a customer** and h
 
 ## Where to find it
 
-These behaviours run on the **storefront**, not the admin. The merchant observes the results in the metric columns of the UpSell List (`/admin/marketing-new/up-sell`) — Views, Added to cart, Total cancel, In stock — see [[upsell-list-table]].
+These behaviours run on the **storefront**, not the admin. The merchant observes the results in the metric columns of the UpSell List (`/admin/marketing/up-sell`) — Views, Added to cart, Total cancel, In stock — see [[upsell-list-table]].
 
 ## What the merchant can do here
 

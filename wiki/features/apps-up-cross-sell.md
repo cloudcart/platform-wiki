@@ -19,7 +19,7 @@ source_count: 2
 - **Cross-sell**: "Customers also bought" or "Frequently bought together" — products shown alongside the current product.
 - **Upsell**: "Consider this higher-tier alternative" — premium / larger / better product variants suggested.
 
-The app is mainly an **installation gateway** — once installed, it opens `/admin/marketing-new/cross-sell` where the merchant manages the actual rules in the Vue Cross-Sell & UpSell manager.
+The app is mainly an **installation gateway** — once installed, it opens `/admin/marketing/cross-sell` where the merchant manages the actual rules in the Vue Cross-Sell & UpSell manager.
 
 > **No on/off control — this app has no "active / inactive" state.** Once it is installed it simply works; there is no Enable / Disable button and no "Activate application" switch on its screen. So *"the app is disabled"* is never the explanation for it not working — check its own settings, credentials, or plan access instead, and use **Uninstall** if the merchant genuinely wants it off.
 >
@@ -27,7 +27,7 @@ The app is mainly an **installation gateway** — once installed, it opens `/adm
 
 ## Where to find it
 
-Sidebar → Apps → install → **Up/Cross-Sell**. The route is `/admin/apps/up_cross_sell`. On install, the merchant is taken to `/admin/marketing-new/cross-sell` (the management UI).
+Sidebar → Apps → install → **Up/Cross-Sell**. The route is `/admin/apps/up_cross_sell`. On install, the merchant is taken to `/admin/marketing/cross-sell` (the management UI).
 
 The management UI is the Vue **Cross-Sell & UpSell** module — its screens are documented on:
 - [[marketing-cross-sell-list]] — the offer list.
@@ -39,9 +39,9 @@ The management UI is the Vue **Cross-Sell & UpSell** module — its screens are 
 ### Install gateway
 On click in the App Store, the platform:
 1. Installs the Up/Cross-Sell app.
-2. Takes the merchant to `/admin/marketing-new/cross-sell` (the management UI).
+2. Takes the merchant to `/admin/marketing/cross-sell` (the management UI).
 
-### Actual management (in `/admin/marketing-new/cross-sell`)
+### Actual management (in `/admin/marketing/cross-sell`)
 The merchant configures:
 - **Cross-sell rules**: when product X is viewed / added to cart, show products Y / Z as suggestions.
 - **Upsell rules**: when product X is viewed / added to cart, show higher-tier alternative product W.
@@ -57,7 +57,7 @@ Behavior is similar in spirit to [[apps-cart-rules]] (trigger + action) but spec
 
 ## Settings & fields
 
-The actual settings live in the Vue Cross-Sell & UpSell manager at `/admin/marketing-new/cross-sell`. The offer fields are documented on [[marketing-cross-sell]] (hub) and [[cross-sell-offer-form]].
+The actual settings live in the Vue Cross-Sell & UpSell manager at `/admin/marketing/cross-sell`. The offer fields are documented on [[marketing-cross-sell]] (hub) and [[cross-sell-offer-form]].
 
 ## Business rules
 
@@ -65,7 +65,7 @@ The actual settings live in the Vue Cross-Sell & UpSell manager at `/admin/marke
 
 This app is essentially a gateway that:
 1. Marks the app as installed.
-2. Opens the Cross-Sell & UpSell manager at `/admin/marketing-new/cross-sell`.
+2. Opens the Cross-Sell & UpSell manager at `/admin/marketing/cross-sell`.
 
 The actual functionality lives in the Marketing module, not in the App's own code.
 

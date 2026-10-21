@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → SEO → Text to add pagination to meta title and description"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["Pagination word", "Meta page word", "meta_page setting", "Pagination text", "Page 2 prefix", "Дума за страница", "Текст за страница в мета"]
 tags: [marketing, seo, meta-title, pagination, indexing]
 plan_gates: []
@@ -24,7 +24,7 @@ Despite the field being labelled "Title" in the UI, this is **NOT** a meta-title
 
 Sidebar → Marketing → SEO → **Main SEO settings** → the third card, with the info-column heading **"Text to add pagination to meta title and description"** and a single field labelled **Title**.
 
-The card is the new Vue version. A `marketing-seo-main=old` cookie falls back to the legacy Smarty page at `/admin/marketing/seo`.
+The card is on the Vue page. The legacy Smarty page and its `marketing-seo-main=old` cookie were removed on 2026-10-21.
 
 ## What the merchant can do here
 

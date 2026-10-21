@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Log"
 route_name: segments.core_new.log
-route_path: /admin/marketing-new/segments/log/:id
+route_path: /admin/marketing/segments/log/:id
 aliases: ["Segment log", "Segment audit log", "Segment processing log", "Segment changes log", "Сегмент лог", "История на сегмент"]
 tags: [marketing, segments, log, audit, subscribers]
 plan_gates: ["segments"]
@@ -23,7 +23,7 @@ The page is read-only — the merchant cannot edit or delete log rows. The log i
 
 ## Where to find it
 
-From the [[marketing-segments]] list, click the **Log** link on any segment row. The breadcrumb reads "Marketing → Campaigns → Segments → \<segment name\>". The route is `/admin/marketing-new/segments/log/:id`. The header shows the segment's name (truncated to 50 characters if longer) and a chart-bar icon.
+From the [[marketing-segments]] list, click the **Log** link on any segment row. The breadcrumb reads "Marketing → Campaigns → Segments → \<segment name\>". The route is `/admin/marketing/segments/log/:id`. The header shows the segment's name (truncated to 50 characters if longer) and a chart-bar icon.
 
 ## What the merchant can do here
 

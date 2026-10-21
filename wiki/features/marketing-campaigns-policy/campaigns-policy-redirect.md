@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Policy → Redirect"
 route_name: campaigns-policy
-route_path: /admin/marketing-new/campaigns/policy
+route_path: /admin/marketing/campaigns/policy
 aliases: ["Policy redirect", "Anti spam policy redirect preservation", "Policy open-redirect protection", "Post-accept redirect", "Policy redirect param", "Policy hash param"]
 tags: [marketing, campaigns, policy, compliance, anti-spam, security]
 plan_gates: []
@@ -20,7 +20,7 @@ This page documents **how the merchant's original destination is preserved** whe
 
 ## Where to find it
 
-Invisible to the merchant — it determines where they land after clicking Accept on `/admin/marketing-new/campaigns/policy` (see [[campaigns-policy-page-ui]]).
+Invisible to the merchant — it determines where they land after clicking Accept on `/admin/marketing/campaigns/policy` (see [[campaigns-policy-page-ui]]).
 
 ## What the merchant can do here
 
@@ -54,7 +54,7 @@ The `?hash=` blob is encrypted with the application framework's app key, so a ta
 
 ### Validation key uses the legacy path prefix (verified against backend)
 
-The prefix check uses `'/admin/campaigns/'` (the legacy path), **not** `/admin/marketing-new/campaigns/`. Vue-router redirects honour the legacy URL as the validation key because the backend was wired before the marketing-new route prefix existed; the actual landing-page redirect still resolves to the modern Vue route via `route('campaigns')`.
+The prefix check uses `'/admin/campaigns/'` (the legacy path), **not** `/admin/marketing/campaigns/`. Vue-router redirects honour the legacy URL as the validation key because the backend was wired before the Vue marketing routes existed; the actual landing-page redirect still resolves to the modern Vue route via `route('campaigns')`.
 
 ## Related
 

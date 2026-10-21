@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Statistics → Channel breakdown"
 route_name: campaigns-statistics
-route_path: /admin/marketing-new/campaigns/statistics/:id
+route_path: /admin/marketing/campaigns/statistics/:id
 aliases: ["Per-channel breakdown", "Campaign channel cards", "Email SMS Viber Web Push totals", "Greyed-out channel card"]
 tags: [marketing, campaigns, statistics, channels]
 plan_gates: ["abandoned_orders", "campaigns"]

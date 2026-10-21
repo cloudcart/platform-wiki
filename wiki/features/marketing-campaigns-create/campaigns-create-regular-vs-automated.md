@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Create campaign → Regular vs Automated"
 route_name: campaigns-create
-route_path: /admin/marketing-new/campaigns/create/:type(regular|automated)
+route_path: /admin/marketing/campaigns/create/:type(regular|automated)
 aliases: ["Regular vs Automated campaign", "Campaign shape", "Regular campaign", "Automated campaign", "Campaign trigger condition", "Регулярна vs автоматизирана кампания"]
 tags: [marketing, campaigns, create]
 plan_gates: ["abandoned_orders", "campaigns"]

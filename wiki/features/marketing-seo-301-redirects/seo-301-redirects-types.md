@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Seo → 301 Redirects → Redirect types"
 route_name: seo-301-redirects
-route_path: /admin/marketing-new/seo/301-redirects
+route_path: /admin/marketing/seo/301-redirects
 aliases: ["301 redirect types", "Redirect destination types", "Manual redirect", "External redirect", "Section redirect", "Entity-typed redirect", "Тип на пренасочване"]
 tags: [marketing, seo, redirects, types]
 plan_gates: []

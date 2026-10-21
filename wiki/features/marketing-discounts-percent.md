@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Percent"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Percent discount", "Percentage discount", "% off discount", "Cart percent discount", "Percentage promotion", "-X% off", "Процентна отстъпка", "Процент отстъпка"]
 tags: [marketing, discounts, percent]
 plan_gates: ["discount_global", "discount_coupon"]
@@ -32,8 +32,8 @@ Unlike [[marketing-discounts-fixed]] (which writes a per-variant *replacement* p
 
 **Sidebar → Marketing → Discounts → + Add discount.** The type-picker modal shows ten cards. To create a Percent discount:
 
-- **For a cart-wide / no-code promotion** ("15% off any order"): click the **Global discount** card. The route is `/admin/marketing-new/discounts/create/global`. In the form, set "Discount type" to **Percentage**.
-- **For a promo-code-driven discount** ("20% off with code SPRING20"): click the **Discount with promo code** card. The route is `/admin/marketing-new/discounts/create/code`. In the form, set "Discount type" to **Percentage**.
+- **For a cart-wide / no-code promotion** ("15% off any order"): click the **Global discount** card. The route is `/admin/marketing/discounts/create/global`. In the form, set "Discount type" to **Percentage**.
+- **For a promo-code-driven discount** ("20% off with code SPRING20"): click the **Discount with promo code** card. The route is `/admin/marketing/discounts/create/code`. In the form, set "Discount type" to **Percentage**.
 
 In both cases, the same backend `percent` type is created — the only difference is whether `code` is set. The list view labels the discount with its target-link summary (e.g., "15% off orders over 100 EUR").
 

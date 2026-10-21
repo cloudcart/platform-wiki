@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Seo → Meta"
 route_name: seo-meta
-route_path: /admin/marketing-new/seo/meta
+route_path: /admin/marketing/seo/meta
 aliases: ["Meta settings", "SEO meta", "Meta information", "Meta titles", "Meta descriptions", "Мета информация", "Мета настройки", "Мета заглавия"]
 tags: [marketing, seo, meta-tags, translations]
 plan_gates: []
@@ -20,9 +20,9 @@ This is a **page-type meta editor**, not a per-product or per-category one (thos
 
 ## Where to find it
 
-Sidebar → Marketing → SEO → **Meta information**. The route is `/admin/marketing-new/seo/meta`. The page header shows the title "Meta settings"; the breadcrumb reads "Marketing → Meta settings".
+Sidebar → Marketing → SEO → **Meta information**. The route is `/admin/marketing/seo/meta`. The page header shows the title "Meta settings"; the breadcrumb reads "Marketing → Meta settings".
 
-This is the new version of the legacy `/admin/marketing/seo/meta` page. Setting a `marketing-seo-meta=old` cookie falls back to the legacy version (still needed for the sections the new page does not expose — see Business rules).
+This is the Vue version of the page. The legacy Smarty page, which showed more sections, was removed on 2026-10-21 together with its `marketing-seo-meta=old` cookie (see Business rules).
 
 ## What the merchant can do here
 
@@ -76,11 +76,11 @@ For a section page, the platform resolves the `<title>` / `<meta name="descripti
 
 ### Only 5 of 16 sections exposed in the new page
 
-The SEO translation namespace also contains `cart`, `checkout`, `account` (and their sub-pages), `login`, `register`, `search.results`, `shops`, `wishlists`, plus the per-entity fallbacks `product` / `category` / `vendor`. These are editable on the legacy page but **NOT** exposed on the new page, which filters to the five top-level sections. Merchants needing the others must use the legacy page via the `marketing-seo-meta=old` cookie.
+The SEO translation namespace also contains `cart`, `checkout`, `account` (and their sub-pages), `login`, `register`, `search.results`, `shops`, `wishlists`, plus the per-entity fallbacks `product` / `category` / `vendor`. The page shows only the five top-level sections. The others were editable only on the legacy page, removed on 2026-10-21, and have no screen now.
 
-### No character counter / SERP preview (regression vs legacy)
+### No character counter / SERP preview
 
-The legacy page showed a Google SERP preview with character-count limits (the `seo.notice` string: "Please enter SEO title and description to preview how your website will be listed in Google search"). The new page has not yet ported this — the fields are plain inputs with no preview or counter.
+The removed legacy page showed a Google SERP preview with character-count limits. The Vue page has none — the fields are plain inputs with no preview or counter.
 
 ### Blank = fall back, no row delete
 

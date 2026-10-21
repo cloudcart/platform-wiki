@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → UpSell & Cross-sell → UpSell List → Fields & validation"
 route_name: admin.up_sell.list
-route_path: /admin/marketing-new/up-sell
+route_path: /admin/marketing/up-sell
 aliases: ["UpSell fields", "UpSell validation", "UpSell bundle exclusion", "UpSell chain re-anchor", "UpSell offer title", "Валидация на UpSell оферта"]
 tags: [marketing, upsell, list, validation, fields]
 plan_gates: ["upsells"]
@@ -21,7 +21,7 @@ This aspect documents the **fields** that define an UpSell offer and the **valid
 
 ## Where to find it
 
-The offer fields are edited in the edit modal of [[marketing-up-sell-diagram]] (opened from the UpSell List). The validation runs server-side on the create / edit request behind `/admin/marketing-new/up-sell`.
+The offer fields are edited in the edit modal of [[marketing-up-sell-diagram]] (opened from the UpSell List). The validation runs server-side on the create / edit request behind `/admin/marketing/up-sell`.
 
 ## What the merchant can do here
 

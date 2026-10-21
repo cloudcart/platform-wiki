@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Reputation → Modal"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Reputation modal", "Reputation - Email modal", "Reputation star icon", "Reputation read-only dashboard", "Модал Репутация", "Репутация - Email"]
 tags: [marketing, channels, reputation, monitoring, email, modal]
 plan_gates: ["campaign.channel.email"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Category → API, plan & permissions"
 route_name: blog-categories
-route_path: /admin/marketing-new/blog/category
+route_path: /admin/marketing/blog/category
 aliases: ["Blog category API", "Blog category plan gate", "Blog category permission", "marketing.blog_categories", "blog_categories plan feature", "Blog category webhook", "API за блог категории"]
 tags: [marketing, blog, content, categories, api, plan-gates, permissions]
 plan_gates: ["blog_categories"]

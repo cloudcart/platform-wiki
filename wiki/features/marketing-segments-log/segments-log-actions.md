@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Log → Action vocabulary"
 route_name: segments.core_new.log
-route_path: /admin/marketing-new/segments/log/:id
+route_path: /admin/marketing/segments/log/:id
 aliases: ["Segment log actions", "Segment log event types", "Segment log action keys", "Segment log channel labels", "Видове събития в сегмент лог"]
 tags: [marketing, segments, log, audit, actions]
 plan_gates: ["segments"]
@@ -20,7 +20,7 @@ This page is the reference for **what each Segment log row means**: the set of a
 
 ## Where to find it
 
-The action icon + label appears in the **Action** column, and the channel detail in the **Info** column, of the Segment log table at `/admin/marketing-new/segments/log/:id`. See [[segments-log-table-ui]] for the table layout itself.
+The action icon + label appears in the **Action** column, and the channel detail in the **Info** column, of the Segment log table at `/admin/marketing/segments/log/:id`. See [[segments-log-table-ui]] for the table layout itself.
 
 ## What the merchant can do here
 

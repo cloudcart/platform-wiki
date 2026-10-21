@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Edit → Steps 4 & 5 (Exit)"
 route_name: campaigns-edit
-route_path: /admin/marketing-new/campaigns/edit/:type(regular|automated)/:id
+route_path: /admin/marketing/campaigns/edit/:type(regular|automated)/:id
 aliases: ["Campaign exit tag", "Tag customers card", "Campaign exit purpose", "Makes an order", "Customers tags"]
 tags: [marketing, campaigns, edit, exit, tagging, step-4, step-5]
 plan_gates: []

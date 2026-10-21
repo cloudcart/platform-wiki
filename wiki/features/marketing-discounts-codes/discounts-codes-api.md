@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Container codes → JSON-API"
 route_name: discounts-codes_list
-route_path: /admin/marketing-new/discounts/codes
+route_path: /admin/marketing/discounts/codes
 aliases: ["Container codes API", "Container codes JSON-API", "Programmatic code generation", "Container codes no audit log", "API за промо кодове"]
 tags: [marketing, discounts, coupons, container, json-api, programmatic]
 plan_gates: ["discount_coupon"]

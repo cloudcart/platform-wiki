@@ -44,7 +44,7 @@ Each toggleable row has its own setting key `mail_<label>`. Default value is `ye
 |--------------|----------------|-------------|----------------|
 | Contact request | `contact` | `mail_contact` | A visitor submits the storefront contact form. |
 | Order Payment Status Change Notification | `order_payment_status_change` | `mail_order_payment_status_change` | An order's payment status changes (e.g., pending → paid). |
-| Order Status Change Notification | `order_status_change` | `mail_order_status_change` | An order's general status changes (e.g., pending → shipped). |
+| Order Status Change Notification | `order_status_change` | `mail_order_status_change` | An order's general status changes (e.g., pending → paid). |
 | New Customer Registration | `new_customer_register` | `mail_new_customer_register` | A new customer account is created on the storefront. |
 | New Order Add Notification | `order_add` | `mail_order_add` | A new order is placed. |
 | Customer Newsletter Subscribe | `customer_newsletter_subscribe` | `mail_customer_newsletter_subscribe` | A customer subscribes to the store's newsletter. |

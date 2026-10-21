@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Viber → Self-credentials"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Viber self-credentials", "Self-credentials Viber", "Merchant InfoBip account", "Custom Viber Business sender", "self_credentials_active", "Scenario provisioning"]
 tags: [marketing, channels, viber, self-credentials, infobip]
 plan_gates: ["viber_messages"]

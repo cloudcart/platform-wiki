@@ -66,7 +66,7 @@ The list-row banned chip and per-row formatter use a locale-wrapped variant of t
 
 ### Side-panel display only
 
-The legacy view is only accessible via the side-panel — there's no full-page version. The URL `/admin/marketing-new/campaigns/banned-info/{id}` returns a panel template, not a full page. The panel has the standard close ("X") button at the top — clicking it returns the merchant to the campaigns list.
+The legacy view is only accessible via the side-panel — there's no full-page version. The URL `/admin/marketing/campaigns/banned-info/{id}` returns a panel template, not a full page. The panel has the standard close ("X") button at the top — clicking it returns the merchant to the campaigns list.
 
 ## How it works
 

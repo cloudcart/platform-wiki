@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Web Push → Send pipeline"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Web Push send pipeline", "Web push notification campaign step", "web_push.title web_push.body", "WebPush merge tags", "Web Push pre-flight checks", "CampaignWebPushSend", "Уеб пуш изпращане"]
 tags: [marketing, channels, web-push, send-pipeline, validation, merge-tags, plan-gate]
 plan_gates: ["campaign.channel.web_push"]

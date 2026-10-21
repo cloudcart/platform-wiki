@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → API & plan gates"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Segments API", "Segments plan gates", "segments feature key", "subscribers feature key", "subscribers-rfm feature key", "rfm_interval", "bestseller_period"]
 tags: [marketing, segments, api, plan-gates, rfm]
 plan_gates: ["segments", "subscribers", "subscribers-rfm"]

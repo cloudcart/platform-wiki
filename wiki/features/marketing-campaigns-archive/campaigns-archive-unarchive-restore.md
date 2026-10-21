@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Archived → Unarchive"
 route_name: campaigns-archived
-route_path: /admin/marketing-new/campaigns/archived
+route_path: /admin/marketing/campaigns/archived
 aliases: ["Unarchive campaign", "Unarchive resurrects to inactive", "Restore archived campaign", "Restart completed campaign", "Clone to restart"]
 tags: [marketing, campaigns, archive, unarchive, restore]
 plan_gates: ["abandoned_orders", "campaigns"]

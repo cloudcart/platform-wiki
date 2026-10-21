@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Email notifications → Customisation limits"
 route_name: marketing-mails-list
-route_path: /admin/marketing-new/omnichannel/mails/list
+route_path: /admin/marketing/omnichannel/mails/list
 aliases: ["What merchants can customise in customer mails", "Customer mail customisation limits", "customer_email_notification_type", "plain vs html email", "Re-firing customer mails", "Per-locale customer mail templates", "Какво може и не може да се променя в имейл"]
 tags: [marketing, omnichannel, email, notifications, customisation, locale, refire]
 plan_gates: []
@@ -21,7 +21,7 @@ This page enumerates **what merchants CAN customise** per template, **what they 
 
 ## Where to find it
 
-Customisation is performed in the **template editor modal** (see [[omnichannel-mails-editor-modal]]) opened from the **Email notifications** list at `/admin/marketing-new/omnichannel/mails/list`.
+Customisation is performed in the **template editor modal** (see [[omnichannel-mails-editor-modal]]) opened from the **Email notifications** list at `/admin/marketing/omnichannel/mails/list`.
 
 Re-firing workflows live on [[orders-details]] and its sub-pages.
 

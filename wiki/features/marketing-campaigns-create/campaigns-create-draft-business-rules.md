@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Create campaign → Draft & gating rules"
 route_name: campaigns-create
-route_path: /admin/marketing-new/campaigns/create/:type(regular|automated)
+route_path: /admin/marketing/campaigns/create/:type(regular|automated)
 aliases: ["Create campaign draft rules", "Campaign created as draft", "Campaign quota check", "Campaign plan gating", "Campaign create permission", "Anti-spam policy gate", "Кампания създадена като чернова"]
 tags: [marketing, campaigns, create]
 plan_gates: ["abandoned_orders", "campaigns"]

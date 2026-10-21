@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Create campaign"
 route_name: campaigns-create
-route_path: /admin/marketing-new/campaigns/create/:type(regular|automated)
+route_path: /admin/marketing/campaigns/create/:type(regular|automated)
 aliases: ["Create campaign", "Start a campaign", "New campaign picker", "Campaign type picker", "Създай кампания", "Нова кампания"]
 tags: [marketing, campaigns, create]
 plan_gates: ["abandoned_orders", "campaigns"]

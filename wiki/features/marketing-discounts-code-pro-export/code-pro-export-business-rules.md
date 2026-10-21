@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO codes → Export → Business rules"
 route_name: discounts-code_pro-list
-route_path: /admin/marketing-new/discounts/code-pro/:id
+route_path: /admin/marketing/discounts/code-pro/:id
 aliases: ["Code PRO export business rules", "Export no filter scope", "Export condition type semantics", "Export permission plan-gate"]
 tags: [marketing, discounts, code-pro, export, csv]
 plan_gates: []

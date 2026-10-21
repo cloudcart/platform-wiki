@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → SMS Msg Hub → Overview"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["SMS MsgHub overview", "SMS MsgHub install", "SMS MsgHub channel card", "MsgHub UI surfaces", "MsgHub vs NTH"]
 tags: [marketing, channels, sms, msghub, install]
 plan_gates: ["campaign.channel.sms_msghub_message"]
@@ -21,7 +21,7 @@ This aspect covers how the merchant adds, activates, and removes the SMS MsgHub 
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing-new/campaigns/channels`) → the **SMS Msg Hub** channel card. The card's actions open modals over the channels page rather than navigating to separate routes.
+Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing/campaigns/channels`) → the **SMS Msg Hub** channel card. The card's actions open modals over the channels page rather than navigating to separate routes.
 
 Channel mapping key: `sms_msghub_message`. Actions hit the channels API (base `/admin/api/core/marketing/campaigns/channels`): activate/deactivate via `POST /{type}/status`, usage via `GET /{type}/usage`, logs via `/{mapping}/logs-list`, settings via `/{type}/settings`. Install/uninstall is handled through the applications API (`/admin/api/core/applications`).
 

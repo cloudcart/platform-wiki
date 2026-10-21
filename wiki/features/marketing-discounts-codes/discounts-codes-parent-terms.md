@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Container codes → Parent terms & plan-gating"
 route_name: discounts-codes_list
-route_path: /admin/marketing-new/discounts/codes
+route_path: /admin/marketing/discounts/codes
 aliases: ["Container code parent terms", "Container codes plan-gating", "Container codes uses counter", "Percent-value cap", "Container code delete cascade", "Наследени условия от контейнер", "Брояч на използвания"]
 tags: [marketing, discounts, coupons, container, plan-gating, uses-counter]
 plan_gates: ["discount_coupon"]
@@ -21,7 +21,7 @@ A generated Container code is a thin leaf row. Almost everything that governs ho
 
 ## Where to find it
 
-The parent Container discount is edited from the [[marketing-discounts]] table (its own discount-edit form). The generated codes hang off it and are listed at `/admin/marketing-new/discounts/codes` — see [[discounts-codes-list-view]].
+The parent Container discount is edited from the [[marketing-discounts]] table (its own discount-edit form). The generated codes hang off it and are listed at `/admin/marketing/discounts/codes` — see [[discounts-codes-list-view]].
 
 ## What the merchant can do here
 

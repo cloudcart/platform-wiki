@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → UI surfaces"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Channels page UI", "Channel card layout", "Channels modals", "Deactivation confirmation modal", "Lazy-load channel stats", "UI канали"]
 tags: [marketing, channels, ui, modals, card-layout]
 plan_gates: []

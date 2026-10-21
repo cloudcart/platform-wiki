@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Archived → Delete cascade"
 route_name: campaigns-archived
-route_path: /admin/marketing-new/campaigns/archived
+route_path: /admin/marketing/campaigns/archived
 aliases: ["Delete archived campaign", "Soft delete campaign", "Permanent delete campaign", "Campaign delete cascade", "Plan quota campaign delete", "Statistics survive campaign delete"]
 tags: [marketing, campaigns, archive, delete, cascade, plan-quota]
 plan_gates: ["abandoned_orders", "campaigns"]

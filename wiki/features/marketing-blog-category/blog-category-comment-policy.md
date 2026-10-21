@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Category → Comment policy"
 route_name: blog-categories
-route_path: /admin/marketing-new/blog/category
+route_path: /admin/marketing/blog/category
 aliases: ["Blog category comment policy", "Blog comment policy", "Automatic comments approval", "Comments need approval", "Turn off comments", "Политика за коментари на блог категория"]
 tags: [marketing, blog, content, categories, comments]
 plan_gates: ["blog_categories"]

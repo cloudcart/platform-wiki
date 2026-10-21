@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Subscribers → Remove subscribers"
 route_name: segments.core_new.subscribers
-route_path: /admin/marketing-new/segments/:id/subscribers
+route_path: /admin/marketing/segments/:id/subscribers
 aliases: ["Remove subscriber from segment", "Detach subscriber from segment", "Why can't I remove this subscriber from the segment", "Премахване на абонат от сегмент"]
 tags: [marketing, segments, subscribers, remove]
 plan_gates: ["segments"]
@@ -20,7 +20,7 @@ The **Remove** action detaches subscribers the merchant previously pinned in by 
 
 ## Where to find it
 
-Two entry points on the Subscribers-in-segment page (`/admin/marketing-new/segments/:id/subscribers`):
+Two entry points on the Subscribers-in-segment page (`/admin/marketing/segments/:id/subscribers`):
 
 - **Single-row trash icon** — confirms *"Remove subscriber from segment?"*.
 - **Bulk select + Delete** — select rows via checkbox, then the bulk Delete action.

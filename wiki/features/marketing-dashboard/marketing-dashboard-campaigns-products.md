@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Dashboard → Campaigns & Products"
 route_name: marketing-dashboard
-route_path: /admin/marketing-new/dashboard
+route_path: /admin/marketing/dashboard
 aliases: ["Top campaigns row", "Recent campaigns row", "Favorite products dashboard", "Expected products dashboard", "Restock modal dashboard", "Back-in-stock dashboard", "Маркетинг кампании топ", "Любими продукти", "Очаквани продукти"]
 tags: [marketing, dashboard, campaigns, products, favorites, expected, restock]
 plan_gates: []

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → System messages → Send counters"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Send count", "Sent counter", "Send messages counter", "Bulk status update", "System messages send aggregation"]
 tags: [marketing, channels, system-messages, counters, statistics]
 plan_gates: []

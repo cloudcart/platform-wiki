@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Viber → Settings"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Viber settings", "Viber settings modal", "Viber sender settings", "different_sender", "allow_self_credentials", "allow_promo_messages", "settings_type"]
 tags: [marketing, channels, viber, settings]
 plan_gates: ["viber_messages"]
@@ -21,7 +21,7 @@ The **Settings modal** for the Viber card is where the merchant configures *who 
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing-new/campaigns/channels`) → **Viber** card → **Settings** button. Title: *"Settings - Viber Message"*. The sub-component is `MarketingChannelsSettingsModalViber` rendered inside `MarketingChannelsSettingsModal`.
+Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campaigns-channels`, `/admin/marketing/campaigns/channels`) → **Viber** card → **Settings** button. Title: *"Settings - Viber Message"*. The sub-component is `MarketingChannelsSettingsModalViber` rendered inside `MarketingChannelsSettingsModal`.
 
 The settings payload is fetched via `GET /admin/api/core/marketing/campaigns/channels/viber-message/settings` and saved via the same path with a POST. The shape returned (`getUserSettings`) is **dual** — both `regular.*` and `self_credentials.*` are always present, plus metadata flags. The Vue front-end picks which panel to render off the metadata.
 

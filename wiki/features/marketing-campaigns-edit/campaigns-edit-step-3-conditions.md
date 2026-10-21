@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Edit → Step 3 (Conditions)"
 route_name: campaigns-edit
-route_path: /admin/marketing-new/campaigns/edit/:type(regular|automated)/:id
+route_path: /admin/marketing/campaigns/edit/:type(regular|automated)/:id
 aliases: ["Campaign condition block", "IF / ELSE branch", "Link clicked", "Email opened", "Overdue action", "Branch step"]
 tags: [marketing, campaigns, edit, condition, automated, step-3]
 plan_gates: []

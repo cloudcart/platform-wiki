@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Blog → Comment"
 route_name: blog-comments
-route_path: /admin/marketing-new/blog/comment
+route_path: /admin/marketing/blog/comment
 aliases: ["Blog comments", "Comments", "Comment moderation", "Comment queue", "Коментари", "Коментари на блог", "Модерация на коментари"]
 tags: [marketing, blog, comments, moderation, content]
 plan_gates: ["blog_comments"]
@@ -35,7 +35,7 @@ This hub is slim by design — it catalogues the cluster. Drill into the aspect 
 
 Sidebar → **Marketing** → **Blog** → **Comment**.
 
-Route name `blog-comments`; path `/admin/marketing-new/blog/comment`. Header icon is the comments icon. The breadcrumb reads "Marketing → Blog comments".
+Route name `blog-comments`; path `/admin/marketing/blog/comment`. Header icon is the comments icon. The breadcrumb reads "Marketing → Blog comments".
 
 There is also an **inline link** from each row of [[marketing-blog-articles]] — clicking the "Comments (N)" button on an article navigates here pre-filtered by article so the merchant can moderate per-article. The admin sidebar / dashboard / [[marketing-blog-articles]] header surface a count of pending comments, labelled *"%n comments pending for approval"* — the merchant's daily nudge to visit this queue.
 

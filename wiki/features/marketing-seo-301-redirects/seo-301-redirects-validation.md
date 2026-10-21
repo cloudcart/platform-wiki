@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Seo → 301 Redirects → Validation"
 route_name: seo-301-redirects
-route_path: /admin/marketing-new/seo/301-redirects
+route_path: /admin/marketing/seo/301-redirects
 aliases: ["301 redirect validation", "Old URL already exists", "Location is not valid", "Redirect form errors", "Same-URL silent skip", "Old URL is required"]
 tags: [marketing, seo, redirects, validation]
 plan_gates: []

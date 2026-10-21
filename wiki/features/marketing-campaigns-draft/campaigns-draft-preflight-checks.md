@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Draft → Pre-flight checks"
 route_name: campaigns-draft
-route_path: /admin/marketing-new/campaigns/draft
+route_path: /admin/marketing/campaigns/draft
 aliases: ["Draft activation pre-flight", "Start campaign validators", "Inactive to Active checks", "Channel-suspension cascade", "Campaign was not started", "Status toggle bypass"]
 tags: [marketing, campaigns, draft, validation, activation]
 plan_gates: ["abandoned_orders", "campaigns"]

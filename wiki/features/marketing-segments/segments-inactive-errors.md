@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Inactive errors"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Inactive segment", "Segment auto-disabled", "inactive_errors", "Segment disabled due to error"]
 tags: [marketing, segments, errors, notifications]
 plan_gates: []

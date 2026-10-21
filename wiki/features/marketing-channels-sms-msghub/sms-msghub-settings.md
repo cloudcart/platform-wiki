@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → SMS Msg Hub → Settings & config"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["SMS MsgHub settings", "MsgHub platform config", "MsgHub send request shape", "MsgHub credentials", "MsgHub sandbox"]
 tags: [marketing, channels, sms, msghub, settings, config]
 plan_gates: ["campaign.channel.sms_msghub_message"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Code PRO codes → Per-code form"
 route_name: discounts-code_pro-edit
-route_path: /admin/marketing-new/discounts/code-pro/:id/:codeId
+route_path: /admin/marketing/discounts/code-pro/:id/:codeId
 aliases: ["Code PRO form", "Per-code form", "Code PRO create form", "Code PRO edit form", "Conditions config row"]
 tags: [marketing, discounts, code-pro, form, conditions]
 plan_gates: ["discount-code-pro"]
@@ -23,7 +23,7 @@ For the backend keys, defaults, and validation strings see [[code-pro-fields]]. 
 
 ## Where to find it
 
-Reached from the codes list ([[marketing-discounts-code-pro]]) via **+ Add code** (route `discounts-code_pro-create`, path `/admin/marketing-new/discounts/code-pro/:id/create`) or by clicking a row (route `discounts-code_pro-edit`, path `/admin/marketing-new/discounts/code-pro/:id/:codeId`).
+Reached from the codes list ([[marketing-discounts-code-pro]]) via **+ Add code** (route `discounts-code_pro-create`, path `/admin/marketing/discounts/code-pro/:id/create`) or by clicking a row (route `discounts-code_pro-edit`, path `/admin/marketing/discounts/code-pro/:id/:codeId`).
 
 ## What the merchant can do here
 

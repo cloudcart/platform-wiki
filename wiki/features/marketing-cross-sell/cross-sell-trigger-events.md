@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Cross-Sell & UpSell → Trigger events & targets"
 route_name: admin.cross_sell.diagram
-route_path: /admin/marketing-new/cross-sell/diagram/{id?}
+route_path: /admin/marketing/cross-sell/diagram/{id?}
 aliases: ["Cross-Sell trigger events", "Cross-Sell events", "Cross-Sell targets", "Cross-Sell ALL_EVENTS", "Cross-Sell allowed targets", "add_to_cart event", "return_page event"]
 tags: [marketing, cross-sell, events, targets, conditions]
 plan_gates: ["cross_sells"]

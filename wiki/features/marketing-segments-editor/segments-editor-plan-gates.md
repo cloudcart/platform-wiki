@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Editor → Plan gates"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Segment editor plan gates", "Segment editor plan-limit banner", "Buy package banner", "segments plan feature", "subscribers plan feature", "subscribers-rfm plan feature"]
 tags: [marketing, segments, editor, plan-gates, paywall]
 plan_gates: ["segments", "subscribers", "subscribers-rfm"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Create campaign → Modal anatomy"
 route_name: campaigns-create
-route_path: /admin/marketing-new/campaigns/create/:type(regular|automated)
+route_path: /admin/marketing/campaigns/create/:type(regular|automated)
 aliases: ["Create campaign modal", "New campaign picker layout", "Campaign type picker tabs", "Custom Automation card", "Create campaign modal anatomy"]
 tags: [marketing, campaigns, create]
 plan_gates: ["abandoned_orders", "campaigns"]

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → SMS → Length & billing"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["SMS NTH length", "SMS NTH billing", "NTH SMS parts", "NTH cost model", "NTH usage alert", "NTH multi-part SMS"]
 tags: [marketing, channels, sms, nth, billing, usage]
 plan_gates: ["campaign.channel.sms_nth_message"]
@@ -21,7 +21,7 @@ This aspect documents **how an NTH SMS is counted and charged**: the GSM-7 / UCS
 ## Where to find it
 
 - The **character + SMS-part counter** appears live in the **campaign editor** when authoring an "SMS (NTH Message)" action body (see [[marketing-campaigns]]).
-- The **Usage** modal (sent-count vs plan cap) opens from the **SMS** channel card under Sidebar → **Marketing** → **Channels** → **Channels setup** (`campaigns-channels`, `/admin/marketing-new/campaigns/channels`). Its title is *"SMS Message Usage - {date_start} - {date_end}"*.
+- The **Usage** modal (sent-count vs plan cap) opens from the **SMS** channel card under Sidebar → **Marketing** → **Channels** → **Channels setup** (`campaigns-channels`, `/admin/marketing/campaigns/channels`). Its title is *"SMS Message Usage - {date_start} - {date_end}"*.
 
 ## What the merchant can do here
 

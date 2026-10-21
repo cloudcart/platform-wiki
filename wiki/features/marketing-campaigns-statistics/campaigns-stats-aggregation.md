@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Statistics → Hourly aggregation"
 route_name: campaigns-statistics
-route_path: /admin/marketing-new/campaigns/statistics/:id
+route_path: /admin/marketing/campaigns/statistics/:id
 aliases: ["Campaign statistics aggregation", "Hourly stats refresh", "Auto-archive completed campaign", "Statistics lag", "60-minute lag", "Stat counter refresh"]
 tags: [marketing, campaigns, statistics, aggregation, jobs]
 plan_gates: ["abandoned_orders", "campaigns"]

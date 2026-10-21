@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Draft → Draft tab"
 route_name: campaigns-draft
-route_path: /admin/marketing-new/campaigns/draft
+route_path: /admin/marketing/campaigns/draft
 aliases: ["Draft campaigns tab", "Draft list view", "Saved drafts list", "In-progress campaigns", "Чернови раздел"]
 tags: [marketing, campaigns, draft, list]
 plan_gates: ["abandoned_orders", "campaigns"]
@@ -28,7 +28,7 @@ Sidebar → **Marketing** → **Campaigns** → click the **Draft** tab.
 | Setting | Value |
 |---------|-------|
 | Route name | `campaigns-draft` |
-| Route path | `/admin/marketing-new/campaigns/draft` |
+| Route path | `/admin/marketing/campaigns/draft` |
 | Filter rule | `active = 2` AND `archived_at IS NULL` |
 
 The four campaign tabs share the same Vue list component; clicking a tab swaps the URL and re-queries the matching list endpoint.

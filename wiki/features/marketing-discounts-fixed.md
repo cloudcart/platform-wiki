@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Products"
 route_name: discounts-products
-route_path: /admin/marketing-new/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id
 aliases: ["Fixed discount products", "Fixed-price products", "Per-product price override", "Фиксирана отстъпка"]
 tags: [marketing, discounts, fixed, per-product-price]
 plan_gates: ["discount_fixed", "total_discounts"]
@@ -30,7 +30,7 @@ The merchant uses this page to:
 
 ## Where to find it
 
-From the [[marketing-discounts]] list, click "Products" on any **Fixed** discount row. The breadcrumb reads "Marketing → Discounts → Products". The route is `discounts-products` at `/admin/marketing-new/discounts/products/:id` (component `MarketingDiscountsProductsPage` — the SAME page documented in [[marketing-discounts-products]], since per-product price assignment is the shared mechanism for Fixed-type discounts). The rows shown are the products attached to this Fixed discount.
+From the [[marketing-discounts]] list, click "Products" on any **Fixed** discount row. The breadcrumb reads "Marketing → Discounts → Products". The route is `discounts-products` at `/admin/marketing/discounts/products/:id` (component `MarketingDiscountsProductsPage` — the SAME page documented in [[marketing-discounts-products]], since per-product price assignment is the shared mechanism for Fixed-type discounts). The rows shown are the products attached to this Fixed discount.
 
 The per-product price-edit form opens as a modal (`DiscountsProductModal`) over this page; it loads/saves via the discount-products API at `/admin/api/core/discounts/products/{id}`.
 

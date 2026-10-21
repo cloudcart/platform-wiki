@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Channel lifecycle"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Channel lifecycle", "Channel states", "Install activate suspend", "Deactivation cascade", "Жизнен цикъл канал", "Активиране на канал"]
 tags: [marketing, channels, campaigns, lifecycle, install, activate]
 plan_gates: []

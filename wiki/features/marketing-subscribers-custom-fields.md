@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → Custom Fields"
 route_name: subscribers-fields-list-new
-route_path: /admin/marketing-new/subscribers/fields
+route_path: /admin/marketing/subscribers/fields
 aliases: ["Subscriber Custom Fields", "Custom Subscriber Fields", "Subscriber custom attributes", "Персонализирани полета (абонати)", "Допълнителни полета на абонати"]
 tags: [marketing, subscribers, custom-fields, schema]
 plan_gates: []
@@ -33,9 +33,9 @@ This screen is split into 4 aspect pages, each covering one well-scoped slice. T
 
 Sidebar → **Marketing** → **Subscribers** → **Custom fields**.
 
-The route is `/admin/marketing-new/subscribers/fields`. Breadcrumb: Marketing → Subscribers → Custom fields.
+The route is `/admin/marketing/subscribers/fields`. Breadcrumb: Marketing → Subscribers → Custom fields.
 
-A legacy version of the same screen still exists at `/admin/subscribers/fields` (old admin); the modern Vue page replaces it — see [[subscribers-custom-fields-downstream]] for the differences.
+The legacy screen at `/admin/subscribers/fields` was removed on 2026-10-21; that address now redirects here. See [[subscribers-custom-fields-downstream]] for what the Vue page does.
 
 ## What the merchant can do here
 

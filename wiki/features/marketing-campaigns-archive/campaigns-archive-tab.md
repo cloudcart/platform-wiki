@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Archived → The tab"
 route_name: campaigns-archived
-route_path: /admin/marketing-new/campaigns/archived
+route_path: /admin/marketing/campaigns/archived
 aliases: ["Archived tab", "Archived campaigns list", "Archived tab columns", "Status column hidden archived"]
 tags: [marketing, campaigns, archive, archived, list]
 plan_gates: ["abandoned_orders", "campaigns"]
@@ -23,7 +23,7 @@ This page documents the **Archived tab** as a list view: what it shows, which co
 
 Sidebar → **Marketing** → **Campaigns** → **Archived** tab.
 
-The tab is the route `campaigns-archived` at `/admin/marketing-new/campaigns/archived`, rendering the shared campaigns list page. It pulls only campaigns that have an archive date set, each row showing title, dates, action counts, and reached / orders / turnover from the latest statistics aggregate.
+The tab is the route `campaigns-archived` at `/admin/marketing/campaigns/archived`, rendering the shared campaigns list page. It pulls only campaigns that have an archive date set, each row showing title, dates, action counts, and reached / orders / turnover from the latest statistics aggregate.
 
 ## What the merchant can do here
 

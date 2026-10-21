@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Segments → Types (One-time vs Automated)"
 route_name: segments.core_new.list
-route_path: /admin/marketing-new/segments
+route_path: /admin/marketing/segments
 aliases: ["Segment type", "One-time segment", "Automated segment", "regular segment", "automated segment", "TYPE_REGULAR", "TYPE_AUTOMATED"]
 tags: [marketing, segments, types, automation]
 plan_gates: ["segments"]

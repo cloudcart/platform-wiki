@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → UpSell & Cross-sell → Cross-Sell List → Model & plan budget"
 route_name: admin.cross_sell.list
-route_path: /admin/marketing-new/cross-sell
+route_path: /admin/marketing/cross-sell
 aliases: ["Cross-Sell plan budget", "Cross-Sell slot limit", "Cross-Sell master records only", "Cross-Sell vs UpSell model"]
 tags: [marketing, cross-sell, list, plans, model]
 plan_gates: []
@@ -21,7 +21,7 @@ This aspect documents the **structural model** behind the list — why it shows 
 
 ## Where to find it
 
-These rules govern the list at `/admin/marketing-new/cross-sell` and the save endpoints reached from the offer editor. The merchant sees their consequences in the "(N remaining)" counter on the Add button and in the one-row-per-offer layout of the grid.
+These rules govern the list at `/admin/marketing/cross-sell` and the save endpoints reached from the offer editor. The merchant sees their consequences in the "(N remaining)" counter on the Add button and in the one-row-per-offer layout of the grid.
 
 ## What the merchant can do here
 

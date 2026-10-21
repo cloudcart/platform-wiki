@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Flat → Form & entry surfaces"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Flat discount form", "Create flat discount", "Flat discount type-picker", "Discount with code card", "Flat discount sub-flows", "Flat discount code generator", "Flat discount label color"]
 tags: [marketing, discounts, flat, form, entry-surface]
 plan_gates: ["discount_global", "discount_coupon"]
@@ -25,8 +25,8 @@ Tickets that land here: *"where do I create a flat-amount discount?"*, *"how do 
 
 From the [[marketing-discounts]] list, click **+ Add discount**. The type-picker modal shows ten cards.
 
-- For a **no-code, cart-wide Flat discount**: click the **Discount** card → `discounts-create` with `type=global` → `/admin/marketing-new/discounts/create/global`. Set *Discount type* to **Fixed amount**.
-- For a **code-driven Flat discount**: click the **Discount with code** card → `discounts-create` with `type=code` → `/admin/marketing-new/discounts/create/code`. The form gains the **Generate a discount code** and **Region** blocks.
+- For a **no-code, cart-wide Flat discount**: click the **Discount** card → `discounts-create` with `type=global` → `/admin/marketing/discounts/create/global`. Set *Discount type* to **Fixed amount**.
+- For a **code-driven Flat discount**: click the **Discount with code** card → `discounts-create` with `type=code` → `/admin/marketing/discounts/create/code`. The form gains the **Generate a discount code** and **Region** blocks.
 
 Both create the same `flat` discount — the only difference is whether `code` is set. The list-view label summarises the target (e.g., "10 EUR off orders over 50 EUR").
 

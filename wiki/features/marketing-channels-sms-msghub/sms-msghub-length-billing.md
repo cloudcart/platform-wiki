@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → SMS Msg Hub → Length & billing"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["SMS MsgHub length", "SMS MsgHub billing", "MsgHub multi-part SMS", "MsgHub character counter", "MsgHub cost model", "MsgHub buy more credits"]
 tags: [marketing, channels, sms, msghub, billing, length]
 plan_gates: ["campaign.channel.sms_msghub_message"]

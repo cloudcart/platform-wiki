@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Percent → Targeting"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Percent discount targeting", "Percent discount settings field", "Percent discount targets"]
 tags: [marketing, discounts, percent, targeting]
 plan_gates: ["discount_global", "discount_coupon"]

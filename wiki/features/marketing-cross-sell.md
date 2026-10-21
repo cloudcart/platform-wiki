@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Cross-Sell & UpSell"
 route_name: admin.cross_sell.list
-route_path: /admin/marketing-new/cross-sell
+route_path: /admin/marketing/cross-sell
 aliases: ["Cross Sell", "Cross-Sell", "UpSell", "Cross Sell & UpSell", "Cross sell offers", "Свързани продукти", "Кръстосани продажби"]
 tags: [marketing, cross-sell, upsell, recommendations, offers]
 plan_gates: ["cross_sells"]
@@ -39,11 +39,11 @@ The **list view** (columns, filters, bulk actions, empty state) lives on its own
 
 ## Where to find it
 
-Sidebar → Marketing → **Cross-Sell & UpSell** (`Cross Sell & UpSell` per `header.install`). Direct URL: `/admin/marketing-new/cross-sell`.
+Sidebar → Marketing → **Cross-Sell & UpSell** (`Cross Sell & UpSell` per `header.install`). Direct URL: `/admin/marketing/cross-sell`.
 
-The module now runs as a **Vue app under `/admin/marketing-new/cross-sell`** (the sidebar entry is the default; there is no separate legacy screen to switch to). Its screens are the offer **list view** ([[marketing-cross-sell-list]]), the create / edit **offer form** ([[cross-sell-offer-form]]), the visual **offer editor / diagram page** ([[marketing-up-sell-diagram]] documents the same page shape), and the customer-facing popup (styled from the offer form). The module is gated on the **Up/Cross-Sell app being installed** — the install gateway at `/admin/apps/up_cross_sell` opens this manager (see [[apps-up-cross-sell]]).
+The module now runs as a **Vue app under `/admin/marketing/cross-sell`** (the sidebar entry is the default; there is no separate legacy screen to switch to). Its screens are the offer **list view** ([[marketing-cross-sell-list]]), the create / edit **offer form** ([[cross-sell-offer-form]]), the visual **offer editor / diagram page** ([[marketing-up-sell-diagram]] documents the same page shape), and the customer-facing popup (styled from the offer form). The module is gated on the **Up/Cross-Sell app being installed** — the install gateway at `/admin/apps/up_cross_sell` opens this manager (see [[apps-up-cross-sell]]).
 
-The "Add Cross Sell" button routes to the visual **offer editor** (the diagram page) at `/admin/marketing-new/cross-sell/diagram/:id` — the same page shape UpSell uses, see [[marketing-up-sell-diagram]].
+The "Add Cross Sell" button routes to the visual **offer editor** (the diagram page) at `/admin/marketing/cross-sell/diagram/:id` — the same page shape UpSell uses, see [[marketing-up-sell-diagram]].
 
 ## What the merchant can do here
 
@@ -81,7 +81,7 @@ The full field set is documented per-aspect. The 7 form boxes map to aspect page
 ## Business rules
 
 - **Trigger-action structure** mirrors [[apps-cart-rules]] — a Trigger (target) condition list + an Action (offered products) condition list — but Cross-Sell fires RECOMMENDATIONS, not discounts. See [[cross-sell-vs-cart-rules]].
-- **Cross-Sell and UpSell are separate engines with the same style of offer editor** — each offer is edited on its own diagram page ([[marketing-up-sell-diagram]] for UpSell; the Cross-Sell equivalent at `/admin/marketing-new/cross-sell/diagram/:id`). There is no shared multi-step tree — each offer stands alone.
+- **Cross-Sell and UpSell are separate engines with the same style of offer editor** — each offer is edited on its own diagram page ([[marketing-up-sell-diagram]] for UpSell; the Cross-Sell equivalent at `/admin/marketing/cross-sell/diagram/:id`). There is no shared multi-step tree — each offer stands alone.
 - **Per-offer plan cap** — UpSell and Cross-Sell offers count against **separate** numeric counters (`cross_sells` vs `upsells`). See [[cross-sell-vs-cart-rules]] + [[marketing-up-sell-list]].
 - The detailed engine-level rules (event list, target types, discount auto-flags, filter force-locks, view-cap cookie semantics, randomisation, on-delete cleanup) live on the aspect pages linked above.
 

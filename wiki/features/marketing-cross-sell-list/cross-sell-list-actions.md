@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → UpSell & Cross-sell → Cross-Sell List → Actions & UI"
 route_name: cross-sell.list
-route_path: /admin/marketing-new/cross-sell
+route_path: /admin/marketing/cross-sell
 aliases: ["Cross-Sell list actions", "Cross-Sell bulk actions", "Cross-Sell add button", "Cross-Sell status filter", "Cross-Sell list UI surfaces"]
 tags: [marketing, cross-sell, list, bulk, ui]
 plan_gates: []
@@ -21,7 +21,7 @@ This aspect documents **everything the merchant DOES from the list**: creating a
 
 ## Where to find it
 
-Sidebar → Marketing → **Cross-Sell** (`/admin/marketing-new/cross-sell`). All actions live on the list page itself — the Add button (top-right), the per-row controls, the checkbox column (for bulk delete), and the filter bar.
+Sidebar → Marketing → **Cross-Sell** (`/admin/marketing/cross-sell`). All actions live on the list page itself — the Add button (top-right), the per-row controls, the checkbox column (for bulk delete), and the filter bar.
 
 ## What the merchant can do here
 
@@ -31,7 +31,7 @@ The "**Add Cross Sell**" button in the top-right (label *"Add Cross Sell"* + a r
 
 ### Edit an existing offer
 
-Click the row title → opens the offer's **diagram page** (`/admin/marketing-new/cross-sell/diagram/:id`) — a summary card of that single offer (its target-condition groups + action groups). Editing happens via the **Edit** button there, which opens the offer's edit modal (see [[marketing-up-sell-diagram]] for the page shape). Each offer is standalone — there is no tree of mixed nodes to edit.
+Click the row title → opens the offer's **diagram page** (`/admin/marketing/cross-sell/diagram/:id`) — a summary card of that single offer (its target-condition groups + action groups). Editing happens via the **Edit** button there, which opens the offer's edit modal (see [[marketing-up-sell-diagram]] for the page shape). Each offer is standalone — there is no tree of mixed nodes to edit.
 
 ### Toggle active per row
 

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Policy → Enforcement"
 route_name: campaigns-policy
-route_path: /admin/marketing-new/campaigns/policy
+route_path: /admin/marketing/campaigns/policy
 aliases: ["Policy enforcement", "Anti spam policy gate", "Campaign middleware order", "Policy router guard", "Policy middleware", "Admin-namespace policy gate"]
 tags: [marketing, campaigns, policy, compliance, anti-spam, middleware]
 plan_gates: []
@@ -20,7 +20,7 @@ This page documents **how the Anti-Spam Policy gate is enforced** — the two la
 
 ## Where to find it
 
-The enforcement is invisible to the merchant — it manifests as an automatic redirect to `/admin/marketing-new/campaigns/policy` when they try to open a campaign-area screen before accepting.
+The enforcement is invisible to the merchant — it manifests as an automatic redirect to `/admin/marketing/campaigns/policy` when they try to open a campaign-area screen before accepting.
 
 ## What the merchant can do here
 
@@ -62,7 +62,7 @@ The middleware checks `app_namespace == 'sitecp'` — i.e. it only enforces when
 
 ### AJAX vs full-page handling
 
-For **AJAX** requests blocked by the middleware, the response is `200 OK` with `{status: 'success', redirect: '/admin/marketing-new/campaigns/policy'}` — the frontend interprets this and navigates. For **non-AJAX** requests, the response is a `302 Redirect`. This dual-mode behaviour is intentional so the SPA shows a smooth redirect rather than an unexpected 302 from an XHR.
+For **AJAX** requests blocked by the middleware, the response is `200 OK` with `{status: 'success', redirect: '/admin/marketing/campaigns/policy'}` — the frontend interprets this and navigates. For **non-AJAX** requests, the response is a `302 Redirect`. This dual-mode behaviour is intentional so the SPA shows a smooth redirect rather than an unexpected 302 from an XHR.
 
 ## How it works
 

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Cross-Sell & UpSell → View tracking & randomisation"
 route_name: admin.cross_sell.list
-route_path: /admin/marketing-new/cross-sell
+route_path: /admin/marketing/cross-sell
 aliases: ["Cross-Sell view cap", "Cross-Sell view cookie", "cross_sell_view cookie", "cross_sell_cancel cookie", "Cross-Sell randomisation", "Cross-Sell view counter", "Cross-Sell on delete cleanup"]
 tags: [marketing, cross-sell, cookies, view-cap, randomisation, metrics]
 plan_gates: ["cross_sells"]

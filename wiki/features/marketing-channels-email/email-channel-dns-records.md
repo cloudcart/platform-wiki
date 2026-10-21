@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Email → DNS records"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Email DNS records", "SPF DKIM Tracking DMARC", "Domain verification", "Tracking CNAME", "Cloudflare auto-CNAME", "Domain.VerifySpf", "Domain.VerifyDkim", "Domain.VerifyDMARC", "Domain.VerifyTracking", "DNS записи за имейл"]
 tags: [marketing, channels, email, dns, dkim, spf, dmarc, cloudflare]
 plan_gates: ["campaign.channel.email"]

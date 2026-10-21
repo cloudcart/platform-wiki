@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Usage → Counter model"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Total sent counter", "Channel send counter", "Cumulative send count", "Per-channel counter", "SMS multi-part counting", "Self-credentials excluded from count", "Бройка изпратени съобщения", "Кумулативен брояч"]
 tags: [marketing, channels, usage, counter, send, mongo]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]

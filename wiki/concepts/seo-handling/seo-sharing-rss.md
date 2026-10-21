@@ -30,7 +30,7 @@ Covered:
 - Open Graph tags emitted by the storefront: `og:image`, `og:title`, `og:description`.
 - The RSS feed: products-only, no cache, ordering, item body, channel title source.
 - The 300-char-truncated description + embedded store contact / social block in each RSS item (verify).
-- Sharing-card route divergence: every other card on [[marketing-seo]] posts to `/admin/api/core/seo/settings/*`; the sharing card posts to **`/admin/marketing/seo/add-this`** (legacy sitecp router) (verify).
+- Sharing-card route: the sharing card posts to `/admin/api/core/seo/settings/add-this`, which has no handler on production on 2026-10-21 (verify).
 - RSS URL host derived from primary domain — re-paste required if the merchant changes primary domain.
 
 Not covered here:
@@ -43,7 +43,7 @@ Not covered here:
 ## Contrasts
 
 - **Sharing module vs. Open Graph image** — same admin card, very different outcomes. The module (AddThis-style) is dead UX on every modern theme since AddThis shut down in May 2023. The `og:image` is the default Open Graph image used by Facebook / LinkedIn / Viber for link previews — the only field on that card that still has merchant impact. Practical guidance: ignore every module toggle on the sharing card, upload the og:image (1200 × 630 px recommended by Facebook), click Save.
-- **Sharing card POSTs to LEGACY route** — every other card on the Main SEO page posts to `/admin/api/core/seo/settings/*` (new Core/Core API), but the Sharing card posts to `/admin/marketing/seo/add-this` (legacy sitecp router). The Core/Core admin API does not expose an `add-this` endpoint at all (verify).
+- **Sharing card's save route** — the Sharing card posts to `/admin/api/core/seo/settings/add-this`, beside the other cards' `/admin/api/core/seo/settings/*` routes; the Core admin API defines no `add-this` route (verify — on 2026-10-21 production has no handler at this address; the legacy `seo/add-this` route was removed with the Smarty SEO pages).
 - **Sitemap.xml vs. RSS feed** — sitemap is the "here are my indexable URLs" catalog for crawlers ([[seo-sitemap-robots]]). RSS is a third-party product feed (Pricerunner, Skroutz, "RSS-to-email" automations) — NOT a search-engine submission. The merchant should submit sitemap to Google Search Console; submit RSS to Skroutz / Mailchimp / blog readers.
 - **`/feed` RSS vs. full Google Shopping feed** — the storefront's `/feed` is a coarse fallback. Google Shopping (older Merchant Center setups) accepts it, but modern Merchant Center requires the structured Product Feed app.
 
@@ -57,9 +57,9 @@ The only field that still matters on this card is the **Main sharing picture** �
 
 Practical guidance: ignore every module toggle on the sharing card, upload the og:image, click Save.
 
-### Sharing card legacy POST route
+### Sharing card POST route
 
-Every other card on [[marketing-seo]] posts to `/admin/api/core/seo/settings/*` (new Core/Core API). The Sharing card alone posts to **`/admin/marketing/seo/add-this`** (legacy sitecp router). The Core/Core admin API does not expose an `add-this` endpoint at all (verify). Merchants who proxy admin traffic via custom infra need to allow both endpoints, not just the Core API.
+Every card on [[marketing-seo]] posts under `/admin/api/core/seo/settings/*`; the Sharing card's address is `/admin/api/core/seo/settings/add-this` (verify — on 2026-10-21 production has no handler at this address; the legacy `seo/add-this` route was removed with the Smarty SEO pages).
 
 ### Open Graph tags emitted by the storefront
 

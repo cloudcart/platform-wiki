@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Edit → Step 2 (Trigger)"
 route_name: campaigns-edit
-route_path: /admin/marketing-new/campaigns/edit/:type(regular|automated)/:id
+route_path: /admin/marketing/campaigns/edit/:type(regular|automated)/:id
 aliases: ["Campaign trigger", "Campaign segment", "Trigger condition", "Subscribers count chip", "Inline create segment"]
 tags: [marketing, campaigns, edit, segments, step-2]
 plan_gates: []

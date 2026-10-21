@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Execution internals"
 route_name: campaigns
-route_path: /admin/marketing-new/campaigns
+route_path: /admin/marketing/campaigns
 aliases: ["Campaign enrolment pipeline", "Campaign send pipeline", "Campaign statistics aggregation", "Campaign queue internals", "Campaign statistics store"]
 tags: [marketing, campaigns, queue, statistics, internals]
 plan_gates: ["campaigns"]

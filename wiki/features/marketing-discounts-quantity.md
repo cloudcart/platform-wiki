@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Quantity"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/quantity
+route_path: /admin/marketing/discounts/create/quantity
 aliases: ["Quantity Discount", "Buy-N-Get-M", "BOGO", "Volume discount", "Tier discount", "Buy more pay less", "Количествена отстъпка"]
 tags: [marketing, discounts, quantity, bogo, tier]
 plan_gates: ["discount_quantity", "total_discounts"]
@@ -44,7 +44,7 @@ From the [[marketing-discounts]] list, click **+ Add discount** and pick the **Q
 
 If the merchant's plan doesn't include the `discount_quantity` feature, the card shows **"Not supported by plan"** and is disabled — see [[quantity-discount-plan-gating]].
 
-The breadcrumb on the form reads "Marketing → Discounts → Create discount". The URL is `/admin/marketing-new/discounts/create/quantity`. After save, the merchant lands on the edit URL `/admin/marketing-new/discounts/edit/{id}`.
+The breadcrumb on the form reads "Marketing → Discounts → Create discount". The URL is `/admin/marketing/discounts/create/quantity`. After save, the merchant lands on the edit URL `/admin/marketing/discounts/edit/{id}`.
 
 ## What the merchant can do here (at a glance)
 

@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → SMS → Send pipeline"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["SMS NTH send pipeline", "NTH queued send", "NTH retry", "NTH pre-flight checks", "NTH job dispatch"]
 tags: [marketing, channels, sms, nth, send, queue]
 plan_gates: ["campaign.channel.sms_nth_message"]
@@ -20,7 +20,7 @@ This aspect documents **how an NTH SMS actually gets sent** — the distinguishi
 
 ## Where to find it
 
-This is backend send behaviour, not a screen. It runs whenever a [[marketing-campaigns|campaign]] step of type **"SMS (NTH Message)"** (`sms_nth_message`) executes. The merchant observes its results in the **Logs** modal on the SMS channel card (route `campaigns-channels`, `/admin/marketing-new/campaigns/channels`).
+This is backend send behaviour, not a screen. It runs whenever a [[marketing-campaigns|campaign]] step of type **"SMS (NTH Message)"** (`sms_nth_message`) executes. The merchant observes its results in the **Logs** modal on the SMS channel card (route `campaigns-channels`, `/admin/marketing/campaigns/channels`).
 
 ## What the merchant can do here
 

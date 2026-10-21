@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Countdown → Programmatic access"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/countdown
+route_path: /admin/marketing/discounts/create/countdown
 aliases: ["Countdown API", "Countdown GraphQL", "Countdown webhook", "Countdown JSON-API v2 unsupported", "Countdown audit log"]
 tags: [marketing, discounts, countdown, api, webhooks, graphql]
 plan_gates: []

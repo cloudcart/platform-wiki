@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Discounts → Shipping → Force-save"
 route_name: discounts-create
-route_path: /admin/marketing-new/discounts/create/global
+route_path: /admin/marketing/discounts/create/global
 aliases: ["Free shipping force_save", "Save the discount on your order", "Shipping discount admin edit", "force_save shipping"]
 tags: [marketing, discounts, shipping, force-save, admin-edit]
 plan_gates: []
@@ -23,7 +23,7 @@ It matters because shipping discounts and order-over discounts often live on ord
 
 ## Where to find it
 
-The **Save the discount on your order** toggle appears on the Create / Edit form at `/admin/marketing-new/discounts/create/global` (or `create/code`) whenever the merchant has set Discount type to **Free shipping**. The field is shown in both target modes (`all` and `order_over`) and is **required** for `type = shipping`. See [[marketing-discounts-shipping]] for the entry-surface flow.
+The **Save the discount on your order** toggle appears on the Create / Edit form at `/admin/marketing/discounts/create/global` (or `create/code`) whenever the merchant has set Discount type to **Free shipping**. The field is shown in both target modes (`all` and `order_over`) and is **required** for `type = shipping`. See [[marketing-discounts-shipping]] for the entry-surface flow.
 
 ## What the merchant can do here
 

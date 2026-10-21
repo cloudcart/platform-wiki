@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Channels → Channels setup → Reputation → Metrics"
 route_name: campaigns-channels
-route_path: /admin/marketing-new/campaigns/channels
+route_path: /admin/marketing/campaigns/channels
 aliases: ["Reputation metrics", "Spam rate Open rate Bounce rate Click rate", "Reputation rate roll-up", "abusepercent openedpercent unknownuserspercent clickedpercent", "Метрики за репутация", "Спам процент процент отворени"]
 tags: [marketing, channels, reputation, metrics, email, deliverability]
 plan_gates: ["campaign.channel.email"]

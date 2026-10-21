@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Edit → Launch flow"
 route_name: campaigns-edit
-route_path: /admin/marketing-new/campaigns/edit/:type(regular|automated)/:id
+route_path: /admin/marketing/campaigns/edit/:type(regular|automated)/:id
 aliases: ["Review and launch modal", "Save draft", "Start campaign", "Campaign draft guard", "Leave draft campaign", "Activation cascade", "SetSubscribersToSingleSegment", "ExecuteCampaign"]
 tags: [marketing, campaigns, edit, launch, draft, activation]
 plan_gates: []

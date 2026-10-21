@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Subscribers → Bulk actions"
 route_name: subscribers.list
-route_path: /admin/marketing-new/subscribers
+route_path: /admin/marketing/subscribers
 aliases: ["Subscribers bulk actions", "Bulk-tag subscribers", "Bulk-accept marketing", "Per-row subscriber actions"]
 tags: [marketing, subscribers, bulk, actions]
 plan_gates: ["subscribers"]

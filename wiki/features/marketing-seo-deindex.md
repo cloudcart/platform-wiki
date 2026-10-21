@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → SEO → Deindex Filtered and Sorted pages"
 route_name: seo-main
-route_path: /admin/marketing-new/seo
+route_path: /admin/marketing/seo
 aliases: ["Deindex filtered pages", "Noindex query limit", "Filtered & sorted noindex", "noindex meta tag", "Деиндексиране", "Деиндексирай филтрираните страници"]
 tags: [marketing, seo, deindex, noindex, indexing]
 plan_gates: []

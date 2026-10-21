@@ -21,7 +21,7 @@ This aspect covers **when** a discount can fire: its `active` flag, its `date_st
 
 ## Where to find it
 
-**Sidebar → Marketing → Discounts → row toggle / Edit form → Date range block.** The activation switch is the per-row toggle on the list (`/admin/marketing-new/discounts`). The date window is configured in the **Date range** block of the create/edit form for every type.
+**Sidebar → Marketing → Discounts → row toggle / Edit form → Date range block.** The activation switch is the per-row toggle on the list (`/admin/marketing/discounts`). The date window is configured in the **Date range** block of the create/edit form for every type.
 
 ## What the merchant can do here
 

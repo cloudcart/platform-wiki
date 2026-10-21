@@ -2,7 +2,7 @@
 type: feature
 nav_path: "Marketing → Campaigns → Policy → Acceptance log"
 route_name: campaigns-policy
-route_path: /admin/marketing-new/campaigns/policy
+route_path: /admin/marketing/campaigns/policy
 aliases: ["Policy acceptance log", "Anti spam policy audit trail", "Policy acceptance record", "Anti spam policy consent log", "What is recorded on Accept"]
 tags: [marketing, campaigns, policy, compliance, anti-spam, gdpr, audit]
 plan_gates: []
