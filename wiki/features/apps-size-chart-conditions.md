@@ -7,14 +7,14 @@ aliases: ["Size Chart Conditions", "Size Chart rules", "Size Chart-to-product ma
 tags: [apps, others, size-chart, conditions, mapping]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-28
+updated: 2026-10-21
 source_count: 1
 ---
 # Size Chart → Conditions
 
 ## Purpose
 
-The **Conditions** view is where the merchant defines **which products get which size chart** — rules mapping categories / brands / tags to specific size charts. See [[apps-size-chart]] for the full feature set.
+The **Conditions** view is where the merchant defines **which products get which size chart** — each condition links a size-chart page (an ordinary page from Content → Pages) to one or more categories and, optionally, manufacturers. See [[apps-size-chart]] for the full feature set.
 
 The DB stores conditions in `@app_size_chart_conditions` (per [[apps-size-chart]]) which links `condition_id` to specific size-chart `id`.
 
@@ -30,38 +30,35 @@ Per row:
 
 | Column | Notes |
 |---|---|
-| **Size chart** | Which named chart this condition references. |
-| **Match type** | Category / Brand (vendor) / Tag / Product. |
-| **Match value** | The specific entity (e.g., category "T-shirts", brand "Adidas"). |
-| **Priority** | When multiple conditions match a product, which applies first. |
-| **Actions** | Edit, Delete. |
+| **Title** | The internal title; click it to edit the condition. |
+| **Title on website** | The link text shown on the product page. |
+| **Page** | The size-chart page, linking to its editor. |
+| **Status** | Active / inactive switch. |
+| (delete) | Deletes the condition. |
 
 ### Add condition
 
-`+ Add condition` modal:
-1. Pick a size chart.
-2. Pick match type (category / brand / tag / product).
-3. Pick the specific match value.
-4. Set priority.
-5. Save.
+**Create new** opens the condition form:
+1. **Title (For internal use)** — required.
+2. **Title (Will be Visible in the Store)** — required; the link text on the product page.
+3. **Page** — required; the size-chart page.
+4. **Category** — one or more, required.
+5. **Manufacturers** — optional, one or more.
+6. Save.
 
-### Priority handling
+### When several conditions match
 
-When multiple conditions match a product (e.g., it's in T-shirts category AND has Brand X), the highest-priority condition's chart is shown. The merchant orders conditions intentionally.
+There is no priority setting — the platform picks one condition by category (see *How it works* below).
 
 ### What the merchant CANNOT do here
-- Define the size chart content here — that's the parent app's chart-CRUD.
+- Define the size chart content here — it is an ordinary page, edited under Content → Pages.
 - Have a product with NO matching condition show any chart (in that case, no button appears).
 
 ## Settings & fields
 
-Per [[apps-size-chart]] data model: conditions table links charts (`@app_size_chart`) to products via category / brand / tag / product matches.
+Each condition holds an internal title, a store title, a page, a status, and its category × manufacturer combinations (see *How it works* below).
 
 ## Business rules
-
-### Default chart fallback
-
-When the merchant defines a default chart (without specific conditions), it applies to ALL products as fallback (verify).
 
 ### Permission
 Standard apps permission scope.
@@ -71,13 +68,12 @@ Standard apps permission scope.
 - [[apps-size-chart]] — hub.
 - [[products-categories]] — categories as match values.
 - [[products-vendors]] — vendors as match values.
-- [[products-tags]] — tags as match values.
 
 ## How it works (verified against backend)
 
 ### Categories + optional vendors are the only match keys
 
-The condition form (the platform code / `update`) accepts exactly two inputs:
+The condition form has exactly two match inputs:
 
 - **Categories** — required, multi-select.
 - **Vendors / manufacturers** — optional, multi-select (comma-separated in the request).
@@ -92,9 +88,9 @@ There is no priority field, no tag-based match, no per-product match, and no per
 - *"You already have conditions created with the selected categories and manufacturers"* — when every category-vendor pair already exists, the platform refuses to create the duplicate condition and aborts.
 - *"You now have conditions created with the selected categories"* — same duplicate error when no vendors are selected.
 
-### Match resolution: closest category wins, no priority field
+### Match resolution: by category, no priority field
 
-When a customer opens a product page, the platform resolves which chart applies by walking the product's category and all its parents (most-specific first) and returning the **first** matching condition. There is no merchant-visible priority field — order is determined automatically by category depth (deeper / more-specific categories override broader ones). Vendor narrows the match: a condition with a vendor only fires when the product's vendor matches.
+When a customer opens a product page, the platform collects the product's categories and all their parent categories, and picks the matching condition whose category was created most recently — usually, but not always, the most specific one. There is no merchant-visible priority field. Manufacturers work like this: for a product that has a manufacturer, only conditions that list that manufacturer match (a condition without manufacturers does not); for a product without a manufacturer, any condition on its categories can match.
 
 ### Internal vs storefront title
 
@@ -107,11 +103,11 @@ The storefront title can be edited per condition, so the same underlying CMS pag
 
 ### Status toggle
 
-Each condition has a status (active / inactive) — the merchant can switch a condition off without deleting it, in which case the matched products stop showing the button.
+Each condition has a status (active / inactive) switch in the list. The storefront's size-chart lookup does not read it, so switching a condition off does not hide its link on matching products; deleting the condition does.
 
 ### No bulk import, no CSV
 
-Conditions are created one at a time through the modal. There is no CSV-import endpoint and no batch tooling in this app.
+Conditions are created one at a time through the **Create new** form. There is no CSV-import endpoint and no batch tooling in this app.
 
 ### Editing reuses the create form
 
@@ -119,7 +115,7 @@ Editing a condition deletes the existing `@app_size_chart_conditions` rows for t
 
 ### No default / fallback chart
 
-If a product does not match any active condition, no size-chart button is shown. There is no global "default chart" setting and no behaviour for "show this chart when nothing else matches".
+If a product does not match any condition, no size-chart button is shown. There is no global "default chart" setting and no behaviour for "show this chart when nothing else matches".
 
 ## Open questions
 

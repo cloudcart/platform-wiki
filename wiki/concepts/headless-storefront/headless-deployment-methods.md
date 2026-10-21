@@ -5,7 +5,7 @@ aliases: ["Nitrogen deployment methods", "CLI deployment", "GitHub deployment", 
 tags: [nitrogen, headless, deployment, cli, github, ci-cd, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 4
 ---
 
@@ -42,7 +42,7 @@ Not covered:
 ## Contrasts
 
 - **CLI mode vs GitHub mode** — CLI is for merchants running their own pipeline; GitHub is fully managed with auto-deploy on push. Each storefront locks to its initial choice.
-- **Nova deploy tokens vs Storefront API tokens** — Nova deploy tokens authenticate the DEPLOY COMMAND'S calls to Nova itself (push a build). Storefront API tokens authenticate the DEPLOYED APP'S calls TO CloudCart (read products, write cart). Different tabs, different rotation rules, different scopes. See [[headless-storefront-api]] for the API-token side.
+- **Nova deploy tokens vs Storefront API tokens** — Nova deploy tokens authenticate the DEPLOY COMMAND'S calls to Nova itself (push a build). Storefront API tokens authenticate the DEPLOYED APP'S calls TO CloudCart (read products, write cart). Different tabs, different rotation rules. See [[headless-storefront-api]] for the API-token side.
 - **GitHub App vs OAuth personal token** — Nitrogen uses a **GitHub App** scoped to one repo with limited permissions, NOT a personal access token. The merchant can revoke the app's access from GitHub's settings at any time.
 
 ## Where it applies
@@ -104,7 +104,7 @@ GitHub-mode deployments show up in the deployment history with a `cloudcart[bot]
 
 The Nova tab on [[nitrogen-storefront-overview]] exposes **Deployment Tokens** — these authenticate the CLI / CI-CD process when pushing a build to Nova. The first deploy token is created automatically when the storefront is created (named "Default"). The merchant can create up to `limits.max_nova_tokens_per_storefront` (default 10 — see [[headless-nitrogen-overview]]) named tokens for granular revocation (e.g., one per CI pipeline, or per developer machine).
 
-Each token is shown ONCE on creation with a *"Copy this token now. You won't be able to see it again."* warning. The platform stores only a SHA-256 hash plus a 15-character prefix for masked display — if the merchant loses the raw value, the only recovery is to regenerate.
+Each token is shown ONCE on creation with a *"Copy this value now. You won't be able to see it again."* warning. The platform stores only a SHA-256 hash plus a 15-character prefix for masked display — if the merchant loses the raw value, the only recovery is to create a new token (and delete or turn off the lost one).
 
 ### Refresh-token rotation handles GitHub access-token expiry automatically
 

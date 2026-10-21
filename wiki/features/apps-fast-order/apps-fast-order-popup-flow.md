@@ -7,7 +7,7 @@ aliases: ["Fast Order popup", "Fast Order form", "Fast Order panel", "Quick orde
 tags: [apps, others, conversion, checkout, conversion-rate]
 plan_gates: ["checkout"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 5
 ---
 
@@ -65,7 +65,7 @@ The Fast Order panel includes the same GDPR consent block (form key `submit_paym
 
 ### No built-in CAPTCHA / rate-limit / IP-throttle
 
-The Fast Order create-order endpoint validates the form (email required; phone / first_name / last_name conditionally required; GDPR terms accepted; customer-not-banned; cart price within `checkout_min_price` / `checkout_max_price`) and runs the banned-customer check, but there is NO CAPTCHA, reCAPTCHA, rate limit, or per-IP throttle on the panel-open or order-submit endpoints. Merchants in spam-prone niches should add upstream protection (Cloudflare / WAF) themselves.
+The Fast Order create-order endpoint validates the form (email required; phone / first_name / last_name conditionally required; GDPR terms accepted; customer-not-banned; cart price within `checkout_min_price` / `checkout_max_price`) and runs the banned-customer check, but there is NO CAPTCHA, reCAPTCHA, rate limit, or per-IP throttle on the panel-open or order-submit endpoints. Merchants in spam-prone niches should add upstream protection (Cloudflare / WAF) themselves. A fast order placed through the Storefront API ([[headless-storefront-api]]) with `fastOrderSubmit` is limited, by contrast: one visitor may submit it 10 times a minute.
 
 ### Quantity IS customer-configurable — passed in from the product page
 
@@ -83,6 +83,8 @@ The flow:
    - Creates the order, then **force-deletes** the temporary cart row.
 
 If the customer abandons mid-flow, the cart row stays in the DB until cleaned up by housekeeping. Multiple panel-opens by the same visitor create separate cart rows.
+
+A fast order placed through the Storefront API ([[headless-storefront-api]]) with `fastOrderSubmit` has no panel-open step: its temporary cart is built and removed within the same call — also when the order is refused — and any cart the buyer already has is left untouched.
 
 ### Button hidden below the cart minimum price
 

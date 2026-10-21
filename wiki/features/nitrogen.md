@@ -4,10 +4,10 @@ nav_path: "Nitrogen (Headless storefronts)"
 route_name: nitrogen
 route_path: /admin/nitrogen
 aliases: []
-tags: [nitrogen, hub, owner-only]
+tags: [nitrogen, hub, staff-permission]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-27
+updated: 2026-10-21
 source_count: 1
 ---
 # Nitrogen (Headless storefronts)
@@ -30,9 +30,9 @@ Not applicable — this is a navigation hub, not a screen with its own settings.
 
 ## Business rules
 
-### Owner-only — moderators have no access to Nitrogen
+### The Nitrogen Storefronts permission
 
-The entire Nitrogen API surface (`/admin/api/core/nitrogen/*` — storefronts, customer-accounts, tokens, deployments, Nova tokens, scopes, env vars, GitHub installation) is wrapped in the `isOwner` middleware. **Only the store owner can list, create, edit, rotate tokens, or deploy storefronts.** Moderators — regardless of which permission boxes have been ticked for them in [[settings-staff]] — are blocked at the API level with HTTP 403 and never see this sidebar entry. There is no separate `nitrogen` permission row in the [[settings-staff]] permission tree; the gate is binary (owner vs everyone else). If a moderator needs to manage a headless storefront, the merchant must either transfer that work to the owner, or contact CloudCart support to discuss ownership transfer ([[settings-staff]] — *"Ownership transfer is NOT exposed in the admin panel"*).
+The entire Nitrogen API surface (`/admin/api/core/nitrogen/*` — storefronts, tokens, deployments, Nova tokens, env vars, GitHub installation) requires the **Nitrogen Storefronts** permission, a row of its own in the [[settings-staff]] permission tree. The store owner always has it; a moderator can list, create, edit, rotate tokens or deploy storefronts only when that permission is ticked for them. Without it, the calls are refused with HTTP 403.
 
 ## Related
 

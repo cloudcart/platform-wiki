@@ -5,7 +5,7 @@ route_path: /wishlist (verify)
 themes_using: [all]
 tags: [storefront, wishlist, favorites, customer-account]
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-10-21
 source_count: 3
 ---
 
@@ -30,7 +30,7 @@ The customer's saved-for-later product list. Each saved item shows the same prod
    - Sets SEO via `$module->setSeo("wishlist")`.
    - Renders the breadcrumb, the section title `sf.global.act.wishlists`, and the product grid using the theme templates with image size `600x600` and responsive `image_srcset`.
    - Adds pagination via the theme templates.
-4. Anonymous customers also have a wishlist — held in cookie/session (`uuid_generate` middleware ensures a visitor ID exists). Logged-in customers' wishlists persist to the customer record so they survive cross-device.
+4. Only signed-in customers have a wishlist: a visitor who clicks the heart is sent to the login page instead. The wishlist is saved on the customer record, so it survives across devices.
 
 ## What the customer sees
 
@@ -47,7 +47,7 @@ The customer's saved-for-later product list. Each saved item shows the same prod
 
 - **Toggling from a product card** — the heart icon `_product-add-to-favorite` has `data-id="{$product->id}"` and `data-module="product-wishlist"`. The storefront's `product-wishlist` data-module posts to `add-to-wishlist` and flips the `active` class plus the label text (`sf.global.add.to.favorites` ↔ `sf.global.remove.from.favorites`).
 - **Header dropdown** — the heart icon in the site header fetches `wishlist.menu` and displays a compact list.
-- **Anonymous → logged-in merge** — when an anonymous visitor adds items and later logs in, the cookie-held wishlist is merged into the customer record (verify the exact merge timing).
+- **Visitors** — a visitor who is not signed in cannot save a product; the heart sends them to the login page.
 - **Removal from the wishlist page** — clicking the active heart on a product card calls `add-to-wishlist/{id}` again; the controller toggles → product disappears from the grid (AJAX, no full reload, via `js-empty-on-ajax`).
 
 ## JavaScript behaviour
@@ -73,8 +73,9 @@ The customer's saved-for-later product list. Each saved item shows the same prod
 
 ## Known issues / by-design vs bug
 
-- Anonymous wishlists live in cookies — clearing cookies wipes the list. Customers should be encouraged to log in for persistence.
+- There is no wishlist for visitors who are not signed in; the heart asks them to log in first.
 - `add-to-wishlist/{id}` is a TOGGLE, not an idempotent "add" — clients that call it twice end up with the product removed again.
+- The [[headless-storefront-api]] has no toggle: `customerWishlistAdd` saves a product (a second call keeps it and returns the item already saved) and `customerWishlistRemove` removes it; both need the signed-in customer's access token.
 - Removing the last item triggers `js-empty-on-ajax` to show the empty state without a full reload; if a theme's empty-state copy is missing the container looks visually empty.
 
 ## Related
@@ -86,6 +87,5 @@ The customer's saved-for-later product list. Each saved item shows the same prod
 ## Open questions
 
 - Confirm the public URL of the wishlist page (`/wishlist` vs `/account/wishlist`) on the latest builds — the routes file shows the AJAX/menu endpoints but the canonical page lives under the customer-account routes.
-- Confirm the merge behaviour when an anonymous wishlist is adopted by a customer at login.
 - Confirm whether `listing_show_wishlist` is a per-module setting (Theme Editor) or a global storefront flag.
 - Confirm the empty-state copy and selector used by `js-empty-on-ajax`.

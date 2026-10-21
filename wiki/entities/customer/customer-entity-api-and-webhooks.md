@@ -5,7 +5,7 @@ aliases: ["Customer API", "Customer webhooks", "Customer plan gate", "Customer i
 tags: [entity, customers, api, webhooks, plan-gates, aggregates]
 plan_gates: ["customers"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 3
 ---
 
@@ -42,7 +42,7 @@ Customer records can be **read, created, updated, or deleted** via JSON-API v2 �
 - `email_for_confirmation` pending-state flow on email change (see [[customer-entity-auth]]).
 - `RegisterGuest` distinct event for `group_id = guests`.
 - `CustomerMarketingChange` segment recompute when `marketing` flips.
-- `CustomerTagChange` propagation to Subscriber (verify).
+- Tag changes are NOT copied to the matching Subscriber record — not through JSON-API v2, the current customer screens or the Admin GraphQL API ([[settings-pat-tokens]]); no setting changes this. Segments that use the **Customer tag** condition read the customer's own tags (see [[customer-details-identity-card]]).
 - Income-KPI recalc on aggregate change.
 - Cart cascade-delete + Subscriber removal on hard delete (orders are NOT deleted, they orphan).
 
@@ -165,4 +165,3 @@ To preserve order history while preventing further customer activity, use **Ban*
 ## Open Questions
 
 - ⏸️ What happens to the customer's `last_order_date` / `income` snapshot when the merchant manually changes an order's status retroactively — is the recalculation immediate or queued?
-- ⏸️ Whether `CustomerTagChange` propagation to the Subscriber record is automatic or requires the customer-tag setting to be on (verify).

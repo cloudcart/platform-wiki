@@ -4,10 +4,10 @@ nav_path: "Nitrogen (Headless)"
 route_name: nitrogen.storefront.overview
 route_path: /admin/nitrogen/:storefrontId
 aliases: []
-tags: [nitrogen, owner-only]
+tags: [nitrogen, staff-permission]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-27
+updated: 2026-10-21
 source_count: 1
 ---
 # Nitrogen
@@ -32,7 +32,8 @@ Distinct routes within this feature, captured from `vuejs-sitecp/` route files.
 |-------|------------|------------|
 | Nitrogen | `nitrogen.storefront.overview` | `/admin/nitrogen/:storefrontId` |
 | Api | `nitrogen.storefront.api` | `/admin/nitrogen/:storefrontId/api` |
-| Customer Account | `nitrogen.storefront.customer-account` | `/admin/nitrogen/:storefrontId/customer-account` |
+| General | `nitrogen.storefront.general` | `/admin/nitrogen/:storefrontId/general` |
+| Domains | `nitrogen.storefront.domains` | `/admin/nitrogen/:storefrontId/domains` |
 | Nova | `nitrogen.storefront.nova` | `/admin/nitrogen/:storefrontId/nova` |
 | Environment | `nitrogen.storefront.environment` | `/admin/nitrogen/:storefrontId/environment` |
 
@@ -46,20 +47,20 @@ TODO — table of visible fields, what each one does, defaults, validation.
 
 ## Business rules
 
-### Owner-only — moderators are blocked
+### The Nitrogen Storefronts permission is required
 
-The storefront-overview page and all its sub-tabs (API, Customer Account, Nova, Environment) call API routes under `/admin/api/core/nitrogen/storefronts/{id}/*`, all wrapped in the `isOwner` middleware. **Only the store owner can read, update scopes, rotate tokens, or change environment variables.** Moderators get HTTP 403 and never see the Nitrogen sidebar entry. See [[nitrogen]] for the pillar-wide owner-only rule.
+The storefront page and all its sub-tabs (General, API, Nova, Environment, Domains) call API routes under `/admin/api/core/nitrogen/storefronts/{id}/*` that require the **Nitrogen Storefronts** permission. The store owner always has it; a moderator has it only when it is granted in their staff permissions. Without it, the calls get HTTP 403 — reading the storefront, generating a new private token, changing environment variables. See [[nitrogen]].
 
 ### Storefront API endpoint — GraphQL at `/api/sf`
 
-The **API** tab shows the merchant's two Storefront API tokens (public + private) and the endpoint the deployed app calls back into:
+The **API** tab shows the storefront's two Storefront API tokens: the public token in full with a Copy button, and the private token masked, with **Generate new token**, which replaces it at once and shows the new token once. The public token cannot be replaced here. The deployed app calls back into these endpoints:
 
 - **POST `<store-host>/api/sf`** — GraphQL endpoint for queries and mutations.
 - **GET `<store-host>/api/sf`** — same endpoint, for introspection clients.
 - **GET `<store-host>/api/sf/downloads/{id}?signature=...`** — signed-URL streaming endpoint for digital files attached to customer orders (HMAC-verified, skips the storefront-token middleware).
 - **GET `<store-host>/api/sf/playground`** (debug only) — built-in GraphQL playground; disabled in production.
 
-Authentication: every request must carry `X-Storefront-Access-Token: <token>` (public or private, depending on whether the request is from a browser or from server-side code). Customer-scoped queries (orders, profile, wishlist, addresses) additionally need `Authorization: Bearer <customer-jwt>` issued via the `customerAccessTokenCreate` mutation against the Customer Account API.
+Authentication: a request names the store with the public token in `X-Storefront-Access-Token` (optional on the store's own domain); the storefront's server may also send the private token, in its own header `X-Storefront-Private-Token`. The customer operations (orders, profile, wishlist, addresses) also need the customer's access token, which the Storefront API's `customerLoginCodeVerify` issues after `customerLoginCodeSend`. The storefront's scopes are not checked — see [[headless-storefront-api]].
 
 See [[headless-storefront]] for the full Storefront API model + token rotation rules and [[json-api-v2]] for the cross-API comparison between `/api/v2`, `/api/gql`, and `/api/sf`.
 

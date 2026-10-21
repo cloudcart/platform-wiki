@@ -7,14 +7,14 @@ aliases: ["Store Locations Settings", "Multi-warehouse config"]
 tags: [apps, administration, store-locations, multi-warehouse, settings]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-27
+updated: 2026-10-21
 source_count: 1
 ---
 # Store Locations → Settings
 
 ## Purpose
 
-The **Settings** tab is where the merchant configures **multi-warehouse / multi-location inventory** — defines locations, maps to geo zones, configures cookie-based storefront routing. See [[apps-store-locations]] for the full feature set.
+The **Settings** tab is where the merchant sets how the storefront behaves before a customer has chosen a delivery location: the page with the location picker, how many days the choice is remembered, and whether customers may browse without an address. The stores themselves come from [[apps-stores]], and zones are linked to stores on the **Geo zones / Shops** tab. See [[apps-store-locations]] for the full feature set.
 
 ## Where to find it
 
@@ -22,29 +22,17 @@ Sidebar → Apps → Store Locations → **Settings tab**. Route: `/admin/apps/s
 
 ## What the merchant can do here
 
-### Locations management
+### Settings tab fields
 
-| Field | Notes |
-|---|---|
-| **Locations list** | Add / edit / delete physical warehouses (or stockrooms). |
-| **Per-location: Name** | Friendly identifier ("Sofia warehouse"). |
-| **Per-location: Address** | Physical address. |
-| **Per-location: Default flag** | One default location for orders with no zone match. |
+The six fields are listed under *Settings & fields* below.
 
-### Zone-to-location mapping
+### Zones and stores (Geo zones / Shops tab)
 
-| Field | Notes |
-|---|---|
-| **Geo zone** (from [[settings-geo-zones]]) | The customer's zone. |
-| **Mapped locations** | Which warehouses serve this zone (can be multiple — overlap allowed). |
-| **Priority** | When multiple locations serve a zone, which is preferred. |
+The zone-to-store links are not on this tab. On **Geo zones / Shops**, **Create** opens **Add Zone and Stores**: pick a geo zone (from [[settings-geo-zones]]) and one or more stores from [[apps-stores]]. Each zone can be set up only once, and each store can belong to only one zone. There is no priority between the stores of a zone.
 
-### Cookie behaviour
+### Remembered location
 
-Per [[apps-store-locations]] `getShopByCookie`:
-- The `store_location` cookie's structure (JSON with geo_zone_id).
-- Cookie expiry.
-- Override URL parameter (?location=X for forced override).
+The customer's chosen delivery zone is remembered in the browser for the **Cookie validity** days. There is no URL parameter that overrides it.
 
 ### What the merchant CANNOT do here
 - Use without [[settings-geo-zones]] configured.
@@ -52,16 +40,22 @@ Per [[apps-store-locations]] `getShopByCookie`:
 
 ## Settings & fields
 
-Per [[apps-store-locations]] Manager:
-- `getMigrationsPath` — DB migrations.
-- `getShopByCookie` — reads `store_location` cookie.
-- `getShopByZone($zone_id)` — returns shops serving a zone.
+| Field | Notes |
+|---|---|
+| **Site access without a delivery address** | Switch. On: customers can browse before entering an address but cannot add to the cart. Disabled until a zone with stores exists. |
+| **Select a main store** | Shown when the switch is on; required. Its choices are the zones set up on **Geo zones / Shops** — the products of that zone's stores are shown before an address is entered. |
+| **Text for a buy button in a product listing** | Shown when the switch is on; required. Replaces the Buy button in listings until an address is entered. |
+| **Text for buy button on detail page** | Shown when the switch is on; required. The same on the product page. |
+| **Select a page to select a location** | Required. The page that holds the delivery-address picker; with the switch off, customers without an address are sent there. |
+| **Cookie validity** | Days the chosen address is remembered; at least 1, default 7. |
+
+Saving is refused until a Google Maps API key is entered (see *How it works* below).
 
 ## Business rules
 
 ### Cookie-driven routing
 
-Customer's first visit sets `store_location` cookie (JSON with geo_zone_id). Subsequent visits use the cookie. The cookie may be set via geo-IP detection OR manual selection.
+The customer's delivery zone is remembered in a browser cookie for the **Cookie validity** days. It is set when the customer enters an address in the picker — or, with **Site access without a delivery address** on, to the main store's zone on the first visit. There is no geo-IP detection.
 
 ### Per-variant per-location stock
 
@@ -75,7 +69,7 @@ Standard apps permission scope.
 - [[apps-store-locations]] — hub.
 - [[settings-geo-zones]] — zone definitions that drive routing.
 - [[products-inventory]] — per-location stock view.
-- [[apps-stores]] — DISTINCT concept (physical pickup vs warehousing).
+- [[apps-stores]] — the stores that zones are linked to; must be installed first.
 
 ## How it works (verified against backend)
 
@@ -85,7 +79,7 @@ The settings form has a numeric **Cookie validity** field expressed in **days**.
 
 ### Manual location switcher on the storefront
 
-There is no automatic IP-geo lookup. The customer **types** their delivery address into the picker page (which the merchant designates via the **Select a page** dropdown). The picker uses Google's address autocomplete to capture city, quarter, street and street number, then matches that address against the merchant's geo zones.
+There is no automatic IP-geo lookup. The customer **types** their delivery address into the picker page (which the merchant designates via the **Select a page to select a location** dropdown). The picker uses Google's address autocomplete to capture city, quarter, street and street number, then matches that address against the merchant's geo zones.
 
 To change their location mid-session, the customer re-opens the picker (the persistent nav module with a map-marker icon, generated by `getAddress`, points back to the picker page). Entering a new address overwrites the cookie.
 
@@ -105,11 +99,11 @@ The app refuses to save settings unless **Google Maps API Key** is filled at Set
 
 ### Configurable fields on the settings page (full list)
 
-- **Select a page** — required. The CMS page that hosts the location-picker module. Error: *"You have not selected a page"*.
+- **Select a page to select a location** — required. The CMS page that hosts the location-picker module. Error: *"You have not selected a page"*.
 - **Cookie validity (days)** — required, numeric.
 - **Site access without a delivery address** — boolean toggle.
 - **Select a main store** — required when *Access to site without address* is on. Error: *"You have not selected a main store"*.
-- **Text for buy button in product listing** — required when *Access to site without address* is on.
+- **Text for a buy button in a product listing** — required when *Access to site without address* is on.
 - **Text for buy button on detail page** — required when *Access to site without address* is on.
 
 ### Zone-to-shop mapping is plain — no priority field
@@ -122,7 +116,7 @@ Stock is tracked in `products_quantities` keyed by `(shop_id, product_id, varian
 
 ### Quantity update event on save
 
-When the merchant adds new shops to a zone, the platform fires a `ShopsQuantityUpdate` event for the affected shop ids — this kicks the search engines / aggregations to refresh so catalog visibility takes effect immediately rather than on the next manual stock change.
+When the merchant adds, changes or removes a zone's stores, the platform queues a background task that refreshes the search index for the affected stores, so catalog visibility updates shortly after saving rather than on the next manual stock change.
 
 ## Open questions
 

@@ -7,7 +7,7 @@ aliases: ["Home Page", "Homepage", "Thank You Page", "Thank-you page", "Error 40
 tags: [marketing, content, pages, system-slots, homepage, thank-you, 404, cache]
 plan_gates: ["static_pages"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 2
 ---
 
@@ -74,7 +74,7 @@ If the active theme declares `system_pages` in its config, additional builder-on
 
 ### Builder system pages: module restrictions cover only Blog slots
 
-The `PageRestriction` validator that runs on builder-page save has restriction entries ONLY for `blog.list` (which requires the `blog-list` module on the page) and `blog.view` (which requires `blog-view`). It has **NO** entries for `home`, `thank_you`, or `error.404` — a builder page can be assigned to the homepage slot without any required modules and the save will pass. See [[landing-pages-builder-rules]] for the full module-restriction story.
+The `PageRestriction` validator that runs when a builder page is published (auto-saves are not checked) has restriction entries ONLY for `blog.list` (which requires the `blog-list` module on the page) and `blog.view` (which requires `blog-view`) — and both blog slots are currently switched off, so a page can be assigned only to `home`, `thank_you` or `error.404`. It has **NO** entries for those three — a builder page can be assigned to the homepage slot without any required modules and publishing will pass. See [[landing-pages-builder-rules]] for the full module-restriction story.
 
 (An earlier version of this wiki claimed "a homepage builder page must include the products module" — that's incorrect; only Blog system pages have module requirements.)
 

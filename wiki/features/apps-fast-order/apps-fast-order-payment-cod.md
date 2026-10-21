@@ -7,7 +7,7 @@ aliases: ["Fast Order COD", "Fast Order payment", "Fast Order customer creation"
 tags: [apps, others, conversion, checkout, conversion-rate]
 plan_gates: ["checkout"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 5
 ---
 
@@ -69,7 +69,9 @@ When the form submits:
 2. If a customer exists, the order attaches to that customer (regardless of whether the user is logged in or not).
 3. If no customer exists, a guest customer is created with the form data, falling back to `first_name = 'anonymous'` / `last_name = 'anonymous'` when those fields aren't required-on.
 
-The guest customer is created BEFORE the order — so even an order that fails validation will leave behind a guest customer row.
+The guest customer is created BEFORE the order — so an attempt that stops before the order is created (for example, with no active cash-on-delivery method) can leave behind a guest customer row.
+
+Through the Storefront API ([[headless-storefront-api]]), `fastOrderSubmit` does not look the entered e-mail up among existing accounts: a signed-in customer orders as themselves, and anyone else orders as a guest — an earlier guest record with the same e-mail is reused, as at the regular checkout.
 
 ### Required-field defaults: name fallback is "anonymous"
 
@@ -89,6 +91,8 @@ The Fast Order popup itself only captures email + (optional) phone + (optional) 
 - `first_name` / `last_name` from the matched / created customer.
 
 There is NO street / house-number / city captured up-front — the courier's pickup or delivery flow downstream is expected to capture the precise address (e.g., the courier calls the customer on the phone number provided, or COD-on-delivery confirms address at handover). Merchants using couriers that require a complete address before pickup (Econt, DPD Bulgaria, etc.) should NOT rely on Fast Order alone — the order will be created with only a country + post-code + lat / lng address.
+
+Through the Storefront API ([[headless-storefront-api]]), `fastOrderSubmit` does not geolocate the visitor: the address holds the store's own country with the phone and name — no post code or coordinates.
 
 ## Related
 

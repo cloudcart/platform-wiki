@@ -5,7 +5,7 @@ route_path: /page/{slug?}
 themes_using: [all]
 tags: [storefront, cms, static-page]
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-10-21
 source_count: 3
 ---
 
@@ -26,7 +26,7 @@ Generic CMS page used for any rich-text content the merchant needs: Terms of Ser
 ## How it loads
 
 1. Route resolves to the request handler.
-2. Controller looks up the page by `slug`. If not found → `404`. If found but `active != yes` → renders the notification `sf.page.err.page_no_longer_active`.
+2. Controller looks up the page by `slug`. If not found → `404`. If found but `active != yes` → also `404`: a 301 redirect set for the address applies first; otherwise the store's own 404 page is shown or, without one, the standard error page with the message *"Page is no longer active"*.
 3. The page record has a `type` field. The template branches on it:
    - `type = faq` → includes [[page-faq]] template (`page/faq.tpl`).
    - `type = builder` → delegates to `preview` (renders the MyStore builder output).
@@ -67,11 +67,12 @@ Generic CMS page used for any rich-text content the merchant needs: Terms of Ser
 
 - All Smarty themes use `templates/page/page.tpl` with the same controller contract. Visual differences are limited to typography and breadcrumb styling.
 - Liquid-engine / headless themes render via a different pipeline — see [[storefront-architecture]].
+- Headless storefronts read pages through the [[headless-storefront-api]]: `page` answers null for an inactive page, as this route answers 404, and for a page-builder page, which that API never serves because only this storefront can render the builder's layout; `pages` lists neither.
 
 ## Known issues / by-design vs bug
 
 - The `(.*)` slug regex means `/page/anything/at/all` matches; if the merchant intentionally uses slashes in slugs (`help/shipping`), the page resolves but breadcrumbs may not reflect the nesting.
-- Inactive pages return `200` with a notification rather than `404` — keeps SEO-discovered URLs from dropping until the merchant explicitly redirects them.
+- Inactive pages return `404`, not `200`: the store's own 404 page, or the error page saying *"Page is no longer active"*. A 301 redirect set for the address still applies.
 - The AJAX/iframe variant strips header & footer; embedding it inside a non-modal context will look unstyled.
 
 ## Related

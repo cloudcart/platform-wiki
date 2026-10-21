@@ -4,10 +4,10 @@ nav_path: "Nitrogen → Storefronts → Create Storefront"
 route_name: nitrogen.storefront.create
 route_path: /admin/nitrogen/create
 aliases: ["Create Nitrogen Storefront", "Create headless storefront", "Nitrogen storefront wizard", "New storefront"]
-tags: [nitrogen, storefronts, create, wizard, github, owner-only]
+tags: [nitrogen, storefronts, create, wizard, github, staff-permission]
 plan_gates: []
 created: 2026-05-27
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 5
 ---
 # Nitrogen → Create Storefront (multi-step wizard)
@@ -70,7 +70,7 @@ Per-field validation and the exact server rules live on the aspect pages: name/m
 
 ## Business rules
 
-- **Owner-only.** The Create action is inside the pillar's `isOwner` group — **only the store owner can run this wizard**. Moderators cannot reach it (the sidebar entry is hidden; direct API calls are rejected with HTTP 403). There is no separate `nitrogen.create` row in [[settings-staff]] to delegate; the gate is binary. See [[nitrogen]] for the pillar-wide owner-only rule.
+- **Nitrogen Storefronts permission.** The Create action is inside the pillar's route group, which requires the **Nitrogen Storefronts** permission — the store owner, or a moderator granted it in [[settings-staff]]; without it, direct API calls are rejected with HTTP 403. There is no separate `nitrogen.create` row: the one permission covers the whole pillar. See [[nitrogen]].
 - **Max 10 storefronts per site.** The `max_storefronts_per_site` cap (default 10) is enforced before the storefront is created, on top of the owner check. The list endpoint exposes the same value via `meta.max_storefronts`.
 - **GitHub via App, not personal tokens.** The integration uses the CloudCart Nitrogen GitHub App. Detail on [[nitrogen-create-storefront-github-connect]].
 - **CLI path skips the repo steps.** Picking CLI / CI-CD goes from step 1 straight to the success card with a deploy token shown once. Detail on [[nitrogen-create-storefront-setup]].
@@ -89,7 +89,7 @@ Per-field validation and the exact server rules live on the aspect pages: name/m
 - [[nitrogen-storefronts]] — Storefronts list (parent of this wizard).
 - [[nitrogen-storefront-overview]] — Per-storefront detail page (where the merchant lands after success).
 - [[nitrogen-deployments]] — Deployments tab on the storefront detail.
-- [[settings-staff]] — staff roles (no delegation row exists for this owner-only wizard).
+- [[settings-staff]] — staff roles (the **Nitrogen Storefronts** permission row).
 
 ## Open questions
 

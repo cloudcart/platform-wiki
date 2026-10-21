@@ -7,7 +7,7 @@ aliases: ["Order shipping row", "Shipping action row", "Order fulfillment row", 
 tags: [orders, order-details, shipping, fulfillment, waybill, courier]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
+updated: 2026-10-21
 source_count: 4
 ---
 
@@ -17,7 +17,7 @@ source_count: 4
 
 ## Purpose
 
-The **Shipping action row** in the main column of the order details page — surfaces the shipping provider, the **Fulfill products** button that generates the waybill, the **Print** action for the printed label, **Mark as unfulfilled**, change-side and insurance actions for couriers that support them, the per-line fulfilment badges, and the expected-delivery picker (for the Shipping Hours app). Courier-specific app rows (Glovo shop, Store Locations geo-zone) layer additional read-only metadata here.
+The **Shipping action row** in the main column of the order details page — surfaces the shipping provider, the **Fulfill products** button that generates the waybill (or, for a shipping method without a courier integration, records the dispatch manually), the **Print** action for the printed label, **Mark as unfulfilled**, change-side and insurance actions for couriers that support them, the per-line fulfilment badges, and the expected-delivery picker (for the Shipping Hours app). Courier-specific app rows (Glovo shop, Store Locations geo-zone) layer additional read-only metadata here.
 
 This page documents the SECTION as it appears on order details. The full waybill flow + per-courier field catalogue is on [[orders-shipping-waybill]].
 
@@ -32,7 +32,7 @@ Main column of `/admin/orders/details/<order_id>`, below the **Payment** row. It
 There is no separate "Fulfillment row". Everything to do with dispatch lives in the single **Shipping** row:
 
 - Shipping provider icon + name, and a **Change provider** dropdown (when allowed; a read-only provider name otherwise).
-- **Fulfill products** primary button — generates the waybill and marks the order fulfilled.
+- **Fulfill products** primary button — for a courier with an integration, creates the courier waybill; for any other shipping method, opens a form to record the dispatch date, delivery date, tracking number and an optional tracking link, and saving it marks the order fulfilled.
 - **Print** — the label PDF, shown once a waybill exists and the order is fulfilled.
 - **Mark as unfulfilled** — the un-fulfil path (see below), shown only once the order IS fulfilled.
 - Per-courier secondary buttons: **Change side** (receiver-pays vs sender-pays), **Request insurance**.
@@ -43,7 +43,7 @@ Per-line fulfilment state is shown as a **badge on each line of the products tab
 
 ### Mark as unfulfilled — the only un-fulfil path
 
-Once the order is fulfilled, a red **Mark as unfulfilled** button appears in the Shipping row. It is the **only** way to take an order back out of the fulfilled state from the admin panel — no status-pill route, no bulk equivalent on the [[orders]] list — and it fires **immediately, with no confirmation dialog**. It drops the order's fulfillment record so the order returns to `not_fulfilled` and the waybill can be re-generated. It does **not** re-open line-item editing on an invoiced order — that block keys on the invoice, not on fulfilment ([[orders-details-known-issues]]).
+Once the order is fulfilled, a red **Mark as unfulfilled** button appears in the Shipping row. It is the only un-fulfil button — there is no bulk equivalent on the [[orders]] list; for a shipping method without a courier integration the order's status menu also offers **Not fulfilled**, and a fulfilled order moved to a negative status is reset automatically (see Business rules). It fires **immediately, with no confirmation dialog**. It drops the order's fulfillment record so the order returns to `not_fulfilled` and the waybill can be re-generated. It does **not** re-open line-item editing on an invoiced order — that block keys on the invoice, not on fulfilment ([[orders-details-known-issues]]).
 
 ### Fulfill products / waybill flow
 
@@ -55,7 +55,9 @@ The **Fulfill products** button is visible when ALL of the following are true:
 - The order has **no pending return** (see below).
 - Payment authorisation isn't blocking.
 
-Clicking POSTs to the courier's `apps.<integration>.waybill` endpoint (integrated couriers) or `admin.internal.waybill` (non-integrated / manual couriers). The integration's response either:
+For a shipping method without a courier integration, clicking opens the manual **Fulfill products** form instead — dispatch date, delivery date, tracking number and an optional tracking link; no waybill is created, and saving records the fulfilment and marks the order fulfilled. In the Admin GraphQL API ([[settings-pat-tokens]]) the two paths are separate operations: `createShippingWaybill` creates the courier waybill and `fulfillOrder` records the manual fulfilment.
+
+For a courier with an integration, clicking opens that courier's waybill flow, which either:
 
 - Generates the waybill silently + shows a **Print** button + tracking number, OR
 - Opens an inline panel asking for waybill-specific fields (parcel count, weight, COD amount, insurance — varies per courier).
@@ -66,7 +68,7 @@ Full per-courier field catalogue: [[orders-shipping-waybill]].
 
 The Bulgarian BGN→EUR transition routes orders in `BGN` currency through `admin.eur.waybill` instead of the standard route. This route is hard-coded to throw an error *"Orders in BGN cannot be shipped after 01.01.2026. Please convert the order to EUR."*
 
-The merchant uses the standard `admin.internal.waybill` route in all normal cases; the EUR route is essentially a deprecated alias whose only function is to surface the conversion-required error. The conversion itself is done via the **Convert to EUR** sidebar button (see [[orders-details-actions]]).
+This applies only to couriers with an integration: for a BGN order, **Fulfill products** leads to this error instead of the courier's waybill flow. The manual **Fulfill products** form (shipping methods without a courier integration) is not blocked for BGN orders. The conversion itself is done via the **Convert to EUR** sidebar button (see [[orders-details-actions]]).
 
 ### Shipping-Hours expected-delivery panel
 
@@ -115,7 +117,7 @@ Each line in the products table carries a fulfillment badge with three possible 
 
 ### Per-product fulfillment popover — info only
 
-Clicking the "fulfilled" badge on a line opens a small modal showing the fulfilment details for ONE specific line. It is a **read-only info modal** — there are no partial-fulfilment controls anywhere on the order detail page. Fulfilment is created only by **Fulfill products** (the whole shipment) and removed only by **Mark as unfulfilled**; there is **no "Mark as fulfilled" button and no "generate per-product fulfillments" action** on this screen. Merchants who need per-line dispatch use a warehouse app (see [[fulfillment-and-warehouse]]).
+Clicking the "fulfilled" badge on a line opens a small modal showing the fulfilment details for ONE specific line. It is a **read-only info modal** — there are no partial-fulfilment controls anywhere on the order detail page. Fulfilment is created by **Fulfill products** (the whole shipment) and removed by **Mark as unfulfilled** — or, for a shipping method without a courier integration, by picking **Fulfilled** / **Not fulfilled** in the order's status menu; there is **no "Mark as fulfilled" button and no "generate per-product fulfillments" action** on this screen. Merchants who need per-line dispatch use a warehouse app (see [[fulfillment-and-warehouse]]).
 
 ### Cancellation reverses fulfilment
 

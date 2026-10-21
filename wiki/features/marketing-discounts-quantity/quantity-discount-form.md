@@ -7,7 +7,7 @@ aliases: ["Quantity discount form", "Volume discount form", "Quantity discount f
 tags: [marketing, discounts, quantity, form, validation]
 plan_gates: ["discount_quantity"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 3
 ---
 
@@ -38,8 +38,9 @@ The Quantity form is the narrowest of the discount types. Only four blocks rende
 1. **General settings** — `active` switch + `name` input. No discount-type picker; type is implicit. No `type_value`.
 2. **Discount conditions** — the quantity-configuration module:
    - **Customer buys** — single-product searchable picker (API: `/admin/api/core/products/search`).
-   - **Tier rows** — Quantity input (unit "pcs.", min 0) + Unit price (currency, min 0) + remove-row X.
-   - **+ Add new condition** — appears only when tier-list length `< 12`. Removing the last tier auto-inserts an empty replacement.
+   - **Tier rows** (product with one variant) — Quantity input (unit "pcs.", min 0) + Unit price (currency, min 0) + remove-row X.
+   - **Tier table** (product with more than one variant) — one row per tier: **Quantity** ("N pcs."), **Unit price** (one price, a from–to range, *"N without discount"* for variants left without a price, or *"Set prices"*) + remove. Clicking the price opens the **Quantity price** modal: **Quantity** (pcs., min 1), then **Common price** (one **Unit price** for **All variants**) or **Multiple price** (a table of **Variant options** / **Current price** / **Unit price**, one row per variant); **Save** / **Close**.
+   - **+ Add new condition** — with one variant, appears only when tier-list length `< 12`; with more than one variant it has no cap and opens the **Quantity price** modal for the new tier. Removing the last tier auto-inserts an empty replacement.
 3. **Customer groups** — shared block (`All groups` switch + multi-pick on OFF).
 4. **Date range** without timer fields — `date_start` + `date_end` + **No expiration** switch.
 
@@ -61,9 +62,9 @@ The Quantity form is the narrowest of the discount types. Only four blocks rende
 | Field | Backend key | What it does | Validation |
 |-------|-------------|--------------|------------|
 | **Customer buys** | `product_id` | The single product the discount targets (searchable picker). | Required; must exist in `products`; must not already be on another Quantity discount — see [[quantity-discount-uniqueness-constraint]]. |
-| **Quantity** (per tier) | `conditions[].quantity` | Minimum cart-line quantity to unlock this tier. Integer in pieces. | Required, integer, min 0. **Note**: `0` rejected as empty — see [[quantity-discount-tier-evaluation]]. |
-| **Unit price** (per tier) | `conditions[].discount_value` | The per-piece price the customer pays once cart-line quantity reaches this tier. Currency value. Stored as integer minor units (cents) — 10 EUR = 1000. | Required, numeric. `0` rejected as empty. |
-| **+ Add new condition** | (UI control) | Appends an empty tier row. Hidden once 12 tiers exist. | — |
+| **Quantity** (per tier) | `conditions[].quantity` | Minimum number of pieces of the product in the cart (all its variants together) to unlock this tier. Integer in pieces. | Required, integer, min 0. **Note**: `0` rejected as empty — see [[quantity-discount-tier-evaluation]]. |
+| **Unit price** (per tier) | `conditions[].discount_value` | The per-piece price the customer pays once the product's pieces in the cart reach this tier — one price for all variants, or one per variant (**Multiple price**). Currency value. Stored as integer minor units (cents) — 10 EUR = 1000. | Required, numeric. `0` rejected as empty; with **Multiple price**, a variant left empty gets no discount at this tier (at least one variant needs a price). Not higher than the variant's current price. |
+| **+ Add new condition** | (UI control) | Appends an empty tier row. Hidden once 12 tiers exist (product with one variant); with more than one variant there is no cap and the new tier opens in the **Quantity price** modal. | — |
 | **Remove tier** (trash icon) | (UI control) | Removes the tier. If the list becomes empty, a fresh blank tier is auto-inserted. | — |
 
 ### Customer groups
@@ -94,11 +95,12 @@ The Quantity form is the narrowest of the discount types. Only four blocks rende
 
 ### Save flow
 
-On submit, the discount is saved with `type = quantity`. The standard target-attachment step is skipped (no category/brand/collection targets). Every save fully replaces the tier list: prior tiers are cleared and one row is written per submitted tier. A `discount.created` / `discount.updated` event then fires (refreshes listings and smart collections, notifies webhooks — see [[settings-hooks]]).
+On submit, the discount is saved with `type = quantity`. The standard target-attachment step is skipped (no category/brand/collection targets). Every save fully replaces the tier list: prior tiers are cleared and, for each submitted tier, one row is written per variant that has a price (a common price is written for every variant of the product). A `discount.created` / `discount.updated` event then fires (refreshes listings and smart collections, notifies webhooks — see [[settings-hooks]]).
 
 ### Per-row validator strings (verbatim)
 
-- *"All conditions must be fulfilled"* — emitted when any tier has either `quantity` OR `discount_value` empty. BG: *"Всички условия трябва да се попълнят"*.
+- *"All conditions must be fulfilled"* — emitted when any tier has either `quantity` OR `discount_value` empty (with **Multiple price**: when no variant of the tier has a price). BG: *"Всички условия трябва да се попълнят"*.
+- *"The quantity discount price cannot be higher than the variant current price"* — a tier price above the variant's current price; a common price must not exceed the cheapest variant's. BG: *"Цената на количествената отстъпка не може да бъде по-висока от текущата цена на разновидността"*.
 - *"Quantity is required"* — per-row error on `conditions[].quantity`.
 - *"Discount value is required"* — per-row error on `conditions[].discount_value`.
 - *"Product is already in use"* — form-validator on the `product_id` field when another Quantity discount targets the same product. See [[quantity-discount-uniqueness-constraint]].
@@ -118,7 +120,7 @@ Compared to other discount types, Quantity intentionally omits:
 - **`force_save`** flag.
 - **`code_apply`** checkbox — defaults to `0`; not merchant-tunable. See [[quantity-discount-stacking]].
 - **`apply_regular_price`** flag.
-- **Per-variant tier override** — tier price applies to every variant of the chosen product equally (compare [[marketing-discounts-fixed]]).
+- **Per-variant tier quantities** — the tier quantities are shared by all variants of the chosen product; only the price can differ per variant (**Multiple price**).
 - **Per-tier customer-group** — the allow-list is on the parent Discount; all tiers share it.
 
 ### Tier price does not auto-adjust on catalog price changes

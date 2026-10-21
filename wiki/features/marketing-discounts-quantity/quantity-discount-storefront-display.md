@@ -7,7 +7,7 @@ aliases: ["Quantity discount product page", "Quantity tier ladder", "Volume disc
 tags: [marketing, discounts, quantity, storefront, product-page]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 2
 ---
 
@@ -38,14 +38,14 @@ No merchant-tunable storefront fields. The tier ladder renders automatically fro
 | Field | What it drives at render-time |
 |-------|-------------------------------|
 | `conditions[].quantity` | Sorted ASCENDING on the product page; deltas between consecutive values pick the row-label format and decide radio vs read-only ladder. |
-| `conditions[].discount_value` | The "unit price: <amount>" shown on each ladder row, in the store's currency. |
+| `conditions[].discount_value` | The "unit price: <amount>" shown on each ladder row, in the store's currency — the selected variant's price at that tier. |
 | `customer_groups[]` | Filters the ladder out entirely for non-matching customers (catalog price shows). |
 
 ## Business rules
 
 ### Product-page tier ladder
 
-On the product detail page, the storefront renders the tier ladder **above the add-to-cart button**. For each tier (sorted **ascending** by `quantity`), it shows two columns:
+On the product detail page, the storefront renders the tier ladder of the **variant the page has selected** **above the add-to-cart button**. For each tier (sorted **ascending** by `quantity`), it shows two columns:
 
 - **Description** — one of three formats, depending on the delta between this tier's quantity and the next:
   - *"N qty"* — when consecutive tiers differ by exactly 1.
@@ -75,7 +75,7 @@ If a merchant wants a sticker / promo-banner aesthetic on a quantity-tiered prod
 
 ### Cart-line display
 
-On the cart and checkout, the per-line price shows the **applied tier's `discount_value`** as the unit price. The customer sees:
+On the cart and checkout, the per-line price shows the **applied tier's `discount_value`** as the unit price — the line's own variant's price at the tier reached by all the product's pieces in the cart. The customer sees:
 
 - Unit price = tier value (NOT the catalog price).
 - Line total = tier value × cart-line quantity.
@@ -95,9 +95,9 @@ This is intentional: it preserves order history and prevents retroactive price c
 
 ### Variant-picker integration
 
-The tier ladder is rendered for the parent product, but the cart-line evaluation happens per variant line (see [[quantity-discount-tier-evaluation]] for the per-line / per-variant rule). The customer picking different variants of the same product sees the same tier ladder above the add-to-cart button, and each variant they add becomes a separate cart line that's evaluated against the ladder independently.
+The tier ladder shows the tiers and prices of the variant the page has selected (the default variant until the customer picks another). When the customer picks a different variant, the ladder is redrawn with that variant's prices; for a variant without tiers it is hidden.
 
-The customer can't "combine 3 size-S + 2 size-M = 5 toward a buy-5 tier" — each line evaluates on its own. Storefront display does not warn the customer of this; they may be surprised at checkout that the cumulative-quantity logic doesn't apply.
+In the cart, pieces of different variants of the same product count together (see [[quantity-discount-tier-evaluation]]): 3 size-S + 2 size-M reach a buy-5 tier, and each line pays its own variant's price at that tier. The product page does not say that other variants' pieces count — its ladder shows only the selected variant's prices.
 
 ## Related
 

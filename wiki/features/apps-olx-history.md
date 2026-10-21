@@ -7,20 +7,18 @@ aliases: ["OLX History", "OLX operation log", "OLX activity log", "OLX audit"]
 tags: [apps, olx, marketplace, history, audit, log]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-27
+updated: 2026-10-21
 source_count: 2
 ---
 # OLX → History
 
 ## Purpose
 
-The **History** tab is the **operation log** of every OLX API call CloudCart made — every publish attempt, every refresh, every parameter mapping save, every delete. Each row records the operation type, the affected entity (product / category / parameter), the OLX API response (success / error), the timestamp.
+The **History** tab is the **error log** of OLX product publishing and syncing — each failed publish or sync, and each advert OLX accepted but is not showing. Each row records the product, the message and the time.
 
 Used by the merchant + support for **troubleshooting**:
 - "Why did this product fail to publish?" — find the row + read the error.
-- "When did this advert get rejected?" — filter by date + status.
-- "How many adverts succeeded yesterday?" — filter by status + date.
-- "Did this category mapping change recently?" — filter by entity type + date.
+- "When did this advert get rejected?" — find the product's row and read its date.
 
 For the OLX feature set, see [[apps-olx]].
 
@@ -28,42 +26,29 @@ For the OLX feature set, see [[apps-olx]].
 
 Sidebar → Apps → OLX → **History tab**. Route: `/admin/apps/olx/history`.
 
-The data table component uses:
-- `TableHistoryName` — operation name / entity column.
-- `TableHistoryMessage` — error / success message column.
-
 ## What the merchant can do here
 
 ### View operation history
 
-Standard data table:
-
 | Column | Notes |
 |---|---|
-| **Operation name** (`TableHistoryName`) | Type of operation — Publish advert / Update advert / Delete advert / Map category / Map parameter / Refresh adverts list / etc. |
-| **Entity** | Which CloudCart record was involved (product name + ID, category name, etc.). |
-| **OLX response message** (`TableHistoryMessage`) | The API response — success confirmation OR error reason. |
-| **Status** | Success / Error / Pending. |
-| **Timestamp** | When the operation ran. |
-| **OLX API endpoint** | (Verify) Which OLX URL was called. |
+| **Product** | The product's image and name, linking to its edit page. |
+| **Message** | A **View** link that opens a pop-up with the error text. |
+| **Created** | When the entry was written. |
+| (delete) | Deletes this entry. |
 
-### Filter by operation type / status / date
+A **Clear all events** button above the table empties the whole history.
 
-Standard filter UI lets the merchant scope to:
-- Specific operation types (e.g., "show only Publish failures").
-- Specific entities (e.g., "show everything related to product X").
-- Date range.
-- Success / error toggles.
+### No filters
 
-### Drill-down
+The list has no filters or search; it is paged.
 
-Clicking a row may open a detail view (verify) with:
-- Full API request payload sent to OLX.
-- Full API response from OLX.
-- Stack trace if applicable.
+### View the message
+
+**View** in the **Message** column opens a pop-up with the error text. The request sent to OLX and OLX's full response are not shown.
 
 ### What the merchant CANNOT do here
-- Edit or delete log entries (append-only).
+- Edit log entries (they can only be deleted, one by one or all at once).
 - Re-run an operation directly from this view (must navigate to the relevant entity — [[apps-olx-products]] for re-publish, etc.).
 
 ## Settings & fields
@@ -72,39 +57,26 @@ Clicking a row may open a detail view (verify) with:
 
 | Field | Notes |
 |---|---|
-| **Operation type** | One of: publish_advert / update_advert / delete_advert / map_category / map_parameter / map_value / refresh_adverts / etc. |
-| **Entity type + ID** | The affected CloudCart record. |
-| **OLX endpoint** | URL hit (e.g., `POST /partner/adverts`). |
-| **Request payload** | What was sent. |
-| **Response payload** | What OLX returned. |
-| **Status code** | HTTP status. |
-| **Status label** | Success / Error / Pending. |
-| **Error message** | Parsed user-friendly error from OLX response. |
-| **Timestamp** | When the operation ran. |
+| **Product** | The product the publish or sync was for. |
+| **Error message** | OLX's validation errors (one line per field), OLX's error text, or the platform's own message. |
+| **Created** | When the entry was written. |
 
-### Common error messages (from OLX API)
+### Common messages
 
-Examples surfaced here (per [[apps-olx]] lang):
-- "Please, synchronize your product parameters with those in Etsy" (`err.params_not_mapped`).
-- "One Etsy parameter is associated with more than one from store" (`err.same_params_mapping`).
-- "This product can not be synced into Etsy..." (`err.missing_product_id`).
-- "You must configure all your settings first" (`err.settings_not_saved`).
-
-(Note: some error strings reference "Etsy" — likely shared error wording across marketplace integrations. The OLX-specific variants follow similar pattern.)
+- One line per field OLX rejected — the field name, a dash, and OLX's reason (e.g. **title** - too short).
+- "OLX accepted the advert but is not showing it (status). Update it in your OLX account to make the changes visible."
+- "An unexpected error occurred, please try again later or contact support." — followed by the error code (403, 404, 406, 429 or 500) when OLX returned one.
+- "You are not logged in to your account" — when OLX refused the connection.
 
 ## Business rules
 
-### Append-only log
-
-Operation log entries are immutable. The merchant can't delete entries to "clean up" the log — useful for audit.
-
 ### Retention
 
-Older log entries are typically pruned after N months (verify retention policy). Critical for compliance is the [[apps-gdpr-acceptance]] log (separate), not this operation log.
+Entries are kept until the merchant deletes them or disconnects OLX (see *How it works* below). Critical for compliance is the [[apps-gdpr-acceptance]] log (separate), not this operation log.
 
 ### Per-product correlation
 
-Each row's Entity field correlates back to the source CloudCart product. The merchant can filter "show all operations for product X" to trace the full publish lifecycle.
+Each row links to its product's edit page. There is no per-product filter; the merchant scans the list for the product.
 
 ### Side effects of viewing
 - No API calls to OLX (read from local DB).
@@ -118,23 +90,23 @@ Standard apps permission scope.
 - [[apps-olx]] — OLX hub.
 - [[apps-olx-products]] — products + publishing.
 - [[apps-olx-adverts]] — live OLX adverts.
-- [[apps-olx-configuration]] — category mapping operations recorded here.
-- [[apps-olx-parameters]] / [[apps-olx-parameters-values]] — parameter mapping operations recorded here.
-- [[apps-olx-settings]] — Connect / Disconnect operations recorded here.
+- [[apps-olx-configuration]] — category mapping (not recorded here).
+- [[apps-olx-parameters]] / [[apps-olx-parameters-values]] — parameter mapping (not recorded here).
+- [[apps-olx-settings]] — disconnecting there empties this history.
 
 ## How it works (verified against backend)
 
 ### History records publish failures only
 
-The history table stores failures (and other operations) tied to a `product_id`. Entries are created when a publish/sync to OLX fails — recording `type=0`, the product ID, and the error message. The UI lists each entry with the product name, image, link to edit the product, the parsed OLX error message, and a timestamp.
+The history stores failures tied to a product. Entries are created when a publish or sync to OLX fails, or when OLX accepts an advert but does not show it — recording the product and the message. The UI lists each entry with the product name, image, link to edit the product, the parsed OLX error message, and a timestamp.
 
 ### Full error detail surfaces — including OLX field-level validation
 
-When OLX returns a 400 error with per-field validation, each `field` and `title` is concatenated and saved. The merchant sees e.g. "title - too short" + "category_id - required" in the same row. Higher-level HTTP errors (401 not logged in, 403 forbidden, 404 not found, 406 not acceptable, 429 rate limit, 500 server error) are appended as `error_other - {code}`.
+When OLX returns a 400 error with per-field validation, each `field` and `title` is concatenated and saved. The merchant sees e.g. "title - too short" + "category_id - required" in the same row. Higher-level HTTP errors (403 forbidden, 404 not found, 406 not acceptable, 429 rate limit, 500 server error) are appended as "An unexpected error occurred, please try again later or contact support. - {code}"; a 401 appends "You are not logged in to your account".
 
 ### Per-row delete and bulk clear
 
-The merchant can delete a single entry by ID, or click "Clear" to truncate the entire history table. So the log is NOT append-only from the merchant's perspective — manual clearing is supported.
+The merchant can delete a single entry from its row, or click **Clear all events** to empty the entire history. So the log is NOT append-only from the merchant's perspective — manual clearing is supported.
 
 ### Linked product required
 
@@ -142,7 +114,7 @@ The listing only includes entries whose linked product still exists in CloudCart
 
 ### No automatic log retention
 
-There is no cron / scheduled job that prunes OLX history. Entries persist indefinitely until the merchant manually deletes them (per-row delete or the **Clear** bulk action). The merchant is responsible for housekeeping if the log grows large.
+There is no cron / scheduled job that prunes OLX history. Entries persist indefinitely until the merchant manually deletes them (per-row delete or **Clear all events**). The merchant is responsible for housekeeping if the log grows large.
 
 ### No export of the history log
 

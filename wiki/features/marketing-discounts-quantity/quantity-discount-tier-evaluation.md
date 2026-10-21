@@ -7,7 +7,7 @@ aliases: ["Quantity tier matching", "Quantity discount tier algorithm", "Buy mor
 tags: [marketing, discounts, quantity, cart, evaluation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 3
 ---
 
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-This aspect documents **how the platform picks a tier** when a customer's cart contains a product with a Quantity discount. It covers the "≥ quantity wins" matching rule, the 12-tier cap, the `0`-is-empty validator edge case, the per-line (not per-product-cumulative) semantics for variant lines of the same product, and why the admin order-edit screen does not re-evaluate tiers.
+This aspect documents **how the platform picks a tier** when a customer's cart contains a product with a Quantity discount. It covers the "≥ quantity wins" matching rule, the 12-tier cap, the `0`-is-empty validator edge case, how pieces of different variants of the same product count together, and why the admin order-edit screen does not re-evaluate tiers.
 
 ## Where to find it
 
@@ -27,7 +27,7 @@ Tier evaluation is **server-side at cart-time**; there is no admin screen that s
 
 The merchant doesn't interact with the evaluator directly — but understanding the matching rule lets them design tier ladders that behave as intended:
 
-- Choose tier thresholds knowing the customer can hit them per-line, not cumulatively across variants of the same product.
+- Choose tier thresholds knowing that every piece of the product in the cart counts toward them, whatever its variant.
 - Avoid the `0` trap on either tier field.
 - Avoid the smallest-tier-is-N pattern when they really wanted "1+ qty discounted" (instead, use the Fixed-discount type below the lowest tier as a fallback — see [[quantity-discount-stacking]]).
 
@@ -37,17 +37,17 @@ The cart-time evaluator reads these stored values:
 
 | Field | Source | What it drives |
 |-------|--------|----------------|
-| `conditions[].quantity` | parent Discount's `quantity_discounts` rows | The tier's minimum cart-line quantity threshold (integer pieces). |
-| `conditions[].discount_value` | same | The per-piece replacement price at this tier (integer cents). |
+| `conditions[].quantity` | parent Discount's `quantity_discounts` rows | The tier's minimum number of pieces of the product in the cart, all variants together (integer pieces). |
+| `conditions[].discount_value` | same | The per-piece replacement price at this tier (integer cents) — one for all variants, or one per variant. |
 | `customer_groups[]` | parent Discount | Cart customer's `group_id` must match (or list empty) for any tier in the ladder to apply. Guests use the store's default guest-group ID. |
 | `date_start` / `date_end` | parent Discount | Cart-engine compares against the **store's local time** at evaluation. |
 | `active` | parent Discount | Inactive discounts are skipped entirely. |
 
 ## Business rules
 
-### "≥ quantity wins" — sort DESC, pick the first ≤ cart-line quantity
+### "≥ quantity wins" — sort DESC, pick the first ≤ the product's pieces in the cart
 
-At cart-time, the platform reads tiers ordered by `quantity` DESC (largest threshold first) and picks the **first tier whose `quantity` is ≤ the cart-line's current quantity**. Worked examples with ladder `2 → 9 EUR`, `5 → 8 EUR`, `10 → 6 EUR`:
+At cart-time, the platform reads tiers ordered by `quantity` DESC (largest threshold first) and picks, for each cart line, the **first of that line's variant's tiers whose `quantity` is ≤ the number of pieces of the product in the cart** (all its variants together). Worked examples with ladder `2 → 9 EUR`, `5 → 8 EUR`, `10 → 6 EUR`:
 
 - Customer adds 4 pcs → tier "2" wins (4 ≥ 2, 4 < 5) → unit price = 9 EUR, line = 36 EUR.
 - Customer adds 1 more (5 pcs) → tier "5" wins → unit price = 8 EUR, line = 40 EUR.
@@ -59,13 +59,13 @@ The discount **does not "kick in" below the smallest tier's quantity**. If the s
 
 ### 12 tiers is a UI cap; storage will hold whatever is submitted
 
-The form caps the tier list at **12 entries** — after the 12th, the **+ Add new condition** link is hidden. The merchant can save with fewer (even just one tier). Removing the last tier auto-inserts a fresh empty one (so the form always shows at least one editable row).
+For a product with one variant, the form caps the tier list at **12 entries** — after the 12th, the **+ Add new condition** link is hidden. The tier table shown for a product with more than one variant has no such cap. The merchant can save with fewer (even just one tier). Removing the last tier auto-inserts a fresh empty one (so the form always shows at least one editable row).
 
-The 12-tier cap is enforced by the form, not by a plan-feature limit and not by a stored constraint. An integration writing through the API could in principle submit more, but no admin merchant-facing path allows it.
+The 12-tier cap is enforced by the form, not by a plan-feature limit and not by a stored constraint. An integration writing through the Admin GraphQL API ([[settings-pat-tokens]]) can submit more, and so can the per-variant tier table.
 
 ### `0` is rejected as empty
 
-Every tier row must have BOTH a `quantity` AND a `discount_value` filled in. A row with one empty field rejects the save with *"All conditions must be fulfilled"* (BG: *"Всички условия трябва да се попълнят"*), plus per-field errors *"Quantity is required"* / *"Discount value is required"* — see [[quantity-discount-form]].
+Every tier row must have BOTH a `quantity` AND a `discount_value` filled in. A row with one empty field rejects the save with *"All conditions must be fulfilled"* (BG: *"Всички условия трябва да се попълнят"*), plus per-field errors *"Quantity is required"* / *"Discount value is required"* — see [[quantity-discount-form]]. With **Multiple price**, one variant's empty price is not an error: that variant simply gets no discount at that tier; the save fails only when no variant has a price.
 
 **Important edge: `0` is treated as empty.** The save validator treats both `quantity = 0` (e.g., "free starting from 0 units") and `discount_value = 0` (e.g., "free at this tier") as missing, so the row **fails with the empty-fields error**.
 
@@ -77,11 +77,11 @@ Before applying any tier, the platform checks the parent Discount's `customer_gr
 
 The filter is per-discount, not per-tier — the same allow-list gates the whole ladder. There is no way to say "Tier 1 applies to everyone, Tier 2 applies only to VIPs". Group-segmented ladders would need separate Quantity discounts per group, which collides with the one-Quantity-discount-per-product rule (see [[quantity-discount-uniqueness-constraint]]), so the pattern isn't supported on a single product.
 
-### One discount, many cart lines — per-line evaluation
+### One discount, many cart lines — every piece of the product counts
 
-The discount targets a `product_id` (not a variant). If a cart contains two lines of the same product but different variants (e.g., size S and size M of the same shirt), the platform evaluates each line's quantity independently against the tier ladder.
+The discount targets one product, and its tier prices are kept per variant. If a cart contains several lines of the same product in different variants (e.g., size S and size M of the same shirt), the platform adds up the pieces of all those lines and matches the total against each line's tiers. Each line then pays **its own variant's price** at the tier that total reaches. A variant left without a price at that tier pays its price at the highest lower tier it has, or its regular (or Fixed-discount) price.
 
-The customer needs to hit the tier on the **line** — not the cumulative product total across variants. `5 size-S + 5 size-M` does NOT count as 10 toward a "buy 10" tier; each line counts on its own.
+`5 size-S + 5 size-M` counts as 10 toward a "buy 10" tier. Pieces added as part of a bundle are not counted.
 
 ### Cart-side application is storefront-only — admin order-edit does not re-evaluate
 

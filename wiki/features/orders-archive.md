@@ -7,7 +7,7 @@ aliases: ["Archive order", "Unarchive order", "Bulk archive", "Bulk unarchive", 
 tags: [orders, archive, list-management, smarty]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-08-06
+updated: 2026-10-21
 source_count: 7
 ---
 # Order archive (toggle + bulk)
@@ -93,6 +93,8 @@ Once archived, an order is frozen against status changes. Attempting a transitio
 The whole bulk run is wrapped in a **single** database transaction. The first order failing the `completed` / `cancelled` gate (e.g. a `pending` order in the selection) throws and the **entire batch rolls back** — NONE are archived, including the ones that would have qualified, and the merchant sees only the *"Only completed orders can be archived."* error with no indication of which row caused it.
 
 Practical workflow: filter the list to `completed` / `cancelled` (or **Archived = No** plus a status filter) BEFORE selecting, so the selection cannot contain an ineligible order. **Unarchive** is unrestricted and cannot fail this way.
+
+The Admin GraphQL API ([[settings-pat-tokens]]) works differently: its `ordersBulkArchive` operation runs as a background task and handles each order on its own, so ineligible orders (the same completed / cancelled / draft rule) are skipped and listed in the result while the rest are archived.
 
 ### Idempotent (verified)
 Re-archiving an already-archived order (or re-unarchiving an active one — e.g. via two browser tabs) returns silently: no error, no duplicate history entry.

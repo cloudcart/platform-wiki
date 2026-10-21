@@ -5,7 +5,7 @@ route_path: /customer/auth/register
 themes_using: [all]
 tags: [storefront, customer, auth, register]
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-10-21
 source_count: 3
 ---
 
@@ -35,7 +35,7 @@ Top section (fixed fields, all required):
 
 - First name (id `register-fist_name` — note the typo, by design in template) and last name (id `register-last_name`). Both linked to `data-password="#register-password"` so the password-strength helper warns against using the name inside the password.
 - Email (id `register-email`). Rendered `readonly` when arriving from social login. Validated as `required|email|unique_email|max:191`.
-- Password (id `register-password`). Validated as `required|min:6|max:20` server-side. There is no zxcvbn-style strength meter — the password-helper only checks that name/email substrings are not reused. (verify)
+- Password (id `register-password`). Not shown when arriving from social login. Validated as `required|min:6|max:20` server-side; a social sign-up with the same e-mail as the social account may leave it empty. There is no zxcvbn-style strength meter — the password-helper only checks that name/email substrings are not reused. (verify)
 - Alternative phone (id `checkout-shipping-marketplace-phone`) — rendered with the `js-phone-intl` class so the international-telephone-input module kicks in. Required.
 
 Then, conditionally:
@@ -53,7 +53,7 @@ Footer: submit button (`cc-button js-loading`, disabled until JS binds), then a 
   - `first_name` required, max 255
   - `last_name` required, max 255
   - `email` required, valid, `unique_email`, max 191
-  - `password` required, min 6, max 20
+  - `password` required (except for a social sign-up with the same e-mail as the social account), min 6, max 20
   - `alternative_phone` required
   - Plus GDPR rules from the request validator and the merchant's custom-fields rules from `CustomFields`
   - Plus, when the relevant settings are on, the full shipping/billing the request validator validation prefixed with `shipping.` / `billing.`
@@ -91,9 +91,9 @@ Footer: submit button (`cc-button js-loading`, disabled until JS binds), then a 
 ## Known issues / by-design vs bug
 
 - **Typo by design**: `id="register-fist_name"` (missing the second `r`). Used as a JS selector elsewhere — renaming would break referrers.
-- **By design**: a password is always required, even for social-sign-up users (the customer can later use the social provider OR the password to log in).
+- **By design**: a social sign-up needs no password. When the customer arrives from a social login with the same e-mail, the form hides the password field and the server does not ask for one; the customer can set a password later from the account settings.
+- **By design (headless)**: a headless storefront registers customers through the [[headless-storefront-api]] `customerCreate`, which takes no password. The new customer is e-mailed a six-digit sign-in code and always signs in with a code, because that API has no password sign-in.
 - **By design**: there is no double-opt-in email confirmation step blocking the registration itself — the platform code typically returns an authenticated customer immediately. A confirmation email may still be sent (see `site.auth.confirm.email` / `site.account.confirm.email`), but it does not gate access. The exception is the membership / private-store flow, which can hold the customer at the redirect page until activated.
-- **Limitation**: the social-sign-up flow has no UI option to skip setting a password — the password field is still required even though the customer just authenticated via Google.
 - **Limitation**: the international phone module validation is client-side only; the server check on `alternative_phone` is just `required`. A poorly-formatted phone can sneak through if JS is disabled. (verify whether downstream code re-validates)
 
 ## Related

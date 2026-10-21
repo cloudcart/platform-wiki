@@ -3,9 +3,9 @@ type: concept
 nav_path: "Concept → Module vs Page Builder block → System pages + restrictions"
 aliases: ["System-page assignment", "Builder system pages", "home thank-you 404 Dynamic page", "blog.list required module", "blog.view required module", "PageRestriction", "storefront_builder plan gate", "video_slider_widget plan gate", "Plan gates Page Builder", "Системни страници"]
 tags: [design, modules, page-builder, plan-gates, concepts]
-plan_gates: ["storefront_builder", "video_slider_widget"]
+plan_gates: ["storefront_builder", "video_slider_widget", "lookbook_widget"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 3
 ---
 
@@ -17,15 +17,15 @@ source_count: 3
 
 The Page Builder isn't only for custom landing pages — a Dynamic page can be **assigned to a system slot** to replace the theme's default `home`, `thank_you`, or `error.404` page. This gives the merchant a drag-drop way to compose the store's homepage and post-checkout pages. Two layers of restrictions apply:
 
-- **`PageRestriction`** — a per-system-page rule that REQUIRES specific blocks. Currently only `blog.list` and `blog.view` enforce required-module rules. (verify)
-- **Plan-feature gates** — `storefront_builder` gates Page Builder usage entirely; `video_slider_widget` gates a single module (Video Slider) at the module layer.
+- **`PageRestriction`** — a per-system-page rule that REQUIRES specific blocks. Currently only `blog.list` and `blog.view` enforce required-module rules — and both slots are currently switched off, so no rule fires in practice.
+- **Plan-feature gates** — `storefront_builder` gates Page Builder usage entirely; `video_slider_widget` gates a single module (Video Slider) at the module layer, and the Lookbook module has a plan gate of its own.
 
 ## Scope
 
 Covered:
 
-- The system-page slots a Dynamic page can be assigned to (`home`, `thank_you`, `error.404`, `blog.list`, `blog.view`).
-- The `PageRestriction` table's enforced rules and the error message the merchant sees on save.
+- The system-page slots a Dynamic page can be assigned to (`home`, `thank_you`, `error.404`; `blog.list` and `blog.view` are currently switched off).
+- The `PageRestriction` table's enforced rules and the error message the merchant sees on publish.
 - Which system pages have NO enforced required-module rule.
 - The `storefront_builder` plan gate (Page Builder usage).
 - The hardcoded `site_id` allowlist (`3819`, `9674`) that bypasses `storefront_builder` at the platform level.
@@ -41,10 +41,10 @@ Not covered:
 
 ## Contrasts
 
-- **Blog system pages vs. home / thank-you / 404**: `blog.list` and `blog.view` enforce a required-block rule (`blog-list` / `blog-view` must be present). `home`, `thank_you`, `error.404` do NOT enforce any required block — the merchant can save them empty. (verify)
-- **Plan gate on creation vs. plan gate on render**: `storefront_builder` blocks Dynamic page CREATION at the admin layer AND suppresses Page Builder content RENDERING on the storefront for downgraded merchants. (verify)
+- **Blog system pages vs. home / thank-you / 404**: `blog.list` and `blog.view` enforce a required-block rule (`blog-list` / `blog-view` must be present). `home`, `thank_you`, `error.404` do NOT enforce any required block — the merchant can publish them empty.
+- **Plan gate on creation vs. plan gate on render**: `storefront_builder` blocks opening the Page Builder at the admin layer (so creating and editing Dynamic pages); the storefront does NOT check it — existing Dynamic pages keep rendering for downgraded merchants.
 - **Plan gate vs. site_id allowlist**: hardcoded `site_id`s (`3819`, `9674`) bypass `storefront_builder` regardless of plan. This is a CloudCart-set carve-out, NOT a plan upgrade. (verify)
-- **Page-level gate vs. module-level gate**: `storefront_builder` gates the entire Page Builder surface. `video_slider_widget` gates a single module (Video Slider). No other module has a plan gate.
+- **Page-level gate vs. module-level gate**: `storefront_builder` gates the entire Page Builder surface. `video_slider_widget` gates a single module (Video Slider), and the Lookbook module is gated the same way by its own plan feature. No other module has a plan gate.
 - **System-page assignment vs. ordinary Dynamic page**: an unassigned Dynamic page serves at `/page/<slug>`. An assigned one replaces the theme's default rendering for the chosen system slot (`/`, `/thankyou`, etc.).
 
 ## Where it applies
@@ -66,6 +66,8 @@ On [[marketing-landing-pages]], a Dynamic page can be assigned via the **Assigne
 | `blog.list` | Theme's default blog index | **MUST include `blog-list` block**. |
 | `blog.view` | Theme's default blog-article page | **MUST include `blog-view` block**. |
 
+The two blog slots are currently switched off: the **Assigned to** dropdown and the builder's system-page links offer only `home`, `thank_you` and `error.404`, so no page can hold a blog slot today. Assigning a slot never runs the required-block check — only publishing does.
+
 When the merchant assigns a Dynamic page to a system slot:
 
 - The page-builder page replaces the theme's default rendering for that slot.
@@ -80,20 +82,20 @@ The platform's required-module enforcement is a helper that ships only **two rul
 - `blog.list` system page → MUST contain a `blog-list` block.
 - `blog.view` system page → MUST contain a `blog-view` block.
 
-If the merchant tries to save a Dynamic page assigned to `blog.list` without a `blog-list` block, validation fails with the error message:
+If the merchant tries to publish a Dynamic page assigned to `blog.list` without a `blog-list` block, validation fails with the error message:
 
-> *"You must add module ":module" for publish this page"*
+> *"You must add widget ":widget" for publish this page"*
 
-(The `":module"` placeholder is filled with the missing block type, e.g., `"blog-list"`.)
+(The `":widget"` placeholder is filled with the missing block's name.)
 
-For `home`, `thank_you`, `error.404`: **NO required-block rule is enforced**. The merchant CAN save an empty homepage Dynamic page with no products block. Whether the resulting storefront page looks reasonable is up to the theme's fallback rendering. (Earlier documentation may have suggested a "homepage requires products" rule — that rule is NOT enforced.)
+For `home`, `thank_you`, `error.404`: **NO required-block rule is enforced**. The merchant CAN publish an empty homepage Dynamic page with no products block. Whether the resulting storefront page looks reasonable is up to the theme's fallback rendering. (Earlier documentation may have suggested a "homepage requires products" rule — that rule is NOT enforced.)
 
 ## `storefront_builder` — gates Page Builder usage
 
 The `storefront_builder` plan feature gates **Page Builder usage end-to-end**:
 
 - The **Dynamic** page-type card on **Marketing → Pages → New** is hidden / blocked for merchants whose plan doesn't include the feature. They cannot create new Dynamic pages.
-- For Dynamic pages created BEFORE the plan downgrade, the platform's the platform code helper returns `true` and **suppresses Page Builder content rendering on the storefront** for those merchants. (verify) Existing Dynamic pages effectively render as empty until the plan is upgraded again.
+- For Dynamic pages created BEFORE the plan downgrade, the Page Builder can no longer be opened to edit them, but the storefront keeps rendering them — no plan check runs when a Dynamic page is served, including one assigned to the homepage.
 - A **hardcoded `site_id` allowlist** at the platform level (`3819`, `9674`) bypasses this restriction — those two specific stores can use Page Builder regardless of plan. This is a permanent CloudCart-set carve-out, NOT a plan upgrade. (verify) Merchants outside this allowlist must be on a plan that includes `storefront_builder`.
 
 ## `video_slider_widget` — gates one module
@@ -103,7 +105,7 @@ A single module instance — the **Video Slider** (`extra.videoSlider` type) —
 - Opening the Video Slider edit panel without the plan feature triggers a plan-upgrade prompt.
 - The Video Slider module is **HIDDEN from the storefront** when the plan doesn't include the feature.
 
-No other module is currently plan-gated. The merchant's plan affects only the Video Slider module + Page Builder usage; every other module instance the active theme declares is available on all plans (subject to app-conditional loading — see [[widget-vs-pb-module-mechanics]]).
+The **Lookbook** module is gated the same way by its own plan feature (its edit panel is refused without it, on the Modules screen and in the Page Builder). No other module is currently plan-gated. The merchant's plan affects only the Video Slider and Lookbook modules + Page Builder usage; every other module instance the active theme declares is available on all plans (subject to app-conditional loading — see [[widget-vs-pb-module-mechanics]]).
 
 ## Per-block restrictions beyond the two enforced rules
 
@@ -115,7 +117,7 @@ No other module is currently plan-gated. The merchant's plan affects only the Vi
 2. Drags a banner row + a product-showcase block in the Page Builder.
 3. Sets **Assigned to** = `home` → saves. No `PageRestriction` error fires.
 4. The storefront `/` URL now serves this composition instead of the theme's default homepage.
-5. If the plan later drops `storefront_builder`, the page still exists but Page Builder content is suppressed on the storefront — the merchant must upgrade or reassign to recover.
+5. If the plan later drops `storefront_builder`, the page keeps rendering on the storefront, but the merchant cannot open it in the Page Builder until the plan is upgraded.
 
 ## Related
 
@@ -128,5 +130,3 @@ No other module is currently plan-gated. The merchant's plan affects only the Vi
 ## Open Questions
 
 - Whether the `site_id` allowlist (`3819`, `9674`) is still active in production or is a legacy carve-out. (verify)
-- Whether the platform code suppresses the entire page or just blocks individually. (verify)
-- Whether a Dynamic page assigned to `home` while `storefront_builder` is inactive falls back to the theme's default homepage or to a blank page. (verify)

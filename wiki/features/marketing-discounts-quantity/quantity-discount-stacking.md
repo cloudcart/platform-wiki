@@ -7,7 +7,7 @@ aliases: ["Quantity discount stacking", "Quantity vs Fixed discount", "Quantity 
 tags: [marketing, discounts, quantity, stacking, priority, cart]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 3
 ---
 
@@ -67,7 +67,7 @@ The Quantity discount also has its own `code_apply` flag, but it is **not expose
 
 ### Quantity discounts have no code field, never code-based
 
-Quantity discounts are **always automatic**. There's no code field on the form (see [[quantity-discount-form]]). The tier activates purely from the cart-line quantity matching the threshold — the customer never types anything to trigger it.
+Quantity discounts are **always automatic**. There's no code field on the form (see [[quantity-discount-form]]). The tier activates purely from the number of pieces of the product in the cart (all its variants together) reaching the threshold — the customer never types anything to trigger it.
 
 Code-based stacking is therefore always **between** a Quantity discount and a separate code-based discount the merchant created elsewhere, not within the Quantity discount itself.
 

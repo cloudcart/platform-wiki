@@ -4,7 +4,7 @@ nav_path: "Entity → Shipping Status → Lifecycle"
 aliases: ["Shipping status lifecycle", "Fulfillment lifecycle", "Shipping status transitions", "Fulfillment status flow", "Auto-fulfill on waybill", "Жизнен цикъл на статус на доставка"]
 tags: [entity, orders, shipping, statuses]
 created: 2026-06-10
-updated: 2026-08-06
+updated: 2026-10-21
 source_count: 0
 ---
 
@@ -14,7 +14,7 @@ source_count: 0
 
 ## Identity
 
-This page documents **how an [[order|Order]]'s Shipping Status moves** through its values over time — the expected flows, what triggers each transition, who drives it (the merchant by hand vs the courier integration via webhook), and why the transitions are NOT strictly enforced as a state machine. For the meaning of each value, see [[shipping-status-values]]; for what a transition triggers downstream (notifications, webhook, auto-completion), see [[shipping-status-side-effects]].
+This page documents **how an [[order|Order]]'s Shipping Status moves** through its values over time — the flow between its two values, what triggers each transition, who drives it (the merchant by hand, a courier waybill, or an automatic rule), and which gates apply. For the meaning of each value, see [[shipping-status-values]]; for what a transition triggers downstream (notifications, webhook, auto-completion), see [[shipping-status-side-effects]].
 
 ## Aliases
 
@@ -25,9 +25,7 @@ This page documents **how an [[order|Order]]'s Shipping Status moves** through i
 
 ## Key Attributes
 
-### The canonical flows
-
-The canonical positive flow:
+### The flow
 
 ```
 not_fulfilled → fulfilled → shipped → delivered
@@ -68,17 +66,17 @@ For integrations that auto-fulfill on waybill issue (most couriers), generating 
 
 ## Where it appears
 
-- [[orders-details]] — the per-order edit hub where the merchant changes the Shipping Status manually (the status pill accepts any value).
+- [[orders-details]] — the per-order edit hub where the merchant changes the Shipping Status manually (the status menu offers **Fulfilled** / **Not fulfilled** for shipping methods without a courier integration).
 - [[orders-shipping-waybill]] — waybill issuance that auto-fulfills the order in the same save.
-- [[shipping-provider-mechanism]] — courier integration webhooks that drive `fulfilled → shipped → delivered → returned`.
+- [[shipping-provider-mechanism]] — courier integrations, whose waybill sets `fulfilled`.
 - [[order]] — carries the current `status_fulfillment` value the lifecycle moves through.
 
 ## Related
 
 - [[shipping-status]] — hub.
 - [[order]] — carries the `status_fulfillment` value through its lifecycle.
-- [[shipping-provider]] — the courier whose webhooks drive the integrated lifecycle.
-- [[shipping-provider-mechanism]] — how courier webhooks push transitions.
+- [[shipping-provider]] — the courier whose waybill fulfils the order in integrated stores.
+- [[shipping-provider-mechanism]] — how courier integrations issue waybills.
 - [[orders-shipping-waybill]] — waybill issuance and the auto-fulfill rule.
 - [[orders-details]] — manual status changes.
 - [[order-status-workflow]] — how the lifecycle interacts with Order and Payment status.

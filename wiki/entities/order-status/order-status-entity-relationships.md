@@ -4,7 +4,7 @@ nav_path: "Entity → Order Status → Relationships"
 aliases: ["Order Status relationships", "Status independence", "Status vs payment vs shipping", "What Order Status drives"]
 tags: [entity, orders, statuses, relationships]
 created: 2026-06-10
-updated: 2026-08-06
+updated: 2026-10-21
 source_count: 3
 ---
 
@@ -47,9 +47,9 @@ The **single most important rule**: Order Status is independent of [[payment-sta
 
 - `status = paid`, `status_fulfillment = not_fulfilled` (paid but not yet packed — typical post-checkout state for many minutes to hours).
 - `status = paid`, `status_fulfillment = fulfilled` (paid and packed — ready for pickup or auto-promotes to completed).
-- `status = completed`, payment-status = `refunded`, `status_fulfillment = returned` (the whole order has been reversed but the merchant marked it Complete first).
+- `status = refunded` (or `cancelled`) with the Shipping Status back at `not_fulfilled` (a reversed order — cancelling or refunding resets a fulfilled order; goods that come back are recorded as a return, not as a shipping status).
 
-The merchant cannot infer one status from another. Each is set independently.
+The merchant cannot infer one status from another, though the platform links them in a few places (auto-completion, the reset on cancel / refund, un-fulfilling re-opening the order) — see [[shipping-status-side-effects]].
 
 ### Action gates per status — what the merchant can do at each step
 
@@ -70,7 +70,7 @@ The merchant cannot infer one status from another. Each is set independently.
 ### What an Order Status is NOT
 
 - **Not [[payment-status]]** — the canonical state of an individual payment record (**14** values: `authorized`, `initiated`, `requested`, `pending`, `held`, `completed`, `failed`, `refunded`, `voided`, `cancelled`, `timeouted`, `chargebacked`, `disputed`). The Order Status is the workflow; the Payment Status is the money.
-- **Not [[shipping-status]]** — the order's fulfillment state (`not_fulfilled` / `fulfilled` plus typically `shipped`, `delivered`, `returned` for integrated stores).
+- **Not [[shipping-status]]** — the order's fulfillment state (`not_fulfilled` / `fulfilled` only, also for courier-integrated stores).
 - **Not a custom status the merchant adds** — custom statuses are extra labels, not new canonical values. See [[order-status-entity-custom-statuses]].
 - **Not an archive flag** — `date_archived` is a separate field; archived orders are status-locked (status cannot change until unarchive).
 

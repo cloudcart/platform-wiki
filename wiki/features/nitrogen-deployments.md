@@ -4,10 +4,10 @@ nav_path: "Nitrogen (Headless) → Deployments"
 route_name: nitrogen.deployments
 route_path: /admin/nitrogen/:storefrontId/deployments
 aliases: []
-tags: [nitrogen, deployments, owner-only]
+tags: [nitrogen, deployments, staff-permission]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-27
+updated: 2026-10-21
 source_count: 1
 ---
 # Deployments
@@ -43,9 +43,9 @@ TODO — table of visible fields, what each one does, defaults, validation.
 
 ## Business rules
 
-### Owner-only — moderators are blocked
+### The Nitrogen Storefronts permission is required
 
-The Deployments list and detail pages call `/admin/api/core/nitrogen/storefronts/{id}/deployments[/{deploymentId}]`, all wrapped in the `isOwner` middleware. **Only the store owner can list deployments, view a deployment's logs, or trigger a redeploy.** Moderators get HTTP 403 and never see the Nitrogen sidebar entry. See [[nitrogen]] for the pillar-wide owner-only rule.
+The Deployments list and detail pages call `/admin/api/core/nitrogen/storefronts/{id}/deployments[/{deploymentId}]`, which require the **Nitrogen Storefronts** permission: the store owner always has it, a moderator only when it is granted in [[settings-staff]]. Without it, listing deployments, viewing a deployment's logs or triggering a redeploy gets HTTP 403. See [[nitrogen]] for the pillar-wide rule.
 
 TODO — non-obvious behavior, dependencies, plan-tier gates.
 

@@ -7,7 +7,7 @@ aliases: ["Bulk status change", "Bulk mark as completed", "Bulk archive", "Bulk 
 tags: [orders, status, bulk, transactions]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
+updated: 2026-10-21
 source_count: 3
 ---
 
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-The [[orders]] list exposes three bulk-status actions: **Archive**, **Unarchive**, and **Mark as completed**. The bulk processor wraps the entire selection in a single DB transaction and is **fail-fast**: the first order to fail any gate aborts the whole batch and NONE of the orders are updated. This page documents the bulk-only behaviours that differ from per-order status changes — the fail-fast model, the notification multiplier, and why bulk actions for other statuses are deliberately absent.
+The [[orders]] list exposes three bulk-status actions: **Archive**, **Unarchive**, and **Mark as completed**. The bulk processor wraps the entire selection in a single DB transaction and is **fail-fast**: the first order to fail any gate aborts the whole batch and NONE of the orders are updated (one exception — an under-authorised payment — is described below). This page documents the bulk-only behaviours that differ from per-order status changes — the fail-fast model, the notification multiplier, and why bulk actions for other statuses are deliberately absent.
 
 ## Where to find it
 
@@ -29,9 +29,9 @@ The [[orders]] list exposes three bulk-status actions: **Archive**, **Unarchive*
 
 Each opens a confirmation dialog before executing:
 
-- *"Are you sure you want to archive these orders?"* (`order.order_archive_are_you_sure`).
-- *"Are you sure you want to unarchive these orders?"* (`order.order_unarchive_are_you_sure`).
-- *"Are you sure you want to mark as completed?"* (`order.order_complete_are_you_sure`).
+- *"This will archive your order. Please confirm."*
+- *"Do you want to unarchive?"*
+- *"Are you sure you want to complete this order? If you mark it as completed, you will not be able to change its status never again."*
 
 The bulk dropdown also exposes other actions (Print, Export, etc. — see [[orders]] for the full bulk-action inventory). Only the three status actions above are covered on this page.
 
@@ -56,14 +56,14 @@ Common failure modes that abort a bulk:
 
 - **Transition rule violation** — e.g., one order in the selection is `Pending` and unfulfilled while the bulk is Mark as completed (which needs `Paid` **or** `Fulfilled`). The first such order aborts the batch.
 - **Archived block** — one order in the selection is archived; Mark as completed on archived is blocked.
-- **Under-authorised order** — one order's payment authorisation is smaller than its total. That check runs before the target status is even looked at, so it aborts the batch regardless of which status was requested.
+- **Under-authorised order** — one order's payment authorisation is smaller than its total. This one does NOT roll back: the run stops at that order, the orders processed before it stay completed, that order and the remaining ones are left unchanged, and the bulk action reports success rather than an error.
 - **Invalid status code** — shouldn't happen via the UI but possible via direct route hits.
 
 The merchant sees only the FIRST failing order's error message. Successive orders in the selection are not processed and their pre-existing state is preserved (rolled back).
 
 ### Bulk Archive / Unarchive — simpler gates
 
-The Archive / Unarchive bulk actions don't go through `validateChangeStatus` — they flip the archived flag directly. They have fewer failure modes and typically succeed across mixed selections. The merchant can safely bulk-archive a mix of completed / cancelled / refunded orders without hitting the fail-fast model.
+The Archive / Unarchive bulk actions don't run the status-transition checks — they only flip the archived flag. **Unarchive** has no other gate and succeeds for any selection. **Archive** still accepts only `completed` / `cancelled` orders (drafts excepted) and runs in the same single transaction: one `pending`, `paid` or `refunded` order in the selection fails the whole batch with *"Only completed orders can be archived."* and nothing is archived — see [[orders-archive]].
 
 ### Mixed-status bulk Mark as completed — common pitfall
 
@@ -95,7 +95,7 @@ The bulk-status flow consumes the same settings as the per-order flow:
 
 ## Business rules
 
-- The bulk action runs inside a SINGLE DB transaction. If ANY order fails ANY gate, the whole transaction rolls back. There is NO partial-success mode.
+- The bulk action runs inside a SINGLE DB transaction. If ANY order fails ANY gate, the whole transaction rolls back — except an under-authorised payment, which stops the run but keeps the orders already completed (see above).
 - Side effects fire per order — for a 100-order bulk that succeeds entirely: 100 pairs of history rows, 100 webhooks, up to 100 emails, 100 invoice / receipt numbers, 100 stock movements.
 - The bulk processor unlocks DB tables before the transaction (a workaround for legacy table-lock issues; wrapped in error handling). `(verify if still needed after the latest order-table migration)`.
 - The bulk action does NOT support a "dry-run" / "preview which would fail" mode. The merchant has to attempt the bulk and read the error.
@@ -104,7 +104,7 @@ The bulk-status flow consumes the same settings as the per-order flow:
 
 ## Programmatic access
 
-There is no JSON-API v2 bulk-status endpoint. To mass-update statuses programmatically, integrators iterate `PATCH /orders/:id` calls — each call is a separate transaction with its own side-effect chain. This gives integrators per-order error containment that the admin bulk action does NOT provide. See [[orders-status-change-api]].
+There is no JSON-API v2 bulk-status endpoint. To mass-update statuses programmatically, integrators iterate `PATCH /orders/:id` calls — each call is a separate transaction with its own side-effect chain. This gives integrators per-order error containment that the admin bulk action does NOT provide. See [[orders-status-change-api]]. The Admin GraphQL API ([[settings-pat-tokens]]) does have bulk operations — `ordersBulkChangeStatus` (to any order or fulfilment status) and `ordersBulkArchive` — which run as a background task, change each order separately and report the orders they skipped, so one failing order does not stop the others.
 
 ## Related
 

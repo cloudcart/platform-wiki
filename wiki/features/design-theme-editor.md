@@ -7,7 +7,7 @@ aliases: ["Theme editor", "Design edit", "CSS Builder", "Customize theme", "Chan
 tags: [design, theme, customization, colors, fonts, scss]
 plan_gates: ["change_theme"]
 created: 2026-05-23
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 5
 ---
 
@@ -81,6 +81,7 @@ The cross-cutting rules — all elaborated in the aspect pages:
 
 - **Variables are per-theme.** Switching themes hides but preserves; switching back reveals. See [[design-theme-editor-variables]].
 - **Save replaces the full set** (delete-then-insert per active theme). See [[design-theme-editor-save-reset]].
+- **Through the Admin GraphQL API** ([[settings-pat-tokens]]), `updateThemeVariables` changes only the variables it is sent — every other variable keeps its current value — and then recompiles the stylesheet the same way as Save.
 - **Save recompiles the stylesheet to S3** at `<site_id>/css/theme.css`; `stylesheet_version` busts caches. See [[design-theme-editor-css-compile]].
 - **Reset is atomic** — DB transaction with rollback on error. See [[design-theme-editor-save-reset]].
 - **Defaults merged on load** AND written back to storage (drift correction across theme updates). See [[design-theme-editor-save-reset]].

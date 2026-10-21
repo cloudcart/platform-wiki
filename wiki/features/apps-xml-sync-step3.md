@@ -7,17 +7,14 @@ aliases: ["XML Sync Step 3", "XML Sync operations", "XML Sync rules"]
 tags: [apps, imports, xml, sync, operations, rules, wizard]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-27
+updated: 2026-10-21
 source_count: 3
 ---
 # XML Sync → Step 3 (Operations & Rules)
 
 ## Purpose
 
-The **Step 3** wizard page is the **operations + rules stage** of the XML Sync wizard. Structurally similar to [[apps-xml-import-step3]] but with **additional options for recurring-sync behaviour**:
-- What HAPPENS when a product is found in the feed.
-- What HAPPENS when a product DISAPPEARS from the feed (was synced before, now missing).
-- Conditional rules + transformations + default values.
+The **Step 3** wizard page is the **operations + rules stage** of the XML Sync wizard. It is the same screen as [[apps-xml-import-step3]]: a list of rows, each picking a mapped field, one of the operations offered for that field, and the operation's value. What happens to products that disappear from the feed is not set here — it is the **Disable missing products** switch on Step 1 (see [[apps-xml-sync-discontinued]]).
 
 The `:id` URL parameter is the sync task ID.
 
@@ -32,25 +29,19 @@ Sidebar → Apps → XML Sync → wizard → Step 3 (after Step 2). Route: `/adm
 ### Sticky controls
 
 - **Back** → returns to [[apps-xml-sync-step2]].
-- **Save job** primary button → persists the operations + finalizes the task. The recurring sync becomes active per the configured interval.
+- **Save job** primary button → persists the operations, takes the task out of draft and returns to the task list. An active task is picked up by the next sync run.
 - Loading spinner during save.
 
 ### Operations and Rules section
 
 Beneath the *"Operations and Rules"* heading:
 
-**Per-product operations**:
-- **On match (existing SKU/ID)**: Update / Skip.
-- **On new product**: Create / Skip.
-- **On missing in feed [SYNC-SPECIFIC]**: Deactivate / Delete / Keep — the recurring-sync-only option for products that DISAPPEARED from the feed (supplier removed the SKU).
+Each row has three parts:
+- **Field** — one of the fields from [[apps-xml-sync-step2]] that has operations.
+- **Operation** — one of the operations offered for that field (the same 7 as XML Import: Multiplication, Divided by, Increment, Decrement, Check value, Split, Yes / No).
+- **Value** — the operation's own setting (for example the multiplier).
 
-**Conditional rules**: same as XML Import Step 3 — filter conditions for which XML rows are processed.
-
-**Per-field transformations**: same operators (string, numeric, date, conditional value mappings).
-
-**Image handling**: same options (download vs hot-link, format filtering, duplicate detection).
-
-**Default values**: same.
+The ✕ at the end of a row removes it; **Add new row** appears once the last row is complete.
 
 ### What the merchant CANNOT do here
 - Define new transformation operators (built-in set only).
@@ -59,51 +50,27 @@ Beneath the *"Operations and Rules"* heading:
 
 ## Settings & fields
 
-### Operations JSON structure
+### Saved operations
 
-Saved on task:
-```
-{
-  "on_match": "update",
-  "on_new": "create",
-  "on_missing": "deactivate", // sync-only
-  "filters": [...],
-  "transformations": {...},
-  "image_handling": {...},
-  "defaults": {...}
-}
-```
+The rows are saved on the task in the order shown and applied in that order on every sync run (see *How it works* below).
 
-### Sync-specific options
+### Missing-product handling is on Step 1
 
-| Option | Use case |
-|---|---|
-| **on_missing = deactivate** | Default — when supplier removes a SKU, the corresponding CloudCart product becomes inactive (hidden from storefront but data retained). |
-| **on_missing = delete** | Permanently remove the product from CloudCart (aggressive cleanup). |
-| **on_missing = keep** | Do nothing on disappearance (merchant's own data is preserved). |
-
-This is the key strategic decision for recurring syncs. Most merchants choose `deactivate` to preserve order history while hiding out-of-stock items.
+Step 3 has no option for products that disappear from the feed. Step 1 has two switches, both off by default: **Disable missing products** (products missing from the feed are made inactive — never deleted) and **Enable exists products** (inactive products that are back in the feed with stock are made active again). See [[apps-xml-sync-discontinued]].
 
 ## Business rules
 
 ### Save job = task active for recurring sync
 
-Clicking "Save job" persists the operations + activates the task at the configured interval. The merchant returns to [[apps-xml-sync-settings]] / [[apps-xml-sync-status]] to monitor.
-
-### on_missing semantics matter
-
-The `on_missing` choice has significant operational impact:
-- **Deactivate** — safe default; preserves history.
-- **Delete** — irreversible; only for trusted feeds where deletion is intentional.
-- **Keep** — strict additive sync; the merchant manages removals separately.
+Clicking "Save job" persists the operations and takes the task out of draft; an active task is picked up by the next sync run. The merchant returns to [[apps-xml-sync-settings]] / [[apps-xml-sync-status]] to monitor.
 
 ### Step 3 references Step 2 mappings
 
-Transformations / rules reference CloudCart fields by their Step 2 mapping. Changing Step 2 mappings may break Step 3 references — the platform should validate.
+Transformations / rules reference CloudCart fields by their Step 2 mapping. Changing Step 2 mappings may break Step 3 references — the platform does not check them (see *How it works* below).
 
 ### Side effects on save
-- Task's operations JSON is persisted.
-- Task becomes triggerable on the configured interval.
+- The task's operations are saved and the task leaves draft.
+- The feed hash and the pending parsed records are cleared, so the next sync run processes the whole feed with the new operations.
 
 ### Permission
 Standard apps permission scope.
@@ -114,13 +81,14 @@ Standard apps permission scope.
 - [[apps-xml-sync-step2]] — preceding step (mapping).
 - [[apps-xml-sync-settings]] — task list (parent).
 - [[apps-xml-sync-status]] — per-task progress.
-- [[apps-xml-import-step3]] — parallel step in one-time XML Import (no on_missing option).
+- [[apps-xml-import-step3]] — the same step in XML Import; this page is built on it.
+- [[apps-xml-sync-discontinued]] — missing-product handling (Step 1).
 
 ## How it works (verified against backend)
 
 ### Missing-product default: KEEP (do nothing)
 
-The merchant has a single binary opt-in flag `disable_missings` (Step 1, stored on the task's metadata). **Default is OFF** — products missing from a sync run are LEFT untouched in CloudCart. When the merchant enables it, missing-from-feed products are flipped inactive (and their variants zeroed out). There is **no built-in "Delete" mode**; the choice is Keep (default) or Deactivate.
+The merchant has a single binary opt-in flag `disable_missings` (Step 1, stored on the task's metadata). **Default is OFF** — products missing from a sync run are LEFT untouched in CloudCart. When the merchant enables it, missing-from-feed products are flipped inactive — only products that track stock and do not allow selling when out of stock, and only when none of their variants still in the feed has stock; quantities are not changed. There is **no built-in "Delete" mode**; the choice is Keep (default) or Deactivate.
 
 ### Same 7 fixed operations as XML Import — no custom code
 
@@ -134,9 +102,9 @@ Per the controller code: there is no preview endpoint that simulates a transform
 
 Save wraps the Step 3 update in a DB transaction and returns success. **No immediate-run side-effect**. However, the task's update hook clears the feed hash and re-initialises the parser queue, so the next queue tick re-parses this task even if the 12h timer hasn't elapsed. For a faster trigger the merchant flips the task's Active switch off and on from [[apps-xml-sync-settings]].
 
-### Step 3 validates only `id` + `name` — broken references silently no-op
+### Step 3 save is not validated — broken references silently no-op
 
-The only enforced validation at save is `id` and `name` required. Operation rules pointing at fields not mapped in Step 2 are persisted but do nothing at runtime — the field has no source value, so the transformation is skipped.
+Saving checks only that the task still exists; the rows are not validated (a row without a field is skipped, and a row whose operation the field does not offer is dropped). Operation rules pointing at fields not mapped in Step 2 are persisted but do nothing at runtime — the field has no source value, so the transformation is skipped.
 
 ### "Re-activate returned products" opt-in (`active_disabled`)
 
@@ -146,9 +114,9 @@ A separate task-metadata flag `active_disabled` enables a **second** sync-specif
 
 Same behaviour as XML Import: `editStep3` clears `xml_hash`, `last_cron_update`, `last_cron`, and the pending parsed-records queue (`records->delete`). The new operations apply from scratch on the next queue tick.
 
-### Step 3 fetch shows 3 sample products for verification
+### No sample preview on screen
 
-The Step 3 view fetches the feed and shows the merchant **3 sample parsed products** with their values mapped per the Step 2 mapping. The merchant can verify "yes, this is the data I expect" before saving the operations. The samples come from the start of the feed — not random — so dynamic feeds (newest-first) show the most recent products.
+Opening Step 3 also reads up to 3 products from the start of the feed, but the screen does not show them — there is no sample preview. The merchant checks the result after the next sync run in [[apps-xml-sync-status]].
 
 ### Operations are evaluated in stored order, identical to XML Import
 

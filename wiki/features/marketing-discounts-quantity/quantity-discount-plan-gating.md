@@ -7,7 +7,7 @@ aliases: ["Quantity discount plan limit", "discount_quantity gate", "Quantity di
 tags: [marketing, discounts, quantity, plan-gates, json-api-v2, graphql]
 plan_gates: ["discount_quantity", "total_discounts"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 3
 ---
 
@@ -31,6 +31,7 @@ The `discount_quantity` plan limit is a **usage counter** (the "used / limit" fi
 - **Discount-type picker** (when creating a new discount from [[marketing-discounts]]) — the **Quantity discount** card is **not** greyed out by the `discount_quantity` quota; it stays selectable. (Only the Discount code (PRO) card is plan-gated at create time — see [[marketing-discounts]] → Plan gates.)
 - **Create endpoint** — creating a `quantity` discount in the modern panel is **not** rejected by the plan gate: the create-time gate keys on `discount-quantity` (hyphen), which does not resolve against the underscore-keyed `discount_quantity` quota, so the gate passes through.
 - **JSON-API v2** — POST / PATCH against `/api/v2/discounts` with `type=quantity` IS rejected at the resource validator — but as a **type restriction** (Quantity is excluded from the v2 writable allowlist), not a plan gate.
+- **Admin GraphQL API** ([[settings-pat-tokens]]) — `createDiscount` with type `quantity` IS refused once the store has as many Quantity discounts as `discount_quantity` allows (or the plan does not include it); `updateDiscount` is not plan-checked.
 
 ## What the merchant can do here
 
@@ -39,7 +40,7 @@ The merchant cannot raise the quota from this screen — the controls are at the
 - **Upgrade to a plan that includes `discount_quantity`** (or a higher numeric cap).
 - **Buy a feature pack** that extends `discount_quantity` (numeric gates extend via packs).
 - **Delete unused Quantity discounts** (deactivation alone keeps the slot held — see [[quantity-discount-uniqueness-constraint]]).
-- **For programmatic access**, use GraphQL `createDiscount` / `updateDiscount` with **admin-session auth** instead of JSON-API v2 with API token (Quantity is excluded from the JSON-API v2 writable allowlist).
+- **For programmatic access**, use the Admin GraphQL API's `createDiscount` / `updateDiscount` with a personal access token the store owner creates at [[settings-pat-tokens]], instead of JSON-API v2 with an API key (Quantity is excluded from the JSON-API v2 writable allowlist).
 
 ## Settings & fields
 
@@ -63,7 +64,7 @@ This feature is gated by these plan-features (see [[plan-gates]], [[plan-vs-feat
 
 | Mapping | Shape | What it controls |
 |---|---|---|
-| `discount_quantity` | Numeric + Access | Per-plan cap for Quantity (volume / BOGO) discounts. Lower plans cannot pick the Quantity discount type from the type-picker — the card shows *"Not supported by plan"* and is disabled. Access route: `discounts/add/quantity`. Each Quantity discount can have up to 12 tiers (cap is UI-side, not plan-driven — see [[quantity-discount-tier-evaluation]]). Extendable via feature pack. |
+| `discount_quantity` | Numeric + Access | Per-plan cap for Quantity (volume / BOGO) discounts. Lower plans cannot pick the Quantity discount type from the type-picker — the card shows *"Not supported by plan"* and is disabled. Access route: `discounts/add/quantity`. For a product with one variant the form allows up to 12 tiers (cap is UI-side, not plan-driven — see [[quantity-discount-tier-evaluation]]); the per-variant tier table and the Admin GraphQL API have no cap. Extendable via feature pack. |
 | `total_discounts` | Numeric (aggregate) | Aggregate cap across all discount types — Quantity discounts also count toward this global ceiling. |
 
 When over the cap or below the access tier, the create endpoint returns **HTTP 403 Forbidden** with *"Not supported by plan"* and the list of plans that allow additional capacity. The type-picker modal grays out the *Quantity discount* card with the same upgrade prompt.
@@ -86,11 +87,11 @@ Quantity discounts are **excluded from JSON-API v2 writes**. The validator allow
 
 Programmatic create / update / delete is possible **only** via:
 
-1. **GraphQL** `createDiscount` / `updateDiscount` mutations with **admin-session authentication** (NOT API-token authentication — the mutations are gated to admin sessions).
+1. **The Admin GraphQL API** ([[settings-pat-tokens]]) — `createDiscount` / `updateDiscount` / `discountsBulkDelete`, with a personal access token the store owner creates; per-variant tier prices included.
 2. The admin panel.
 3. A CloudCart staff member creating them on behalf of the merchant.
 
-For integrators building bulk-tier-management tools, the GraphQL path is the only programmatic option — and the admin-session requirement means it can't be wired to a typical headless integration that uses API tokens.
+For integrators building bulk-tier-management tools, the Admin GraphQL API is the only programmatic option; it works with a personal access token, so it can be wired to a headless integration.
 
 ### Auto-disable on expiry — runs in UTC, not store timezone
 

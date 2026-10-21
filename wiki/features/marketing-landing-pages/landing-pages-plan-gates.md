@@ -7,7 +7,7 @@ aliases: ["Plan gates", "static_pages", "faq_page", "landing_page", "storefront_
 tags: [marketing, content, pages, plan-gates, billing]
 plan_gates: ["static_pages", "faq_page", "landing_page", "storefront_builder"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 2
 ---
 
@@ -25,7 +25,7 @@ The plan gates affect three surfaces:
 
 - **+ Add new page** counter on [[landing-pages-list-view]] — shows `static_pages` remaining cap.
 - **Choose page type** modal on [[landing-pages-types]] — each card's clickability is gated by its corresponding plan-feature key.
-- The hidden module palette in the page builder — `storefront_builder` runs a per-module restriction callback.
+- The page builder itself — `storefront_builder` gates every builder action (opening, auto-save, block settings); separately, the **Video slider** and **Lookbook** blocks show a padlock in the palette and their settings are refused without their own plan feature.
 
 When blocked by any gate, the merchant is redirected to the per-feature upsell page at [[plan-features]].
 
@@ -46,7 +46,7 @@ When blocked by any gate, the merchant is redirected to the per-feature upsell p
 | `static_pages` | Numeric | Total page count cap across all four types (regular / faq / landing / builder). The **+ Add new page (N)** counter shows remaining slots; hitting the cap blocks new pages until upgrade or delete. Extendable via feature pack. |
 | `landing_page` | Access | Lower plans cannot pick the **External page** (`landing`) type at all — `/admin/marketing/pages/add/landing` route is gated. Restricts the type-picker card. |
 | `faq_page` | Access | Lower plans cannot pick the **FAQ page** type at all — `/admin/marketing/pages/add/faq` route is gated. Restricts the type-picker card. |
-| `storefront_builder` | Access + callback | Gates the **Dynamic page** (builder) type at `/admin/marketing/pages/builder/*`. Also runs the platform code callback that restricts specific modules per plan tier — see [[landing-pages-builder-rules]]. |
+| `storefront_builder` | Access + callback | Gates the **Dynamic page** (builder) type at `/admin/marketing/pages/builder/*`. The access check is a callback for the whole builder; it does not restrict individual modules — only **Video slider** and **Lookbook** carry gates of their own, see [[landing-pages-builder-rules]]. |
 
 ### The "(N)" counter mechanism
 
@@ -72,9 +72,9 @@ The merchant is redirected to the per-feature upsell at [[plan-features]]. The p
 
 The merchant typically sees the gated type card visually disabled on the **Choose page type** modal — that's the client-side hint. The authoritative check is server-side: if a merchant hand-edits the URL to `/admin/marketing/pages/add/faq` on a plan that doesn't include `faq_page`, the route still redirects to the upsell. The same is true for `landing` and the builder.
 
-### Builder `storefront_builder` has a SECOND layer beyond access
+### Two builder modules have gates of their own
 
-Even when the merchant's plan includes `storefront_builder`, **specific modules** in the builder palette can be restricted per plan tier via the platform code. The merchant on a mid-tier `storefront_builder`-enabled plan can use the builder, but premium modules (e.g. some product-slider variants) may be hidden. See [[landing-pages-builder-rules]].
+Even when the merchant's plan includes `storefront_builder`, two modules are gated separately: **Video slider** and **Lookbook** show a padlock in the builder palette (linking to their app) until the app is installed and enabled — Video slider also needs its plan feature — and the builder refuses to open or save their settings on a plan without the feature. No other module is restricted by plan. See [[landing-pages-builder-rules]].
 
 ### Bulk Delete frees `static_pages` slots immediately
 
@@ -89,7 +89,7 @@ Each copy made via the bulk Copy action is a new page counted against `static_pa
 - [[marketing-landing-pages]] — hub.
 - [[landing-pages-list-view]] — the "(N)" counter on **+ Add new page**.
 - [[landing-pages-types]] — the four type cards gated by these features.
-- [[landing-pages-builder-rules]] — the per-module restriction layer for `storefront_builder`.
+- [[landing-pages-builder-rules]] — the builder's own rules, including the two separately gated modules.
 - [[plan-features]] — the per-feature upsell page the merchant is redirected to.
 - [[plan-gates]] — the platform-wide plan-gate catalogue.
 - [[plan-vs-feature-pack]] — feature packs that extend `static_pages` without a full plan upgrade.

@@ -7,7 +7,7 @@ aliases: ["Page builder modules", "Page builder blocks", "Dynamic page modules",
 tags: [design, modules, page-builder, marketing, landing-pages]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-10-05
+updated: 2026-10-21
 source_count: 4
 ---
 
@@ -48,7 +48,7 @@ Inside the builder:
 1. Click **+ Add block** on any row to open the block picker.
 2. Pick a module from the picker — only apps-installed modules appear.
 3. Configure the block in the side panel.
-4. Click **Save** — the change is persisted to the page's content JSON and a new `PageHistory` row is created.
+4. The change is auto-saved as a draft history version. Click **Publish changes** to write it to the page's content JSON and make it live (a published `PageHistory` row is created).
 
 The same module registry is used to render the storefront — every block stored in the page's content JSON resolves to a module class via the platform code.
 
@@ -57,15 +57,15 @@ The same module registry is used to render the storefront — every block stored
 - Drop any registered module into a Dynamic page.
 - Configure the block's fields per-instance — multiple instances of the same module on the same page are independent.
 - Reorder and remove blocks freely.
-- Roll back to a previous version via the page-builder's history dropdown (up to 500 most recent versions per page — see [[marketing-landing-pages]]).
+- Roll back to a previous version via the page-builder's history list — it shows the latest 50 of the up to 500 versions kept per page; open one and publish it (see [[marketing-landing-pages]]).
 - Combine multiple blocks in a row (the page builder is row + column based, not a free-form canvas).
-- Picker shows ONLY the modules whose app dependencies are satisfied — e.g., `store_locations` is hidden if the Store Locations app is not installed.
+- Picker shows ONLY the modules whose app dependencies are satisfied — e.g., `store_locations` is hidden if the Store Locations app is not installed. Exception: **Video slider** and **Lookbook** stay listed with a padlock that links to their app.
 
 ## What the merchant cannot do here
 
 - The merchant cannot add new module TYPES from the page builder — the registry is fixed by the platform (see `App\Services\Module::$widgets_map`).
 - The merchant cannot configure the theme-wide modules (header / footer / global filters) from the page builder — those live on [[design-modules]].
-- The merchant cannot save a Dynamic page as inactive — the page-builder controller forces `active = true` on save (see [[marketing-landing-pages]]).
+- The merchant cannot publish a Dynamic page as inactive — publishing from the builder forces `active = true`; auto-saves are drafts and leave the page untouched (see [[marketing-landing-pages]]).
 - The merchant cannot use page-builder modules outside a Dynamic page — they only render inside the builder's rendering pipeline.
 
 ## Settings & fields
@@ -96,7 +96,7 @@ If the app is uninstalled after the merchant added the block, the storefront ren
 
 ### Plan gate
 
-The page builder URL `/admin/marketing/pages/builder/...` is gated by the `storefront_builder` plan feature. Lower-tier merchants are redirected to the plan upsell. Some modules are additionally restricted per-plan via the platform code callback — see [[plan-gates]] and [[marketing-landing-pages]].
+The page builder URL `/admin/marketing/pages/builder/...` is gated by the `storefront_builder` plan feature. Lower-tier merchants are redirected to the plan upsell. No other module is restricted by that gate; only **Video slider** and **Lookbook** have plan gates of their own — they show a padlock in the picker until their app is installed and enabled (Video slider also needs its plan feature), and their settings cannot be opened or saved on a plan without the feature — see [[plan-gates]] and [[marketing-landing-pages]].
 
 ### `blog-list` module is wired but commented out in the registry
 

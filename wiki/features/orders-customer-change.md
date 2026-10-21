@@ -7,7 +7,7 @@ aliases: ["Edit customer on order", "Change order customer", "Update customer in
 tags: [orders, customer, edit, smarty]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 6
 ---
 # Customer edit (on order)
@@ -23,7 +23,7 @@ The flow for **editing the customer information attached to a specific order** �
 
 The page exposes a critical toggle: **"Update customer info"** — intended to also propagate the changes to the underlying customer record. In practice the toggle is effectively decorative; see [[orders-customer-change-propagation]] for the real propagation conditions.
 
-The page does NOT let the merchant SWAP the order to a different customer account. To do that, the merchant would need to delete the order and recreate it OR contact CloudCart support.
+The page does NOT let the merchant SWAP the order to a different customer account. Orders cannot be deleted, so the merchant would need to create a new order for the right customer OR contact CloudCart support. Only the Admin GraphQL API ([[settings-pat-tokens]]) can move an order to another customer, with `changeOrderCustomer`, and only while the order is still a draft ([[orders-add-draft-state]]) — the order then takes the new customer's name, email, group and addresses, and VAT is recalculated.
 
 This cluster is split into focused aspects because the flow combines a snapshot data-model, a counter-intuitive propagation rule, status-gating, and a layered validation chain — each worth its own page.
 
@@ -32,7 +32,7 @@ This cluster is split into focused aspects because the flow combines a snapshot 
 - [[orders-customer-change-panel]] — the side-panel UI: where to find it, the cog-menu status gate (`pending` / `paid` / `disputed`), form fields, after-save partial reloads.
 - [[orders-customer-change-snapshot-model]] — the order's customer snapshot (three fields) vs the live customer record; why phone is NOT here; notification re-routing when the email changes.
 - [[orders-customer-change-propagation]] — the "Update customer info" toggle, the decorative-toggle quirk, the three propagation conditions, and why no `customer.updated` webhook fires.
-- [[orders-customer-change-validation]] — required-field + max-191 rules, the archived-order block and its ordering, the full before/after history diff, no email-uniqueness check.
+- [[orders-customer-change-validation]] — required-field + max-191 rules, the archived-order block and its ordering, the full before/after history diff, and the email check when the change is copied to the customer record (an email that already belongs to another customer is refused).
 
 ## Where to find it
 
@@ -50,10 +50,10 @@ Routes:
 - Optionally propagate those changes to the linked customer record (intended via the **Update customer info** toggle, but the real rule is on [[orders-customer-change-propagation]]).
 
 What the merchant CANNOT do here:
-- Change which customer the order belongs to (no `customer_id` field). To reassign, use DB intervention or CloudCart support.
+- Change which customer the order belongs to. To reassign, contact CloudCart support (only draft orders can be moved, through the Admin GraphQL API — [[settings-pat-tokens]]; see Purpose).
 - Edit phone — phone lives on the address records, edited via [[orders-address-edit]].
 - Edit on an **archived** order — blocked with *"Cannot perform this operation on archived order"* (unarchive via [[orders-archive]] first).
-- Edit on an order in `cancelled`, `completed`, `paid + fulfilled`, or `refunded` state — the sidebar cog hides the action.
+- Edit on an order in any status other than `pending`, `paid` or `disputed` (e.g. `cancelled`, `completed`, `refunded`) — the sidebar cog hides the action. A `paid` order keeps the action after it is fulfilled.
 - Add / remove customer tags, change password, or create a new customer record (use [[customers-details]] / [[customers]] / [[orders-add]]).
 
 ## Settings & fields

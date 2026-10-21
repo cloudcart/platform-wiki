@@ -4,10 +4,10 @@ nav_path: "Nitrogen → Storefronts"
 route_name: nitrogen.storefronts
 route_path: /admin/nitrogen
 aliases: ["Nitrogen Storefronts", "Headless Storefronts list", "Storefronts list", "Nitrogen list"]
-tags: [nitrogen, storefronts, headless, list, owner-only]
+tags: [nitrogen, storefronts, headless, list, staff-permission]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-27
+updated: 2026-10-21
 source_count: 4
 ---
 # Nitrogen → Storefronts (list)
@@ -95,9 +95,9 @@ Per the header description: *"Each storefront gets its own API tokens and enviro
 
 The `apiNitrogenStorefronts.index` query is paginated. URL query params round-trip via `useQueryParams` so a bookmarked URL `/admin/nitrogen?page=2` restores the same page.
 
-### Permission — owner-only
+### Permission — Nitrogen Storefronts
 
-The Nitrogen route group (`/admin/api/core/nitrogen/*`) is wrapped in the `isOwner` middleware. **Only the store owner can list, create, edit, delete, or rotate tokens on storefronts here.** Moderators — even if they have full [[settings-staff]] permissions — get HTTP 403 and never see the sidebar entry. There is no `nitrogen.*` row in the staff permission tree to delegate. See [[nitrogen]] for the full owner-only carve-out across this pillar.
+The Nitrogen route group (`/admin/api/core/nitrogen/*`) requires the **Nitrogen Storefronts** permission. The store owner always has it; a moderator can list, create, edit, delete or rotate tokens on storefronts here only when that permission is granted in [[settings-staff]] — otherwise the calls get HTTP 403. See [[nitrogen]].
 
 ## How it works (verified against backend)
 

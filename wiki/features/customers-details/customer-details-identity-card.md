@@ -7,7 +7,7 @@ aliases: ["Customer identity card", "Customer insights module", "Customer note",
 tags: [customers, profile, detail, tags, insights]
 plan_gates: ["customers"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 6
 ---
 
@@ -70,9 +70,9 @@ A dedicated card below the note card.
 - Tag-shape icon + label *"Tags"* (header row) + helper text *"Use tags to define customer groups and segments. Create marketing campaigns to specific groups"*.
 - **Multi-tag search-select** with `mode="tags"` — typeahead against `GET /admin/api/core/customers/tags`. Each chip is a current tag.
 - **Create on the fly**: typing a non-existing tag shows an *"Add '{name}' as a tag for this customer"* footer link in the dropdown. Case-insensitive dedup — an already-existing tag triggers an *"exists"* message instead.
-- **Save tags** button — disabled until the local list differs from the initial set. Clicking POSTs to `/admin/api/core/customers/add-tags` with `{ids: [customer_id], tags: [...]}`. The endpoint **REPLACES** the customer's full tag set (not additive). Toast: *"Tags saved successfully"*. After save, the initial snapshot resets and the customer record re-fetches.
+- **Save tags** button — disabled until the local list differs from the initial set. Clicking POSTs to `/admin/api/core/customers/add-tags` with `{ids: [customer_id], tags: [...]}`. The endpoint **only adds**: tags in the picker that the customer does not have yet are attached, and a chip removed from the picker is NOT removed from the customer. Saving an empty picker is rejected (toast *"Error saving tags"*). Toast: *"Tags saved successfully"*. After save, the initial snapshot resets and the customer record re-fetches.
 
-The picker feeds the [[customers]] list filter and the segments built on [[marketing-segments]] — applying or removing a tag here changes campaign eligibility immediately.
+The picker feeds the [[customers]] list filter and the segments built on [[marketing-segments]] — applying a tag here changes campaign eligibility immediately.
 
 ## Settings & fields
 
@@ -86,7 +86,7 @@ Editable fields on this page all live in the Edit Customer modal — see [[custo
 | `customer_group_id` | Modal → identity section | Surfaced as badge. |
 | Note | Modal in note-only mode | Hard-capped 191 chars server-side. |
 | Custom fields | Modal → custom fields card | Per-store definitions on [[customers-custom-fields]]. |
-| Tags | Tags card (inline) | REPLACES the full set on save. |
+| Tags | Tags card (inline) | Save only adds tags; removing a chip does not remove the tag. |
 
 ## Business rules
 
@@ -98,9 +98,9 @@ The Customer record stores `income`, `completed_orders`, `orders_total`, `orders
 
 The customer note (admin-only field) is limited to **191 characters maximum**. A note longer than 191 chars throws the `customer.err.note_max_chars_%1$s` translation error. (191 is the platform's standard index-friendly column limit.) For longer records, the merchant should use customer tags + a separate notes system, or keep the note terse. Notes are NEVER shown to the customer — admin-only.
 
-### Tag saves REPLACE the full set and propagate to Subscriber
+### Tag saves only ADD tags
 
-The save endpoint replaces the customer's full tag set with what's posted — it is NOT additive. The frontend handles this automatically (it sends the local picker state), but JSON-API callers should be aware. Tag changes also propagate to the matching Subscriber record (joined by `customer_id`), so tags applied here AUTOMATICALLY become criteria in [[marketing-segments]] and campaign-targeting flows.
+The save endpoint adds the posted tags to the customer and keeps every tag the customer already has — it does NOT replace the set. Removing a chip in the picker and saving leaves that tag on the customer, and saving an empty picker is rejected. Through the Admin GraphQL API ([[settings-pat-tokens]]), `addCustomerTags` adds tags the same way and `removeCustomerTags` removes tags by their IDs. Saving here does not copy the tags to the matching Subscriber record; segments in [[marketing-segments]] that use the **Customer tag** condition read the customer's own tags.
 
 ### Identity-card "Edit pencil" opens the modal
 
