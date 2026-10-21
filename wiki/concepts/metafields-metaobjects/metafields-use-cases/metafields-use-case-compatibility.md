@@ -5,7 +5,7 @@ aliases: ["Compatibility metaobject", "Fitment", "Compatible with", "Fits model"
 tags: [metafields, metaobjects, use-case, compatibility, spare-parts, electronics]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-21
 source_count: 3
 ---
 
@@ -67,7 +67,7 @@ Details that vary **per pairing**, such as the yield of a cartridge on one print
 ## Where it applies
 
 - Printer ink and toner, vacuum and appliance spare parts, camera lenses and accessories, bicycle parts, car and motorbike accessories, watch straps, coffee machines and capsules, tool batteries.
-- A store with thousands of devices fills entries by import: `metaobjectUpsert` by handle ([[metaobjects-definitions]]).
+- A store with thousands of devices fills entries by import: `metaobjectUpsert` by handle ([[metafields-admin-api]]).
 
 ## Related
 

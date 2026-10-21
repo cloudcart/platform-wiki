@@ -5,7 +5,7 @@ aliases: ["Metafield capabilities", "Admin filter metafield", "adminFilterable",
 tags: [metafields, metaobjects, custom-data, filtering, smart-collections, concepts]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-21
 source_count: 5
 ---
 
@@ -37,7 +37,7 @@ Turning on the admin filter or the smart-collection condition indexes the values
 - **Matching**:
   - Text matches exactly and case-sensitively, or by prefix with `*`.
   - Numbers, measurements and dates take `>`, `>=`, `<` and `<=`; measurements compare in a common unit.
-  - A reference matches by the target's global id.
+  - A reference matches by the target's global ID, `gid://cloudcart/Product/123` ([[metafields-value-formats]]).
   - `fields.{key}:*` means "has a value", and `-` or `NOT` negates.
   - A term the list cannot use (an unknown field, a field without the filter, a value the type cannot hold) is ignored with a warning rather than failing the search.
 - **Text length**: text is indexed by its first 255 characters; longer exact matches are still confirmed in full.

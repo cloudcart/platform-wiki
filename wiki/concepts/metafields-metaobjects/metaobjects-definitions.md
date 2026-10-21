@@ -7,7 +7,7 @@ aliases: ["Metaobject definition", "Metaobject entries", "Metaobject entry", "Me
 tags: [metaobjects, custom-data, entries, concepts]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-21
 source_count: 5
 ---
 
@@ -45,7 +45,7 @@ A field can be added, renamed, have its validations or *required* changed, or be
 - **Required fields** must have a value. Fields left empty are simply absent from the entry.
 - **Status**: Active or Draft, when the definition has the active/draft status.
 - **Unnamed entries** (no display-name value) are shown as *"<definition name> #<id>"*.
-- **Upsert**: the Admin GraphQL API's `metaobjectUpsert` creates or updates an entry by type and handle. This is how an import or sync keeps entries in step without looking up ids.
+- **Upsert**: the Admin GraphQL API's `metaobjectUpsert` creates or updates an entry by type and handle. This is how an import or sync keeps entries in step without looking up ids. Partial and full updates are in [[metafields-admin-api]].
 - **Used in**: an entry's page lists where it is referenced, from products, categories, customers and other entries.
 
 ### Deleting

@@ -5,8 +5,8 @@ aliases: ["Page sections metaobject", "Headless CMS metaobjects", "Homepage sect
 tags: [metafields, metaobjects, use-case, content, nitrogen, landing-pages]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
-source_count: 4
+updated: 2026-10-21
+source_count: 5
 ---
 
 # Use case: homepage and landing-page sections
@@ -53,7 +53,7 @@ Active/draft status **on**: a new campaign page is built in draft and becomes vi
 - The home route reads `metaobject(handle: {type: "landing_page", handle: "home"})`, then `field(key: "sections") { references { nodes { ... on Metaobject { type fields { key value reference references } } } } }`.
 - A switch on each section's `type` picks the component. Product and category references come back with their data.
 - **Landing pages**: a route `/{handle}` reads the `landing_page` entry with that handle. A smart collection's page can be paired with an entry of the same handle for a hero above its grid ([[metafields-use-case-category-content]]).
-- **Rich text** arrives as a tree of paragraphs, headings, lists and links ([[metafields-types]]). A small renderer turns it into HTML.
+- **Rich text** arrives as a tree of paragraphs, headings, lists and links ([[metafields-types]]). `<MetafieldRichText>` from `@cloudcart/nitrogen-react` renders it, with `headingStart` placing the section's headings under its own. Other values (a `boolean`, a list of links, a measurement) go through `parseMetafield` ([[metafields-nitrogen]]).
 
 ### Rules that keep it manageable
 

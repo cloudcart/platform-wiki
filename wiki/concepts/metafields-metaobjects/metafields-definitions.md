@@ -7,7 +7,7 @@ aliases: ["Metafield definition", "Product metafields", "Category metafields", "
 tags: [metafields, custom-data, products, categories, customers, concepts]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-21
 source_count: 6
 ---
 
@@ -78,7 +78,7 @@ Deleting a product, category or customer deletes its metafield values. Deleting 
 
 - **Settings → Metaobjects → Products / Customers / Categories** (`/admin/settings/metafields/products`, `…/customers`, `…/categories`): the list, *Add definition*, *Unstructured*.
 - The **Metafields** card on the product page, the category edit window and the customer page. It saves with the rest of the page, all or nothing. A refused value stops the save and shows on its field.
-- Admin GraphQL: `metafieldDefinitionCreate`, `metafieldDefinitionUpdate`, `metafieldDefinitionDelete`, `metafieldDefinitionPin` / `Unpin`, and `metafieldsSet` (up to 25 values per call) / `metafieldsDelete` (up to 250).
+- Admin GraphQL: `metafieldDefinitionCreate`, `metafieldDefinitionUpdate`, `metafieldDefinitionDelete`, `metafieldDefinitionPin` / `Unpin`, and `metafieldsSet` (up to 25 values per call) / `metafieldsDelete` (up to 250), see [[metafields-admin-api]].
 
 ## Related
 

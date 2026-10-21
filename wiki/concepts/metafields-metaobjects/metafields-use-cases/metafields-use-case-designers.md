@@ -5,7 +5,7 @@ aliases: ["Designer profile metaobject", "Author page", "Artist profile", "Maker
 tags: [metafields, metaobjects, use-case, content, brand-story]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-21
 source_count: 3
 ---
 
@@ -69,7 +69,7 @@ The collection maintains itself as products are tagged with the designer. It is 
 ## Where it applies
 
 - Fashion and jewellery designers, book authors and illustrators, artists and print studios, wine and food producers, furniture makers, marketplaces of independent makers.
-- Up to 1,000,000 entries per metaobject. For a bookstore with thousands of authors, entries are typically created by an import with `metaobjectUpsert` by handle ([[metaobjects-definitions]]).
+- Up to 1,000,000 entries per metaobject. For a bookstore with thousands of authors, entries are typically created by an import with `metaobjectUpsert` by handle ([[metafields-admin-api]]).
 
 ## Related
 

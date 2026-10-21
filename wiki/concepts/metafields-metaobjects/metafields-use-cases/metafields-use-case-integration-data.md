@@ -5,7 +5,7 @@ aliases: ["ERP id metafield", "PIM id", "Supplier code", "Back-office product da
 tags: [metafields, metaobjects, use-case, integrations, erp, admin-graphql]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-21
 source_count: 4
 ---
 
@@ -45,10 +45,10 @@ Product metafields in a namespace per system, created through the Admin GraphQL 
 ### How an integration works with it
 
 - **Authenticate** with a personal access token ([[settings-pat-tokens]]) holding the narrowest scopes: `products` for product values, `settings` to create definitions, `metaobjects` for entries.
-- **Write values** with `metafieldsSet`, up to 25 per call, across products, categories and customers in one call when the token has each scope. One owner, namespace and key holds one value. Writing again replaces it.
+- **Write values** with `metafieldsSet`, up to 25 per call, across products, categories and customers in one call when the token has each scope. One owner, namespace and key holds one value. Writing again replaces it. The owner is named by its plain id, a referenced record by its global ID ([[metafields-admin-api]]).
 - **Find by key**: with the admin filter on `pim.product_id`, the Admin GraphQL `products(query: "metafields.pim.product_id:P-10442")` returns the product ([[metafields-capabilities]]).
 - **Sync entries** with `metaobjectUpsert(handle: {type: "supplier", handle: "SUP-017"}, …)`: it creates the entry the first time and updates it afterwards.
-- **Values without a definition** are accepted as *unstructured* values, but are not validated, filterable or unique. Defining the key first avoids that ([[metafields-definitions]]).
+- **Values without a definition** are accepted as *unstructured* values. They are checked only against the type sent with them, with no validations, admin filter or unique values. Defining the key first avoids that ([[metafields-definitions]]).
 
 ### Admin visibility
 

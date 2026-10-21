@@ -5,8 +5,8 @@ aliases: ["Metafield types", "Metafield type", "single_line_text_field", "multi_
 tags: [metafields, metaobjects, custom-data, types, validations, concepts]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
-source_count: 4
+updated: 2026-10-21
+source_count: 5
 ---
 
 # Metafield types and validations
@@ -41,27 +41,17 @@ Every metafield definition and every metaobject field has a **type**. The type d
 | Reference | `mixed_reference` | yes | `metaobject_definition_ids` (required) | an entry of any of several metaobject definitions |
 | Measurement | 11 types (below) | yes | `min`, `max` | `{"value", "unit"}` |
 
+The exact string each type stores and accepts, with examples, is in [[metafields-value-formats]]. A list's value is a JSON array, and its items of number types are strings.
+
 ### Measurements
 
-| Type | Units |
-|---|---|
-| `weight` | grams, kilograms, ounces, pounds |
-| `dimension` | millimeters, centimeters, meters, inches, feet, yards |
-| `volume` | milliliters, centiliters, liters, cubic meters; US and imperial fluid ounces, pints, quarts, gallons |
-| `area` | square centimeters, square meters, square inches, square feet, square yards |
-| `temperature` | celsius, fahrenheit, kelvin |
-| `energy` | joules, kilojoules, calories, kilocalories |
-| `power` | milliwatts, watts, kilowatts, horsepower |
-| `voltage` | volts |
-| `battery_charge_capacity` | milliamp hours |
-| `data_storage_capacity` | bytes, kilobytes, megabytes, gigabytes, terabytes |
-| `duration` | nanoseconds … seconds, minutes, hours, days, months, years |
+The 11 types are `weight`, `dimension`, `volume`, `area`, `temperature`, `energy`, `power`, `voltage`, `battery_charge_capacity`, `data_storage_capacity` and `duration`. Their units, as a value names them (`kilograms`, `cubic_meters`, `milliamp_hours` …), are in [[metafields-value-formats]].
 
 A value keeps the unit it was entered in. For filtering and smart-collection conditions it is compared in a common base unit, so `1 kilograms` and `900 grams` compare correctly.
 
 ### Rich text
 
-A rich-text value holds only: paragraphs, headings (levels 1–6), ordered and unordered lists, links, and bold and italic text. Anything else is refused, so a value is always something both the admin and a Nitrogen storefront can render. Links follow the `url` rules, so `javascript:` links are impossible.
+A rich-text value is a JSON tree of paragraphs, headings (levels 1–6), numbered and bulleted lists, links, and bold and italic text. Anything else is refused, so every value displays both in the admin and on a Nitrogen storefront. The parts of the tree, their properties and an example are in [[metafields-value-formats]].
 
 ### Files
 

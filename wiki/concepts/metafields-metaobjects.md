@@ -7,7 +7,7 @@ aliases: ["Metafields", "Metaobjects", "Metafields and metaobjects", "Custom dat
 tags: [metafields, metaobjects, custom-data, nitrogen, headless, concepts]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-21
 source_count: 12
 ---
 
@@ -32,11 +32,13 @@ How it works:
 
 - [[metafields-definitions]]: metafield definitions on products, categories and customers. Namespace and key, pinning, what can change later, values without a definition, deleting.
 - [[metafields-types]]: every value type, its list form and the validations it takes, including measurements, references, files and rich text.
+- [[metafields-value-formats]]: the exact string each type stores and accepts: lists, references as global IDs, measurement units, the rich-text tree.
 - [[metaobjects-definitions]]: metaobject definitions, their fields, the display name, entries with handles, active/draft status, references and deleting.
 - [[metafields-capabilities]]: the admin filter, the smart-collection condition and unique values.
 - [[metafields-limits]]: every number: definitions, fields, entries, value sizes, list sizes, calls.
 - [[metafields-permissions]]: staff permissions, token scopes, what the storefront and a signed-in customer may read.
-- [[metafields-nitrogen]]: how a Nitrogen storefront reads them, and what it can rely on.
+- [[metafields-nitrogen]]: how a Nitrogen storefront reads them, what it can rely on, and the `parseMetafield` and `<MetafieldRichText>` helpers.
+- [[metafields-admin-api]]: writing values and entries through the Admin GraphQL API: `metafieldsSet`, `compareDigest`, `metaobjectUpsert`, partial vs full updates.
 
 What to build with them:
 

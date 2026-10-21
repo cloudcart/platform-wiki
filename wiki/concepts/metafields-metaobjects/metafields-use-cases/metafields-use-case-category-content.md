@@ -5,7 +5,7 @@ aliases: ["Category metafields", "Category hero banner", "Category landing page 
 tags: [metafields, metaobjects, use-case, categories, merchandising, seo]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-10-21
 source_count: 4
 ---
 
@@ -35,7 +35,7 @@ Natively a category has **one** description, an image, a colour, an icon and SEO
 |---|---|---|
 | `custom.hero_image` | file (Image) | A wide banner, separate from the category's own thumbnail image. |
 | `custom.hero_headline` | single-line text, `max` 80 | |
-| `custom.hero_link` | `link` | `{"text": "Shop the sale", "url": "/selection/sale"}` |
+| `custom.hero_link` | `link` | `{"text": "Shop the sale", "url": "https://www.example.com/selection/sale"}`: a full address, since a path alone is refused. |
 | `custom.intro` | multi-line text, `max` 400 | Above the grid. |
 | `custom.seo_text` | rich text | Below the grid; headings and lists allowed. |
 | `custom.featured_products` | `list.product_reference`, `list.max` 8 | A hand-picked row at the top. |
