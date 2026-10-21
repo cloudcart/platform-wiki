@@ -2,12 +2,12 @@
 type: feature
 nav_path: "Marketing → Discounts → Products → Per-product modal"
 route_name: discounts-products
-route_path: /admin/marketing/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id, /admin/marketing/discounts/create/fixed
 aliases: ["Fixed discount product modal", "Common price vs Multiple price", "Add product to Fixed discount"]
 tags: [marketing, discounts, fixed, modal, ui]
 plan_gates: ["discount_fixed", "total_discounts"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 3
 ---
 

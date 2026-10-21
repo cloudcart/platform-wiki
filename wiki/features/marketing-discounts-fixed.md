@@ -2,12 +2,12 @@
 type: feature
 nav_path: "Marketing → Discounts → Products"
 route_name: discounts-products
-route_path: /admin/marketing/discounts/products/:id
+route_path: /admin/marketing/discounts/products/:id, /admin/marketing/discounts/create/fixed
 aliases: ["Fixed discount products", "Fixed-price products", "Per-product price override", "Фиксирана отстъпка"]
 tags: [marketing, discounts, fixed, per-product-price]
 plan_gates: ["discount_fixed", "total_discounts"]
 created: 2026-05-23
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 5
 ---
 

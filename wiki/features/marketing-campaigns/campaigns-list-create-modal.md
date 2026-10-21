@@ -2,12 +2,12 @@
 type: feature
 nav_path: "Marketing → Campaigns → Create modal"
 route_name: campaigns-create
-route_path: /admin/marketing/campaigns/create/:type(regular|automated)
+route_path: /admin/marketing/campaigns/create/:type(regular|automated), /admin/marketing/campaigns/create/regular, /admin/marketing/campaigns/create/automated
 aliases: ["Create campaign modal", "Regular vs Automated tab", "Predefined automated catalog", "+ Create campaign button"]
 tags: [marketing, campaigns, create, modal, predefined]
 plan_gates: ["campaigns"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 1
 ---
 

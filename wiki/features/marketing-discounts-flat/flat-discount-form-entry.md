@@ -2,12 +2,12 @@
 type: feature
 nav_path: "Marketing → Discounts → Flat → Form & entry surfaces"
 route_name: discounts-create
-route_path: /admin/marketing/discounts/create/global
+route_path: /admin/marketing/discounts/create/global, /admin/marketing/discounts/create/code
 aliases: ["Flat discount form", "Create flat discount", "Flat discount type-picker", "Discount with code card", "Flat discount sub-flows", "Flat discount code generator", "Flat discount label color"]
 tags: [marketing, discounts, flat, form, entry-surface]
 plan_gates: ["discount_global", "discount_coupon"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 4
 ---
 

@@ -2,12 +2,12 @@
 type: feature
 nav_path: "Marketing → Discounts → Percent → Editor"
 route_name: discounts-create
-route_path: /admin/marketing/discounts/create/global
+route_path: /admin/marketing/discounts/create/global, /admin/marketing/discounts/create/code
 aliases: ["Percent discount editor", "Percent discount form", "Discount with promo code form"]
 tags: [marketing, discounts, percent, editor]
 plan_gates: ["discount_global", "discount_coupon"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 2
 ---
 

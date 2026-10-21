@@ -2,12 +2,12 @@
 type: feature
 nav_path: "Marketing → Discounts → Container codes → Parent terms & plan-gating"
 route_name: discounts-codes_list
-route_path: /admin/marketing/discounts/codes
+route_path: /admin/marketing/discounts/codes, /admin/marketing/discounts/create/container
 aliases: ["Container code parent terms", "Container codes plan-gating", "Container codes uses counter", "Percent-value cap", "Container code delete cascade", "Наследени условия от контейнер", "Брояч на използвания"]
 tags: [marketing, discounts, coupons, container, plan-gating, uses-counter]
 plan_gates: ["discount_coupon"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 4
 ---
 

@@ -2,12 +2,12 @@
 type: feature
 nav_path: "Marketing → Discounts → Percent"
 route_name: discounts-create
-route_path: /admin/marketing/discounts/create/global
+route_path: /admin/marketing/discounts/create/global, /admin/marketing/discounts/create/code
 aliases: ["Percent discount", "Percentage discount", "% off discount", "Cart percent discount", "Percentage promotion", "-X% off", "Процентна отстъпка", "Процент отстъпка"]
 tags: [marketing, discounts, percent]
 plan_gates: ["discount_global", "discount_coupon"]
 created: 2026-05-23
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 4
 ---
 # Percent discount (`-X% off`)

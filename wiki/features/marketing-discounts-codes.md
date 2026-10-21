@@ -2,12 +2,12 @@
 type: feature
 nav_path: "Marketing → Discounts → Container codes"
 route_name: discounts-codes_list
-route_path: /admin/marketing/discounts/codes
+route_path: /admin/marketing/discounts/codes, /admin/marketing/discounts/create/container
 aliases: ["Container codes", "Promo code management", "Generated coupons", "Bulk single-use codes", "Промо кодове", "Управление на промо кодове", "Контейнерни кодове"]
 tags: [marketing, discounts, coupons, container, generated-codes]
 plan_gates: ["discount_coupon"]
 created: 2026-05-23
-updated: 2026-06-10
+updated: 2026-10-21
 source_count: 5
 ---
 # Container codes (Promo code management)
