@@ -6,9 +6,9 @@ related_entity: discount-code
 related_features: [marketing-discounts-code-pro-generator, marketing-discounts-code-pro]
 aliases: ["Discount Codes PRO generate", "Code PRO bulk generator API", "discount-codes-pro generate endpoint", "POST /discount-codes-pro/generate"]
 tags: [api, json-api-v2, discounts, code-pro]
-plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
+plan_gates: ["discount_coupon"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 7
 ---
 # Discount Codes PRO API — bulk generator (`POST /generate`)
@@ -71,7 +71,7 @@ Base URL, auth, headers: see [[json-api-v2]].
 
 | Field | Validation | Notes |
 |---|---|---|
-| `discount_id` | required, `int`, `exists:discounts,id` | Parent. The controller additionally enforces the platform code — a non-code-pro parent returns 404. |
+| `discount_id` | required, `int`, `exists:discounts,id` | Parent. It must be of type `code-pro` — any other parent returns 404. |
 | `generator_type` | required; `in:random,range` | Pick the mode. |
 | `limit` | required when `generator_type = random`; `int, min:1, max:5000` | **Hard cap of 5,000 codes per request on this API endpoint — independent of the merchant's `discount-code-pro-generator` plan-feature value.** The admin-panel generator DOES read the plan-feature value (so it can exceed 5,000 on higher plans), but the JSON-API v2 endpoint is fixed at 5,000 regardless. For batches larger than 5,000, issue multiple sequential calls. |
 | `length` | optional; `int, min:6, max:18` | Length of each random code. Default platform-defined when omitted. |
@@ -106,7 +106,7 @@ Not applicable — `/generate` is a write-only action endpoint. To list the code
 
 ## Side effects
 
-The bulk `generate` controller calls `$discount->customPush` inside a DB transaction, which DOES save the **parent** Discount — so this path can fire `discount.updated` (single-code PATCH does not). Generated codes get their `uses` counter wired into the recompute pipeline. Full catalogue: see [[api-discount-codes-pro-side-effects]].
+The bulk `generate` writes its codes inside a DB transaction and fires no `discount.updated`, the same as a single-code PATCH. Generated codes get their `uses` counter wired into the recompute pipeline. Full catalogue: see [[api-discount-codes-pro-side-effects]].
 
 ## Equivalent UI
 

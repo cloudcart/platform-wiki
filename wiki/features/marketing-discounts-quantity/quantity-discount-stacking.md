@@ -7,7 +7,7 @@ aliases: ["Quantity discount stacking", "Quantity vs Fixed discount", "Quantity 
 tags: [marketing, discounts, quantity, stacking, priority, cart]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -27,8 +27,8 @@ Stacking behaviour is cart-side; there is no admin UI screen that toggles it. Th
 
 The merchant cannot configure stacking directly on the Quantity form — `code_apply` is not exposed and there is no priority dial. Practical levers:
 
-- **Choose between Quantity and Fixed** for the same product knowing the Quantity tier wins at and above the smallest threshold; the Fixed price applies as fallback below it.
-- **Configure the promo code's `code_apply`** on the code-based discount (Container or Code PRO) — this decides whether the code applies on top of a tier-priced line.
+- **Choose between Quantity and Fixed** for the same product knowing that at and above the smallest threshold the tier price applies, less the Fixed saving; the Fixed price applies as fallback below it.
+- **Configure `code_apply` on a promo code or a Code PRO code** — this decides whether the code applies to a tier-priced line. A Container has no such switch.
 - **Avoid up-sell / cross-sell / bundle conflicts** with Quantity tiers on the same products if predictable per-unit pricing matters — those overrides win above Quantity.
 
 ## Settings & fields
@@ -37,10 +37,10 @@ This aspect has no merchant-tunable fields on the Quantity form itself. The rele
 
 | Field | Lives on | What it does at stacking-time |
 |-------|----------|-------------------------------|
-| `code_apply` | The promo-code discount (Container / Code PRO) | If `1`, the code applies on top of the Quantity-tier price; if `0`, the code is blocked when the cart has a Quantity-tier line. |
-| `code_apply` | The Quantity discount itself | Defaults to `0`; not exposed on the Quantity form (see [[quantity-discount-form]]). When `1`, the cart subtracts the variant's existing `save` from the tier price before promo-code allocation. Mostly dormant. |
+| `code_apply` | A promo code or Code PRO code | On: the code also applies to a tier line, on the reduced amount. Off: see the rules below. |
+| `code_apply` | The Quantity discount itself | Not shown on the Quantity form (see [[quantity-discount-form]]); on for a discount saved from the admin form. When on, the cart takes the saving of the variant's active Fixed or no-code Flat/Percent discount off the tier price, with or without a code. |
 | `discount_value` (per tier) | The Quantity discount's tier rows | The replacement unit price the tier sets. |
-| Up-sell / cross-sell / bundle override flags | The Cart Rule or up-sell config | Take priority over the Quantity tier — see [[apps-cart-rules]]. |
+| Up-sell / cross-sell / bundle override flags | The up-sell, cross-sell or bundle settings | Take priority over the Quantity tier. |
 
 ## Business rules
 
@@ -52,22 +52,25 @@ When a cart line has BOTH a per-variant [[marketing-discounts-fixed]] price AND 
 2. **Cross-sell override**.
 3. **Bundle override** — when the line is part of a cart-bundle.
 4. **Quantity tier** (this feature).
-5. **Per-variant Fixed discount**.
+5. **The cheapest active row among Fixed and no-code Flat or Percent**.
 
-So if a product has BOTH a Fixed discount AND a Quantity discount, **the Quantity tier wins** once its threshold is met. Below the smallest tier's threshold, the Fixed-discount price applies as fallback. This is the most subtle stacking interaction merchants miss — and it holds the same whether viewed from the product line or from the variant: the Quantity check runs before the variant's Fixed-discount fallback.
+So if a product has BOTH a Fixed discount AND a Quantity discount, a reached tier sets the line's price. With the Quantity discount's `code_apply` on, which a discount saved from the admin form has, the variant's active Fixed or no-code saving also comes off the tier price, with or without a code: catalog 20 EUR, Fixed 15 EUR, tier 12 EUR means the cart charges 7 EUR while the ladder shows 12 EUR. There is no lower limit on the result. Below the smallest tier's threshold, the Fixed-discount price applies as fallback. This holds the same whether viewed from the product line or from the variant: the Quantity check runs before the variant's Fixed-discount fallback.
 
 ### Quantity + promo-code stacking — controlled by the promo code's `code_apply`, not the Quantity discount
 
-Whether a promo code applies on top of a Quantity-tier line is decided by the **external code-based discount's own `code_apply` setting** — the one the merchant configures on the [[marketing-discounts-codes]] / [[marketing-discounts-code-pro]] / Container discount they create:
+Whether a promo code applies on top of a Quantity-tier line is decided by the **external code-based discount's own `code_apply` setting**, on a promo code or a Code PRO code ([[marketing-discounts-code-pro]]). A Container ([[marketing-discounts-codes]]) has no such switch: its default is on, and it is never refused for this.
 
-- **Quantity-tier line + external code with `code_apply = 0`** → the code is **blocked** (the Quantity tier counts as a "cart has a discounted line" condition).
-- **Quantity-tier line + external code with `code_apply = 1`** → the code applies **on top of** the Quantity-tier price (line-level allocation).
+- **Off, code on all products or a specific target** → accepted; the tier line is skipped and the other lines get the code. If every line is discounted, nothing comes off and no message shows.
+- **Off, code with Orders over or free shipping with a threshold** → refused at entry if any line holds a product discount, with *"This discount code can not be applied because you already have a discounted products at your cart"*.
+- **Off, free shipping for all, or Code PRO** → refused at entry with *"Invalid discount code"*.
+- **On** → the code applies **on top of** the Quantity-tier price, on the reduced amount. For what a code's amount comes off, see [[discount-stacking-amount-by-target]].
+- **On, with `apply_regular_price` also on** → the code is worked out on the regular price and compared with the current discounted price. If the code's price is lower, it replaces the tier on the line; otherwise the line keeps the tier and no code. Never both.
 
-The Quantity discount also has its own `code_apply` flag, but it is **not exposed** on the Quantity form (see [[quantity-discount-form]] for the omitted-fields list), defaults to `0`, and so is **dormant** for any discount saved through the admin. It only ever changes behaviour if an integrator sets it on the Quantity discount programmatically — and even then the admin UI does not surface the result. When set, it makes the cart subtract the variant's existing Fixed-discount saving from the tier price before the code's amount is allocated, so the code does not double-discount an already-reduced unit price. For practical merchant workflows this branch never fires.
+The Quantity discount also has its own `code_apply` flag. It is not shown on the Quantity form (see [[quantity-discount-form]] for the omitted-fields list), and a discount saved from the admin form has it on. It does not depend on any code: when on, the cart takes the saving of the variant's active Fixed or no-code Flat/Percent discount off the tier price, as in the example above. Only the Admin GraphQL API can turn it off; with it off the line pays the plain tier price.
 
 ### Quantity discounts have no code field, never code-based
 
-Quantity discounts are **always automatic**. There's no code field on the form (see [[quantity-discount-form]]). The tier activates purely from the counted pieces reaching the threshold (per cart line by default, see [[quantity-discount-line-counting]]) — the customer never types anything to trigger it.
+Quantity discounts are **always automatic**. There's no code field on the form (see [[quantity-discount-form]]). The tier activates purely from the counted pieces reaching the threshold (per cart line, see [[quantity-discount-line-counting]]) — the customer never types anything to trigger it.
 
 Code-based stacking is therefore always **between** a Quantity discount and a separate code-based discount the merchant created elsewhere, not within the Quantity discount itself.
 
@@ -80,10 +83,10 @@ The tier is evaluated and applied only at the storefront cart; it then persists 
 - [[marketing-discounts-quantity]] — hub.
 - [[quantity-discount-tier-evaluation]] — the matched-tier resolution that this aspect's priority resolver picks between.
 - [[quantity-discount-form]] — confirms `code_apply` is NOT a merchant-exposed field on the Quantity form.
-- [[marketing-discounts-fixed]] — the per-variant Fixed discount that is bypassed when a Quantity tier matches.
-- [[marketing-discounts-codes]] — Container-discount child codes; one source of the external `code_apply` promo codes that interact with Quantity tiers.
-- [[marketing-discounts-code-pro]] — Multi-code campaign discounts; another source of external `code_apply` codes.
-- [[apps-cart-rules]] — Cart Rules can compose multi-product promotions Quantity discount cannot express; rules-side discounts also evaluate in the same per-line priority resolver.
+- [[marketing-discounts-fixed]] — the per-variant Fixed discount whose price a matched tier replaces, and whose saving comes off the tier price.
+- [[marketing-discounts-codes]] — Container codes, which apply on top of tier lines.
+- [[marketing-discounts-code-pro]] — Code PRO codes, each with its own `code_apply` switch.
+- [[apps-cart-rules]] — Cart Rules can compose multi-product promotions Quantity discount cannot express; they reduce a line after its product discount and any line-level code.
 
 ## Open questions
 

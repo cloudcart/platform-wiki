@@ -7,7 +7,7 @@ aliases: ["Cart Rules", "Cart rules engine", "Conditional discounts", "Trigger-a
 tags: [apps, marketing, automation, rules-engine, discounts]
 plan_gates: ["cart_rules_total", "cart_rules_range", "cart_rules_conditions", "cart_rules_actions"]
 created: 2026-05-22
-updated: 2026-08-06
+updated: 2026-11-04
 source_count: 8
 ---
 
@@ -72,7 +72,7 @@ The cross-cutting rules that span all aspects:
 
 - **Rules evaluate in descending `sort_order`**, and the **date window applies first** — a rule outside its `[active_from, active_to]` window doesn't evaluate at all, even if status is Active. See [[cart-rules-cooldowns]].
 - **Row evaluation = AND across triggers** — no OR within a row; use multiple rows or rules for OR. Multi-row rules are an **OR-fallback ladder, not accumulating tiers** — only ONE row per rule fires. See [[cart-rules-stacking]].
-- **Products are consumed across rules** — once a rule matches a product, no later rule can match it; priority decides first pick. **Cart Rules + Discounts stack**: Cart Rules see the cart AFTER [[marketing-discounts]] apply (Discounts → Cart Rules on the discounted basis). See [[cart-rules-stacking]].
+- **Products are consumed across rules** — once a rule matches a product, no later rule can match it; priority decides first pick. **Cart Rules + Discounts stack**: Cart Rules see the cart after product discounts and line-level codes from [[marketing-discounts]], and before order-level discounts. See [[cart-rules-stacking]].
 - **Any admin can access** — no per-role gate; every staff member can create / modify / delete rules. **No audit log of edits** (only `created_at` / `updated_at` / `deleted_at`; no actor, no diff history). See [[cart-rules-known-issues]].
 - **Value scale — you enter the HUMAN value; it is stored ×100.** Send `50` for 50 EUR and `10` for 10% — the save step multiplies both by 100 (stored `5000` / `1000`). Quantities and counts are plain integers. Because money is then held in cents and percent as percent×100, the two are compared in **different units** during cart-level stacking — which is the root of the winner-takes-all gotcha. See [[cart-rules-conditions]] → *Value scale* and [[cart-rules-stacking]].
 - **Plan-tier gating — FOUR distinct limits** — `cart_rules_total`, `cart_rules_range`, `cart_rules_conditions`, `cart_rules_actions`, each individually expandable via feature packs. See [[plan-features]] + [[plan-vs-feature-pack]].

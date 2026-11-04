@@ -7,17 +7,17 @@ aliases: ["Countdown eligibility", "Countdown validity check", "Countdown discou
 tags: [marketing, discounts, countdown, eligibility, validity-check]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 2
 ---
 
-> Part of [[marketing-discounts-countdown]]. See the hub for the other aspects (editor, storefront popup + timer, single-instance rule, cart totals + stacking, programmatic access).
+> Part of [[marketing-discounts-countdown]]. See the hub for the other aspects (editor, storefront popup + timer, a second Countdown, cart totals + stacking, programmatic access).
 
 # Countdown discount — eligibility (target, customers, dates, validity check)
 
 ## Purpose
 
-This page documents the conditions a cart must satisfy for the Countdown popup to fire and the discount to attach: the target (`all` vs `order_over`), the customer-group restriction, the `only_customer` registered-users gate, the calendar `date_start` / `date_end` window, the per-session timer that runs on top, and the silent "cart too small" flat-subtotal cap.
+This page documents the conditions a cart must satisfy for the Countdown popup to fire and the discount to attach: the target (`all` vs `order_over`), the customer-group restriction, the `only_customer` registered-users gate, the calendar `date_start` / `date_end` window, the per-session timer that runs on top, and the silent skip when a fixed amount is larger than the subtotal.
 
 The eligibility chain runs on **every cart-totals computation** (cart view, checkout, order placement) — not only at popup-show time. So a cart that becomes eligible mid-session (e.g., customer adds an item that pushes them over `order_over`) starts seeing the popup on the next checkout visit, provided the calendar window is still open.
 
@@ -28,7 +28,7 @@ The eligibility chain runs in the storefront cart engine on every cart-totals co
 ## What the merchant can do here
 
 - Restrict who is eligible by choosing the target (`all` vs `order_over`) and the `order_over` threshold.
-- Set `only_customer` (REQUIRED for Countdown) to exclude guests entirely.
+- Set `only_customer` (shown for "Orders over", off by default) so guests get no discount.
 - Restrict to specific [[customers-custom-groups]] via `customer_groups[]` when `customer_groups_target = no`.
 - Set the calendar `date_start` / `date_end` window during which the Countdown is even considered.
 - Configure the per-session timer length (`countdown_minutes`) — see [[countdown-discount-editor]].
@@ -41,18 +41,18 @@ The merchant CANNOT bypass the silent "cart too small" skip for flat-type Countd
 
 | Value | Means | Companion field |
 |-------|-------|-----------------|
-| `all` | Apply to any cart that passes the customer-group + `only_customer` + date-range filters. | — |
-| `order_over` | Cart subtotal must be ≥ `order_over` (computed via `getTotalBeforeShipping` — shipping providers may be excluded). | `order_over` (amount in store currency); `force_save` flag. |
+| `all` ("For every product in the cart") | Apply to any cart that passes the customer-group + `only_customer` + date-range filters. | — |
+| `order_over` ("Orders over") | Products subtotal at or above `order_over`, measured after per-product and line discounts, before whole-order discounts. | `order_over` (amount in store currency). |
 
 The Countdown form's target dropdown only offers these two values — see [[countdown-discount-editor]]. There is NO product / category / vendor / `category_vendor` / `selection` target for Countdown.
 
 ### Registered-users gate
 
-`only_customer` is REQUIRED for Countdown (no default — the save validator rejects without a value). When ON, guests are excluded entirely; the popup will not fire on guest carts. When OFF, both guests and registered customers can trigger the popup.
+`only_customer` defaults to off, and the form shows it only for "Orders over". When ON, guests get no discount row; the popup still shows to them and their timer starts. When OFF, both guests and registered customers get the discount.
 
 ### Customer-group filter
 
-The `customerIsInValidGroup` check runs at cart-time: the cart's customer (or guest group) must match the parent discount's `customer_groups` allow-list:
+The customer-group check runs at cart-time: the cart's customer (or guest group) must match the parent discount's `customer_groups` allow-list:
 
 | Field | Backend key | Effect |
 |-------|-------------|--------|
@@ -66,9 +66,9 @@ No match → no Countdown.
 | Field | Effect |
 |-------|--------|
 | `date_start` | Inclusive lower bound for eligibility. |
-| `date_end` | Exclusive upper bound. Nullable → no expiration. |
+| `date_end` | Included, up to local midnight. Nullable → no expiration. |
 
-Storefront cart-engine checks use store timezone for the eligibility window, so the customer-visible behaviour stops at the right local time. (The auto-disable sweep runs in UTC — see [[countdown-discount-single-instance]] for the off-by-up-to-27h drift.)
+Storefront cart-engine checks use store timezone for the eligibility window, so the customer-visible behaviour stops at the right local time. (The auto-disable sweep runs in UTC — see [[countdown-discount-single-instance]].)
 
 ### Per-session timer window
 
@@ -80,20 +80,21 @@ On every cart-totals computation (cart view, checkout, order placement) the plat
 
 1. Is there an Active discount with `countdown_minutes` meta set? (Active = `active = yes`; deactivated Countdowns don't apply.)
 2. Is `now` within `[date_start, date_end]`?
-3. Does the customer's group match (`customerIsInValidGroup`)?
-4. Is the customer registered (or `only_customer = no`)?
-5. Is the cart subtotal ≥ `order_over` (if `order_over` is set)?
-6. For flat type: is `type_value` ≤ cart.subtotal? (cannot discount more than the cart is worth — see "Flat-type subtotal cap" below.)
-7. Compute `popupFirstShowDate = cart.meta(countdown_popup_first_showing) ?: now`.
-8. Is `now` ≤ `popupFirstShowDate + countdown_minutes`?
+3. Does the customer's group match?
+4. Is the products subtotal at or above `order_over` (if `order_over` is set)?
+5. For flat type: is `type_value` ≤ the products subtotal? (See "Fixed amount larger than the subtotal" below.)
+6. Take the first popup view from the cart (`countdown_popup_first_showing`), or now if there is none.
+7. Is `now` within `countdown_minutes` of that time?
 
-If all yes → the discount is attached as a `countdown` group total. If any fail → the discount silently doesn't apply (no popup, no totals line).
+If all yes → the popup can fire. If any fail → the discount silently doesn't apply (no popup, no totals line).
+
+The totals row has further conditions: the popup has been shown, and `only_customer` and `maxused_user` pass. A guest on an `only_customer` Countdown, or a customer at their limit, still gets the popup and their timer starts, but no discount row.
 
 ## Business rules
 
-### Flat-type subtotal cap (silent skip)
+### Fixed amount larger than the subtotal (silent skip)
 
-When the Countdown's inner type is `flat` AND `type_value > cart.subtotal`, the discount silently does NOT apply for that cart — it can't discount more than the cart is worth. The customer sees no popup, no timer, no animation. The merchant might think the Countdown is broken — it's just that the cart is too small.
+When the Countdown's inner type is `flat` AND `type_value > cart.subtotal`, the discount silently does NOT apply for that cart. The check compares the single amount, see [[countdown-discount-cart-totals]]. The customer sees no popup, no timer, no animation. The merchant might think the Countdown is broken — it's just that the cart is too small.
 
 This is asymmetric to `percent` (which always produces a sensible amount because it scales with subtotal).
 
@@ -111,7 +112,7 @@ The uses counter increments only on orders that reach the store's configured `di
 
 ### Eligibility is independent of plan caps
 
-Plan-gating (`discount_global`, `total_discounts`) only blocks **creation** of the Countdown — see [[countdown-discount-single-instance]]. Once created, the cart-time eligibility chain doesn't re-check plan caps.
+The plan check runs only when a Countdown is **created** — see [[countdown-discount-single-instance]]. Once created, the cart-time eligibility chain doesn't re-check the plan.
 
 ## Related
 
@@ -124,4 +125,4 @@ Plan-gating (`discount_global`, `total_discounts`) only blocks **creation** of t
 
 ## Open questions
 
-- Verify whether `getTotalBeforeShipping` excludes specific shipping providers or all of them in the `order_over` comparison `(verify)`.
+None.

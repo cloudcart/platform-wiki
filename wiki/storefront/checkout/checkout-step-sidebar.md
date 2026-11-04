@@ -8,7 +8,7 @@ aliases: ["Checkout sidebar", "Order summary panel", "Right-column checkout", "C
 tags: [storefront, checkout, sidebar, summary, totals, app-injection]
 plan_gates: []
 created: 2026-06-12
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -81,7 +81,7 @@ For the full DOM → POST → reload-fragment map of the whole flow see [[checko
 | Setting | Effect |
 |---|---|
 | `cc_cart->getDiscountCodeNew` returning a code | Renders the "Applied code" row with a remove × link. |
-| `session('discount_error')` | Error message rendered under the discount-code input. |
+| A refused code | The reason is shown as an error on the discount-code input. |
 | `checkoutText` widget enabled | Custom HTML block appears below the totals. |
 | `checkoutSideText` widget enabled | Same — separate slot. |
 | [[apps-bgn2eur]] active | Conversion message overlay appears. |
@@ -94,7 +94,7 @@ Verified locations where third-party / first-party apps can inject content in th
 |---|---|
 | Custom text widgets `checkoutText` + `checkoutSideText` | Two named widget slots merchants can fill via Theme Editor / [[design-modules]]. |
 | **BGN-to-EUR** | Pre-positioned `<div class="bgn2eur-convertion-message-checkout">` placeholder filled by the app's JS. |
-| **Cart Rules** ([[apps-cart-rules]]) | Surfaces effect lines inside the totals (e.g. *"BGN 5 discount: Buy 2 get 1"*) via the cart's `messages` collection. |
+| **Cart Rules** ([[apps-cart-rules]]) | Surfaces effect lines inside the totals (e.g. *"5 EUR discount: Buy 2 get 1"*) via the cart's `messages` collection. |
 | **Marketing discounts** | Same path — surfaces inside the messages block and the discount-code applied list. |
 | **Subscriptions** ([[apps-subscriptions-plans]]) | A notice in the messages block when a line-level code is withheld from a subscription line: *"Subscriptions do not combine with other discounts — the discount code does not apply to the subscription."* / *"Абонаментът не се комбинира с други отстъпки — кодът за отстъпка не се прилага за абонамента."* |
 | **Cross-sell / Up-sell modules** ([[marketing-cross-sell-list]] / [[marketing-up-sell-list]]) | Render inside step accordions on the left, NOT in the sidebar — they need product-list context the sidebar doesn't expose. |

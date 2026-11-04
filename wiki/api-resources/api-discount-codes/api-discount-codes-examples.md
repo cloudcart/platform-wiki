@@ -6,9 +6,9 @@ related_entity: discount-code
 related_features: [marketing-discounts-codes, marketing-discounts]
 aliases: ["Discount Codes API examples", "Container codes curl examples", "discount-codes filtering", "discount-codes testing checklist"]
 tags: [api, json-api-v2, discounts, container-codes]
-plan_gates: ["discount_coupon"]
+plan_gates: ["discount_global"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 6
 ---
 # Discount Codes API — filtering, examples & testing checklist
@@ -21,7 +21,7 @@ This aspect is the **query reference + worked examples** for the `discount-codes
 
 ## Endpoint
 
-All examples use `<store-host>` and `<YOUR_API_KEY>`. The parent Container Discount (a `percent` discount with `is_container = 1`) must already exist on [[api-discounts]] — the Container codes API does not require linking to it. Base URL, auth, headers: see [[json-api-v2]].
+All examples use `<store-host>` and `<YOUR_API_KEY>`. A code applies at checkout only while the store has an active Container Discount (a `percent` discount with `is_container = 1`) on [[api-discounts]]; codes are not linked to it. Base URL, auth, headers: see [[json-api-v2]].
 
 ## Attributes
 
@@ -292,7 +292,7 @@ The duplicate-`code` 422 reflects the platform-wide unique constraint, and the `
 
 ## Side effects
 
-The writes above trigger the redemption / no-webhook / no-audit behaviour catalogued on [[api-discount-codes-side-effects]].
+The writes above trigger the no-webhook / no-audit behaviour catalogued on [[api-discount-codes-side-effects]].
 
 ## Equivalent UI
 
@@ -301,7 +301,7 @@ The writes above trigger the redemption / no-webhook / no-audit behaviour catalo
 
 ## Testing checklist
 
-End-to-end sequence for an AI agent. Assumes a parent Container Discount (`discount_type = percent` + `is_container = 1`) already exists on [[api-discounts]] — the Container codes API does not require linking to it.
+End-to-end sequence for an AI agent. No Container Discount is needed to create codes; a code applies at checkout only while an active one (`discount_type = percent` + `is_container = 1`) exists on [[api-discounts]].
 
 ```
 1. GET /api/v2/discount-codes?page[size]=5
@@ -338,7 +338,7 @@ End-to-end sequence for an AI agent. Assumes a parent Container Discount (`disco
 - [[api-discount-codes-attributes]] — field semantics behind these payloads.
 - [[api-discount-codes-side-effects]] — write-time / redemption behaviour.
 - [[json-api-v2]] — API hub.
-- [[api-discounts]] — parent Container Discount endpoint.
+- [[api-discounts]] — Container Discount endpoint.
 
 ## Open questions
 

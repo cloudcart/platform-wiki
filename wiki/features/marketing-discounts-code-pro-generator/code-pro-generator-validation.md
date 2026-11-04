@@ -7,7 +7,7 @@ aliases: ["Generator validation", "Generator errors", "Generator error messages"
 tags: [marketing, discounts, coupons, code-pro, bulk-generation, validation]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 5
 ---
 
@@ -48,7 +48,7 @@ Failed client-side validation scrolls to the first error field. Server-side vali
 - **Generate via `range` mode with `from >= to`** — `to` must be greater than `code.from`. Else: *"Discount code must be greater than:value"*.
 - **Generate via `range` mode beyond the plan cap** — the numeric-range validator checks the total count against the plan cap and fails with *"You can generate maximum:max promo codes"* if the range is too wide.
 - **Generate via `random` mode with no structure selected** — the `code.structure` array is required. Else: *"You have not selected a code structure"*.
-- **Generate via `random` numeric-only mode with a `limit` that exceeds what the chosen `length` can fit** — the numeric-random validator computes `floor(10^length / (length * 100)) * 100` as the soft cap and rejects above it with *"Number of codes may not be greater than:max"*. (Approximates the probability the generator can find that many unique numeric strings of `length` digits.)
+- **Generate via `random` numeric-only mode with a `limit` at or above the largest number the chosen `length` holds** (999,999 for 6 digits) — rejected with *"Number of codes may not be greater than:max"*, where `:max` is `floor(largest number / (length * 100)) * 100`.
 - **Use a code string already in the existing Code PRO catalogue** — `range` mode pre-checks for collisions and fails with *"Some of the codes have already been created"*. `random` mode retries internally until no collision remains — see [[code-pro-generator-modes]].
 - **Generate with a `length` outside 6-18** — *"Number of characters must be at least:min"* / *"Number of characters may not be greater than:max"*.
 - **Generate over `from / to` values that overflow the platform's 15-digit numeric range** — `code.from` and `code.to` are capped at `999999999999999` (15 nines).
@@ -72,11 +72,11 @@ Failed client-side validation scrolls to the first error field. Server-side vali
 
 ### Translation key
 
-The "Number of codes may not be greater than:max" message is keyed at `code_pro.validation.code_limit.max` in the backend translation catalogue (verify) — surfaces identically through the JSON-API v2 path; see [[code-pro-generator-api]] for the API divergence on the cap value.
+The "Number of codes may not be greater than:max" message is keyed at `code_pro.validation.code_limit.max` in the backend translation catalogue. The JSON-API v2 path uses its own messages; see [[code-pro-generator-api]].
 
 ## Business rules
 
-- **Client-side gate is for date fields only.** Everything else (range collision, structure, length bounds, plan cap, numeric soft cap) runs server-side. The merchant will see an HTTP 422 response surface as toast/banner errors for these.
+- **Client-side gate is for date fields only.** Everything else (range collision, structure, length bounds, plan cap, numeric-only limit) runs server-side. The merchant will see an HTTP 422 response surface as toast/banner errors for these.
 - **The first failure halts validation.** The page scrolls to the first error field and does not show subsequent failures until the merchant fixes that one.
 - **No partial successes.** If validation fails the request never enters the transactional save path — see [[code-pro-generator-business-rules]] for transactional behaviour.
 
@@ -86,7 +86,7 @@ The "Number of codes may not be greater than:max" message is keyed at `code_pro.
 - [[code-pro-generator-fields]] — the fields these validations gate.
 - [[code-pro-generator-modes]] — mode-specific pipeline that calls these validators.
 - [[code-pro-generator-business-rules]] — what happens after validation passes (transaction, shared terms).
-- [[code-pro-generator-api]] — same validation messages on the JSON-API v2 `POST /generate` path.
+- [[code-pro-generator-api]] — the JSON-API v2 generate path and its own validation.
 
 ## Open questions
 

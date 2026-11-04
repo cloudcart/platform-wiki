@@ -7,7 +7,7 @@ aliases: ["Shipping discount", "Free shipping discount", "Free shipping", "Free 
 tags: [marketing, discounts, shipping, free-shipping]
 plan_gates: ["discount_global", "discount_coupon"]
 created: 2026-05-23
-updated: 2026-10-21
+updated: 2026-11-04
 source_count: 4
 ---
 # Shipping discount (Free shipping)
@@ -18,7 +18,7 @@ The **Shipping discount** is the discount **type** that **removes the shipping c
 
 Two flavours:
 
-- **Global / always-on** — no code; auto-applies whenever the cart meets the conditions. Targets `all` carts ("Free shipping for everyone") or `order_over` ("Free shipping above 50 EUR").
+- **Global / always-on** — no code; auto-applies whenever the cart meets the conditions. Target `all` ("For every product in the cart": no minimum, "Free shipping for everyone") or `order_over` ("Orders over": "Free shipping above 50 EUR").
 - **Promo-code** — customer enters a code at checkout to trigger free shipping.
 
 Unlike `flat` and `percent` types in [[marketing-discounts]], a shipping discount **carries no `type_value`** — there's no "how much off" number; the discount IS "remove the shipping line". The saved amount equals the cart's shipping quote at the moment of redemption.
@@ -29,20 +29,20 @@ Unlike `flat` and `percent` types in [[marketing-discounts]], a shipping discoun
 
 This feature is split into 7 aspect pages, each covering one well-scoped slice.
 
-- [[shipping-discount-eligibility]] — when free shipping kicks in: target `all` vs `order_over`, customer-group / region / `only_customer` / date-range / status restrictions, counted statuses for the `uses` counter, auto-disable in UTC.
-- [[shipping-discount-value-mechanics]] — how "remove the shipping line" works: paired positive + negative totals lines, no `type_value`, carrier-quote variability (COD surcharges, insurance, per-product surcharges), `description` always null, customer-facing rendering.
-- [[shipping-discount-stacking]] — the `code_apply` flag for code-based variants, one-shipping-discount-per-cart selection, no-code pool excludes code variants, code-based inclusive `>=` vs no-code strict `>`, first-match-wins iteration.
-- [[shipping-discount-force-save]] — the `force_save` admin-edit guard: required for `type=shipping`, condition re-check bypass on existing orders.
-- [[shipping-discount-other-zero-paths]] — the 4 mechanisms that zero a shipping line (Free-shipping discount, Cross-Sell injection, payment-provider waive, OrderModification, Cart Rule); the **"has free shipping"** flag and its effect on the waybill receiver-pays option.
-- [[shipping-discount-plan-gates-api]] — `discount_global` vs `discount_coupon` plan-feature quotas, type-picker gating, HTTP 403 at the cap, JSON-API v2 + GraphQL writes, webhook events, no audit-log row, 10-minute activation cooldown.
-- [[shipping-discount-examples]] — common merchant scenarios (always-on, threshold, VIP-only, region-only, code campaign, multi-tier via Cart Rules) with the exact field combos to set.
+- [[shipping-discount-eligibility]] — when free shipping kicks in: target `all` vs `order_over`, the minimum-amount rules, customer-group / `only_customer` / date-range / status restrictions, region on a code, counted statuses for the `uses` counter, the hourly auto-disable.
+- [[shipping-discount-value-mechanics]] — how "remove the shipping line" works: paired positive + negative totals lines, no `type_value`, carrier-quote variability (COD surcharges, insurance, per-product surcharges), what the row shows the customer.
+- [[shipping-discount-stacking]] — the `code_apply` flag for code-based variants, one-shipping-discount-per-cart selection and its order (no-code first, then code), no-code pool excludes code variants, first-match-wins iteration.
+- [[shipping-discount-force-save]] — the `force_save` admin-edit switch, off by default: condition re-check bypass on existing orders.
+- [[shipping-discount-other-zero-paths]] — the mechanisms that zero a shipping line (Free-shipping discount, Cross-Sell injection, payment-provider waive, order modification, Cart Rule); the **"has free shipping"** flag and its effect on the waybill receiver-pays option.
+- [[shipping-discount-plan-gates-api]] — the plan check on create (admin form 403, JSON-API v2 402), `discount_global` vs `discount_coupon` usage, JSON-API v2 + GraphQL writes, webhook events, no audit-log row.
+- [[shipping-discount-examples]] — common merchant scenarios (always-on, threshold, VIP-only, region-only code, code campaign, per-method thresholds) with the exact field combos to set.
 
 ## Where to find it
 
 A "Free shipping" discount is **not a separate type card** in the type-picker — it is always reached *through* one of two cards. From the [[marketing-discounts]] list, click **+ Add discount**, then:
 
 - **Global discount** card (no-code free shipping) — opens the form at `/admin/marketing/discounts/create/global` (`type=global`). Inside, set the discount **type** to **Free shipping** (the *Discount type* select offers Fixed amount / Percentage / Free shipping).
-- **Discount with code** card (free-shipping coupon) — opens `/admin/marketing/discounts/create/code` (`type=code`). Same form plus the **Generate a discount code** and **Regions** blocks; again pick **Free shipping** inside.
+- **Discount with promo code** card (free-shipping coupon) — opens `/admin/marketing/discounts/create/code` (`type=code`). Same form plus the **Generate a discount code** and **Regions** blocks; again pick **Free shipping** inside.
 
 The breadcrumb reads "Marketing → Discounts → Create discount".
 
@@ -50,17 +50,17 @@ The breadcrumb reads "Marketing → Discounts → Create discount".
 
 - Create a Free-shipping discount (with or without a promo code).
 - Pick a **target**: `all` or `order_over` — see [[shipping-discount-eligibility]].
-- Restrict to [[customers-custom-groups|customer groups]], registered users, a [[geo-zone|geo zone]], or a date range — [[shipping-discount-eligibility]].
+- Restrict to [[customers-custom-groups|customer groups]], specific customers, or a date range; a code can also be limited to a [[geo-zone|geo zone]] — [[shipping-discount-eligibility]].
 - Use the binary "remove shipping line" value-type — [[shipping-discount-value-mechanics]].
-- Configure `force_save` (required for shipping) — [[shipping-discount-force-save]].
+- Switch **Save the discount on your order** (`force_save`) on or off — [[shipping-discount-force-save]].
 - Manage stacking, `code_apply`, one-shipping-discount-per-cart selection — [[shipping-discount-stacking]].
-- Manage plan-gate quotas, API, webhooks, the 10-minute cooldown — [[shipping-discount-plan-gates-api]].
+- See the plan check, API and webhooks — [[shipping-discount-plan-gates-api]].
 
 ### What the merchant CANNOT do here
 
 - **Set a numeric Discount value** — `type_value` must be empty (*"Type value must be empty"*). See [[shipping-discount-value-mechanics]].
-- **Target a specific product / category / vendor / smart collection** — only `all` and `order_over` are supported (*"Type is not valid for products or product category targets"*).
-- **Discount shipping by a percentage** ("50% off shipping") — binary only. Use [[apps-cart-rules|Cart Rules]] for partial-shipping promos.
+- **Target a specific product / category / vendor / smart collection** — the form offers only `all` and `order_over` for free shipping.
+- **Discount shipping by a percentage** ("50% off shipping") — binary only. [[apps-cart-rules|Cart Rules]] have no partial shipping action either; their only shipping action is Free shipping.
 - **Stack a code-based free-shipping discount on a discounted cart** without `code_apply = 1` — see [[shipping-discount-stacking]].
 
 ## Settings & fields
@@ -72,11 +72,11 @@ Field-by-field tables are deferred to the aspect pages so each table can stay cl
 | `type` + `type_value` (binary, no value) | [[shipping-discount-value-mechanics]] |
 | `settings` (target `all` / `order_over`) + `order_over` threshold | [[shipping-discount-eligibility]] |
 | `active`, `name`, `date_start` / `date_end` / `no_expire` | [[shipping-discount-eligibility]] |
-| `only_customer`, `customers[]`, `customer_groups[]`, `all_regions`, `geo_zone_id` | [[shipping-discount-eligibility]] |
+| `only_customer`, `customers[]`, `customer_groups[]`, `all_regions` and `geo_zone_id` (code form) | [[shipping-discount-eligibility]] |
 | `max_uses`, `maxused_user`, counted statuses (`discounts_used_statuses`) | [[shipping-discount-eligibility]] |
-| `force_save` (required for `type=shipping`) | [[shipping-discount-force-save]] |
+| `force_save` (switch, off by default) | [[shipping-discount-force-save]] |
 | `code`, `code_format`, `barcode_prefix`, `code_apply` (code variant only) | [[shipping-discount-stacking]] |
-| Plan-feature quotas (`discount_global`, `discount_coupon`) | [[shipping-discount-plan-gates-api]] |
+| Plan-feature usage (`discount_global`, `discount_coupon`) | [[shipping-discount-plan-gates-api]] |
 
 ### Endpoints
 
@@ -85,7 +85,7 @@ Field-by-field tables are deferred to the aspect pages so each table can stay cl
 | Create form (global / no-code) | `/admin/marketing/discounts/create/global` |
 | Create form (code-based) | `/admin/marketing/discounts/create/code` |
 | Edit form | `/admin/marketing/discounts/edit/{id}` |
-| Save (admin API) | `POST /admin/api/discounts` |
+| Save (admin API) | `POST /admin/api/core/discounts` |
 | JSON-API v2 CRUD | `<store>/api/v2/discounts` (resource [[api-discounts]]) |
 
 ## Business rules
@@ -98,7 +98,7 @@ A shipping discount **does not produce a `type_value`**. At cart totals time, th
 
 ### One shipping discount per cart at checkout
 
-The cart's discount-applicator picks at most **ONE** shipping-type discount per cart at totals time. Code-based shipping coupons reach the cart through a different path than no-code shipping; the no-code pool query explicitly excludes code variants. Selection rules + the misnamed "sorted by `order_over DESC`" myth are on [[shipping-discount-stacking]].
+The cart's discount-applicator picks at most **ONE** shipping-type discount per cart at totals time. Code-based shipping coupons reach the cart through a different path than no-code shipping; the no-code pool query explicitly excludes code variants. Selection rules are on [[shipping-discount-stacking]].
 
 ### Permissions
 
@@ -107,12 +107,12 @@ The form and CRUD endpoints are scoped under the standard `marketing.discounts` 
 ## Related
 
 - [[marketing-discounts]] — parent feature; the Shipping discount type lives there alongside flat / percent / fixed / quantity / countdown / code-pro.
-- [[marketing-discounts-codes]] — Container codes (a different code-based discount type; codes can also be `shipping`-typed via Container generation).
+- [[marketing-discounts-codes]] — Container codes (a different code-based discount type).
 - [[marketing-discounts-code-pro]] — Code PRO multi-code campaigns; each PRO code can independently be a `shipping` condition.
 - [[marketing-discounts-fixed]] — Fixed-price discount (compare: shipping changes the shipping line, Fixed changes the product price).
 - [[marketing-discounts-countdown]] — Countdown timer discount (a different visual-urgency style).
-- [[apps-cart-rules]] — for partial-shipping discounts (e.g., "10% off shipping" — which Discounts cannot do — use Cart Rules).
-- [[geo-zone]] — region restriction via `geo_zone_id`; very common with shipping discounts.
+- [[apps-cart-rules]] — Cart Rules; their Free shipping action also zeroes the whole line.
+- [[geo-zone]] — region restriction via `geo_zone_id`, on the code form.
 - [[customers-custom-groups]] — customer-group restriction (e.g., "Free shipping for VIPs only").
 - [[settings-hooks]] — `discount.created` / `updated` / `deleted` webhooks.
 - [[settings-statuses]] — `discounts_used_statuses` setting controls which statuses count toward `max_uses`.
@@ -120,7 +120,7 @@ The form and CRUD endpoints are scoped under the standard `marketing.discounts` 
 - [[orders-shipping-waybill]] — the waybill picker that hides the receiver-pays option when "has free shipping" is set.
 - [[analytics-top-order-discounts]] — analytics dashboard surfacing top order-level discounts including shipping discounts.
 - [[discount]] — entity page for the underlying Discount record.
-- [[discount-stacking]] — cross-discount stacking matrix + the per-type 10-minute-cooldown table.
+- [[discount-stacking]] — cross-discount stacking matrix.
 
 ## Open questions
 

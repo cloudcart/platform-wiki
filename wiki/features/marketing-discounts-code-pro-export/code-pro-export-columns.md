@@ -7,7 +7,7 @@ aliases: ["Code PRO export columns", "Export CSV column layout", "56 columns", "
 tags: [marketing, discounts, code-pro, export, csv]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -27,7 +27,7 @@ These columns appear in the `discount-codes-pro.csv` file produced by the "Expor
 
 - **Read the full per-code terms** of every code in one spreadsheet: name, code string, active flag, barcode info, apply / overwrite flags, date window, usage stats, customer-only flag, geo zone, and timestamps.
 - **Inspect up to 5 conditions per code**, each expanded into 8 columns (target type, discount type, value, and the targeted product / category / vendor / collection names + order-over amount).
-- **Correlate the target type with the discount mechanic** — column "Condition i type" carries the target type, "Condition i type value" carries the flat / percent / shipping mechanic.
+- **Correlate the target type with the discount mechanic** — column "Condition i type" carries the target type, "Condition i type value" carries the flat / percent mechanic (empty on free-shipping rows).
 
 ## Settings & fields
 
@@ -38,7 +38,7 @@ These columns appear in the `discount-codes-pro.csv` file produced by the "Expor
 | 1 | `Name` | `code.name` | Falls back to `code` value when blank. |
 | 2 | `Code` | `code.code` | Prefixed with a space (` <code>`) so Excel doesn't auto-cast numeric codes to numbers — see [[code-pro-export-format]]. |
 | 3 | `Active` | `yes` / `no` | Per the code's `active` flag. |
-| 4 | `Is barcode` | `yes` / `no` | Derived solely from `code_format` — `yes` when `code_format ∈ {ean8, ean13}`, otherwise `no`. (Older wiki phrasing said the flag is derived from `code_prefix` + `code_format`; that was incorrect — `code_prefix` is not part of the derivation.) |
+| 4 | `Is barcode` | `yes` / `no` | Derived solely from `code_format` — `yes` when `code_format ∈ {ean8, ean13}`, otherwise `no`. |
 | 5 | `Barcode format` | Barcode-prefix display text | Empty if not a barcode. |
 | 6 | `Apply to discounted products` | `yes` / `no` | Per `code_apply`. |
 | 7 | `Overwrite product discount` | `yes` / `no` | Per `apply_regular_price`. |
@@ -59,11 +59,11 @@ For each condition slot `i` from 1 to 5 the export adds 8 columns:
 | # | Column | Source |
 |---|--------|--------|
 | 1 | `Condition i type` | The condition's `setting` (e.g., `all_products`, `order_over`, `product`, `category`, `vendor`, `selection`, `category_vendor`, `free_shipping`) — note this is the **target type**, not the discount type. See [[code-pro-export-business-rules]] for the normalisation. |
-| 2 | `Condition i type value` | The condition's `type` (`flat` / `percent` / `shipping`). |
-| 3 | `Condition i value` | The discount value, formatted per type (percent vs money). |
-| 4 | `Condition i product` | Semicolon-separated unique product names (when setting = `product` or `category_vendor`). |
+| 2 | `Condition i type value` | The condition's `type` (`flat` / `percent`); empty on free-shipping rows. |
+| 3 | `Condition i value` | The discount value, formatted per type (percent vs money); empty on free-shipping rows. |
+| 4 | `Condition i product` | Semicolon-separated unique product names (when setting = `product`). |
 | 5 | `Condition i category` | Semicolon-separated unique category names (when setting = `category` or `category_vendor`). |
-| 6 | `Condition i vendor` | Semicolon-separated unique vendor names (when setting = `vendor`). |
+| 6 | `Condition i vendor` | Semicolon-separated unique vendor names (when setting = `vendor` or `category_vendor`). |
 | 7 | `Condition i selection` | Semicolon-separated unique smart-collection names (when setting = `selection`). |
 | 8 | `Condition i order_over` | The order-over amount, formatted as money. |
 

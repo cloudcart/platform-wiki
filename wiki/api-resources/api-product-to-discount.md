@@ -8,7 +8,7 @@ aliases: ["Product-to-Discount API", "Fixed-discount price overrides API", "JSON
 tags: [api, json-api-v2, discounts, fixed-discounts]
 plan_gates: ["discount_fixed"]
 created: 2026-05-26
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 6
 ---
 # Product-to-Discount (JSON-API v2)
@@ -54,7 +54,7 @@ curl -X POST 'https://<store-host>/api/v2/product-to-discount' \
 | `product_id` | int | **read-only** | **read-only** | — | Set via the `product` relationship at create. |
 | `variant_id` | int | **read-only** | **read-only** | — | Set via the `variant` relationship at create. |
 | `target_id` | int | **read-only** | **read-only** | — | Internal target-row reference, set on save. |
-| `save` | int | **read-only** | **read-only** | — | Snapshot delta `variant.price - price` — the storefront *"you save X"* badge value. Later catalog-price changes do NOT refresh it until the row is PATCHed again. |
+| `save` | int | **read-only** | **read-only** | — | Delta `variant.price - price` — the storefront *"you save X"* badge value. Saving the product refreshes it, and deactivates the override if the catalog price is at or below it. |
 | `date_start`, `date_end` | date | **read-only** | **read-only** | — | Captured from the parent's date window on save. |
 | `created_at`, `updated_at` | timestamp | **read-only** | **read-only** | — | Standard timestamps. |
 
@@ -106,7 +106,7 @@ All three are **required at create** and **immutable thereafter** (the validator
 - **Plan-feature gate inherited from parent** — the parent's create on [[api-discounts]] consumed the `discount_fixed` slot; this endpoint runs no per-row gate. A failed gate (on a parent create) surfaces as **HTTP 402 Payment Required**, not 403.
 - **Discount-uses recompute (parent-level)** — the parent's `uses` counter is recomputed (not incremented) on every related order's status change via a 10-second-delayed job; cancelled orders free the slot — see [[discount-stacking]].
 - **No audit log** — no actor, no diff history; only `created_at` / `updated_at`.
-- **No-op override allowed** — when the POSTed `price` equals `variant.price`, the platform writes `save = 0` and stores the row anyway. The *"you save X"* badge then won't render. Verify intent before bulk-importing from a tool that may pass already-current prices.
+- **No-op override allowed** — when the POSTed `price` equals `variant.price`, the platform writes `save = 0` and stores the row anyway. The *"you save X"* badge then won't render, and the next product save deactivates the row. Verify intent before bulk-importing from a tool that may pass already-current prices.
 
 ## Equivalent UI
 

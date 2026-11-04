@@ -7,7 +7,7 @@ aliases: ["Code PRO overview", "Code PRO vs Container", "Code PRO mini-campaigns
 tags: [marketing, discounts, code-pro, overview, plan-gates]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -28,20 +28,20 @@ The Code PRO discount type is created from [[marketing-discounts]] via **+ Add d
 Pick Code PRO as a discount type when each code needs its own terms. The decision tree:
 
 - One code, one set of terms → **Promo code** (regular Discount with `type=code`).
-- Many codes, all sharing the same terms (e.g., single-use coupons mass-generated) → **Container codes** ([[marketing-discounts-codes]]).
+- Many codes that only need a percent each and no usage limits (e.g., mass-generated newsletter coupons) → **Container codes** ([[marketing-discounts-codes]]).
 - Many codes, **each with its own terms** (e.g., influencer campaigns) → **Code PRO**.
 
 ### Each code is its own mini-campaign
 
-Where a Container discount has many identical-terms codes, **a Code PRO discount has many independent codes** — each carries its own discount value, target, date window, customer-group restriction, region, `max_uses`, per-customer cap. The merchant builds them one at a time via the form (see [[code-pro-form]]) or in bulk via the generator ([[marketing-discounts-code-pro-generator]]) and they redeem entirely on their own merits. This is what makes Code PRO suited for influencer / affiliate campaigns: each partner gets a code with personalized terms, and the parent discount is just an organizational umbrella.
+Where Container codes are a shared pool with only a percent each, **a Code PRO discount has many independent codes** — each carries its own discount value, target, date window, customer-group restriction, region, `max_uses`, per-customer cap. The merchant builds them one at a time via the form (see [[code-pro-form]]) or in bulk via the generator ([[marketing-discounts-code-pro-generator]]) and they redeem entirely on their own merits. This is what makes Code PRO suited for influencer / affiliate campaigns: each partner gets a code with personalized terms, and the parent discount is just an organizational umbrella.
 
 ### Code uniqueness — store-wide on the Code PRO table
 
 The `code` field is unique on `discounts_code_pro.code` — meaning if the merchant has two Code PRO campaigns, they **cannot share code strings between them**. Attempting to save a duplicate returns: *"Discount code is exists"* (`code_pro.validation.code.unique`).
 
-This is **stricter than Container codes** (where each code is unique within the entire `discount_codes` table) and **stricter than regular Promo / Container parent codes** (where each `discounts.code` is unique on its own table). The three tables (`discounts.code`, `discounts_code_pro.code`, `discount_codes.code`) are independent — a string can theoretically exist once in each table, but the customer entering it at checkout would match whichever the lookup hits first.
+This is **stricter than Container codes** (where each code is unique within the entire `discount_codes` table) and **stricter than regular Promo codes** (where each `discounts.code` is unique on its own table). The three tables (`discounts.code`, `discounts_code_pro.code`, `discount_codes.code`) are independent — a string can theoretically exist once in each table, but the customer entering it at checkout would match whichever the lookup hits first.
 
-Uniqueness is enforced by a **form-validation check at create time** (the `discounts_code_pro.code` column carries a plain, non-unique index — there is no database UNIQUE constraint). The check runs only when a **new** code is created; **editing** an existing code does not re-check uniqueness.
+Uniqueness is enforced by a **form-validation check at create time** (the `discounts_code_pro.code` column carries a plain, non-unique index — there is no database UNIQUE constraint). In the admin the check runs only when a **new** code is created; **editing** an existing code does not re-check uniqueness. JSON-API v2 checks on both create and edit.
 
 ## Settings & fields
 
@@ -64,13 +64,13 @@ Code PRO touches three plan-feature keys:
 
 | Plan feature key | Gates | Default |
 |---|---|---|
-| `discount-code-pro` | Creating Code PRO parent discounts; per-code CRUD via [[code-pro-endpoints-api]]; segment / campaign integrations. | `1` (enabled at platform level via `restrict.defaults`); individual plans opt out by setting to `0`. |
+| `discount-code-pro` | Creating Code PRO campaigns in the admin; segment / campaign integrations. | `1` (enabled at platform level via `restrict.defaults`) (verify); individual plans opt out by setting to `0` (verify). |
 | `discount-code-pro-generator` | The admin-panel bulk-generator batch-size cap (default 5,000 codes per request). | Plan-specific. |
 | (none) | Adding / editing individual codes once a parent exists. | Unlimited per parent (subject to performance). |
 
-On plans that have `discount-code-pro` disabled, the merchant cannot create a Code PRO discount through the admin panel, AND JSON-API v2 requests return **HTTP 403 Forbidden** with *"Not supported by plan"* (older wiki phrasing said 402; corrected).
+On plans that have `discount-code-pro` disabled, the merchant cannot create a Code PRO discount through the admin panel (403 *"This feature is not enabled for your plan. To access it, please upgrade your plan."*). JSON-API v2 does not read this feature: creating a campaign compares usage with `discount_coupon` and returns **402 Payment Required**, and codes under a campaign have no plan check.
 
-The **bulk generator** consults `discount-code-pro-generator` only on the admin-panel path. **The JSON-API v2 bulk-generate endpoint has a hard-coded ceiling of 5,000 codes per request regardless of plan-feature value.** So a plan with `discount-code-pro-generator = 10000` will still be capped at 5,000 codes per call when invoked through the API — see [[code-pro-endpoints-api]]. To generate more, the integrator must issue multiple sequential calls.
+The **bulk generator** consults `discount-code-pro-generator` only on the admin-panel path. **In random mode the JSON-API v2 generate endpoint has a hard-coded ceiling of 5,000 codes per request regardless of plan-feature value; its range mode has no count limit.** So a plan with `discount-code-pro-generator = 10000` is still capped at 5,000 per random-mode API call — see [[code-pro-endpoints-api]]. To generate more, the integrator must issue multiple sequential calls.
 
 ### Permission
 
@@ -88,10 +88,10 @@ The type-picker modal reads the `discount-code-pro` plan feature live (no cachin
 
 - [[marketing-discounts-code-pro]] — hub.
 - [[marketing-discounts]] — parent feature; Code PRO is one of seven discount types.
-- [[marketing-discounts-codes]] — Container codes (the "identical-terms mass-generated" alternative).
+- [[marketing-discounts-codes]] — Container codes (the shared-pool alternative).
 - [[discount]] — entity page for the parent Code PRO campaign.
 - [[plan-gates]] — how plan-feature keys are evaluated at runtime.
-- [[code-pro-endpoints-api]] — JSON-API v2 surface; same plan-gating.
+- [[code-pro-endpoints-api]] — JSON-API v2 surface and its plan check.
 
 ## Open questions
 

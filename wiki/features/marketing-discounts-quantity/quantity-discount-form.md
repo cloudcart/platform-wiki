@@ -7,7 +7,7 @@ aliases: ["Quantity discount form", "Volume discount form", "Quantity discount f
 tags: [marketing, discounts, quantity, form, validation]
 plan_gates: ["discount_quantity"]
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -41,13 +41,13 @@ The Quantity form is the narrowest of the discount types. Only five blocks rende
    - **Tier rows** (product with one variant) — Quantity input (unit "pcs.", min 0) + Unit price (currency, min 0) + remove-row X.
    - **Tier table** (product with more than one variant) — one row per tier: **Quantity** ("N pcs."), **Unit price** (one price, a from–to range, *"N without discount"* for variants left without a price, or *"Set prices"*) + remove. Clicking the price opens the **Quantity price** modal: **Quantity** (pcs., min 1), then **Common price** (one **Unit price** for **All variants**) or **Multiple price** (a table of **Variant options** / **Current price** / **Unit price**, one row per variant); **Save** / **Close**.
    - **+ Add new condition** — with one variant, appears only when tier-list length `< 12`; with more than one variant it has no cap and opens the **Quantity price** modal for the new tier. Removing the last tier auto-inserts an empty replacement.
-3. **Quantity counting** — switch **Count the quantity from all cart lines of the product** (`quantity_count_all_lines`, default off). See [[quantity-discount-line-counting]].
+3. **Quantity counting** — switch **Count the quantity from all cart lines of the product** (`quantity_count_all_lines`). It shows on the form, but saving does not store it, so each line counts alone. See [[quantity-discount-line-counting]].
 4. **Customer groups** — shared block (`All groups` switch + multi-pick on OFF).
 5. **Date range** without timer fields — `date_start` + `date_end` + **No expiration** switch.
 
-**Activate / deactivate row toggle** — inline list-row switch. The **10-minute activation cooldown does NOT apply** to Quantity; merchant can toggle as often as they like.
+**Activate / deactivate row toggle** — inline list-row switch. It takes effect immediately, any number of times.
 
-**Delete confirmation** — generic table delete-confirm dialog → cascading delete of tier rows + customer_groups. See [[quantity-discount-uniqueness-constraint]].
+**Delete confirmation** — generic table delete-confirm dialog. The tier rows stay behind and keep the product taken — see [[quantity-discount-uniqueness-constraint]].
 
 ## Settings & fields
 
@@ -63,8 +63,8 @@ The Quantity form is the narrowest of the discount types. Only five blocks rende
 | Field | Backend key | What it does | Validation |
 |-------|-------------|--------------|------------|
 | **Customer buys** | `product_id` | The single product the discount targets (searchable picker). | Required; must exist in `products`; must not already be on another Quantity discount — see [[quantity-discount-uniqueness-constraint]]. |
-| **Quantity** (per tier) | `conditions[].quantity` | Minimum number of pieces to unlock this tier, counted per cart line by default ([[quantity-discount-line-counting]]). Integer in pieces. | Required, integer, min 0. **Note**: `0` rejected as empty — see [[quantity-discount-tier-evaluation]]. |
-| **Unit price** (per tier) | `conditions[].discount_value` | The per-piece price the customer pays once the counted pieces reach this tier — one price for all variants, or one per variant (**Multiple price**). Currency value. Stored as integer minor units (cents) — 10 EUR = 1000. | Required, numeric. `0` rejected as empty; with **Multiple price**, a variant left empty gets no discount at this tier (at least one variant needs a price). Not higher than the variant's current price. |
+| **Quantity** (per tier) | `conditions[].quantity` | Minimum number of pieces to unlock this tier, counted per cart line ([[quantity-discount-line-counting]]). Integer in pieces. | Required, integer, min 0. **Note**: `0` rejected as empty — see [[quantity-discount-tier-evaluation]]. |
+| **Unit price** (per tier) | `conditions[].discount_value` | The per-piece price the customer pays once the counted pieces reach this tier — one price for all variants, or one per variant (**Multiple price**); see [[quantity-discount-stacking]] when the variant also has a Fixed or no-code discount. Currency value. Stored as integer minor units (cents) — 10 EUR = 1000. | Required, numeric. `0` rejected as empty; with **Multiple price**, a variant left empty gets no discount at this tier (at least one variant needs a price). Not higher than the variant's current price. |
 | **+ Add new condition** | (UI control) | Appends an empty tier row. Hidden once 12 tiers exist (product with one variant); with more than one variant there is no cap and the new tier opens in the **Quantity price** modal. | — |
 | **Remove tier** (trash icon) | (UI control) | Removes the tier. If the list becomes empty, a fresh blank tier is auto-inserted. | — |
 
@@ -79,7 +79,7 @@ The Quantity form is the narrowest of the discount types. Only five blocks rende
 | Field | Backend key | What it does | Validation |
 |-------|-------------|--------------|------------|
 | **Date start** | `date_start` | First day the discount applies. | Required. |
-| **Date end** | `date_end` | Last day the discount applies. | Required unless **No expiration** is on; must be after `date_start`. |
+| **Date end** | `date_end` | Last day the discount applies. | Required unless **No expiration** is on; must not be before `date_start`. |
 | **No expiration** | `no_expire` | Sets `date_end` to null — discount runs indefinitely. | Boolean. |
 
 ### Endpoints
@@ -96,7 +96,7 @@ The Quantity form is the narrowest of the discount types. Only five blocks rende
 
 ### Save flow
 
-On submit, the discount is saved with `type = quantity`. The standard target-attachment step is skipped (no category/brand/collection targets). Every save fully replaces the tier list: prior tiers are cleared and, for each submitted tier, one row is written per variant that has a price (a common price is written for every variant of the product). A `discount.created` / `discount.updated` event then fires (refreshes listings and smart collections, notifies webhooks — see [[settings-hooks]]).
+On submit, the discount is saved with `type = quantity`. The standard target-attachment step is skipped (no category/brand/collection targets). Every save fully replaces the tier list: prior tiers are cleared and, for each submitted tier, one row is written per variant that has a price (a common price is written for every variant of the product). Listings and smart collections then refresh; the `discount.created` / `discount.updated` webhooks fire when the discount record itself is saved — see [[settings-hooks]].
 
 ### Per-row validator strings (verbatim)
 
@@ -119,7 +119,7 @@ Compared to other discount types, Quantity intentionally omits:
 - **Code-generator helper / code field** — Quantity discounts are always automatic.
 - **Timer-in-listing / timer-in-details switches** — no storefront countdown.
 - **`force_save`** flag.
-- **`code_apply`** checkbox — defaults to `0`; not merchant-tunable. See [[quantity-discount-stacking]].
+- **`code_apply`** checkbox — not shown; a discount saved from this form has it on. See [[quantity-discount-stacking]].
 - **`apply_regular_price`** flag.
 - **Per-variant tier quantities** — the tier quantities are shared by all variants of the chosen product; only the price can differ per variant (**Multiple price**).
 - **Per-tier customer-group** — the allow-list is on the parent Discount; all tiers share it.
@@ -130,14 +130,14 @@ Unlike Fixed-discount per-variant rows (which auto-deactivate when catalog price
 
 ### `discount_value` is the replacement unit price, not an amount off
 
-`discount_value` is **NOT** an amount off and **NOT** a percent off. The Quantity type is internally `fixed`: the platform replaces the cart-line price with this exact number per piece. Savings versus catalog are computed at cart-time. See [[quantity-discount-tier-evaluation]].
+`discount_value` is **NOT** an amount off and **NOT** a percent off. The Quantity type is internally `fixed`: the platform replaces the cart-line price with this number per piece, less the saving of the variant's active Fixed or no-code Flat/Percent discount when there is one ([[quantity-discount-stacking]]). Savings versus catalog are computed at cart-time. See [[quantity-discount-tier-evaluation]].
 
 ## Related
 
 - [[marketing-discounts-quantity]] — hub.
 - [[marketing-discounts]] — parent feature; shared list / change-statuses / delete endpoints.
 - [[customers-custom-groups]] — `customer_groups[]` allow-list source.
-- [[settings-hooks]] — `discount.created` / `discount.updated` / `discount.deleted` webhooks fire on save.
+- [[settings-hooks]] — `discount.created` / `discount.updated` webhooks fire when the discount record is saved.
 
 ## Open questions
 

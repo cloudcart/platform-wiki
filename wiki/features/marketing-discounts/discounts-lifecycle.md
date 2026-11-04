@@ -3,11 +3,11 @@ type: feature
 nav_path: "Marketing → Discounts → Lifecycle"
 route_name: ""
 route_path: ""
-aliases: ["Discount lifecycle", "Discount scheduling", "Discount start date", "Discount end date", "No expiration", "Auto-disable expired discounts", "Discount activation cooldown", "Discount status toggle", "Жизнен цикъл на отстъпки", "Активиране на отстъпка", "Изтичане на отстъпка"]
+aliases: ["Discount lifecycle", "Discount scheduling", "Discount start date", "Discount end date", "No expiration", "Auto-disable expired discounts", "Discount status toggle", "Жизнен цикъл на отстъпки", "Активиране на отстъпка", "Изтичане на отстъпка"]
 tags: [marketing, discounts, promotions, lifecycle, scheduling]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-This aspect covers **when** a discount can fire: its `active` flag, its `date_start` / `date_end` window, the **"No expiration"** toggle, the **hourly background sweep** that auto-disables expired discounts, the **10-minute activation cooldown** that throttles toggle thrashing, and the **"Latest update" badge** that surfaces background-regeneration delay. The date window and the hourly auto-disable sweep apply to **every** discount type; the **10-minute activation cooldown** applies **only to no-code Flat / Percent / Shipping / Fixed** discounts (see that section below).
+This aspect covers **when** a discount can fire: its `active` flag, its `date_start` / `date_end` window, the **"No expiration"** toggle, and the **hourly background sweep** that auto-disables expired discounts. The date window and the hourly auto-disable sweep apply to **every** discount type.
 
 ## Where to find it
 
@@ -28,7 +28,7 @@ This aspect covers **when** a discount can fire: its `active` flag, its `date_st
 - Schedule a discount to start on a future date — it stays `active = yes` but is **skipped at checkout** until `date_start` arrives.
 - Schedule a discount to end automatically — set a `date_end` and the hourly sweep auto-deactivates it once the cutoff passes.
 - Run an open-ended discount — toggle **"No expiration"** to clear `date_end`.
-- Toggle a discount on/off mid-window via the row switch (rate-limited).
+- Toggle a discount on/off mid-window via the row switch; it takes effect immediately.
 - Bulk activate / deactivate multiple discounts via the table action bar.
 - Render a countdown timer on storefront listings + product detail pages (per-type — see [[marketing-discounts-countdown]] and the per-Date-range timer switches on [[marketing-discounts-flat]] / [[marketing-discounts-percent]] / [[marketing-discounts-shipping]]).
 
@@ -38,11 +38,10 @@ This aspect covers **when** a discount can fire: its `active` flag, its `date_st
 |-----------------|-------------|--------------|------------|
 | **Discount status** | `active` | `yes` = fires when in window. `no` = skipped even if in window. | `yes` / `no`. |
 | **Start date** | `date_start` | When the discount begins applying. | Required. |
-| **End date** | `date_end` | When the discount stops applying. Nullable. | Cannot be before `date_start`; cannot be today or earlier on save. |
+| **End date** | `date_end` | When the discount stops applying. Nullable. | Cannot be before `date_start`. Asked for unless **No expiration** is on. Past dates and today save. |
 | **No expiration** | (toggle) | Wipes `date_end` and clears any date-end errors. | — |
 | **Show timer in product listing** | `timer_list` | Renders countdown badge on category pages. | 1 / 0. Auto-disables when `date_end` is empty. |
 | **Show timer in product details page** | `timer_details` | Renders countdown badge on product detail page. | 1 / 0. Disabled until an end date is set. |
-| **Latest update** | (derived) | Shown as a badge on the freshly-saved row while async regeneration jobs run. | — |
 
 ## Business rules
 
@@ -59,20 +58,16 @@ Failing any one of these makes the discount invisible to the checkout lookup. Th
 
 ### Auto-disable on expiry — hourly background sweep
 
-A platform-wide job runs **every 3 600 seconds (60 minutes)** and **toggles `active = no`** on any discount whose `date_end < (UTC now) - 1 day`. This retires expired holiday sales without manual intervention. A discount whose `date_end` was yesterday at 23:59 UTC gets deactivated at the next hourly tick after the +1 day cutoff — approximately 23:59 UTC the following day plus 0–60 minutes of sweep latency. The 1-day buffer prevents racing the merchant's evening edits. Skipped for plan-expired stores.
+A platform-wide job runs **every 3 600 seconds (60 minutes)** and **toggles `active = no`** on an expired discount at the first run after 00:00 UTC on the day after its `date_end`. This retires expired holiday sales without manual intervention. Skipped for plan-expired stores.
 
-### Activation rate-limit — 10 minutes per discount (no-code Flat / Percent / Shipping / Fixed only)
+### Status switch — immediate
 
-Toggling `active` is **rate-limited to once per 10 minutes** — but **only for no-code Flat, Percent, Shipping and Fixed discounts** (the types that trigger per-product attachment regeneration). Quantity, Countdown, Code (single-code / Container) and Code PRO discounts are **not** throttled. Trying to re-toggle a throttled discount within the window returns one of two messages:
+The switch in the Discounts list, the bulk action, the edit form and GraphQL take effect immediately, any number of times, on every discount type. At checkout the new status applies at once. The list switch and the bulk action send no webhook and start no background rebuild; see [[discounts-audit-trail]].
 
-> *"You've already activated this discount. Please wait:minutes minutes in order to be able to deactivate it again."* (when trying to deactivate)
-> *"You've already deactivated this discount. Please wait:minutes minutes in order to be able to activate it again."* (when trying to re-activate)
 
-This protects the listing-engine regeneration job that rebuilds `product_to_discount` rows on every status flip — for high-catalog stores (10 000+ products) it can take minutes. See [[discounts-storefront-display]]. Bypassed in dev / CLI. On bulk-activate / bulk-deactivate, in-cooldown rows are **silently skipped**.
+### After a save
 
-### "Latest update" badge
-
-Creating or updating a discount fires several background jobs (per-product attachment recompute, smart-collection refresh, listing-engine patch). Because these run async, the merchant sees a **"Latest update: :date"** label on a freshly-saved discount until the jobs complete. Not an error — just signals "storefront catching up". See [[discounts-storefront-display]].
+Saving a discount writes its per-variant rows during the save. The listing engine and smart collections are refreshed afterwards, so listings can take a moment to catch up. See [[discounts-storefront-display]]. A discount that holds a stored rebuild time shows *"Latest update: {time}"* as a tooltip on its name in the list; a save does not set that time.
 
 ### Scheduling vs activation — independent switches
 
@@ -86,19 +81,19 @@ For Black-Friday-midnight starts, pre-create with `active = yes` + `date_start =
 
 ### Counted statuses — when `uses` ticks
 
-The `uses` counter only ticks when an order reaches one of the **counted statuses**, configured store-wide via `discounts_used_statuses`. Defaults: **`paid`, `completed`, `fulfilled`**. Cancelled / refunded orders **never** count. A `pending` order does not yet consume a `max_uses` slot — the slot is reserved when the order reaches `paid` (or the configured status). The merchant changes the set via the **Statuses** modal on the list page; see [[settings-statuses]]. The set is intersected with the live status dropdown so **renamed** statuses still work via their CODE (not their label).
+The `uses` counter only counts orders in one of the **counted statuses**, configured store-wide via `discounts_used_statuses`. Defaults: **`paid`, `completed`, `fulfilled`**. A `pending` order does not consume a `max_uses` slot until it reaches `paid` (or the configured status), or until it is marked fulfilled under the defaults. A merchant can add Cancelled or Refunded to the set, and those orders then count. The merchant changes the set via the **Statuses** modal on the list page; see [[settings-statuses]]. The set is intersected with the live status dropdown so **renamed** statuses still work via their CODE (not their label).
 
-### Bulk operations + soft-delete
+### Bulk operations + delete
 
-Bulk-status-change applies the 10-minute cooldown per row; in-cooldown rows are silently skipped (no per-row error toast). Bulk-delete cascades through targets, customer_groups, customers, per-variant fixed rows, and Code PRO child codes — but does NOT delete historical order-discount rows (those survive for analytics — [[analytics-top-order-discounts]] / [[analytics-top-order-product-discounts]]). See [[discounts-audit-trail]] for the `discount.deleted` webhook.
+Bulk status change applies to every selected row immediately. A discount used in a smart collection or an XML import / sync task cannot be deleted: *"This discount cannot be deleted because it is still used in: ..."*. Otherwise bulk-delete removes the discount; its targets, customer_groups, customers, per-variant fixed rows and Code PRO codes go with it (verify). Historical order-discount rows survive for analytics — [[analytics-top-order-discounts]] / [[analytics-top-order-product-discounts]]. A list delete sends no `discount.deleted` webhook; see [[discounts-audit-trail]].
 
 ## Related
 
 - [[marketing-discounts]] — hub.
 - [[discounts-eligibility]] — the other half of the "is this discount eligible?" check (customer, region, stacking).
-- [[discounts-storefront-display]] — what fires when `active` flips (per-product attachment regen, cache invalidation).
-- [[discounts-audit-trail]] — webhook events on create / update (toggle) / delete.
-- [[discounts-known-issues]] — the strict-greater-than `max_uses` check + bulk-toggle silent-skip surprises.
+- [[discounts-storefront-display]] — what fires when a discount is saved (per-variant rows, cache invalidation).
+- [[discounts-audit-trail]] — webhook events on create / update / delete.
+- [[discounts-known-issues]] — the strict-greater-than `max_uses` check.
 - [[settings-statuses]] — `discounts_used_statuses` setting + the order-statuses-map modal.
 - [[order-processing-pipeline]] — status transitions that drive the `uses` counter.
 

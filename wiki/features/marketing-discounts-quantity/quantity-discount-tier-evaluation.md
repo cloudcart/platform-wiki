@@ -7,7 +7,7 @@ aliases: ["Quantity tier matching", "Quantity discount tier algorithm", "Buy mor
 tags: [marketing, discounts, quantity, cart, evaluation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -27,7 +27,7 @@ Tier evaluation is **server-side at cart-time**; there is no admin screen that s
 
 The merchant doesn't interact with the evaluator directly — but understanding the matching rule lets them design tier ladders that behave as intended:
 
-- Choose tier thresholds knowing that by default each cart line counts alone.
+- Choose tier thresholds knowing that each cart line counts alone.
 - Avoid the `0` trap on either tier field.
 - Avoid the smallest-tier-is-N pattern when they really wanted "1+ qty discounted" (instead, use the Fixed-discount type below the lowest tier as a fallback — see [[quantity-discount-stacking]]).
 
@@ -37,7 +37,7 @@ The cart-time evaluator reads these stored values:
 
 | Field | Source | What it drives |
 |-------|--------|----------------|
-| `conditions[].quantity` | parent Discount's `quantity_discounts` rows | The tier's minimum number of pieces on the cart line, or on all the product's lines when `quantity_count_all_lines` is on (integer pieces). |
+| `conditions[].quantity` | parent Discount's `quantity_discounts` rows | The tier's minimum number of pieces on the cart line (integer pieces). |
 | `conditions[].discount_value` | same | The per-piece replacement price at this tier (integer cents) — one for all variants, or one per variant. |
 | `customer_groups[]` | parent Discount | Cart customer's `group_id` must match (or list empty) for any tier in the ladder to apply. Guests use the store's default guest-group ID. |
 | `date_start` / `date_end` | parent Discount | Cart-engine compares against the **store's local time** at evaluation. |
@@ -47,7 +47,7 @@ The cart-time evaluator reads these stored values:
 
 ### "≥ quantity wins" — sort DESC, pick the first ≤ the counted pieces
 
-At cart-time, the platform reads tiers ordered by `quantity` DESC (largest threshold first) and picks, for each cart line, the **first of that line's variant's tiers whose `quantity` is ≤ the counted pieces**: the line's own quantity by default, or the pieces on all the product's lines with the switch on. Worked examples with ladder `2 → 9 EUR`, `5 → 8 EUR`, `10 → 6 EUR`:
+At cart-time, the platform reads tiers ordered by `quantity` DESC (largest threshold first) and picks, for each cart line, the **first of that line's variant's tiers whose `quantity` is ≤ the line's own quantity**. Worked examples with ladder `2 → 9 EUR`, `5 → 8 EUR`, `10 → 6 EUR`:
 
 - Customer adds 4 pcs → tier "2" wins (4 ≥ 2, 4 < 5) → unit price = 9 EUR, line = 36 EUR.
 - Customer adds 1 more (5 pcs) → tier "5" wins → unit price = 8 EUR, line = 40 EUR.
@@ -77,12 +77,9 @@ Before applying any tier, the platform checks the parent Discount's `customer_gr
 
 The filter is per-discount, not per-tier — the same allow-list gates the whole ladder. There is no way to say "Tier 1 applies to everyone, Tier 2 applies only to VIPs". Group-segmented ladders would need separate Quantity discounts per group, which collides with the one-Quantity-discount-per-product rule (see [[quantity-discount-uniqueness-constraint]]), so the pattern isn't supported on a single product.
 
-### One discount, many cart lines — two counting modes
+### One discount, many cart lines — each line counts alone
 
-The switch **Count the quantity from all cart lines of the product** (`quantity_count_all_lines`, default off) decides:
-
-- **Off:** each line reaches a tier with its own quantity. `5 size-S + 5 size-M` does not reach a "buy 10" tier; each line can reach a "buy 5" tier.
-- **On:** the pieces on all the product's lines add up, and each line pays its own variant's price at the tier the total reaches.
+Each line reaches a tier with its own quantity. `5 size-S + 5 size-M` does not reach a "buy 10" tier; each line can reach a "buy 5" tier. The switch **Count the quantity from all cart lines of the product** (`quantity_count_all_lines`) shows on the form, but saving does not store it.
 
 Details and examples: [[quantity-discount-line-counting]].
 
@@ -92,13 +89,13 @@ Tier evaluation runs only on the storefront cart flow, not in the admin panel. W
 
 ### Date range — store timezone at evaluation, UTC at auto-disable
 
-Cart-engine checks `date_start` / `date_end` against the **store's local time** when evaluating a cart line. This is independent of the daily auto-disable sweep (which runs in UTC — see the [[marketing-discounts-quantity]] hub for the timing gap). Net effect: the customer's cart stops applying tiers at the expected local time, but the discount listing keeps showing `active = yes` for up to ~27 hours after end-of-day in Europe/Sofia.
+Cart-engine checks `date_start` / `date_end` against the **store's local time** when evaluating a cart line. This is independent of the hourly auto-disable sweep (which runs in UTC — see the [[marketing-discounts-quantity]] hub for the timing gap). Net effect: the customer's cart stops applying tiers at the expected local time, but the discount listing keeps showing `active = yes` until the first sweep run after 00:00 UTC on the day after the end date.
 
 ## Related
 
 - [[marketing-discounts-quantity]] — hub.
 - [[quantity-discount-form]] — where the tier rows are entered and validated.
-- [[quantity-discount-line-counting]] — per line or across all lines.
+- [[quantity-discount-line-counting]] — how cart lines count.
 - [[quantity-discount-stacking]] — what happens when the matched tier also has a Fixed / promo-code / bundle override at the same line.
 - [[quantity-discount-storefront-display]] — how the tier ladder shows on the product page.
 - [[marketing-discounts-fixed]] — the per-variant Fixed discount that takes over when no tier matches.

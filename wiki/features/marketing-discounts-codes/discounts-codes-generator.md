@@ -3,11 +3,11 @@ type: feature
 nav_path: "Marketing → Discounts → Container codes → Generator"
 route_name: discounts-codes_list
 route_path: /admin/marketing/discounts/codes
-aliases: ["Container codes generator", "Generate codes modal", "Bulk code generation", "Code shape and uniqueness", "Генериране на промо кодове", "1000 кода на заявка"]
+aliases: ["Container codes generator", "Generate codes modal", "Bulk code generation", "Code shape and uniqueness", "Генериране на промо кодове"]
 tags: [marketing, discounts, coupons, container, generated-codes, generator]
-plan_gates: ["discount_coupon"]
+plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -17,17 +17,17 @@ source_count: 4
 
 ## Purpose
 
-The generator is how the merchant mass-creates single-use Container codes. It produces a batch of unique, identically-termed coupons in one transaction — the engine behind campaigns like "1,000 unique 10%-off codes for newsletter subscribers". The 10-character code shape is fixed platform behaviour. The **1,000-per-request batch cap applies to the legacy generator only** — the modern Vue modal validates only that the count is at least 1, with **no upper cap**.
+The generator is how the merchant mass-creates Container codes. It produces a batch of unique percent codes — the engine behind campaigns like "1,000 unique 10%-off codes for newsletter subscribers". The 10-character code shape is fixed platform behaviour. The modal validates only that the count is at least 1, with **no upper limit**.
 
 ## Where to find it
 
-The bulk-generator modal is opened from the *Generate codes* action on the Container codes list page (`/admin/marketing/discounts/codes`). It saves in a single transaction. To generate **flat-amount** Container codes, the merchant uses the legacy generator URL `/admin/discounts/generate-codes` (the modern modal sends percent only — see below).
+The bulk-generator modal is opened from the *Generate codes* action on the Container codes list page (`/admin/marketing/discounts/codes`). Codes are saved one at a time, so a failure part-way leaves the ones already made.
 
 ## What the merchant can do here
 
-### Modern Vue modal
+### The modal
 
-The modern Vue Container codes list page wraps the standard table and embeds the `DiscountsCodeGeneratePopup` modal. Layout:
+The Container codes list page embeds the `DiscountsCodeGeneratePopup` modal. Layout:
 
 - Title: *"Generate codes"*.
 - Field 1: **Amount of the discount** — percent input. The user types a percent value (e.g., 15 → sent as `value × 100 = 1500`).
@@ -36,25 +36,14 @@ The modern Vue Container codes list page wraps the standard table and embeds the
 
 Save calls the generate-codes-for-container API with `{ type: 'percent', value: input × 100, amount }`. On success it closes the modal, refetches the list, and toasts *"Codes generated successfully!"*. The form payload resets to `{type: "percent", value: 0, amount: 0}` whenever the modal closes.
 
-The Vue modal **does not currently expose the flat-amount type toggle** — only `percent` is sent. Merchants generating flat-amount Container codes use the legacy generator instead.
-
-### Legacy generator (flat + percent)
-
-- Pick the discount **type**: `flat` (currency amount off) or `percent`.
-- For `percent`: enter the percentage value (0-100). Validation caps the value against the maximum type-value across the store's Container discounts — see [[discounts-codes-parent-terms]] for the cap rule.
-- Enter the **batch size** (number of codes) — between **1 and 1,000 per request**. To produce more than 1,000, run the generator multiple times.
-- Submit. The platform creates that many 10-character uppercase alphanumeric codes in one transaction, retrying any that hit a unique-constraint collision so the final count always matches the requested amount.
+The modal generates percent codes only; there is no flat-amount option.
 
 ## Settings & fields
 
 | Field / Control | Backend key | What it does | Validation |
 |-----------------|-------------|--------------|------------|
-| **Discount type** | `type` | Whether generated codes give a flat-amount or percent discount. | Required; must be `flat` or `percent`. Else: *"The selected type is invalid"*. |
-| **Percent value** | `value` | The percentage off (0-100, capped against the max Container type-value in store). | Required when type=`percent`. Else: *"The percentage value can not be empty"*. |
-| **Flat value** | `value` | The currency-amount off, in store currency. | Required when type=`flat`. |
-| **Number of codes** | `amount` | How many codes to generate in this batch. | Integer ≥ 1. The **legacy** generator caps at 1,000 (*"You can generate maximum 1000 promo codes"*); the **modern Vue modal has no upper cap**. |
-
-> The type toggle, flat value, and max-value cap reflect the **legacy** generator. The modern Vue `DiscountsCodeGeneratePopup` exposes only **Amount of the discount** (percent) and **Amount of codes** — it always sends `type: 'percent'`.
+| **Amount of the discount** | `value` | The percent, sent as percent × 100. | Required (*"Value is required"*). Not compared with any Container. |
+| **Amount of codes** | `amount` | How many codes to generate in this batch. | Integer ≥ 1 (*"Amount is required"*, *"Amount must be at least 1"*). No upper limit. |
 
 ## Business rules
 
@@ -64,7 +53,7 @@ Generated codes are exactly **10 uppercase characters, randomly composed from `[
 
 - **No two codes collide** across the entire codes table — even if two batches in different Container discounts happen to roll the same string.
 - **The merchant can predict exactly how many codes they end up with** (= the input `amount`).
-- **There is no merchant-tunable code shape.** The character set (`A-Z` + `0-9`) and length (10) are hard-coded constants in the generator, not configurable settings. For prefix, suffix, fixed length, range-mode, or numeric-only generation, the merchant must use [[marketing-discounts-code-pro-generator]] on a [[marketing-discounts-code-pro]] discount — see [[discounts-codes-vs-code-pro]].
+- **There is no merchant-tunable code shape.** The character set (`A-Z` + `0-9`) and length (10) are hard-coded constants in the generator, not configurable settings. For a chosen length, range-mode, or numeric-only generation, the merchant must use [[marketing-discounts-code-pro-generator]] on a [[marketing-discounts-code-pro]] discount — see [[discounts-codes-vs-code-pro]].
 
 ### Generator loop
 
@@ -76,19 +65,14 @@ The save endpoint runs:
 
 On a heavily-populated codes table where collisions are more likely, the loop runs slightly longer than `amount` iterations but always produces exactly `amount` final rows.
 
-### Bulk-generate cap = 1,000 per request
+### No upper limit on the count
 
-The hard cap is **`amount BETWEEN 1 AND 1,000`** per generate request. To produce 5,000 codes, run the generator 5 times. There is no plan-feature-gated higher limit for Container codes; it is a fixed platform cap — unlike [[marketing-discounts-code-pro-generator]], which caps at the `discount-code-pro-generator` plan-feature value (default 5,000 per request). Practical guidance:
-
-- Plan campaigns in 1,000-code batches so each finishes in a single transaction.
-- For very large campaigns (100,000+ codes), Code PRO with `random` mode is more efficient because it does up to 5,000 codes per request.
-
-> Programmatic generation via JSON-API v2 has **no built-in 1,000 cap** — see [[discounts-codes-api]].
+The modal accepts any count of 1 or more, and Container codes have no plan limit — unlike [[marketing-discounts-code-pro-generator]], which caps at the `discount-code-pro-generator` plan-feature value (default 5,000 per request). JSON-API v2 generate takes up to 1,000 per call — see [[discounts-codes-api]].
 
 ## Related
 
 - [[marketing-discounts-codes]] — hub.
-- [[marketing-discounts-code-pro-generator]] — alternative generator with shape controls and a higher cap.
+- [[marketing-discounts-code-pro-generator]] — alternative generator with shape controls.
 - [[discount-code]] — entity page for individual generated codes.
 
 ## Open questions

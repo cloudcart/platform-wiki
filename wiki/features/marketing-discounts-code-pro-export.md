@@ -7,7 +7,7 @@ aliases: ["Code PRO export", "Export codes", "Download codes CSV", "Експор
 tags: [marketing, discounts, code-pro, export, csv]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -23,7 +23,7 @@ The **Code PRO codes export** is a one-click CSV download of every code under a 
 - **Re-import / audit** generated batches when the merchant runs many campaigns and needs a per-code history.
 - **Verify** that the generator output matches the spec (especially after a [[marketing-discounts-code-pro-generator]] run).
 
-The CSV is **always the entire active codes list** for the chosen Code PRO discount (no per-code filter in the URL) — the filter parameters the listing supports are not applied to the export. Filtering must happen in the merchant's spreadsheet tool after download.
+The CSV is **always the entire codes list, active and inactive,** for the chosen Code PRO discount (no per-code filter in the URL) — the filter parameters the listing supports are not applied to the export. Filtering must happen in the merchant's spreadsheet tool after download.
 
 ## Where to find it
 

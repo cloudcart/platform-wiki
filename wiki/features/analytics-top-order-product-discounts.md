@@ -7,7 +7,7 @@ aliases: ["Product discounts", "Top product discounts", "Top order product disco
 tags: [analytics, ccanalytics, orders, discount, product, top-order-product-discounts]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 9
 ---
 # Product discounts
@@ -16,7 +16,7 @@ source_count: 9
 
 A ranked table of the merchant's **most-used product-level discounts** — *"Which discount rules are being redeemed on individual products, and how much margin am I giving away?"* Top 5 by total amount discounted, with units affected, order count, mobile/desktop split, and a per-product drill-down.
 
-It is the **product-level** counterpart to [[analytics-top-order-discounts]]: that box counts discounts on the **whole cart/order subtotal** (e.g. "10% off any order over €100"); this one counts discounts on **specific products within a line-item** (e.g. "Buy-one-get-one on shoes"). They use separate data sources and share the default layout, with this one as the parent.
+It is the **product-level** counterpart to [[analytics-top-order-discounts]]: that box counts discounts on the **whole cart/order subtotal** (e.g. "10% off any order over €100"); this one counts discounts on **product lines**, including coupons for all or specific products (e.g. `Spring shoes (SPRING30)`). They use separate data sources and share the default layout, with this one as the parent.
 
 ## Where to find it
 
@@ -49,8 +49,8 @@ Same 3-state indicator as the sister box:
 | State | EN label | BG label | When |
 |-------|----------|----------|------|
 | `exists` | View discount | Виж отстъпката | Active — links to `/admin/marketing/discounts/edit/:id` |
-| `deleted` | Deleted discount | Изтрита отстъпка | Deleted |
-| `manual` | Manually created discount | Ръчно въведена отстъпка | Entered manually during order edit |
+| `deleted` | Deleted discount | Изтрита отстъпка | A line with no linked discount, including a manual discount typed on an order line |
+| `manual` | Manually created discount | Ръчно въведена отстъпка | A line discount with no name |
 
 ### Details — `/admin/analytics/details/top-order-product-discounts`
 
@@ -111,9 +111,9 @@ The key asymmetry versus the sister [[analytics-top-order-discounts]] box: data 
 
 No name → `Manual discount` / `Ръчна отстъпка`; name + code → `"{name} ({code})"`; otherwise the name. Renamed discounts show their **most recent** name.
 
-### Only existing discounts are ingested; no double-count
+### Deleted discounts stay in the box; no double-count
 
-Rows are written only for discounts that still exist at ingest; one deleted before a new order is captured is not ingested for that order, while older orders that already applied it are preserved (shown as **deleted**). This box has its own product-level data source, so a product carrying both an order-level and a product-level discount appears in **different boxes** — never double-counted.
+Deleting a discount does not filter its orders out of the box; a line with no linked discount is shown as **deleted**. This box has its own product-level data source, so a product carrying both an order-level and a product-level discount appears in **different boxes** — never double-counted.
 
 ### Product info only in View More; empty state
 

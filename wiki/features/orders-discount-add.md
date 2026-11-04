@@ -7,14 +7,14 @@ aliases: ["Add order discount", "Order-level discount", "Manual discount", "Appl
 tags: [orders, discount, smarty]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 7
 ---
 # Order-level discount (add / delete)
 
 ## Purpose
 
-The flow for **applying or removing an ORDER-LEVEL discount** on a specific placed order. Distinct from per-line discounts ([[orders-products]]) — order-level discounts affect the order's subtotal, not specific line items.
+The flow for **applying or removing an ORDER-LEVEL discount** on a specific placed order. Distinct from per-line discounts ([[orders-products]]). What it changes depends on the discount's target: a code for all products lands on the product lines, while a threshold discount or a manual discount is one amount on the order — see [[discount-stacking-amount-by-target]].
 
 Two paths to a discount:
 
@@ -35,7 +35,7 @@ From [[orders-details]] → **Discount action row** in the order summary: an **A
 Sub-routes:
 - `admin.orders.discount.add` (GET / POST) — open form / save.
 - `admin.orders.discount.delete` (GET) — remove the order-level discount.
-- `admin.orders.modifications.delete` (GET) — remove discount-related modifications.
+- `admin.orders.modifications.delete` (GET) — remove the order's order-level modifications.
 
 See [[orders-discount-add-form]] for the modal field inventory and [[orders-discount-add-delete]] for the removal flow.
 
@@ -44,34 +44,34 @@ See [[orders-discount-add-form]] for the modal field inventory and [[orders-disc
 - **Add an existing discount** — pick a pre-filtered campaign from [[marketing-discounts]]; its rules apply. See [[orders-discount-add-form]] + [[orders-discount-add-existing-eligibility]].
 - **Add a manual discount** — type a one-off flat or percent value. See [[orders-discount-add-manual]].
 - **Remove the order-level discount** — restores any consumed usage count on existing discounts. See [[orders-discount-add-delete]].
-- **Remove discount-related modifications** — clean up orphan line-level modifications introduced by the discount. See [[orders-discount-add-delete]].
+- **Remove order-level modifications** — clears adjustments the order carries at order level, such as a cart rule's amount off the whole order. Discounts do not create these. See [[orders-discount-add-delete]].
 
 What the merchant **cannot** do here:
-- Add a **second** order-level discount — the platform throws *"Order already has a discount"*; remove the existing one first (see Business rules below).
+- Add a **second** order-level discount — the platform throws *"This order has discount."*; remove the existing one first (see Business rules below).
 - Add a discount on an **archived** order — throws *"Cannot perform this operation on archived order"*.
 - Apply a banner / label / container-type discount, a wrong-customer-group discount, or one whose `order_over` threshold exceeds the subtotal — all filtered out of the picker ([[orders-discount-add-existing-eligibility]]).
 - Apply a product- / category- / vendor-targeted discount at order level — only `all` / `order_over` / `shipping` target types appear ([[orders-discount-add-existing-eligibility]]).
 
 ## Settings & fields
 
-The Add Discount modal is one `ajaxForm` with a single primary dropdown (**Choose discount**: `existing` / `manual`) that progressively reveals the matching sub-form. Full field-by-field inventory — including the dynamic currency-vs-percent input mask, default type, and the request validator validation — is on [[orders-discount-add-form]].
+The Add Discount modal is one `ajaxForm` with a single primary dropdown (**Choose discount**: `existing` / `manual`) that progressively reveals the matching sub-form. Full field-by-field inventory — including the dynamic currency-vs-percent input mask, default type, and submission validation — is on [[orders-discount-add-form]].
 
-The existing-discount picker is **pre-filtered** by the backend (customer group, `order_over`, type exclusions, target type, code-less exclusion). The complete filter list and the no-auto-detach behaviour are on [[orders-discount-add-existing-eligibility]]. Manual-discount field rules (flat-less-than-subtotal, percent clamping, fixed label) are on [[orders-discount-add-manual]].
+The existing-discount picker is **pre-filtered** by the backend (customer group, `order_over`, type exclusions, target type, code-less exclusion). The complete filter list and what happens when the subtotal later drops below the threshold are on [[orders-discount-add-existing-eligibility]]. Manual-discount rules (amount above the subtotal refused, fixed label) are on [[orders-discount-add-manual]].
 
 ## Sub-pages (in this cluster)
 
-- [[orders-discount-add-form]] — the Add Discount modal: primary dropdown, existing / manual sub-forms, dynamic input mask, the request validator validation, panel-reload chain.
-- [[orders-discount-add-existing-eligibility]] — the pre-filter that decides which existing [[marketing-discounts]] appear in the picker; the three allowed target types; threshold no-auto-detach.
-- [[orders-discount-add-manual]] — one-off manual discounts: flat-less-than-subtotal rule, percent clamp / no-negative, default Percent type, fixed "Manual discount" label.
+- [[orders-discount-add-form]] — the Add Discount modal: primary dropdown, existing / manual sub-forms, dynamic input mask, submission validation, panel-reload chain.
+- [[orders-discount-add-existing-eligibility]] — the pre-filter that decides which existing [[marketing-discounts]] appear in the picker; the three allowed target types; the threshold after the subtotal drops.
+- [[orders-discount-add-manual]] — one-off manual discounts: amount above the subtotal refused, default Percent type, fixed "Manual discount" label.
 - [[orders-discount-add-delete]] — removing the order-level discount + delete-modifications; the browser confirm dialog; usage-count restore.
-- [[orders-discount-add-recalculation]] — the add/delete recalculation cascade (re-price → totals → tax → shipping), side effects, `order.updated` webhook, history entries, uses-counter recount.
+- [[orders-discount-add-recalculation]] — what adding and removing recalculate, side effects, `order.updated` webhook, history entries, uses-counter recount.
 - [[orders-discount-add-api]] — why add/delete is admin-only; the read-only [[api-order-discount]] resource.
 
 ## Business rules
 
 ### One order-level discount at a time
 
-The platform enforces ONE order-level discount per order. Before creating, it checks for any non-shipping order-level discount already present — if one exists, it throws *"Order already has a discount"*. To swap discounts, the merchant removes the existing one first, then adds the new one. (Shipping discounts may be exempted from this check when the order subtotal is below the shipping discount's `order_over` threshold, in which case the shipping discount isn't actually applied.)
+The platform enforces ONE order-level discount per order. Before creating, it checks for any order-level discount already present, free shipping included — if one exists, it throws *"This order has discount."*. To swap discounts, the merchant removes the existing one first, then adds the new one. (A free-shipping discount is ignored by this check only when the order subtotal is below its `order_over` threshold, in which case it isn't applied.)
 
 This is distinct from per-line discounts ([[orders-products]]) — a single line can have multiple per-line discounts AND the order can carry its own order-level discount on top. See [[discount-stacking]].
 
@@ -81,7 +81,7 @@ Archived orders (`isArchived = true`) reject ALL three discount routes (`add`, `
 
 ### Existing-discount filters drive merchant choice
 
-The existing-discount picker is intentionally narrow — it only shows discounts that would legitimately apply, so the merchant cannot accidentally mis-apply one. The full filter logic is on [[orders-discount-add-existing-eligibility]].
+The existing-discount picker is narrow, but it does not run every check the storefront runs. The full filter logic is on [[orders-discount-add-existing-eligibility]].
 
 ### Recalculation + audit
 

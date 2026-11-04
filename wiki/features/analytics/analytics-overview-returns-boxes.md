@@ -4,10 +4,10 @@ nav_path: "Analytics → Returns boxes (Returns over time, Net revenue, Return r
 route_name: analytics
 route_path: /admin/analytics
 aliases: ["Returns over time", "Returns Over Time", "Net revenue", "Return rate", "returns analytics", "return statistics", "returns report inflated", "too many returns in analytics", "cancelled orders counted as returns", "връщания в анализите", "справка връщания", "нетни приходи", "процент връщания"]
-tags: [analytics, dashboard, returns, reporting, din-7016]
+tags: [analytics, dashboard, returns, reporting]
 plan_gates: []
 created: 2026-08-08
-updated: 2026-08-08
+updated: 2026-11-04
 source_count: 4
 ---
 

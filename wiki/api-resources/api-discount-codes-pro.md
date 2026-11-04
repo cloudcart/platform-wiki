@@ -6,9 +6,9 @@ related_entity: discount-code
 related_features: [marketing-discounts-code-pro, marketing-discounts-code-pro-generator, marketing-discounts]
 aliases: ["Discount Codes PRO API", "Code PRO API", "JSON-API v2 discount-codes-pro", "API кодове ПРО", "/discount-codes-pro"]
 tags: [api, json-api-v2, discounts, code-pro]
-plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
+plan_gates: ["discount_coupon"]
 created: 2026-05-26
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 7
 ---
 # Discount Codes PRO (JSON-API v2)
@@ -17,7 +17,7 @@ source_count: 7
 
 `discount-codes-pro` is the JSON-API v2 resource for **Code PRO codes** — multi-code campaigns where each child code carries its OWN terms (per-code value, target, date window, customer-group restriction, region restriction, usage caps, barcode format). External integrations use the endpoint to provision per-influencer / per-partner / per-affiliate codes (each with their own commission split), to read per-code redemption status, and to bulk-generate codes from a marketing tool. Each row is, in effect, a mini-campaign linked to a parent Code PRO Discount through the `discount` relationship.
 
-This is the "many codes per parent, each with independent terms" pattern — different from Container codes on [[api-discount-codes]] (where the parent owns the terms) and different from a single coupon `code` on a [[api-discounts|Discount]]. Use this endpoint for influencer campaigns (`INFLUENCER1` = 15% off, `INFLUENCER2` = 20% off), staff codes (capped per-employee), B2B partner codes (each with their own customer group + region), or any campaign where each code needs independent reporting + caps.
+This is the "many codes per parent, each with independent terms" pattern — different from Container codes on [[api-discount-codes]] (where the Container owns the terms) and different from a single coupon `code` on a [[api-discounts|Discount]]. Use this endpoint for influencer campaigns (`INFLUENCER1` = 15% off, `INFLUENCER2` = 20% off), staff codes (capped per-employee), B2B partner codes (each with their own customer group + region), or any campaign where each code needs independent reporting + caps.
 
 ## Sub-pages (in this cluster)
 
@@ -34,7 +34,7 @@ This resource is split into 4 aspect pages. Drill into the one that matches the 
 - **Methods supported:** `GET` (collection), `GET /{id}`, `POST` (collection), `PATCH /{id}`, `DELETE /{id}` — full CRUD.
 - **Custom route:** `POST /api/v2/discount-codes-pro/generate` — bulk-generate many codes under one parent (random or numeric-range mode). See [[api-discount-codes-pro-generator]].
 - **Read-only:** no.
-- **App-installation requirement:** the parent Code PRO Discount requires the `discount-code-pro` plan-feature ON. Codes inherit that gate from the parent — see [[api-discount-codes-pro-side-effects]].
+- **App-installation requirement:** none. Over the API the parent Code PRO Discount is gated only by the `discount_coupon` counter when created on [[api-discounts]]; codes have no plan check — see [[api-discount-codes-pro-side-effects]].
 - **Content negotiation:** unlike [[api-discount-codes]], this resource does NOT relax content negotiation — every write request must use `Content-Type: application/vnd.api+json`.
 
 Base URL, auth, headers, and rate limits: see [[json-api-v2]].
@@ -71,7 +71,7 @@ Writes are not silent: per-code `uses` is recomputed (not incremented) on relate
 
 - [[json-api-v2]] — API hub.
 - [[api-discounts]] — parent Code PRO Discount endpoint (set `discount_type = code-pro`).
-- [[api-discount-codes]] — Container codes (each shares parent's terms — different pattern).
+- [[api-discount-codes]] — Container codes (terms come from the Container — different pattern).
 - [[discount-code]] — Code PRO code entity reference.
 - [[discount-stacking]] — uses-recompute, parent-aggregate, `code_apply`, `apply_regular_price` max-of-two filter, mutually-exclusive cart slots.
 - [[geo-zone]] — region restriction entity.

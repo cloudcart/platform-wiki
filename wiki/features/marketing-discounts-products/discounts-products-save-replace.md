@@ -3,11 +3,11 @@ type: feature
 nav_path: "Marketing → Discounts → Products → Save & replace flow"
 route_name: discounts-products
 route_path: /admin/marketing/discounts/products/:id
-aliases: ["Discount products save flow", "Discount products full replace", "product_to_discount row writes", "ProductUpdated event for discount", "ProductsSearchEnginesSync on discount save", "Запис на отстъпка — пълна замяна", "Edit на отстъпка изтрива варианти"]
+aliases: ["Discount products save flow", "Discount products full replace", "product_to_discount row writes", "Запис на отстъпка — пълна замяна", "Edit на отстъпка изтрива варианти"]
 tags: [marketing, discounts, fixed, products, save-flow, events, transaction, full-replace]
 plan_gates: ["discount_fixed"]
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 2
 ---
 
@@ -19,7 +19,7 @@ source_count: 2
 
 When the merchant saves the modal, toggles a row's status, or removes a product, the backend writes **per-variant rows** (not per-product) and re-evaluates downstream caches and search indices. This page documents the exact **order of operations** in the save transaction, the **full-replace semantics** that make "edit and save" silently drop variants not in the payload, and the **events fired** that propagate to the listing engine and the search index.
 
-This matters most for "I edited my discount and now some variants are missing" tickets — the save flow is **designed** to replace the entire `(discount_id, product_id)` rowset on every Edit-mode save. The modal mitigates this by pre-filling all variants, but bulk-update paths (scripts, JSON-API v2 writes) must send every variant or accept the drop.
+This matters most for "I edited my discount and now some variants are missing" tickets — every Edit-mode save removes all of the product's rows, on every discount, before writing back the submitted ones. The modal always sends every variant, but a script driving the endpoint directly must send every variant or accept the drop.
 
 ## Where to find it
 
@@ -42,21 +42,21 @@ The save endpoint accepts an array of entries: `{ product_id, variant_id, price 
 ### Validation (runs before the transaction opens)
 
 - `product_id`, `variant_id`, `price` are required integers; `price` is in cents.
-- `price` must be at least 1 and strictly less than the variant's catalog price (*"Price must be at least 1 and less than <variant.price>"*).
+- `price` must be at least 1 and no higher than the variant's catalog price (*"Price must be at least 1 and less than <variant.price>"*). A price equal to the catalog price is accepted.
 - `variant_id` must not already exist on this discount (when adding a new product; not when updating an existing one).
 - `product_id` must match the route's `product_id` (when updating).
 
 ### Save transaction (single DB transaction)
 
-1. **(Update only) Delete all existing rows** for this `(discount_id, product_id)` pair — full replace.
+1. **(Update only) Delete all existing rows** for this `product_id`, on every discount — full replace.
 2. **For each entry in the submitted array, insert a row** with the precomputed `save` value (= `variant.price − price`).
 3. **Re-evaluate each affected product's default variant** (since the discount may have changed which variant is the cheapest).
-4. **Fire `ProductUpdated`** so the listing engine rebuilds the product's grid row.
-5. **Fire the search re-index** so the search index / search indices re-index the price.
+4. **Fire the product-updated event** so the listing engine rebuilds the product's grid row.
+5. **Fire the search-engine-sync event** so the search index / search indices re-index the price.
 
 ### Status toggle endpoint
 
-Accepts `{product_ids: [...], status: 'yes'|'no'}` and flips `active` on **every variant row** under the selected products. Both events (`ProductUpdated`, the search re-index) fire.
+Accepts `{product_ids: [...], status: 'yes'|'no'}` and flips `active` on **every variant row** under the selected products. Both events fire.
 
 ### Delete endpoint
 
@@ -70,11 +70,11 @@ The save writes **one row per variant** to the `product_to_discount` table — n
 
 ### Save = full replace for the product
 
-The update endpoint **deletes all existing rows** for this `(discount_id, product_id)` pair before re-inserting from the submitted array. So an "edit and save" is effectively a **full replace** — variants the merchant didn't include in the payload **disappear** from the discount. The modal mitigates this by always pre-filling all of the product's variants (even ones with no existing override) — but a script or external tool driving the endpoint directly could accidentally drop variants.
+The update endpoint **deletes all existing rows** for this `product_id` on every discount, Fixed, Flat and Percent, before re-inserting from the submitted array, which writes back only the edited one. Flat and Percent rows return when the product is next saved or that discount is rebuilt. So an "edit and save" is effectively a **full replace** — variants the merchant didn't include in the payload **disappear** from the discount. The modal always sends every one of the product's variants — but a script or external tool driving the endpoint directly could accidentally drop variants.
 
-### `fixed_price >= variant.price` is silently dropped, not errored
+### A price above the catalog price fails the whole save
 
-When inserting per-variant rows, the save flow re-checks `fixed_price < variant.price`. Any entry where the fixed price is NOT cheaper than the variant's catalog price is **skipped** (no row inserted, no error message). The merchant sees the saved discount with FEWER variants than they entered — the invalid ones simply disappear. This compounds with the full-replace semantics: an Edit that re-submits a previously-valid price after a catalog-price drop can silently drop the row.
+A price above the variant's catalog price is rejected before the transaction opens: the whole save fails with the message above and nothing is written. A price equal to the catalog price is saved with `save = 0`.
 
 ### Status toggle fans out to all variant rows
 
@@ -84,21 +84,21 @@ Toggling a single product's Active state (or bulk-toggling) flips the `active` c
 
 When inserting variant rows, missing `date_start`, `date_end`, `discount_id` are auto-filled from the parent discount before insert. Editing the parent discount's date range automatically updates every variant row's dates via the underlying model's update hook — the merchant doesn't have to re-save each product.
 
-### Customer-group fan-out happens at the parent discount's save
+### Customer groups are copied at this save
 
-When the parent Fixed discount has customer-group restrictions, the platform clones each variant row per group at the **parent's** save time. This page (and its save flow) does NOT expose customer groups — it inherits them. See [[discounts-products-business-rules]] for the rationale.
+When the parent Fixed discount has customer-group restrictions, the platform clones each variant row per group when a product's prices are saved here. This page does NOT expose customer groups — it inherits them. Changing groups on an existing Fixed discount does not change products already attached until each is edited. See [[discounts-products-business-rules]].
 
 ### Default Fixed discount (auto-created)
 
 The platform has a concept of a **default Fixed discount** — a singleton Fixed discount marked with `for_products = yes` meta, auto-created on first need. Used as a fallback container for products discounted ad-hoc (e.g., via inline price edits on the product page). Most merchants never see this; it's an internal helper. See [[discounts-products-business-rules]].
 
-### Events: `ProductUpdated` + the search re-index
+### Events: product-updated + search-engine-sync
 
-Every save / toggle / delete fires both events for every affected product (chunked when bulk). `ProductUpdated` rebuilds the listing-engine grid row; the search re-index re-indexes the search index on the `searchable-import4` queue. The storefront reflects the change only after both have processed the affected products — see [[storefront-architecture]] + [[background-queue-inventory]].
+Every save / toggle / delete fires both events for the affected products. product-updated rebuilds the listing-engine grid row; search-engine-sync re-indexes the search index. The storefront reflects the change only after both have processed the affected products — see [[storefront-architecture]] + [[background-queue-inventory]].
 
 ### Webhook
 
-Each save / toggle / delete also fires the `discount.updated` webhook event — see [[settings-hooks]]. Receivers must be idempotent because a single bulk-toggle on 30 products fires 30 events.
+Saving, switching or removing products on a Fixed discount sends no webhook. `discount.updated` fires only when the discount record itself is saved — see [[settings-hooks]].
 
 ## Related
 
@@ -108,9 +108,9 @@ Each save / toggle / delete also fires the `discount.updated` webhook event — 
 - [[discounts-products-fields]] — the validation messages raised before the transaction opens.
 - [[discounts-products-business-rules]] — the broader cross-cutting rules (type guard, picker source).
 - [[marketing-discounts-fixed]] — parent discount; customer-group fan-out and date inheritance live there.
-- [[storefront-architecture]] — the search index re-index path triggered by the search re-index.
-- [[background-queue-inventory]] — the `searchable-import4` queue that processes the re-index.
-- [[settings-hooks]] — `discount.updated` webhook fires on each save / toggle / delete.
+- [[storefront-architecture]] — the search index re-index path triggered by the search-engine-sync event.
+- [[background-queue-inventory]] — the queue that processes the re-index.
+- [[settings-hooks]] — webhook events; product changes here send none.
 
 ## Open questions
 

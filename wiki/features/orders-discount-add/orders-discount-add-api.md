@@ -7,7 +7,7 @@ aliases: ["Order discount API", "Programmatic discount", "Order discount JSON-AP
 tags: [orders, discount, api, json-api-v2]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 2
 ---
 
@@ -40,13 +40,13 @@ The rich filtering and validation around order-level discounts is admin-only:
 
 - Customer-group match, `order_over` threshold, target-type filtering, code-less-discount exclusion ([[orders-discount-add-existing-eligibility]]).
 - One-order-level-discount-at-a-time gate, archived-order block ([[orders-discount-add]]).
-- Flat-discount-less-than-subtotal and percent-no-negative validation ([[orders-discount-add-manual]]).
+- Refusal of an amount above the subtotal ([[orders-discount-add-manual]]).
 
 None of this is reachable from the API.
 
 ### Discount application is coupled to the recalculation cascade
 
-Applying or removing a discount is tightly coupled to the totals / tax / shipping / line re-pricing cascade, all of which happen in one DB transaction with the discount add / delete (see [[orders-discount-add-recalculation]]). The platform requires this flow to go through the validated admin paths so the cascade always runs.
+Applying or removing a discount is tightly coupled to recalculating totals, tax and shipping (and, when adding, re-pricing lines), all of which happen in one DB transaction with the discount add / delete (see [[orders-discount-add-recalculation]]). The platform requires this flow to go through the validated admin paths so the cascade always runs.
 
 ### Programmatic discount management belongs at the rule level
 

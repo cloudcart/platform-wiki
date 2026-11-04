@@ -7,7 +7,7 @@ aliases: ["Discount products", "Fixed discount product list", "Product picker fo
 tags: [marketing, discounts, fixed, products, product-picker]
 plan_gates: ["discount_fixed"]
 created: 2026-05-23
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -26,12 +26,12 @@ This topic is split into 5 aspect pages — drill into the one that matches the 
 - [[discounts-products-list-view]] — list columns, filters, sorting, row toggle / remove, bulk actions, paging.
 - [[discounts-products-modal-flow]] — Add / Edit modal sequence (picker, pricing-mode radio, three pricing-table variants, save / close cleanup).
 - [[discounts-products-fields]] — fields reference (list columns, modal inputs, validation messages, toast strings).
-- [[discounts-products-save-replace]] — full-replace save semantics, the DB-transaction order, the events fired (`ProductUpdated`, the search re-index).
-- [[discounts-products-business-rules]] — type guard, picker source, default Fixed discount singleton, customer-group + date inheritance, the silent-drop behaviour for `fixed_price >= variant.price`.
+- [[discounts-products-save-replace]] — full-replace save semantics, the DB-transaction order, the events fired.
+- [[discounts-products-business-rules]] — type guard, picker source, default Fixed discount singleton, customer-group + date inheritance, what happens to a price above the catalog price.
 
 ## Where to find it
 
-From the [[marketing-discounts]] list, the **Products** link on any **Fixed**-type discount row opens this page. The breadcrumb reads "Marketing → Discounts → Products". The route is `/admin/marketing/discounts/products/:id` where `:id` is the parent discount's id. The modern Vue page replaces the legacy products listing; the legacy URL `/admin/discounts/products/{discount_id}` continues to drive the same underlying API.
+From the [[marketing-discounts]] list, the **Products** link on any **Fixed**-type discount row opens this page. The breadcrumb reads "Marketing → Discounts → Products". The route is `/admin/marketing/discounts/products/:id` where `:id` is the parent discount's id. The old URL `/admin/discounts/products/{discount_id}` redirects here.
 
 ## What the merchant can do here
 
@@ -45,16 +45,16 @@ From the [[marketing-discounts]] list, the **Products** link on any **Fixed**-ty
 What the merchant cannot do here:
 
 - Add a product already on this Fixed discount (validator rejects with *"Variant already exists in discount."*).
-- Set a fixed price ≥ the variant's catalog price — rejected per-variant with *"Price must be at least 1 and less than <variant.price>"*. See [[discounts-products-fields]].
+- Set a fixed price above the variant's catalog price — rejected with *"Price must be at least 1 and less than <variant.price>"*, and the whole save fails. A price equal to the catalog price is accepted. See [[discounts-products-fields]].
 - Bulk-import prices — the modal is one product at a time; for mass-price changes, use the Products listing's price-import workflow.
 
 ## Settings & fields
 
-The list shows **Product Name** (image thumbnail + name), **Price** (struck-through original / new fixed price, with the EUR-to-EUR dual display when active), **Active** toggle, and a **Remove** action. Filterable by **Active** = Yes / No. Sortable by **Price** and **Active**. Bulk actions: *"Set status active"*, *"Set status unactive"*, and the default delete. The Discount product modal exposes a Product picker (add mode), a Pricing-type radio (multi-variant products), a read-only **Price in store** column, and a **New price** input per variant or shared. See [[discounts-products-fields]] for the full reference.
+The list shows **Product Name** (image thumbnail + name), **Price** (struck-through original / new fixed price, with a second line while the currency-transition preview of [[apps-bgn2eur]] is active), **Active** toggle, and a **Remove** action. Filterable by **Active** = Yes / No. Sortable by **Price** and **Active**. Bulk actions: *"Set status active"*, *"Set status unactive"*, and the default delete. The Discount product modal exposes a Product picker (add mode), a Pricing-type radio (multi-variant products), a read-only **Price in store** column, and a **New price** input per variant or shared. See [[discounts-products-fields]] for the full reference.
 
 ## Business rules
 
-The parent Fixed discount drives almost everything here. The list-page is plan-gated by `discount_fixed` (inherited); all CRUD endpoints sit under the standard `marketing.discounts` permission; the controller hard-filters to `type = fixed` (404 otherwise); per-variant rows fan out from each modal save; the **save flow is a full replace per `(discount_id, product_id)`** — pre-filling all variants in the modal mitigates accidental drops. Customer-group fan-out and date inheritance derive from the parent discount, not from this page. See [[discounts-products-business-rules]] for the full catalogue and [[discounts-products-save-replace]] for the transaction order.
+The parent Fixed discount drives almost everything here. All CRUD endpoints sit under the standard `marketing.discounts` permission; the controller hard-filters to `type = fixed` (404 otherwise); per-variant rows fan out from each modal save; **editing a product's prices removes that product's rows from every discount, Fixed, Flat and Percent, and writes back only the edited one**. Flat and Percent rows return when the product is next saved or that discount is rebuilt. Customer-group fan-out and date inheritance derive from the parent discount, not from this page. See [[discounts-products-business-rules]] for the full catalogue and [[discounts-products-save-replace]] for the transaction order.
 
 ## Related
 
@@ -64,8 +64,8 @@ The parent Fixed discount drives almost everything here. The list-page is plan-g
 - [[marketing-discounts-code-pro]] — Code PRO multi-code campaigns (another code-based discount type).
 - [[discount]] — entity page for the parent Fixed discount.
 - [[products-products]] — the products attached to the Fixed discount; the picker queries this catalog.
-- [[customers-custom-groups]] — customer groups on the parent Fixed discount drive per-group row fan-out at save time.
-- [[settings-hooks]] — `discount.updated` event fires on each save / toggle / delete here.
+- [[customers-custom-groups]] — customer groups on the parent Fixed discount drive per-group row fan-out when a product's prices are saved.
+- [[settings-hooks]] — `discount.updated` fires when the discount record itself is saved; save, toggle and delete here send none.
 - [[apps-cart-rules]] — Cart Rules see Fixed-discount prices as the "after discounts" amount on cart lines.
 - [[analytics-top-order-product-discounts]] — analytics dashboard surfacing top product-discount usage.
 

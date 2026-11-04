@@ -7,7 +7,7 @@ aliases: ["Discount storefront display", "From/Now pricing", "Discount badge", "
 tags: [marketing, discounts, promotions, storefront, ui, listing-engine]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -46,11 +46,11 @@ This aspect covers **what the customer sees** when a discount is active — stri
 
 ### Per-product attachment regeneration — the listing-engine pipeline
 
-When a discount is **created, edited, status-toggled, deleted, or has its target list changed**, the platform regenerates the per-product attachment rows in `product_to_discount`. This table is what the storefront reads to render "From X / Now Y" pricing on category and product detail pages.
+When a no-code Flat or Percent discount or a Fixed discount is **created, edited, or has its target list changed**, the platform regenerates its per-variant rows. These rows are what the storefront reads to render "From X / Now Y" pricing on category and product detail pages. The list switch, bulk status and list delete start no rebuild.
 
-This is the slowest part of the discount lifecycle: for high-catalog stores (10 000+ products) it can take several minutes. It's the underlying reason for the 10-minute activation cooldown (see [[discounts-lifecycle]]) and the **"Latest update"** badge on freshly-saved discounts.
+The rows are written during the save. The listing engine and smart collections are refreshed afterwards, so listings can take a moment to catch up.
 
-Triggers: new discount save → matching products get attachment rows; status `yes → no` → rows soft-deactivate; target list edited → rows recomputed against the new set; **catalog product price changed** (independent of any discount edit) → per-variant Fixed-discount rows auto-recalculate `save = catalog − fixed`; if catalog price drops at or below the fixed price, the row is **deactivated** (no fake "discount").
+Triggers: new discount save → matching products get rows; target list edited → rows recomputed against the new set; **catalog product price changed** (independent of any discount edit) → per-variant Fixed-discount rows auto-recalculate `save = catalog − fixed`; if catalog price drops at or below the fixed price, the row is **deactivated** (no fake "discount").
 
 ### Storefront cache invalidation
 
@@ -64,9 +64,9 @@ The **Discount price options** box (show MSRP as the "was" price, hide the disco
 
 ### Countdown timer + popup effect
 
-The Countdown timer is rendered on three surfaces: **product listings** (gated by `timer_list = 1`), **product detail pages** (gated by `timer_details = 1`), and **checkout** (always, via `countdown_discount_popup` — the merchant cannot disable the checkout-stage timer). Both listing / detail switches **auto-disable** when `date_end` is empty.
+The `timer_list` (product listings) and `timer_details` (product detail pages) switches are on the Global and Fixed forms and show that discount's end-date timer; both **auto-disable** when `date_end` is empty. A Countdown discount has no such switches: its timer runs at **checkout**, via the countdown popup, and the merchant cannot disable it.
 
-When the customer adds the Countdown-discounted product to cart, a celebration animation fires per `countdown_popup_effect`: `confetti` (two-sided burst, 350 particles, 50° spread), `fireworks` (six positions, 550 ms intervals), or `school_pride` (1 000 red particles, 5 × 100 ms iterations). The merchant previews via the in-page Preview button on the Countdown edit form. See [[marketing-discounts-countdown]].
+When the countdown popup first shows at checkout, a celebration animation fires per `countdown_popup_effect`: `confetti` (two-sided burst, 350 particles, 50° spread), `fireworks` (six positions, 550 ms intervals), or `school_pride` (1 000 red particles, 5 × 100 ms iterations). The merchant previews via the in-page Preview button on the Countdown edit form. See [[marketing-discounts-countdown]].
 
 ### Label / Banner — visual only
 
@@ -79,8 +79,8 @@ Saving a discount that targets specific products / categories also refreshes any
 ## Related
 
 - [[marketing-discounts]] — hub.
-- [[discounts-lifecycle]] — the 10-minute activation cooldown that throttles this regeneration pipeline.
-- [[discounts-audit-trail]] — webhook events that fire when the regeneration completes.
+- [[discounts-lifecycle]] — status switch and date window.
+- [[discounts-audit-trail]] — webhook events.
 - [[discounts-known-issues]] — shipping-discount tie-break at checkout.
 - [[marketing-discounts-fixed]] — per-variant fixed-price configuration.
 - [[marketing-discounts-countdown]] — countdown timer + popup effect picker.

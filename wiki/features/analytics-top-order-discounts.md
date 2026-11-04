@@ -7,16 +7,16 @@ aliases: ["Order discounts", "Top order discounts", "Most used order discounts",
 tags: [analytics, ccanalytics, orders, discount, top-order-discounts]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 9
 ---
 # Order discounts
 
 ## Purpose
 
-A ranked table of the merchant's **most-used cart/order-level discounts** for the selected time range. Answers: *"Which of my discount rules — coupon codes, global cart promotions, free-shipping rules — are actually being redeemed, and how much money are they costing me?"* Shows the top 5 by total discount amount given out, with usage count, mobile/desktop split, and drill-down to per-order history.
+A ranked table of the merchant's **most-used cart/order-level discounts** for the selected time range. Answers: *"Which of my order-level discounts — threshold discounts, free shipping, payment-method discounts — are actually being redeemed, and how much money are they costing me?"* Shows the top 5 by total discount amount given out, with usage count, mobile/desktop split, and drill-down to per-order history.
 
-It is paired with [[analytics-top-order-product-discounts]] — that sister box covers **product-level** discounts (per line-item), while this one covers **order-level** discounts (applied to the whole cart). Both appear together in the default layout.
+It is paired with [[analytics-top-order-product-discounts]] — that sister box covers **product-level** discounts (per line-item), while this one covers **order-level** discounts (applied to the whole cart). A coupon for all or specific products lands on the product lines, so it appears in the sister box, not here ([[discount-stacking-amount-by-target]]). Both appear together in the default layout.
 
 ## Where to find it
 
@@ -28,7 +28,7 @@ From the box, the merchant can click a discount name to **edit the discount** (`
 
 ### Dashboard card
 
-Top 5 discounts ranked by **largest discount given out first**, then usage count descending. Each row shows the discount **Name** (code in parens when attached, e.g. `Summer sale (SUMMER20)`; nameless ones show `Manual discount`), a **"Uses {value}"** usage count, the total **Amount** as positive money, the **mobile/desktop split**, and a **drill-down** link — present only when the discount has a real id (hidden for manual / deleted).
+Top 5 discounts ranked by **largest discount given out first**, then usage count descending. Each row shows the discount **Name** (code in parens when attached, e.g. `Summer sale (SUMMER20)`; nameless ones show `Manual discount`), a **"Uses {value}"** usage count, the total **Amount** as positive money, the **mobile/desktop split**, and a **drill-down** link — present only when the discount has a real id (hidden for manual / deleted) (verify).
 
 ### Tooltip (box-level)
 
@@ -38,7 +38,7 @@ Top 5 discounts ranked by **largest discount given out first**, then usage count
 
 - `exists` — **View discount** / **Виж отстъпката** — discount still active; click opens its edit screen at `/admin/marketing/discounts/edit/:id`.
 - `deleted` — **Deleted discount** / **Изтрита отстъпка** — discount has been deleted; link disabled.
-- `manual` — **Manually created discount** / **Ръчно въведена отстъпка** — a manual discount entered at order-edit time (not from a rule).
+- `manual` — **Manually created discount** / **Ръчно въведена отстъпка** — a row with no discount name.
 
 ### Details — `/admin/analytics/details/top-order-discounts`
 
@@ -84,17 +84,17 @@ The display name is built conditionally: a discount with no name shows `Manual d
 
 Period-over-period comparison is explicitly disabled here, unlike most other table boxes. Reason inferred: discount usage reflects rules in place at the time, so prior-period comparison is ambiguous (the rule may not have existed earlier).
 
-### Manual discounts bucket; Free shipping label; positive amounts
+### Manual discounts; Free shipping label; positive amounts
 
-Manually-entered discounts (no rule attached) all aggregate under one "Manual discount" row with no drill-down. In View More, a free-shipping discount is labelled "Free shipping" (using the **last** recorded free-shipping state in the period); otherwise the discount type is shown directly. Because a discount reduces the order total, the underlying amount is negative; the box flips the sign so merchants always see positive money values.
+A manual discount typed on an order (no rule attached) does not reach this box. In View More, a free-shipping discount is labelled "Free shipping" (using the **last** recorded free-shipping state in the period); otherwise the discount type is shown directly. Because a discount reduces the order total, the underlying amount is negative; the box flips the sign so merchants always see positive money values.
 
-### Deleted discounts persist in old periods only
+### Deleted discounts stay in the box
 
-Discounts deleted at the system level **are not captured** for orders placed after the deletion, but orders captured BEFORE it retain their rows (with the last-known name) and can still appear in older period queries — flagged with the PageHelp `deleted` state.
+Deleting a discount does not filter its orders out of the box. Orders that used it keep their rows, with the last-known name.
 
 ### "Sales" = order count
 
-One row exists per `(order, discount)` pair (no per-line splits), so "Sales" is the number of **orders** that applied the discount; mobile/desktop are direct counts of those orders.
+One row exists per `(order, discount)` pair (no per-line splits), so "Sales" is the number of **orders** that applied the discount; mobile/desktop are direct counts of those orders (verify).
 
 ### Empty state, Top-N, and caps
 

@@ -7,7 +7,7 @@ aliases: ["Discount products list view", "Discount products row actions", "Disco
 tags: [marketing, discounts, fixed, products, list-view, bulk-actions]
 plan_gates: ["discount_fixed"]
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 2
 ---
 
@@ -25,7 +25,7 @@ Marketing → Discounts → (click **Products** on a Fixed-type discount row) �
 
 ## What the merchant can do here
 
-- **See every product attached** to this discount, paginated and sortable, with: **Product Name** (image thumbnail + name, clickable to open the edit modal, plus a *"View in store"* tooltip linking to the storefront page), **Price** (original price struck-through over the new fixed price, with the EUR-to-EUR dual display when active), **Active** toggle per product, **Remove** action per product.
+- **See every product attached** to this discount, paginated and sortable, with: **Product Name** (image thumbnail + name, clickable to open the edit modal, plus a *"View in store"* tooltip linking to the storefront page), **Price** (original price struck-through over the new fixed price, with a second line while the currency-transition preview of [[apps-bgn2eur]] is active), **Active** toggle per product, **Remove** action per product.
 - **Click the product name or image** — opens the [[discounts-products-modal-flow|Discount product modal]] pre-filled with the existing per-variant prices.
 - **Toggle a product's active state inline** via the row switch — POSTs to `/admin/api/core/discounts/products/{discount_id}/status` with the product id and `status: yes|no`. Toast on success: *"Status changed successfully"*.
 - **Remove a single product** — DELETEs to `/admin/api/core/discounts/products/{discount_id}?ids[product_ids][0]={product_id}`. Removal is immediate (no soft-delete here). Toast: *"Removed successfully"*.
@@ -42,7 +42,7 @@ Marketing → Discounts → (click **Products** on a Fixed-type discount row) �
 | Column | What it shows |
 |--------|---------------|
 | **Product Name** | Product image thumbnail + name. Image links to the storefront page (tooltip *"View in store"*). Name link opens the edit modal. |
-| **Price** | Two lines, formatted via `moneyFormat`: top line = original price (struck-through) and the new fixed price (e.g., `999 EUR / 799 EUR`); second line shows the EUR-to-EUR dual display when EUR-display is active for the store. |
+| **Price** | Two lines, formatted via `moneyFormat`: top line = original price (struck-through) and the new fixed price (e.g., `999 EUR / 799 EUR`); a second line shows while the currency-transition preview of [[apps-bgn2eur]] is active. |
 | **Active** | Per-row toggle — green = active, grey = inactive. Inactive products keep the discount attachment but the storefront skips applying it. |
 | (Remove) | Per-row remove action — immediately deletes the product from the discount. |
 
@@ -70,7 +70,7 @@ Sortable columns: **Price** (ascending / descending), **Active**.
 - **Remove is immediate, not soft-delete.** Once the merchant confirms the remove, the variant rows are deleted; there is no "Restore" undo. Re-adding the product creates fresh rows.
 - **List read groups per product.** The list endpoint returns one row per `product_id` (even when the product has multiple variants with different fixed prices), with an `items` array carrying each variant's `discount_price`. The modal opens that same payload — see [[discounts-products-modal-flow]].
 - **Per-render price formatting is precomputed.** The list cell renders `discount.price` (cents) ÷ 100 as the final price and `discount.price + discount.save` (cents) ÷ 100 as the original. The `save` column is precomputed at save time — this page does no per-render computation.
-- **Status toggle + delete both fire two events** on every affected variant row: `ProductUpdated` (listing-engine rebuild) and the search re-index (the search index re-index). See [[discounts-products-save-replace]] for the full event chain.
+- **Status toggle + delete both fire two events** for the affected products: product-updated (listing-engine rebuild) and search-engine-sync (search re-index). See [[discounts-products-save-replace]] for the full event chain.
 
 ## Related
 

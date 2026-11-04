@@ -4,7 +4,7 @@ nav_path: "Entity → Discount Code → Usage limits"
 aliases: ["Code usage cap", "max_uses", "uses counter", "Code redemption limit", "Counted-status increment", "Лимит на употреба на код", "Брояч на код"]
 tags: [entity, marketing, discounts, codes]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -14,7 +14,7 @@ source_count: 3
 
 ## Identity
 
-This aspect covers how many times a Discount Code can be redeemed — the `max_uses` / `uses` cap, what counts as a redemption, and the difference between Container and Code PRO counter behavior. The non-obvious part: **cancelled / refunded orders behave differently depending on code type** — Code PRO auto-frees a slot, Container does not.
+This aspect covers how many times a Discount Code can be redeemed — the `max_uses` / `uses` cap, what counts as a redemption, and the difference between Container and Code PRO codes. Cancelling a counted order frees a use on the discount, Container discounts included. An individual Container code has no counter.
 
 ## Aliases
 
@@ -32,36 +32,37 @@ This aspect covers how many times a Discount Code can be redeemed — the `max_u
 
 ### Counted-status increments — cancelled orders don't burn a slot
 
-The `uses` counter increments only when an order using the code reaches one of the **counted statuses** (per the `discounts_used_statuses` setting — default: `paid`, `completed`, `fulfilled`). Orders that fail (`failed`, `cancelled`, `refunded`, `chargebacked`) do NOT consume a slot — they free the code back up for the next customer. This prevents fraud-protection delays from "wasting" a one-time code.
+The `uses` counter counts an order only when it is in one of the **counted statuses** (per the `discounts_used_statuses` setting — default: `paid`, `completed`, `fulfilled`). With the default set, orders that fail (`failed`, `cancelled`, `refunded`, `chargebacked`) do NOT consume a slot — they free the code back up for the next customer. A merchant can add Cancelled or Refunded to the list, and those orders then count. This prevents fraud-protection delays from "wasting" a one-time code.
 
-### Code PRO `uses` counter — recomputed, not incremented
+### `uses` counter — recomputed, not incremented
 
-For Code PRO codes, the `uses` counter is **NOT incremented** on each new order. Instead it is **recomputed** on every order-status change by counting all counted-status orders that currently reference this code. Practical effect: cancelled or refunded orders **auto-decrement** the counter (because they no longer count toward the recompute), unlike Container codes where the counter is incremented at order-placement and not decremented on cancellation.
+The `uses` counter is **NOT incremented** on each new order. Instead it is **recomputed** on every order-status change by counting all counted-status orders that currently reference the discount or Code PRO code. Practical effect: cancelled or refunded orders **auto-decrement** the counter under the default statuses, on Container discounts too.
 
-Merchant-visible consequence: if a customer redeems a Code PRO discount, then the merchant cancels the order, the Code PRO `uses` counter goes back down. The customer's `maxused_user` cap also frees up. For Container codes, the cancellation does NOT auto-decrement.
+An individual Container code has no counter: an order does not use it up, and it stays reusable until turned off or deleted, or until the Container's own `max_uses` is reached. `maxused_user` is counted separately: a cancelled order that was already fulfilled still counts there.
 
-### The four interacting caps
+### The interacting caps
 
-A code has up to four caps that all check independently — the cart engine checks ALL applicable caps before letting the customer redeem:
+The limits are `max_uses` and `maxused_user` on the discount, and the same pair on each Code PRO code:
 
-1. **Per-code `max_uses`** — this specific code's total redemptions.
-2. **Per-Discount `usage_limit`** — the overall parent Discount's total redemptions (across all codes).
-3. **Per-customer `usage_limit_customer`** (parent Discount) — how many times one customer can use the discount across any code.
-4. **Per-code per-customer cap** (Code PRO `maxused_user`) — for Code PRO, how many times one customer can use THIS specific code.
+1. **Per-code `max_uses`** (Code PRO) — this specific code's total redemptions.
+2. **Discount `max_uses`** — the discount's total redemptions, enforced on every kind of code.
+3. **Discount `maxused_user`** — how many times one logged-in customer can use it.
+4. **Code PRO `maxused_user`** — the same limit on a Code PRO code; it counts across the whole campaign.
 
-The per-customer cap on the parent Discount prevents the same customer from redeeming the code multiple times even when `max_uses` allows it. Customer-identity matching for caps 3 and 4 is by customer ID — see [[discount-code-entity-customer-binding]].
+Customer-identity matching for the per-customer caps is by customer ID. See [[discount-code-entity-customer-binding]].
+
 
 ## Where it appears
 
 - [[marketing-discounts-code-pro]] — Code PRO management; exposes `max_uses`, `maxused_user` per code.
-- [[marketing-discounts-codes]] — Container codes; inherit `max_uses` / `maxused_user` from the parent.
-- [[marketing-discounts]] — the parent Discount edit form exposes `usage_limit` and `usage_limit_customer`.
-- [[orders-details]] — order-status transitions are what drive counter increments / recomputes.
+- [[marketing-discounts-codes]] — Container codes; the Container discount carries `max_uses` / `maxused_user`.
+- [[marketing-discounts]] — the Discount edit form exposes `max_uses` and `maxused_user`.
+- [[orders-details]] — order-status transitions drive the recount.
 
 ## Related
 
 - [[discount-code]] — hub.
-- [[discount]] — parent Discount; carries `usage_limit` and `usage_limit_customer`.
+- [[discount]] — carries `max_uses` and `maxused_user`.
 - [[order]] — counted-status transitions drive the counter.
 - [[discount-stacking]] — how a capped code interacts with other discounts in the same cart.
 

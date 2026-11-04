@@ -5,7 +5,7 @@ aliases: ["Discount attach", "Discount snapshot", "Cart Rule order", "Post-disco
 tags: [orders, checkout, discounts, cart-rules, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -15,7 +15,7 @@ source_count: 3
 
 ## Definition
 
-Two distinct pricing-modifier systems run during the checkout flow: **Discounts** ([[discount]]) — promotional pricing tied to discount entities, evaluated continuously during the cart phase, snapshotted at submit — and **Cart Rules** ([[cart-rule]]) — custom condition→action rules from the app, evaluated AFTER discounts on the post-discount cart total. The ordering is deterministic: Discount first, Cart Rule second. The `uses` counter on a discount increments only when the order reaches a **counted status** (`discounts_used_statuses` setting on [[settings-statuses]], default `paid` / `completed` / `fulfilled`).
+Two distinct pricing-modifier systems run during the checkout flow: **Discounts** ([[discount]]) — promotional pricing tied to discount entities, evaluated continuously during the cart phase, snapshotted at submit — and **Cart Rules** ([[cart-rule]]) — custom condition→action rules from the app, evaluated AFTER product discounts and line-level codes, before order-level discounts. The ordering is deterministic: product discounts and line-level codes first, Cart Rules second, order-level discounts last. The `uses` counter on a discount is a recount of orders in a **counted status** (`discounts_used_statuses`, set in the discount statuses panel, default `paid` / `completed` / `fulfilled`).
 
 ## Scope
 
@@ -36,8 +36,8 @@ Not covered here:
 ## Contrasts
 
 - **Discount eligibility (during cart) vs discount snapshot (at submit)** — eligible discounts attach and re-evaluate on every cart change. At submit, the attached set is snapshotted into per-order-discount rows; further cart changes after submit no longer affect the order's discounts.
-- **Discounts evaluated FIRST vs Cart Rules SECOND** — Cart Rules always run on the post-discount cart state. A "Cart total > 100 BGN" Cart Rule sees the discounted subtotal, not the pre-discount catalog subtotal.
-- **Counted status vs non-counted status** — only orders in `discounts_used_statuses` (default `paid` / `completed` / `fulfilled`) increment the discount's `uses` counter. Cancelled / refunded / failed orders NEVER count, so a customer who places + cancels can re-use a "1 per customer" discount.
+- **Line discounts evaluated FIRST vs Cart Rules SECOND** — Cart Rules run after product discounts and line-level codes. A "Cart total > 100 EUR" Cart Rule sees the total after those, before any order-level discount.
+- **Counted status vs non-counted status** — only orders in `discounts_used_statuses` (default `paid` / `completed` / `fulfilled`) count towards the discount's `uses` counter, and a cancelled or refunded order leaves that total. The one-per-customer check (`maxused_user`) has no such exclusion: it still counts an order whose fulfilment status is a counted one.
 
 ## Where it applies
 
@@ -45,7 +45,7 @@ Not covered here:
 
 While the cart is open, the matching-discounts evaluator runs on every cart change. Any [[discount]] whose target + conditions match the current cart state attaches automatically. See [[discount-stacking]] for the interaction rules between codeless discounts, code-based discounts, Cart Rules, and the `code_apply` / `force_save` flags.
 
-At the moment of order submission (step 2 of [[checkout-flow-submit-order-creation]]), the discounts that were attached are re-evaluated against the final cart state then **snapshotted** into per-order-discount rows. From then on, the discount's `uses` counter increments only when the order reaches one of the **counted statuses** (default: `paid`, `completed`, `fulfilled` — configured in the `discounts_used_statuses` setting on [[settings-statuses]]). Cancelled / refunded orders never increment.
+At the moment of order submission (step 2 of [[checkout-flow-submit-order-creation]]), the discounts that were attached are re-evaluated against the final cart state then **snapshotted** into per-order-discount rows. From then on, the discount's `uses` counter is recounted on each status change and includes the order only in one of the **counted statuses** (default: `paid`, `completed`, `fulfilled` — set in the discount statuses panel, setting `discounts_used_statuses`). A cancelled or refunded order leaves the count.
 
 ### Cart Rule pricing — sees post-discount line prices
 
@@ -53,17 +53,17 @@ Cart Rules run AFTER discounts during cart re-evaluation and order submit (step 
 
 Concrete consequences:
 
-- A Cart Rule that **adds 5 BGN** to a discounted line stacks on top of the discount.
-- A Cart Rule that **sets the line to 10 BGN** overrides the discount's effect (the line ends at 10 BGN regardless of what the discount produced).
+- A Cart Rule **amount** comes off the already discounted line.
 - A Cart Rule **percentage** is applied to the post-discount price.
+- A Cart Rule cannot set a price or add an amount.
 
-This ordering is non-configurable — Cart Rules are by design "the last word" on per-line pricing within the checkout pipeline.
+This ordering is non-configurable.
 
 ### `discounts_used_statuses` counted-status setting
 
 | Setting | Location | Default | Effect |
 |---|---|---|---|
-| `discounts_used_statuses` | [[settings-statuses]] | `paid`, `completed`, `fulfilled` | Discount's `uses` counter increments only when the order enters one of these statuses. |
+| `discounts_used_statuses` | Discount statuses panel | `paid`, `completed`, `fulfilled` | Discount's `uses` counter counts only orders in one of these statuses. |
 
 Merchants can add custom statuses to this list — useful when a custom sub-status (e.g. "Out for delivery") should also count.
 
@@ -81,10 +81,8 @@ The discount-uses counter is updated both **inline** during the `OrderStatusChan
 - [[discount-stacking]] — discount-vs-discount interaction rules.
 - [[marketing-discounts]] — discount catalogue + editor.
 - [[apps-cart-rules]] — Cart Rule editor.
-- [[settings-statuses]] — `discounts_used_statuses` configuration.
 - [[tax-computation]] — taxes recomputed after discount + Cart Rule pricing.
 
 ## Open Questions
 
-- Confirm Cart Rules can target the same line as a discount with no merge conflict (the "override" wording above is the observed behaviour) (verify).
 - Confirm whether the snapshot at submit re-runs targeting (re-attaches new matches) or only re-evaluates already-attached discounts (verify).

@@ -7,7 +7,7 @@ aliases: ["Percent discount editor", "Percent discount form", "Discount with pro
 tags: [marketing, discounts, percent, editor]
 plan_gates: ["discount_global", "discount_coupon"]
 created: 2026-06-10
-updated: 2026-10-21
+updated: 2026-11-04
 source_count: 2
 ---
 
@@ -23,7 +23,7 @@ The Percent editor is the admin form where the merchant configures a no-code or 
 
 From [[marketing-discounts]], click **+ Add discount** to open the type-picker modal. Two cards open the Percent editor:
 
-- **Global discount** card → route `/admin/marketing/discounts/create/global` (route name `discounts-create`, query `type=global`). For a cart-wide no-code Percent.
+- **Global discount** card → route `/admin/marketing/discounts/create/global` (route name `discounts-create`, query `type=global`). For a no-code Percent.
 - **Discount with promo code** card → route `/admin/marketing/discounts/create/code` (route name `discounts-create`, query `type=code`). For a promo-code-driven Percent. Adds the **Generate a discount code** + **Region** blocks.
 
 Once on the form, the merchant sets **Discount type → Percentage** in the General settings block.
@@ -32,11 +32,11 @@ Once on the form, the merchant sets **Discount type → Percentage** in the Gene
 
 ### Form sections (top-to-bottom)
 
-The Percent form is composed of these sections (the "Global discount" type-picker card uses the layout below; the "Discount with promo code" card adds the code-generator and region blocks):
+The Percent form is composed of these sections (the "Global discount" type-picker card uses the layout below; the "Discount with promo code" card adds the code-generator and region blocks and leaves out Color settings and the amount label):
 
 1. **General settings** — name, status (active/inactive), discount type (Fixed amount / Percentage / Free shipping), discount value (for Percentage, the percent as a whole number 0-100 — e.g. `15` for 15%, not `0.15`).
-2. **Discount target** — pick where the discount applies (cart-wide, orders-over, specific products, category, vendor, smart collection, or category+vendor). See [[percent-discount-targeting]].
-3. **Discount limits** — total uses and per-customer uses (only shown for `all` and `order_over` targets).
+2. **Discount target** — pick where the discount applies (every product in the cart, orders-over, specific products, category, vendor, smart collection, or category+vendor). See [[percent-discount-targeting]].
+3. **Discount limits** — total uses and per-customer uses (on this form only shown for `all` and `order_over`; on the code form for every target).
 4. **Customer groups** — restrict to specific groups or "All groups".
 5. **Registered users only** — restrict to logged-in customers (only shown for `order_over` target).
 6. **Color settings** — background and text color for the discount label on storefront.
@@ -45,7 +45,7 @@ The Percent form is composed of these sections (the "Global discount" type-picke
 
 For code-based variants, the form additionally shows:
 
-- **Generate a discount code** — the code string, barcode mode (EAN-13 / EAN-8), `code_apply` ("Apply discount even if the cart contains products with a discount"), `apply_regular_price` ("Apply to the regular price of products, if this discount is greater").
+- **Generate a discount code** — the code string, barcode mode (EAN-13 / EAN-8), `code_apply` ("The discount is applied even when the cart contains discounted products"), `apply_regular_price` ("Apply to the regular price of products, if this discount is greater").
 - **Region (Geo zone)** — restrict to a specific shipping region or "Make it Global".
 
 ### Form sub-flows triggered by field choices
@@ -58,12 +58,12 @@ For code-based variants, the form additionally shows:
 | Picking **Discount target → Product vendor/s** | Slides open: multi-pick vendor search. |
 | Picking **Discount target → Smart collection/s** | Slides open: multi-pick smart collection search. |
 | Picking **Discount target → Category + vendor** | Slides open: same warning box + category multi-pick + vendor multi-pick. |
-| Picking **Discount target ∈ {all, order_over}** | The **Discount limits** block becomes visible. Otherwise hidden. |
+| Picking **Discount target ∈ {all, order_over}** | The **Discount limits** block becomes visible. Otherwise hidden on this form; on the code form it shows for every target. |
 | Picking **Discount target = order_over** | The **Registered users only** block becomes visible. Otherwise hidden. |
 | Toggling **Customer groups → All groups OFF** | Slides open: multi-pick customer-groups search (api `/admin/api/core/customers/groups`). |
 | Toggling **Region → Make it Global OFF** (code variant only) | Slides open: single-pick geo-zone search (api `/admin/api/core/settings/geo-zones/search`). |
 | Toggling **No expiration ON** | Wipes `date_end` and clears any date-end errors. |
-| Toggling **Code format → Barcode EAN13** or **EAN8** | The free-text "Generate" button hides; the **"Use as barcode prefix"** switch appears below. |
+| Toggling **Code format → Barcode EAN13** or **EAN8** | The free-text "Generate" button hides; the **"The value from the field should be used as the barcode prefix."** switch appears below. |
 | Toggling **code_apply ON** (in code variant) | The *"Apply to the regular price of products, if this discount is greater"* switch appears — see [[percent-discount-stacking]]. |
 
 ### Generate-code helper
@@ -72,11 +72,11 @@ Inside the code-variant form, the **Generate a discount code** field-block has t
 
 ### Activate / deactivate toggle
 
-From the Discounts list, the merchant uses the row's **Active** switch to flip the discount on/off. For no-code Percent, the 10-minute cooldown per discount applies — switching too quickly returns a rate-limit error and reverts the toggle. See [[percent-discount-validity]] for the exact message + scope.
+From the Discounts list, the merchant uses the row's **Active** switch to flip the discount on/off. It takes effect immediately, any number of times.
 
 ### Delete confirmation
 
-The row's trash icon triggers the generic delete-confirmation dialog (*"Are you sure?"*), then the discount is removed. Cascading deletes wipe the discount's customer-groups, targets, and customers join rows.
+The row's trash icon triggers the generic delete-confirmation dialog (*"Are you sure?"*), then the discount is removed. Cascading deletes wipe the discount's customer-groups, targets, and customers join rows. A discount used by a smart collection or an XML import/sync task cannot be deleted from the list: *"This discount cannot be deleted because it is still used in: {usages}"*.
 
 ## Settings & fields
 
@@ -85,8 +85,7 @@ The full field catalogue (every backend key, default, validation string) lives o
 ## Business rules
 
 - The **Discount type** dropdown's "Percentage" option creates a `type = percent` row regardless of which entry card was used (global or code). The only structural difference between the two surfaces is whether `code` is set on the row.
-- The "Save the discount in the order" (`force_save`) switch is offered only for the `order_over` target — see [[percent-discount-targeting]].
-- The 10-minute activation cooldown applies to **no-code** Percent only; code-based Percent has no cooldown. See [[percent-discount-validity]].
+- The "Save the discount on your order" (`force_save`) switch is offered only for the `order_over` target — see [[percent-discount-targeting]].
 
 ## Related
 
@@ -95,7 +94,7 @@ The full field catalogue (every backend key, default, validation string) lives o
 - [[percent-discount-fields]] — every field + validation rule.
 - [[percent-discount-targeting]] — what each `settings` target does.
 - [[percent-discount-stacking]] — `code_apply` + `apply_regular_price` semantics.
-- [[percent-discount-validity]] — active-toggle cooldown + date rules.
+- [[percent-discount-validity]] — date rules.
 - [[customers-custom-groups]] — customer-group picker contents.
 - [[geo-zone]] — geo-zone picker contents (code variant).
 

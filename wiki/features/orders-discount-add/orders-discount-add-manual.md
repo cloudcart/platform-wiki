@@ -7,7 +7,7 @@ aliases: ["Manual order discount", "One-off discount", "Flat discount", "Percent
 tags: [orders, discount, manual-discount, validation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-The **one-off manual discount path** of the Add Discount flow — a flat-currency amount OR a percentage typed directly on the order, applied right now to this order only. Unlike existing discounts, a manual discount has no master record in [[marketing-discounts]] and never appears in discount reports.
+The **one-off manual discount path** of the Add Discount flow — a flat-currency amount OR a percentage typed directly on the order, applied right now to this order only. Unlike existing discounts, a manual discount has no master record in [[marketing-discounts]] and does not appear in discount reports, including the Order discounts box in analytics ([[analytics-top-order-discounts]]).
 
 The merchant uses this for negotiated courtesy discounts ("10% off for the inconvenience") that don't correspond to a defined campaign.
 
@@ -32,8 +32,7 @@ The merchant uses this for negotiated courtesy discounts ("10% off for the incon
 
 What the merchant CANNOT do:
 - Enter a custom label / reason — the label is fixed (see below).
-- Zero out the order with a flat discount — flat must be strictly less than the subtotal (see below).
-- Drive the final total negative with a percent discount — the engine clamps it (see below).
+- Go above the subtotal — a flat amount or a percent that would take the subtotal below zero is refused (see below).
 
 ## Settings & fields
 
@@ -44,13 +43,13 @@ What the merchant CANNOT do:
 
 ## Business rules
 
-### Flat discount cannot equal or exceed order subtotal
+### Flat discount cannot exceed the order subtotal
 
-Manual flat-amount discounts are validated: the entered value must be **strictly less than** the order's `price_subtotal`. The merchant cannot zero out an order via a flat discount — they must use percent (which can reach 100%) OR remove products. Error: *"Flat discount must be less than order subtotal"*.
+A flat amount above the order's subtotal is refused with *"The value of the rebate can not exceed the subtotal of the order"*. An amount equal to the subtotal is accepted and zeroes the products.
 
-### Percent discount validates > 0 — no upper cap in the form, but the engine clamps
+### Percent discount above 100 is refused
 
-Manual percent discounts only check that the value is non-empty and numeric. The form ALLOWS percentages > 100 to be entered, but the discount engine clamps to a maximum that prevents the final price from going negative — if the resulting discount-applied subtotal would be negative, the platform throws *"Discount results in negative value"*.
+The form accepts a percentage above 100, but saving it is refused with the same error, *"The value of the rebate can not exceed the subtotal of the order"*. The value must be numeric. An empty amount saves a zero-value discount, which deducts nothing and blocks adding another until it is removed.
 
 ### Default type is PERCENT, not Flat
 

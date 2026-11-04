@@ -4,7 +4,7 @@ nav_path: "Entity → Discount"
 aliases: ["Discount", "Promo code", "Coupon", "Coupon code", "Promotion", "Sale", "Voucher", "Отстъпка", "Промо код", "Купон"]
 tags: [marketing, discounts, entity]
 created: 2026-05-21
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 6
 ---
 
@@ -12,11 +12,11 @@ source_count: 6
 
 ## Identity
 
-A **Discount** is a rule the merchant configures to reduce the price the customer pays. It is the central promotions object on the platform — every storefront price reduction, every coupon code at checkout, every "Buy 5, save 20%" tier, and every "Free shipping over 50 BGN" banner is a Discount in the database.
+A **Discount** is a rule the merchant configures to reduce the price the customer pays. It is the central promotions object on the platform — every storefront price reduction, every coupon code at checkout, every "Buy 5, save 20%" tier, and every "Free shipping over 50 EUR" banner is a Discount in the database.
 
 Each Discount carries:
 
-- A **type** (`flat` / `percent` / `shipping` / `fixed` / `quantity` / `countdown` / `code-pro`) that defines HOW the rule applies. Plus the **Container** variant: `is_container = 1` on a `flat` or `percent`.
+- A **type** (`flat` / `percent` / `shipping` / `fixed` / `quantity` / `code-pro`) that defines HOW the rule applies. Plus two variants of `flat` or `percent`: **Container** (`is_container = 1`) and **Countdown** (timer settings).
 - A **target** (`all` / `product` / `category` / `vendor` / `category_vendor` / `selection` / `order_over` / `shipping`) that defines WHERE it applies.
 - An optional **code** the customer must type.
 - A set of **conditions** (date window, customer-group restriction, region restriction, usage caps).
@@ -38,8 +38,8 @@ CloudCart's Discounts are intentionally **single-condition** rules (one type, on
 
 The Discount entity is documented across five aspect pages. The high-level shape is:
 
-- **Type** — one of 7 values: `flat`, `percent`, `shipping`, `fixed`, `quantity`, `countdown`, `code-pro` — plus the `is_container = 1` Container variant.
-- **Target** — one of 8 values controlling where the rule applies.
+- **Type** — one of 6 values: `flat`, `percent`, `shipping`, `fixed`, `quantity`, `code-pro` — plus the Container and Countdown variants of `flat` or `percent`.
+- **Target** — one of 8 values controlling where the rule applies. What the amount comes off for each: [[discount-stacking-amount-by-target]].
 - **Code** — optional string the customer types (case-insensitive); null = auto-apply.
 - **Date window** — `date_start` / `date_end` (end nullable).
 - **Usage caps** — `max_uses`, `maxused_user`, `only_customer`.
@@ -54,10 +54,10 @@ For the full verbatim field catalogue, including validation strings and the cent
 This entity is split into 5 aspect pages. The Assistant should drill into the aspect that matches the question, not read every page.
 
 - [[discount-entity-fields]] — verbatim field set with validation strings (identity, type & target, code, usage caps, restrictions, display).
-- [[discount-entity-lifecycle]] — states (`scheduled` / `active` / `expired` / `inactive`), 10-minute activation cooldown, per-product attachment regeneration, `uses` recompute, counted statuses, Code PRO sub-lifecycle.
-- [[discount-entity-business-rules]] — one-per-store limits, plan-gating per type, save-time normalisation, force-save, container code consumption, cart code mutual-exclusion, currency caps, soft-delete cascade.
-- [[discount-entity-stacking-evaluation]] — `code_apply` default-off rule, `apply_regular_price` max-of-two filter, Discounts-before-Cart-Rules ordering, stand-alone XOR Container codes per cart.
-- [[discount-entity-webhooks-api]] — `discount.created` / `discount.updated` / `discount.deleted` webhooks, internal `DiscountStatusChange` event, JSON-API v2 endpoints + same-side-effects + 5-type allowlist (`percent` / `flat` / `fixed` / `shipping` / `code-pro`).
+- [[discount-entity-lifecycle]] — states (`scheduled` / `active` / `expired` / `inactive`), immediate status switch, per-variant row regeneration, `uses` recompute, counted statuses, Code PRO sub-lifecycle.
+- [[discount-entity-business-rules]] — Countdown and Quantity limits, plan checks per path, save-time normalisation, force-save, Container codes, cart code mutual-exclusion, amount limits, delete.
+- [[discount-entity-stacking-evaluation]] — `code_apply` default-off rule, `apply_regular_price` comparison, where Cart Rules sit among discounts, stand-alone XOR Container codes per cart.
+- [[discount-entity-webhooks-api]] — `discount.created` / `discount.updated` / `discount.deleted` webhooks, JSON-API v2 endpoints + 5-type allowlist (`percent` / `flat` / `fixed` / `shipping` / `code-pro`).
 
 ## Where it appears
 
@@ -66,11 +66,11 @@ This entity is split into 5 aspect pages. The Assistant should drill into the as
 - [[marketing-discounts-code-pro]] — multi-code campaign (PRO).
 - [[marketing-discounts-code-pro-generator]] — bulk code generator for PRO.
 - [[marketing-discounts-code-pro-export]] — export PRO codes for distribution.
-- [[marketing-discounts-codes]] — Container codes list (mass-generated single-use codes).
+- [[marketing-discounts-codes]] — Container codes list (one store-wide pool of reusable codes).
 - [[marketing-discounts-products]] — per-product price-override sub-page for Fixed discounts.
 - [[orders-discount-add]] — apply a discount to an existing order from the admin (creates a per-order-discount row).
 - [[orders-details]] — discount action row shows order-level discounts; line-level rows show product-level discounts.
-- [[apps-cart-rules]] — companion engine for compositional rules; Cart Rules evaluate AFTER Discounts at checkout.
+- [[apps-cart-rules]] — companion engine for compositional rules; Cart Rules evaluate after product discounts and line-level codes, before order-level discounts.
 - [[marketing-segments]] — segment conditions can reference discount usage (e.g., "customers who used promo X").
 - [[marketing-campaigns]] — campaigns can embed dynamic PRO codes in their messages.
 - [[apps-up-cross-sell]] — cross-sell offers can reference discounts.
@@ -80,7 +80,7 @@ This entity is split into 5 aspect pages. The Assistant should drill into the as
 
 ## Related
 
-- [[discount-code]] — entity page for a Container child code.
+- [[discount-code]] — entity page for Container and Code PRO codes.
 - [[order]] — orders carry zero-or-more discounts via per-order-discount audit rows.
 - [[customer]] — customer-group and per-customer-cap restrictions apply against this entity.
 - [[customer-group]] — `customer_groups[]` restriction.
@@ -90,10 +90,10 @@ This entity is split into 5 aspect pages. The Assistant should drill into the as
 - [[vendor]] — discount targets reference vendor (brand) IDs.
 - [[smart-collection]] — `selection`-target discounts reference smart-collection IDs.
 - [[cart]] — discount evaluation happens against the cart at checkout.
-- [[cart-rule]] — companion entity for compositional rules; Cart Rules evaluate AFTER Discounts.
+- [[cart-rule]] — companion entity for compositional rules, evaluated before order-level discounts.
 - [[discount-stacking]] — concept page on stacking semantics.
 - [[discount-stacking-code-apply]] — concept page on `code_apply`.
-- [[discount-stacking-evaluation-order]] — concept page on Discounts-before-Cart-Rules ordering.
+- [[discount-stacking-evaluation-order]] — concept page on the evaluation order.
 - [[checkout-flow]] — the storefront flow that applies discounts.
 - [[settings-statuses]] — `discounts_used_statuses` setting determines which order statuses count toward `max_uses`.
 - [[settings-hooks]] — `discount.*` webhooks.
@@ -102,5 +102,4 @@ This entity is split into 5 aspect pages. The Assistant should drill into the as
 
 ## Open Questions
 
-- ⏸️ **Auto-cleanup of expired Container codes** — see [[discount-entity-lifecycle]].
 - ⏸️ **Bulk-export of Container codes format** — see [[discount-entity-business-rules]].

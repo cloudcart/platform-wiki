@@ -7,7 +7,7 @@ aliases: ["Free shipping eligibility", "Shipping discount target", "Shipping dis
 tags: [marketing, discounts, shipping, eligibility, conditions]
 plan_gates: ["discount_global", "discount_coupon"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -31,7 +31,7 @@ All eligibility fields live on the Create / Edit form at `/admin/marketing/disco
 - Set `order_over` (when target is `order_over`).
 - Restrict to **Registered users only** (`only_customer`) and optionally specific customer accounts.
 - Restrict to [[customers-custom-groups|customer groups]] via `customer_groups_target` + `customer_groups[]`.
-- Restrict to a [[geo-zone]] via `all_regions = no` + `geo_zone_id`.
+- On the **Discount with promo code** form only, restrict to a [[geo-zone]] via `all_regions = no` + `geo_zone_id`.
 - Set the **date range** (`date_start`, `date_end`, `no_expire`).
 - Toggle `active`.
 - Cap usage with `max_uses` and `maxused_user`.
@@ -42,8 +42,8 @@ All eligibility fields live on the Create / Edit form at `/admin/marketing/disco
 
 | Value | Means | Required companion |
 |---|---|---|
-| `all` | All carts (always-on free shipping). | — |
-| `order_over` | Cart subtotal ≥ `order_over` value. | `order_over` (amount in store currency). |
+| `all` ("For every product in the cart") | No minimum (always-on free shipping). | — |
+| `order_over` ("Orders over") | Total before shipping at or above the amount. A code also has an entry check, see below. | `order_over` (amount in store currency). |
 
 Changing Discount type to `shipping` **forces `settings` to `all`** and hides product / category / vendor / selection options. The merchant can then switch to `order_over` if they want a threshold.
 
@@ -54,23 +54,23 @@ Changing Discount type to `shipping` **forces `settings` to `all`** and hides pr
 | **Discount status** | `active` | Active = fires at checkout. Inactive = skipped. | `yes` / `no`. |
 | **Discount name** | `name` | Merchant-facing label; also shown on the customer's totals row. | Required, max 191 chars. |
 | **Start date** | `date_start` | When the discount becomes eligible. | Required, valid date. |
-| **End date** | `date_end` | When the discount stops being eligible. NULL = no expiration. | Nullable; end > start; cannot be today or earlier on save. |
-| **No expiration** | `no_expire` | UI helper — sets `date_end` to null. | — |
+| **End date** | `date_end` | When the discount stops being eligible. NULL = no expiration. | Nullable; cannot be before the start. Today and past dates save. |
+| **No expiration** | `no_expire` | UI helper — sets `date_end` to null. Without it the form asks for an end date. | — |
 
-Free-shipping discounts use the **Global** form layout, so their Date range block **does** include the two storefront-timer switches — **Show timer in product listing** (`timer_list`) and **Show timer in product details page** (`timer_details`) — both disabled until an end date is set. (This is the countdown *badge*, unrelated to the Countdown discount type's per-session minute timer.)
+No-code free-shipping discounts use the **Global** form layout, so their Date range block **does** include the two storefront-timer switches — **Show timer in product listing** (`timer_list`) and **Show timer in product details page** (`timer_details`) — both disabled until an end date is set. (This is the countdown *badge*, unrelated to the Countdown discount type's per-session minute timer.)
 
 ### Customer + region + limits
 
 | Field | Backend key | What it does |
 |---|---|---|
-| **Only registered users** | `only_customer` | Hidden from guest carts. |
-| **Specific customers** | `customers[]` | When `only_customer = 1`, restrict further. |
+| **Discount available only to registered users** | `only_customer` | On a code: guests are refused at entry with *"The code is valid only for registered users"*. On no-code free shipping, picking specific customers limits it. |
+| **Specific customers** | `customers[]` | When `only_customer = 1` on no-code free shipping, only these accounts qualify. |
 | **All groups** | `customer_groups_target` | `yes` = all groups; `no` = restrict. |
 | **Customer groups** | `customer_groups[]` | Selected [[customers-custom-groups]] when restricted. |
-| **Make it Global** | `all_regions` | `yes` = all regions. |
-| **Region** | `geo_zone_id` | When `all_regions = no`, restrict to a [[geo-zone]]. |
+| **Make it Global** | `all_regions` | Code form only. `yes` = all regions. |
+| **Region** | `geo_zone_id` | Code form only. When `all_regions = no`, restrict to a [[geo-zone]]. |
 | **Maximum total uses** | `max_uses` | Across all customers. NULL = unlimited. Integer 1-100,000. Counted only on orders reaching the **counted statuses**. |
-| **Maximum uses per customer** | `maxused_user` | Per-customer cap. NULL = unlimited. Integer 1-100,000. |
+| **Maximum uses per customer** | `maxused_user` | On a code, checked when a logged-in customer enters it. NULL = unlimited. Integer 1-100,000. |
 
 The Registered-users block is shown only when target is `order_over`.
 
@@ -81,43 +81,39 @@ The Registered-users block is shown only when target is `order_over`.
 A shipping discount applies only when **all** of:
 
 - The cart has a non-zero shipping quote (provider selected, quote > 0). Pickup / digital-only carts silently skip the discount.
-- Cart subtotal (before shipping) ≥ `order_over` if target is `order_over`. For target `all`, the subtotal check is skipped.
+- Total before shipping (after whole-order discounts) at or above `order_over`. A discount created with target `all` has no minimum. One edited from "Orders over" to `all` keeps its old minimum and still enforces it.
 - Active scope (status + date window + uses remaining) satisfied.
-- Customer-group + region + `only_customer` restrictions match.
+- Customer group and region match; if specific customers are picked, the customer is one of them.
 
 If any fail, the discount silently doesn't apply — no customer-facing "did not qualify" error.
 
 ### Targets are limited to `all` and `order_over`
 
-Shipping discounts can only target the whole cart. Enforced at three layers: the Discount target dropdown hides product / category / vendor / selection options when type=shipping; the backend validator rejects `products`, `product_categories`, `vendors`, `selections` payloads with *"Type is not valid for products or product category targets"*; and the discount-lookup engine restricts shipping-typed queries to `all` / `order_over`.
+The Discount target dropdown hides the product / category / vendor / selection options when the type is Free shipping. The discount always takes the whole shipping row.
 
-### Code-based shipping uses inclusive `>=` on `order_over`; no-code uses strict `>`
+### The minimum amount: no-code at or above; a code strictly above at entry
 
-Unlike Flat / Percent code-based discounts (strict `>` on `order_over`), a code-based **Free-shipping** coupon uses an **inclusive `>=` comparison** at the code-validation step. A cart subtotal **exactly equal to** the threshold qualifies — the code is accepted.
+No-code free shipping applies at or above the minimum: 50.00 qualifies on a 50 EUR minimum. It is measured on the total before shipping, after whole-order discounts, so a 60 EUR cart with 15 EUR off is 45 and does not reach a 50 EUR minimum.
 
-Example: a "Free shipping with code WELCOME, order_over = 50 EUR" coupon on a cart with subtotal exactly 50.00 EUR — the shipping coupon IS accepted; a comparable Percent code at the same threshold would be rejected. Merchants do NOT need to set `order_over = 49.99` to make a "50 EUR or more" promise work. The invented error message *"The cart sum is not over the discount minimum"* does not exist in the platform's translation files.
+A free-shipping code with a minimum is refused at the code box unless the products subtotal is strictly above the minimum. 50.00 on a 50 EUR minimum gets *"The discount could not be applied because the minimum total price of the products has not been reached."* Once accepted, shipping stays free while the total before shipping is at or above the minimum.
 
-### `order_over` field — practically uncapped (currency stored in cents)
+### `order_over` field — no maximum amount
 
-The `order_over` threshold field validates through the platform's currency-amount validator. The "max" parameter is the maximum number of CHARACTERS in the input string, NOT a numeric value cap (default 1,000,000-character ceiling). There is **no built-in numeric ceiling** on `order_over`.
-
-The platform stores monetary values in **cents** (1 EUR = 100), so `order_over = 5000` means a 50 EUR threshold. Merchants entering very high thresholds simply see the discount never fire — there is no validation error for *"unreasonably high"*.
+The form takes the amount in euros, and `order_over` has no maximum.
 
 ### Counted statuses (uses counter)
 
-The `uses` counter increments only when an order reaches a **counted status** — configured per store via `discounts_used_statuses`; defaults to `paid`, `completed`, `fulfilled`. Cancelled, voided, refunded, chargebacked, disputed, failed, or timeouted orders never burn a slot.
+The `uses` counter increments only when an order reaches a **counted status** — configured per store via `discounts_used_statuses`; defaults to `paid`, `completed`, `fulfilled`. Cancelled, voided, refunded, chargebacked, disputed, failed, or timeouted orders never burn a slot of `max_uses`. The per-customer count still includes a fulfilled order in one of those statuses.
 
 ### Auto-disable on expiry — runs in UTC, NOT store timezone
 
-A daily background process toggles `active = no` on shipping discounts whose `date_end` is more than 1 day in the past in **UTC** — NOT the store's timezone. For a Europe/Sofia store, a shipping discount with `date_end = 2026-06-15` may remain technically "active" for up to ~27 hours after local end-of-day before the UTC sweep flips the flag.
+An hourly background process sets `active = no` at its first run after 00:00 **UTC** on the day after a discount's `date_end`. For a Europe/Sofia store that is about 2 to 4 hours after local midnight. For a store west of UTC it happens before the store's end date is over, so the discount stops early.
 
-Storefront cart-engine checks DO use store timezone at evaluation time, so the customer's checkout stops applying the free shipping at the expected local time — but the merchant's listing still shows the row as Active until the next UTC sweep runs.
+Storefront cart-engine checks DO use store timezone at evaluation time, so the customer's checkout stops applying the free shipping at local midnight on the end date — but the merchant's listing still shows the row as Active until that run.
 
-This recurring process is part of [[background-queue-inventory]].
+### Date range — the end date cannot be before the start
 
-### Date range — end-date cannot be today or earlier on save
-
-The form validator rejects a `date_end` of today or earlier — the merchant cannot create a pre-expired discount. To deactivate an in-flight discount immediately, toggle `active` instead (see [[shipping-discount-plan-gates-api]] for the 10-minute cooldown).
+The form refuses an end date before the start date, and asks for one unless **No expiration** is on. Today and past dates save; a discount whose end date has passed does not apply. To deactivate an in-flight discount immediately, toggle `active`; it takes effect at once.
 
 ## Related
 
@@ -125,7 +121,7 @@ The form validator rejects a `date_end` of today or earlier — the merchant can
 - [[customers-custom-groups]] — customer-group restriction.
 - [[geo-zone]] — region restriction.
 - [[settings-statuses]] — `discounts_used_statuses` setting.
-- [[background-queue-inventory]] — daily UTC sweep that auto-disables expired shipping discounts.
+- [[background-queue-inventory]] — hourly UTC sweep that auto-disables expired discounts.
 
 ## Open questions
 

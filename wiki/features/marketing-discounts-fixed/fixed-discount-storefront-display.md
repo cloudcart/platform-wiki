@@ -7,7 +7,7 @@ aliases: ["Fixed discount storefront", "was / now rendering", "Save X EUR label"
 tags: [marketing, discounts, fixed, storefront, rendering]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -46,18 +46,18 @@ This aspect introduces no new merchant-editable fields. The displayed prices com
 
 When the modal opens for an existing Fixed discount + product pair, the form builds one row per variant by merging the four **Settings & fields** sources above (the same merger [[fixed-discount-product-modal]] documents at the UI layer). Two behaviours go beyond a plain merge:
 
-- **Pre-fill default for a new variant** (no existing `product_to_discount` row): if other variants already have discounts, the form pre-fills this variant's catalog price as the default discount price (so the merchant doesn't accidentally save 0); otherwise it stays zero / null.
+- **A variant with no existing row** opens with an empty **New price**. It must be filled before saving: a blank price fails the save.
 - **Initial mode** comes from grouping variants by their `discount_price` — all share one → `single` (Common price) mode, otherwise `multiple` (Multiple price).
 
 ### Storefront read path
 
 For each variant on display, the storefront looks up the active per-variant `product_to_discount` row (`active = 1`, matching customer-group or null, within the parent discount's active date window). If found, it renders the row's `price` (fixed price) and `save` (precomputed delta), plus the struck-through catalog price; if not found, the catalog price is shown unchanged.
 
-The lookup orders by `price ASC` and picks first — producing the *"customer always gets the cheapest"* behaviour when multiple active Fixed discounts target the same variant (see the cross-discount-uniqueness note in [[fixed-discount-validation-rules]]).
+The lookup orders by `price ASC` and picks first — producing the *"customer always gets the cheapest"* behaviour when several active rows match the same variant, whether Fixed or no-code Flat or Percent (see the cross-discount-uniqueness note in [[fixed-discount-validation-rules]]).
 
 ### "was / now" rendering
 
-The struck-through "was" price is the variant's catalog price, the "now" price is `fixed_price`, and "Save X EUR" is computed against the catalog price. The storefront uses the precomputed `save` column directly — no per-render computation (see [[fixed-discount-row-writes]] for how `save` is denormalized).
+The struck-through "was" price is the variant's catalog price, the "now" price is `fixed_price`, and "Save X EUR" is computed against the catalog price. Listings use the stored `save` value (see [[fixed-discount-row-writes]]); the variant price block calculates the saving from the current catalog price.
 
 ### Auto-deactivation feedback loop
 
@@ -66,10 +66,10 @@ When the merchant updates a product's catalog price (Products → edit), the pla
 | Catalog change | Row state after re-evaluation | Customer sees |
 |---|---|---|
 | Drops to ≤ fixed price | `active = 0` | Catalog price (no "was / now") |
-| Rises above fixed price (after a drop) | Stays `active = 0` until a manual save | Catalog price (no "was / now") |
+| Rises above fixed price (after a drop) | Stays `active = 0` until re-saved or switched back on | Catalog price (no "was / now") |
 | Rises above fixed price (no prior drop) | Stays `active = 1`, `save` re-computed | Updated "Save X EUR" |
 
-The row staying deactivated after a recovery is the most common Fixed-discount support ticket: *"I raised my catalog price and the campaign price isn't showing again."* The merchant must re-save the row to re-activate it — see [[fixed-discount-row-writes]].
+The row staying deactivated after a recovery is the most common Fixed-discount support ticket: *"I raised my catalog price and the campaign price isn't showing again."* The merchant must re-save the row or switch it back on — see [[fixed-discount-row-writes]].
 
 ### Cache invalidation chain
 

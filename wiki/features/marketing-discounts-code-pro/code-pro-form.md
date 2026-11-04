@@ -7,7 +7,7 @@ aliases: ["Code PRO form", "Per-code form", "Code PRO create form", "Code PRO ed
 tags: [marketing, discounts, code-pro, form, conditions]
 plan_gates: ["discount-code-pro"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -35,8 +35,8 @@ Configure one code's full set of terms:
 - **Usage limits** — `max_uses` (total across all customers) and `maxused_user` (per customer). Either or both can be Unlimited.
 - **Customer groups** — limit redemption to selected [[customers-custom-groups]], or "All groups" via the `customer_groups_target` checkbox.
 - **Region** — limit redemption to a [[geo-zone]], or "All regions" via the `all_regions` checkbox.
-- **Stacking flags** — `code_apply` ("Apply discount even if the cart contains products with a discount") and `apply_regular_price` ("Apply to the base price if this discount is higher").
-- **Guest restriction** — `only_customer` to hide the code from guest checkouts.
+- **Stacking flags** — `code_apply` ("The discount is applied even when the cart contains discounted products.") and `apply_regular_price` ("Apply to the regular price of products, if this discount is greater").
+- **Guest restriction** — `only_customer` ("Discount available only to registered users") refuses the code for guests; its box shows only when the code has an `order_over` condition.
 
 ## Settings & fields
 
@@ -56,10 +56,10 @@ Each row in the Conditions array is a card wrapped with an index badge (1, 2, 3,
 | Control | Behaviour |
 |---------|-----------|
 | **Discount type** select | `Fixed amount` (`flat`) / `Percentage` (`percent`) / `Free shipping` (`shipping`). |
-| **Discount value** input | Slides open ONLY when type ∈ {`flat`, `percent`}. Currency input for `flat` (in cents); percent input for `percent` (0–100). |
+| **Discount value** input | Slides open ONLY when type ∈ {`flat`, `percent`}. Currency input for `flat` (a normal money amount, not cents); percent input for `percent` (0–100). |
 | **Discount target** select | When type=`shipping`: only `all` and `order_over`. When type=`flat`/`percent`: all seven (`all`, `order_over`, `product`, `category`, `vendor`, `selection`, `category_vendor`). |
 | **Per-setting sub-form** | Slides open the matching picker / threshold input depending on the selected target (see table below). |
-| **Allow-price sub-form** (`DiscountsCodeProConditionsConfigRowAllowPrice`) | Shown for target ∈ {`all` when type≠shipping, `product`, `category`, `vendor`, `selection`, `category_vendor`}. Contains the *"Where the price of the product is minimum"* switch (`allow_price`) which, when ON, reveals an `order_over` currency input. This is the per-target minimum-cart-amount constraint that the Code PRO engine uses to gate the condition. |
+| **Allow-price sub-form** (`DiscountsCodeProConditionsConfigRowAllowPrice`) | Shown for target ∈ {`all` when type≠shipping, `product`, `category`, `vendor`, `selection`, `category_vendor`}. Contains the *"Where the price of the product is minimum"* switch (`allow_price`) which, when ON, reveals an `order_over` currency input. This is a minimum unit price per line, at or above: only lines at or above it get the discount. |
 
 ### The target sub-forms
 
@@ -68,7 +68,7 @@ Each row in the Conditions array is a card wrapped with an index badge (1, 2, 3,
 | `all` | Allow-price sub-form only (no extra input; or, when type=`shipping`, nothing). |
 | `order_over` | Order-over currency input + Save-the-discount-on-your-order switch. |
 | `product` | Multi-pick product search (api `/admin/api/core/products/search`) + Allow-price sub-form. |
-| `category` | Warning info-box (*"will only apply to main product category"*) + multi-pick category search (api `/admin/api/core/product-categories/search`) + Allow-price sub-form. Category options get post-processed: each option name is split on `>` and only the leaf name is shown. |
+| `category` | Warning info-box (*"The discount will only be applied to the main product category."*) + multi-pick category search (api `/admin/api/core/product-categories/search`) + Allow-price sub-form. Category options get post-processed: each option name is split on `>` and only the leaf name is shown. |
 | `vendor` | Multi-pick vendor search + Allow-price sub-form. |
 | `selection` | Multi-pick smart-collection search + Allow-price sub-form. |
 | `category_vendor` | Warning info-box + category multi-pick + vendor multi-pick + Allow-price sub-form. |
@@ -77,11 +77,11 @@ Each row in the Conditions array is a card wrapped with an index badge (1, 2, 3,
 
 - Removing the last condition auto-inserts a fresh empty row so there's always at least one.
 - Adding rows: the *"Add new condition"* link is shown next to the last row but only when `condition.length < 5`.
-- The export reserves columns for **5** conditions; the form caps the displayed rows at 5 via the controller's `->take(5)` call even if more exist in the DB — see [[code-pro-business-rules]] for the deletes-and-recreates behaviour on save.
+- The export reserves columns for **5** conditions; the form caps the displayed rows at 5 even if more exist — see [[code-pro-business-rules]] for the deletes-and-recreates behaviour on save.
 
 ## Business rules
 
-The conditional reveal of the **Discount value** input on type ∈ {flat, percent} matches the validation: `condition.*.value` is required only for those types (see [[code-pro-fields]]). The **Allow-price** sub-form is the per-condition minimum-cart-subtotal gate; it differs from the row-level `order_over` target — `order_over` makes the whole condition a "cart-over X" rule, while `allow_price` adds a "minimum X" gate on top of a product / category / vendor / selection target.
+The conditional reveal of the **Discount value** input on type ∈ {flat, percent} matches the validation: `condition.*.value` is required only for those types (see [[code-pro-fields]]). The **Allow-price** sub-form is a minimum unit price per line, not a cart amount; it differs from the `order_over` target — `order_over` makes the whole condition a "subtotal at or above X" rule, while `allow_price` lets only lines priced at or above X take the discount. On `all`, lines are checked in cart order and the first below the minimum stops that condition.
 
 ## How it works
 
@@ -90,7 +90,7 @@ The form posts to `/admin/api/core/discounts/code-pro/{id}/save` (POST, see [[co
 ## Related
 
 - [[marketing-discounts-code-pro]] — hub.
-- [[code-pro-fields]] — backend keys, defaults, validation strings for each control on this form.
+- [[code-pro-fields]] — backend keys, defaults, validation strings for each control on this form, and what each target does with the value.
 - [[code-pro-business-rules]] — deletes-and-recreates save flow, date validation, customer-group / region toggles.
 - [[marketing-discounts-code-pro-generator]] — bulk-generator form that reuses the same `DiscountsCodeProConditionsConfig` block.
 - [[customers-custom-groups]] — multi-pick source for the Customer groups block.

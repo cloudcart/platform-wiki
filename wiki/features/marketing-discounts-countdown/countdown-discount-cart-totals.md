@@ -7,11 +7,11 @@ aliases: ["Countdown cart totals", "Countdown stacking", "Countdown discount gro
 tags: [marketing, discounts, countdown, cart-totals, stacking]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 2
 ---
 
-> Part of [[marketing-discounts-countdown]]. See the hub for the other aspects (editor, storefront popup + timer, eligibility, single-instance rule, programmatic access).
+> Part of [[marketing-discounts-countdown]]. See the hub for the other aspects (editor, storefront popup + timer, eligibility, a second Countdown, programmatic access).
 
 # Countdown discount — cart totals, stacking, order rows
 
@@ -19,17 +19,17 @@ source_count: 2
 
 This page documents what happens to the cart and the placed order once the Countdown discount passes eligibility: how the totals line is computed, which discount group it lives in, why it stacks freely with code-based and order-over discounts, why per-product "was X / now Y" pricing is NOT shown on listings, and what rows the platform writes when the order is placed.
 
-The crisp summary: Countdown is a **whole-order** discount (single subtraction at totals time, no per-product attachment), in its own **`countdown` discount group**, that **coexists** with every other group at checkout.
+The crisp summary: Countdown is a **row in the checkout totals** (no per-product attachment), in its own **`countdown` discount group**, that **coexists** with every other group at checkout.
 
 ## Where to find it
 
-The math runs in the storefront cart engine on every cart-totals computation. The result is visible to the customer in the checkout summary's totals area. On order placement, an `OrderDiscount` row is written; the row drives downstream analytics and webhook payloads. There is no admin URL for the totals math itself — the merchant influences it indirectly via the inner type (`flat` vs `percent`) and `type_value` in the [[countdown-discount-editor]].
+The math runs in the storefront cart engine on every cart-totals computation. The result is visible to the customer in the checkout summary's totals area. On order placement, an order discount row is written; the row drives downstream analytics and webhook payloads. There is no admin URL for the totals math itself — the merchant influences it indirectly via the inner type (`flat` vs `percent`) and `type_value` in the [[countdown-discount-editor]].
 
 ## What the merchant can do here
 
 - Watch the Countdown apply at checkout as a separate `countdown` discount-group totals line, stacking on top of any `order_over` discount and any code-based discount the customer enters.
-- Confirm the negative amount math: for `percent`, `subtotal × (percent / 100)` (split per VAT group on multi-VAT carts); for `flat`, the stored `type_value` (capped at subtotal).
-- See an `OrderDiscount` row on the placed order with `is_countdown = 1` and `discount_group = countdown` — used downstream by [[analytics-top-order-discounts]].
+- Confirm the negative amount math in the table below.
+- See an order discount row on the placed order with `is_countdown = 1` and `discount_group = countdown` — used downstream by [[analytics-top-order-discounts]].
 
 The merchant CANNOT make Countdown render "was X / now Y" pricing on product listings — Countdown skips per-product attachment entirely.
 
@@ -37,20 +37,23 @@ The merchant CANNOT make Countdown render "was X / now Y" pricing on product lis
 
 ### Cart totals math
 
-When the Countdown discount is attached, the totals chain (specifically `DiscountBeforeShipping`) adds a negative totals line **before** the shipping is added:
+When the Countdown discount is attached, the totals chain adds a negative totals line **before** the shipping is added:
 
-| Inner type | Formula |
+| Inner type + target | Amount |
 |------------|---------|
-| `percent` | `discount_amount = subtotal × (percent / 100)`. When the cart has multiple VAT rates, the platform also computes per-VAT-group amounts (one negative per VAT group present in the cart). |
-| `flat` | `discount_amount = type_value` (capped at subtotal — see [[countdown-discount-eligibility]] for the "cart too small" silent skip). |
+| `percent` | `subtotal × (percent / 100)`, once. |
+| `flat` + "Orders over" | The amount, once. |
+| `flat` + "For every product in the cart" | Amount × total quantity of pieces when VAT applies to the cart; the amount once when no VAT applies. |
 
-The totals line is keyed `discount.before.countdown.<discount_id>`. Its `value` is set to the timer's expiry timestamp (`popupFirstShowDate + countdown_minutes`) so the storefront timer module knows when to stop ticking — see [[countdown-discount-storefront-popup]].
+A fixed amount larger than the subtotal is skipped entirely, see [[countdown-discount-eligibility]]. That check compares the single amount, so the per-piece total can still exceed the subtotal. See [[discount-stacking-amount-by-target]] for the other discount types.
+
+The totals line is keyed `discount.before.countdown.<discount_id>`. Its `value` is set to the timer's expiry timestamp (first popup view + `countdown_minutes`) so the storefront timer module knows when to stop ticking — see [[countdown-discount-storefront-popup]].
 
 ### Order rows attached at checkout
 
 When the customer places an order with an active Countdown discount:
 
-- An `OrderDiscount` row is created with `is_countdown = 1`, `discount_group = countdown`.
+- An order discount row is created with `is_countdown = 1`, `discount_group = countdown`.
 - The order's discount-meta carries `parameter = countdown, value = countdown` so reports can identify which orders were Countdown-driven.
 - The discount's `uses` counter increments when the order reaches one of the counted statuses (see [[settings-statuses]]).
 
@@ -75,7 +78,7 @@ Unlike `flat` and `percent` discounts which create per-product attachment rows (
 
 ### Countdown fetched separately from order-over collection
 
-The cart's `getDiscountsOver` query EXCLUDES Countdown (filters with `!isCountDown`). Countdown is fetched separately via `getCountdownDiscount` and added to its own `countdown` discount group. A cart can simultaneously have:
+The cart's order-over lookup leaves Countdown out. Countdown is looked up separately and added to its own `countdown` discount group. A cart can simultaneously have:
 
 - A standard flat / percent over-amount discount (in the `order_over` group).
 - A Countdown discount (in the `countdown` group).
@@ -92,19 +95,17 @@ Code-based discounts coexist with Countdown:
 
 The per-line code-apply check happens in the line-discount path; Countdown happens in the order-totals path. They never see each other — see [[marketing-discounts-code-pro]] and [[marketing-discounts-codes]].
 
-### Multi-VAT carts produce one negative line per VAT group (percent only)
+### Multi-VAT carts produce one negative line per VAT group
 
-When the cart has multiple VAT rates, the percent-type Countdown produces one negative totals line per VAT group present in the cart. This keeps the VAT-correct math intact — each line's VAT base is reduced proportionally. (Flat-type Countdown produces a single negative line regardless of VAT mix `(verify)`.)
+When VAT applies to the cart, both percent and flat Countdowns produce one negative totals line per VAT group present in the cart. This keeps the VAT-correct math intact — each line's VAT base is reduced proportionally.
 
 ### Per-cart timer survives navigation, resets on cookie clearing
 
-The `countdown_popup_first_showing` timestamp is stored on the cart meta. As long as the customer keeps the same cart (same session / customer account), navigating away and returning doesn't reset the timer — the deadline keeps ticking. But clearing cookies / logging out / starting a new cart resets the meta, and the timer restarts on the next checkout visit — see [[countdown-discount-storefront-popup]].
+The `countdown_popup_first_showing` timestamp is stored on the cart meta. As long as the customer keeps the same cart (same session / customer account), navigating away and returning doesn't reset the timer — the deadline keeps ticking. But clearing cookies / logging out / starting a new cart resets the meta, and the timer restarts on the next checkout visit `(verify)` — see [[countdown-discount-storefront-popup]].
 
-### `force_save` only meaningful for `order_over`
+### A placed order keeps its Countdown
 
-The `force_save` flag is meaningful only when the Countdown's target is `order_over`. For target `all`, the flag is stored but unused — there are no `order_over` conditions to "force save" past.
-
-When `force_save` is ON and the target is `order_over`, an admin-edited order keeps the Countdown discount even if the edited cart drops below the threshold. Without `force_save`, an admin edit that drops the cart below `order_over` removes the Countdown line on next recompute.
+On a placed order the Countdown stays whatever an admin edit does: its minimum is not rechecked. The Countdown form has no **Save the discount on your order** switch, and the setting has no effect on a Countdown.
 
 ### FastOrder bypass
 
@@ -116,12 +117,13 @@ The [[apps-fast-order]] integration explicitly excludes Countdown discounts from
 - [[countdown-discount-eligibility]] — what must pass before the totals math runs.
 - [[countdown-discount-storefront-popup]] — the timer's expiry timestamp travels on the totals line `value`.
 - [[discount-stacking]] — the cross-cutting stacking ladder; Countdown is in its own group.
+- [[discount-stacking-amount-by-target]] — what each target's amount comes off.
 - [[marketing-discounts-code-pro]] — Code PRO codes stack on top of Countdown.
 - [[marketing-discounts-codes]] — Container codes stack on top of Countdown.
 - [[marketing-discounts-fixed]] — Fixed per-product overrides; Countdown's per-product attachment is skipped, so Fixed and Countdown apply at separate stages.
 - [[apps-fast-order]] — bypasses Countdown.
-- [[analytics-top-order-discounts]] — surfaces Countdown redemptions via `is_countdown = 1` on the `OrderDiscount` row.
+- [[analytics-top-order-discounts]] — surfaces Countdown redemptions via `is_countdown = 1` on the order discount row.
 
 ## Open questions
 
-- Verify whether flat-type Countdown produces a single negative line on multi-VAT carts or splits per VAT group like percent does `(verify)`.
+None.

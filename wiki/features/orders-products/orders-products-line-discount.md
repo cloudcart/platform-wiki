@@ -7,7 +7,7 @@ aliases: ["Per-line discount", "Line item discount", "Manual product discount", 
 tags: [orders, products, line-items, discount, manual-discount]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -62,24 +62,24 @@ The merchant picks WHICH discount to remove. This prevents accidental removal of
 
 ### Per-line discount BLOCKS when a discount already exists on the line
 
-The "Add discount" modal rejects with *"Product already has a discount"* if the line ALREADY has any kind of discount attached (manual, code-applied, or auto-applied from [[marketing-discounts]]). The merchant must REMOVE the existing line discount first before adding a new one. So "stacking per-line discounts" via this manual modal is not possible — the multiple-discounts state arises only when an automated discount-code or campaign applies ON TOP of an existing manual one (or vice-versa), not via repeated use of this form.
+The "Add discount" modal rejects with *"This product already has a discount."* if the line ALREADY has any kind of discount attached (manual, code-applied, or auto-applied from [[marketing-discounts]]). The merchant must REMOVE the existing line discount first before adding a new one. So "stacking per-line discounts" via this manual modal is not possible — the multiple-discounts state arises only when an automated discount-code or campaign applies ON TOP of an existing manual one (or vice-versa), not via repeated use of this form.
 
-### Flat discount must be STRICTLY less than the line price
+### Flat discount cannot exceed the unit price
 
-Manual flat discounts are validated: the discount value must be **strictly less than the line's per-unit price**. If the entered flat discount equals or exceeds the line price, the platform rejects with *"Flat discount must be less than product price"*. For 100%-off scenarios, the merchant uses **Percent** type with value 100.
+A flat amount above the line's per-unit price is refused with *"The flat discount must be lesser than the product price"*. An amount equal to the unit price is accepted and makes the unit free. A percent can be at most 100.
 
 ### Per-line discounts are separate from order-level discounts
 
 Line discounts are MANUAL merchant adjustments at the line level — they:
 
-- Do NOT show in [[marketing-discounts]] reports.
+- Do NOT show in [[marketing-discounts]] reports; they appear in the Product discounts box in analytics ([[analytics-top-order-product-discounts]]).
 - Are visible in the order's totals breakdown.
-- Can be stacked with order-level discounts ([[orders-discount-add]]).
+- Sit alongside threshold and manual order-level discounts ([[orders-discount-add]]). A code with `code_apply` off skips the line. With `code_apply` and `apply_regular_price` both on, the code replaces the line discount if the code's price is lower; otherwise the line keeps the line discount and no code.
 - Survive line-quantity edits — the discount stays on the line.
 
-### Order-level discount cascade — "modifications" are line-level mirrors
+### Modifications are separate from discounts
 
-When an order-level discount applies, the platform creates cascading line-level entries called **modifications** that mirror the discount across individual lines. Removing a single line's modification is handled by `admin.orders.products.delete-modifications`; removing the parent order discount uses `admin.orders.products.delete-discount`. The cog menu picks the right route automatically — the merchant doesn't see the distinction directly. See [[orders-discount-add]] for the full cascade flow.
+**Modifications** come from cart rules and subscription plans, not from discounts. A code for all products is stored on each line as that line's discount code. In the cog menu, `admin.orders.products.delete-discount` removes only that line's discount, and `admin.orders.products.delete-modifications` only that line's modifications. See [[orders-discount-add]] for the order-level flow.
 
 ### History entries — distinct action keys per discount action
 

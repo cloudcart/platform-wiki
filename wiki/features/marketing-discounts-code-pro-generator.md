@@ -7,7 +7,7 @@ aliases: ["Code PRO generator", "Bulk code generator", "Codes generation", "Ге
 tags: [marketing, discounts, coupons, code-pro, bulk-generation]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
 created: 2026-05-23
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 5
 ---
 
@@ -35,11 +35,11 @@ The generator is **the only way to produce more than a few Code PRO codes effici
 This feature is split into 6 aspect pages, each covering one well-scoped slice. The Assistant should drill into the aspect that matches the question, not read every page.
 
 - [[code-pro-generator-form-layout]] — the on-screen settings boxes (General, Code, Registered users, Customer groups, Regions, Date range, Discount limits, Conditions); the Range/Random sub-block; post-save 1.5 s redirect.
-- [[code-pro-generator-modes]] — what Range vs Random do once submitted; the two pipelines; generator strategies for alpha / numeric / mixed; the numeric-only soft cap; the leading-zero gotcha.
+- [[code-pro-generator-modes]] — what Range vs Random do once submitted; the two pipelines; generator strategies for alpha / numeric / mixed; the numeric-only limit; the leading-zero gotcha.
 - [[code-pro-generator-fields]] — full field reference: generator-type / code-shape fields (`code.generator_type`, `code.from`, `code.to`, `code.limit`, `code.length`, `code.structure[]`) + shared per-code fields applied to every row.
 - [[code-pro-generator-validation]] — client-side date gate; server-side validators; verbatim error messages including *"Number of codes may not be greater than:max"*, *"You can generate maximum:max promo codes"*, *"Some of the codes have already been created"*.
 - [[code-pro-generator-business-rules]] — plan-gate cascade; cap derivation from `discount-code-pro-generator` feature value; all-or-nothing transactional save; identical-terms guarantee; no audit log.
-- [[code-pro-generator-api]] — JSON-API v2 `POST /generate`; same pipeline as the admin form **but hard-capped at 5,000 codes per request regardless of plan feature value**.
+- [[code-pro-generator-api]] — JSON-API v2 generate: its own route and fields, **capped at 5,000 codes per request in random mode regardless of plan feature value**, no count limit in range mode.
 
 ## What the merchant can do here
 
@@ -51,7 +51,7 @@ This feature is split into 6 aspect pages, each covering one well-scoped slice. 
 
 ## Settings & fields
 
-The hub does not duplicate the field reference — see [[code-pro-generator-fields]] for the full table of generator-type / code-shape fields (`code.generator_type`, `code.from`, `code.to`, `code.limit`, `code.length`, `code.structure[]`) and shared per-code fields (`active`, `code_apply`, `apply_regular_price`, `only_customer`, `geo_zone_id`, `max_uses`, `maxused_user`, `date_start`, `date_end`, `condition[]`, `customer_groups[]`, `customer_groups_target`, `all_regions`, `no_expire`, `barcode_prefix`). For the on-screen layout that groups these fields into settings boxes see [[code-pro-generator-form-layout]].
+The hub does not duplicate the field reference — see [[code-pro-generator-fields]] for the full table of generator-type / code-shape fields (`code.generator_type`, `code.from`, `code.to`, `code.limit`, `code.length`, `code.structure[]`) and shared per-code fields (`active`, `code_apply`, `apply_regular_price`, `only_customer`, `geo_zone_id`, `max_uses`, `maxused_user`, `date_start`, `date_end`, `condition[]`, `customer_groups[]`, `customer_groups_target`, `all_regions`, `no_expire`). For the on-screen layout that groups these fields into settings boxes see [[code-pro-generator-form-layout]].
 
 ## What the merchant CANNOT do here
 
@@ -59,9 +59,9 @@ The most-common rejection cases (see [[code-pro-generator-validation]] for the f
 
 - Generate more than the `discount-code-pro-generator` plan-feature cap.
 - Use a `range` where `to ≤ from`.
-- Use a `range` whose total count exceeds the plan cap (validator rejects before allocation).
+- Use a `range` whose total count exceeds the plan cap.
 - Use `random` mode with no `code.structure` selected.
-- Use `random` numeric-only with a `limit` larger than what `length` digits can fit.
+- Use `random` numeric-only with a `limit` at or above the largest number `length` digits can hold.
 - Re-use code strings that already exist (range mode rejects whole batch; random mode retries internally).
 - Use a `length` outside 6-18.
 
@@ -70,7 +70,7 @@ The most-common rejection cases (see [[code-pro-generator-validation]] for the f
 - **Plan-gate cascade**: `discount-code-pro` (boolean parent) must be on; `discount-code-pro-generator` (numeric) caps per-request size — default 5,000 — see [[code-pro-generator-business-rules]].
 - **Identical terms across the batch**: every code shares conditions, customer groups, region, dates, limits, stacking flags — only the `code` string differs — see [[code-pro-generator-business-rules]].
 - **All-or-nothing transaction**: the merchant gets a full batch or no batch — never a partial one — see [[code-pro-generator-business-rules]].
-- **No audit log** for batch generation (verify) — see [[code-pro-generator-business-rules]].
+- **No audit log** for batch generation — see [[code-pro-generator-business-rules]].
 - **Range mode loses leading zeros** — see [[code-pro-generator-modes]] for the workaround (use Random + numeric structure).
 - **Same `marketing.discounts` permission** as the rest of the Discounts engine.
 
@@ -81,18 +81,18 @@ The most-common rejection cases (see [[code-pro-generator-validation]] for the f
 | `discount-code-pro` | Boolean (parent on/off) | The parent Code PRO discount type must be unlocked — otherwise the generator route is unreachable. |
 | `discount-code-pro-generator` | Numeric (max codes per single batch) | Caps `code.limit` (random) or `(to - from + 1)` (range). Default cap **5000 per request**. |
 
-The admin-panel generator honours the higher plan-feature value; the JSON-API v2 endpoint is **hard-capped at 5,000** regardless — see [[code-pro-generator-api]] for the divergence.
+The admin-panel generator honours the higher plan-feature value; in random mode the JSON-API v2 endpoint is **hard-capped at 5,000** regardless, and its range mode has no count limit — see [[code-pro-generator-api]].
 
 ## Programmatic access
 
-The same bulk-generation pipeline is exposed via JSON-API v2 — see [[code-pro-generator-api]] for the divergence (hard 5,000 cap) and [[api-discount-codes-pro]] for the resource Schema.
+Bulk generation is also exposed via JSON-API v2, with its own route, fields and limits — see [[code-pro-generator-api]] and [[api-discount-codes-pro]] for the resource Schema.
 
 ## Related
 
 - [[marketing-discounts]] — parent feature.
 - [[marketing-discounts-code-pro]] — per-code create / edit / list (codes generated here appear there).
 - [[marketing-discounts-code-pro-export]] — export the generated batch to CSV for distribution.
-- [[marketing-discounts-codes]] — Container codes' simpler bulk generator (hard 1,000-per-batch cap, no prefix / length / structure controls).
+- [[marketing-discounts-codes]] — Container codes' simpler bulk generator (percent only, no upper limit on the count, no length / structure controls).
 - [[code-pro-form]] — per-code form sharing the conditions sub-component.
 - [[code-pro-overview]] — Code PRO discount type overview.
 - [[code-pro-business-rules]] — Code PRO discount-level business rules.

@@ -7,7 +7,7 @@ aliases: ["Generator modes", "Range mode", "Random mode", "Generator strategies"
 tags: [marketing, discounts, coupons, code-pro, bulk-generation]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 5
 ---
 
@@ -58,7 +58,7 @@ This is the merchant's tool of choice when:
 
 Range mode treats `from` and `to` as integers — leading zeros are lost when stored as strings: `from=00001, to=00100` would emit codes `1`, `2`, ..., `100`, not `00001`, `00002`, ..., `00100`. Merchants who need zero-padded numeric codes should use **random mode** with numeric structure and the desired `length`, or post-process after the fact.
 
-#### Range pipeline (verify)
+#### Range pipeline
 
 1. Validate: `code.from` and `code.to` exist, numeric, within `1`-`999999999999999`; `to > from`; total ≤ plan cap.
 2. Build the integer sequence from `from` to `to`.
@@ -81,9 +81,9 @@ When `length` is blank, **each individual code** gets a random length between 6 
 
 After the requested limit is reached, the platform checks for collisions against the existing catalogue; if any exist, **the colliding codes are removed and the loop continues** until the final batch has `code.limit` unique codes. **The merchant always ends up with exactly `limit` codes (no shortfall).**
 
-#### Random pipeline (verify)
+#### Random pipeline
 
-1. Validate: `code.limit` ≤ plan cap; `code.length` either blank or 6-18; `code.structure` array non-empty; for numeric-only + fixed length, `code.limit` ≤ numeric-random soft cap (see below).
+1. Validate: `code.limit` ≤ plan cap; `code.length` either blank or 6-18; `code.structure` array non-empty; for numeric-only + fixed length, `code.limit` below the largest number that length holds (see below).
 2. Build the requested number of codes using the structure-appropriate generator.
 3. Loop while count < limit:
    - Generate a new code via the chosen strategy.
@@ -95,26 +95,26 @@ The pre-check is done in chunks of 100 — so very large batches (5,000+ codes) 
 
 #### Numeric-only random — capped by what `length` can hold
 
-When the structure is numeric-only AND `length` is set, an additional **soft cap** applies: the max representable number of `length` digits divided by `(length × 100)`, rounded down to the nearest 100. For example, `length = 6` → max representable `999999`, soft cap = `floor(999999 / 600) × 100 ≈ 1,500`. This prevents the generator from looping indefinitely trying to find unique numeric codes when the search space is too small to fit the requested batch.
+When the structure is numeric-only AND `length` is set, the request is rejected only when the count reaches the largest number that length holds (999,999 for 6 digits). In practice the plan cap is the limit, so 5,000 six-digit codes are allowed.
 
 The exact validation message is documented in [[code-pro-generator-validation]].
 
-### Range mode — soft cap
+### Range mode — count limit
 
-The numeric-range validator computes the total count between `code.from` and `code.to` and rejects the request if that total exceeds the plan-cap value. This guards against a merchant typing `from=1, to=1000000000` — the validator rejects before the platform even tries to allocate the array.
+The numeric-range validator computes the total count between `code.from` and `code.to` and rejects the request if that total exceeds the plan-cap value. An extremely large range may fail with a server error instead of this message (verify).
 
 ### Retry loop has no upper-bound counter
 
-The random-mode retry loop's `while count < limit` has no upper-bound retry counter — for numeric-only generation with a tight `length` (e.g., `length = 6` and limit close to the soft cap), the loop could theoretically run for many iterations. The numeric-random soft cap is designed to keep this within practical bounds.
+The random-mode retry loop's `while count < limit` has no upper-bound retry counter — for numeric-only generation with a tight `length`, the loop can run for many iterations.
 
 ## Related
 
 - [[marketing-discounts-code-pro-generator]] — hub.
 - [[code-pro-generator-form-layout]] — the on-screen sub-block that switches between Range and Random parameters.
 - [[code-pro-generator-fields]] — per-mode field tables.
-- [[code-pro-generator-validation]] — full list of validation messages including soft-cap errors.
+- [[code-pro-generator-validation]] — full list of validation messages including the numeric-only limit.
 - [[code-pro-generator-business-rules]] — transactional persistence + shared-terms propagation.
-- [[marketing-discounts-codes]] — the simpler Container codes' generator (fixed shape, hard 1,000-per-batch cap) for comparison.
+- [[marketing-discounts-codes]] — the simpler Container codes' generator (fixed shape, percent only, no upper limit on the count) for comparison.
 
 ## Open questions
 

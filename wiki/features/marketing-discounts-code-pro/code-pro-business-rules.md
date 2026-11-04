@@ -7,7 +7,7 @@ aliases: ["Code PRO business rules", "Code PRO save flow", "Code PRO barcode mod
 tags: [marketing, discounts, code-pro, business-rules, save-flow]
 plan_gates: ["discount-code-pro"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -23,7 +23,7 @@ For the form layout see [[code-pro-form]]. For field definitions see [[code-pro-
 
 ## Where to find it
 
-These rules apply on the per-code form save (`/admin/marketing/discounts/code-pro/:id/:codeId`), on the bulk-toggle / bulk-delete actions in the table action bar at `/admin/marketing/discounts/code-pro/:id`, and on the JSON-API v2 path (see [[code-pro-endpoints-api]]) — same rules, same side-effects.
+These rules apply on the per-code form save (`/admin/marketing/discounts/code-pro/:id/:codeId`), on the bulk-toggle / bulk-delete actions in the table action bar at `/admin/marketing/discounts/code-pro/:id`, and, with its own validation, on the JSON-API v2 path (see [[code-pro-endpoints-api]]).
 
 ## What the merchant can do here
 
@@ -39,7 +39,7 @@ This page is about behaviour, not fields. For field reference see [[code-pro-fie
 
 The parent Code PRO discount has its own `active` toggle in the [[marketing-discounts]] list. Each child code under it has its own `active` flag (`active = 1` / `0`). **A code is redeemable only when BOTH the parent and the child are active.**
 
-The merchant can pause one specific code (e.g., an influencer whose contract expired) without affecting the rest of the campaign. The row's Active switch calls `apiMarketingDiscounts.statusDiscountCodes` with `{ ids: [code_id], status: 1|0 }` (note: numeric `1`/`0`, NOT `yes`/`no` — different from the parent discount's toggle).
+The merchant can pause one specific code (e.g., an influencer whose contract expired) without affecting the rest of the campaign. The row's Active switch calls `apiMarketingDiscounts.statusDiscountCodes` with `{ ids: [code_id], status: 1|0 }` (note: numeric `1`/`0`, NOT `yes`/`no` — different from the parent discount's toggle). Only this toggle or the list's bulk action turns a code off: the status switch on the code form saves it as active either way.
 
 ### Conditions are deleted-and-recreated on save
 
@@ -54,7 +54,7 @@ This means stale conditions don't accumulate; the post-save state is exactly wha
 
 1. The save endpoint resolves the parent Discount by `discount_id` (must be `type=code-pro`) and either finds the existing code or instantiates a new one.
 2. Top-level fields are filled with explicit casting:
-   - Boolean checkboxes (`active`, `code_apply`, `apply_regular_price`, `barcode_prefix`, `only_customer`) are derived from the request payload.
+   - `code_apply`, `apply_regular_price` and `barcode_prefix` are on when the form sends them. The status switch (`active`) always saves the code as active. `only_customer` is saved as on whenever the form sends it, which it does when an existing code is edited, so saving an existing code through the edit form turns "registered users only" on even when it was off.
    - `name` falls back to `code` when blank.
    - `code_prefix` is derived from the presence of `code_format` (so picking ean13/ean8 implicitly enables barcode mode).
    - `geo_zone_id` is nulled when `all_regions` is ON.
@@ -69,22 +69,22 @@ This means stale conditions don't accumulate; the post-save state is exactly wha
 
 ### Date validation uses store-format
 
-Date fields use the store's display `date_format` setting (e.g., `d.m.Y` for BG / `Y-m-d` for ISO). The validator chains `date_format:<store-format>` and `dateToCarbon:<store-format>` so merchants typing in their preferred format always work. The `date_end` may be omitted entirely if `no_expire` is checked (sets `date_end = null`).
+Date fields use the store's display `date_format` setting (e.g., `d.m.Y` for BG / `Y-m-d` for ISO). The form asks for a start date (*"Field is required"*) and for an end date unless `no_expire` is checked (*"The end date is required"*); `no_expire` sets `date_end = null`.
 
 ### Customer-group and region targeting — binary toggles
 
 The form has a binary toggle for each:
 
-- **Customer groups**: `customer_groups_target = 'all'` → applies to all groups, no list needed. Otherwise an array of group IDs is required.
-- **Region**: `all_regions = 'yes'` → no geo restriction. Otherwise `geo_zone_id` is required and must reference an existing [[geo-zone]].
+- **Customer groups**: `customer_groups_target = 'yes'` → applies to all groups, no list needed. With it off, the listed groups apply; if none is picked, the code has no group restriction.
+- **Region**: `all_regions = 'yes'` → no geo restriction. With it off, `geo_zone_id` names an existing [[geo-zone]]; if none is picked, the code has no region restriction.
 
 At checkout, the discount-lookup applies both filters — see [[code-pro-checkout]] for the active-scope check.
 
 ### Stacking — `code_apply`
 
-By default (`code_apply = 0`), a Code PRO code is rejected at checkout if any cart line already has a discount applied (e.g., a Fixed discount on a product). When the merchant turns ON *"Apply discount even if the cart contains products with a discount"*, the code stacks on top of those.
+By default (`code_apply = 0`), a Code PRO code is refused at checkout with *"Invalid discount code"* if any cart line already has a product discount (e.g., a Fixed discount on a product). When the merchant turns ON *"The discount is applied even when the cart contains discounted products."*, the code stacks on top of those.
 
-The `apply_regular_price` flag pairs with it to make the code re-evaluate against the catalog price if that yields a larger discount.
+With `apply_regular_price` also on, the code is worked out on the regular price and compared with the current discounted price. If the code's price is lower, it replaces the product discount; otherwise the line keeps the product discount and no code. A flat value whose share for a line reaches that line's discounted unit price is not applied at all.
 
 ### Barcode mode (`code_prefix` + `code_format`)
 
@@ -103,7 +103,7 @@ The list at `/admin/marketing/discounts/code-pro/:id` supports bulk status toggl
 - **Set status active** / **Set status unactive** → POST to `/admin/api/core/discounts/code-pro/:id/status` with `{ ids: [...], status: 1|0 }`.
 - **Delete** → DELETE to `/admin/api/core/discounts/code-pro/:id?ids[]=...`.
 
-Bulk delete wraps the loop in a transaction and deletes per row so any registered model events fire (e.g., the `targets` / `customer-groups` cascade cleanup). Older wiki phrasing referenced a `bulk-status` route name — that name doesn't exist; the unified status-change endpoint handles single + bulk via the IDs array.
+Bulk delete removes the selected codes in one step, and their conditions and customer-group rows go with them.
 
 ### Delete cascade
 
@@ -116,7 +116,7 @@ Deleting a code cascades to:
 
 ## How it works
 
-The deletes-and-recreates pattern is the same on both the admin-panel path and the JSON-API v2 path — see [[code-pro-endpoints-api]] for the same-side-effects guarantee. The store-wide unique constraint on `discounts_code_pro.code` is DB-level (see [[code-pro-overview]]) so it fires whether the duplicate comes from the form, a bulk-generator, or an API call.
+The deletes-and-recreates pattern runs on every admin save; the JSON-API v2 path replaces conditions and groups only when they are sent — see [[code-pro-endpoints-api]]. The store-wide uniqueness of `discounts_code_pro.code` is a form check, not a database rule (see [[code-pro-overview]]): the admin runs it on new codes, the JSON-API on create and edit, and the generator checks against existing codes itself.
 
 ## Related
 
@@ -124,7 +124,7 @@ The deletes-and-recreates pattern is the same on both the admin-panel path and t
 - [[code-pro-fields]] — field reference; the keys this save flow casts.
 - [[code-pro-form]] — the form that posts to the save endpoint.
 - [[code-pro-checkout]] — runtime active-scope rules that consume what's saved here.
-- [[code-pro-endpoints-api]] — JSON-API v2 path with identical side-effects.
+- [[code-pro-endpoints-api]] — the JSON-API v2 path and how it differs.
 - [[customers-custom-groups]] — customer-group join target.
 - [[geo-zone]] — region target.
 

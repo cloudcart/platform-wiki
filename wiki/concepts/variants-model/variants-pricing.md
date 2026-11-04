@@ -5,7 +5,7 @@ aliases: ["Variant pricing", "Per-Variant price", "Price override", "price_from 
 tags: [catalog, variants, parameters, options, concepts, pricing]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -15,7 +15,7 @@ source_count: 3
 
 ## Definition
 
-Each [[variant|Variant]] carries its **own** `price` that **overrides** the parent [[product|Product]]'s base price. If the Variant's `price` is unset, the Variant inherits the base price. On top of that, the platform supports per-Variant fixed-amount discounts (a separate `discount_price` field on the Variant record), per-Variant `delivery_price` shipping cost overrides, and per-Variant unit-of-measure pricing (e.g., "5 BGN per 100 g" computed from `base_unit_value` + `base_unit_id`).
+Each [[variant|Variant]] carries its **own** `price` that **overrides** the parent [[product|Product]]'s base price. If the Variant's `price` is unset, the Variant inherits the base price. On top of that, the platform supports per-Variant discount prices (a `discount_price` sent with the Variant is saved as a price on the store's default Fixed discount), per-Variant `delivery_price` shipping cost overrides, and per-Variant unit-of-measure pricing (e.g., "5 BGN per 100 g" computed from `base_unit_value` + `base_unit_id`).
 
 The parent Product also carries two **denormalised** fields recomputed on every Variant price save:
 
@@ -31,13 +31,13 @@ Both `price` and `discount_price` are capped at 1,000,000,000 minor units — ef
 Covered here:
 
 - Per-Variant `price` override of the parent product base price.
-- Per-Variant `discount_price` (fixed-amount discount stored on the Variant).
+- Per-Variant `discount_price` (saved as a price on the store's default Fixed discount).
 - Per-Variant `delivery_price` shipping cost override.
 - Per-Variant unit-of-measure pricing (`base_unit_value` / `base_unit_id` / `unit_type`) and the auto-fill behaviour.
 - The 1,000,000,000 minor-units cap on `price` and `discount_price`.
 - `price_from` / `price_to` denormalisation on the parent product.
 - `default_variant_id` auto-recomputation (lowest price, ties by ID).
-- How storefront discount rules target specific Variants.
+- How discounts reach specific Variants.
 - Bulk-editing Variant prices from the product editor matrix.
 
 Not covered here:
@@ -51,7 +51,7 @@ Not covered here:
 ## Contrasts
 
 - **Variant `price` vs Product base price** — the Variant `price` overrides the parent product's base price when set. Unset Variant `price` inherits the base price. The base price is still useful as the default and as the fallback on simple (single-Variant) products.
-- **Variant `discount_price` vs cart-level Discount rules** — `discount_price` is a fixed amount stored on the Variant record itself (the "old price strikethrough" pattern). Cart-level Discount rules from [[marketing-discounts]] are runtime rules that fire on conditions (cart total, customer group, coupon code) and are NOT stored on the Variant.
+- **Variant `discount_price` vs other discounts** — `discount_price` is a target price saved per Variant on the store's default Fixed discount (the "old price strikethrough" pattern). A no-code Flat or Percent discount from [[marketing-discounts]] is also saved per Variant, as a lower price. Codes and "Orders over" discounts are worked out in the cart and are not saved per Variant.
 - **Variant `price` vs Product Options price modifier** — Variant `price` is a per-SKU override; [[products-options-overview|Product Options]] price modifiers (additive / multiplicative / per-quantity) apply to the SAME SKU based on customer-input customisations at the cart line. Both can stack on the same order line.
 
 ## Where it applies
@@ -62,7 +62,7 @@ Per-Variant pricing surfaces on:
 - [[products-inventory]] — drill into per-Variant `quantity`; some price fields visible on the row.
 - The storefront product detail page — Variant price shown when the customer picks Options; `price_from` / `price_to` shown before any pick. Discounted Variants show the strikethrough price + the discounted price.
 - The storefront category page — each card shows the `default_variant_id`'s price (or `price_from` if the variant-aware listing mode is off).
-- [[marketing-discounts]] — Discount rules can target specific Variants (Variant ID, SKU, or Parameter-Option combination); they combine with `discount_price` / per-Variant `price` per the [[discount-stacking]] precedence.
+- [[marketing-discounts]] — a Fixed discount sets a price per Variant. Other discounts target products, categories, vendors or smart collections and reach their Variants. Among the prices saved for a Variant, the lowest applies, see [[discount-stacking-evaluation-order]].
 - [[marketing-discounts-quantity]] — quantity-tier discounts work on per-Variant stock (e.g. a 5-for-4 deal on a specific Colour-Size evaluates against that Variant's cart quantity).
 
 ### Unit-of-measure pricing and auto-fill
@@ -97,7 +97,7 @@ Saving a Variant price (even a no-change save) re-indexes the parent product for
 - [[variant]] — Variant entity carrying `price` / `discount_price` / `delivery_price` / unit fields.
 - [[products-products]] — product editor with the per-Variant pricing grid.
 - [[products-inventory]] — per-Variant stock screen.
-- [[marketing-discounts]] — cart-level Discount rules that can target Variants.
+- [[marketing-discounts]] — the discount types and what each one targets.
 - [[marketing-discounts-quantity]] — quantity-tier discounts per Variant.
 - [[discount-stacking]] — precedence between Variant `discount_price` and cart-level discounts.
 - [[multi-currency]] — currency conversion of per-Variant prices.

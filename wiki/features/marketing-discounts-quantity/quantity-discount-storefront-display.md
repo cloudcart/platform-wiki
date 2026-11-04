@@ -7,7 +7,7 @@ aliases: ["Quantity discount product page", "Quantity tier ladder", "Volume disc
 tags: [marketing, discounts, quantity, storefront, product-page]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 2
 ---
 
@@ -29,7 +29,7 @@ The merchant cannot directly control storefront rendering of the tier ladder —
 
 - **Use tight consecutive tier quantities** (e.g. 2, 3, 4, 5) to get the radio-button picker UX.
 - **Use sparse tier quantities** (e.g. 5, 10, 50) to get the read-only ladder (which signals "step up by N at a time, not one piece").
-- **Combine with a per-variant Fixed discount** to provide a fallback price below the smallest tier — see [[quantity-discount-stacking]].
+- **Combine with a per-variant Fixed discount** to provide a fallback price below the smallest tier; its saving then also comes off the tier price — see [[quantity-discount-stacking]].
 
 ## Settings & fields
 
@@ -60,7 +60,7 @@ The customer reads the ladder top-to-bottom as a price schedule that gets cheape
 The ladder's interactivity depends on the tier quantity pattern:
 
 - **Tight / consecutive ladders** — when all tier deltas are tight (consecutive `quantity` values, e.g. tiers at 2, 3, 4, 5), the storefront renders **radio-button selectors** next to each row so the customer can click a tier to auto-fill the quantity input.
-- **Sparse / gap ladders** — when deltas are non-consecutive (e.g. tiers at 5, 10, 50), the tier list shows as a **read-only ladder** — the customer reads it as reference but must manually adjust the quantity input to reach the next tier.
+- **Sparse / gap ladders** — when deltas are non-consecutive (e.g. tiers at 5, 10, 50), the tier list shows as a **read-only ladder** — the customer reads it as reference but must manually adjust the quantity input to reach the next tier. After the customer picks another variant the rows are radio buttons, whatever the gaps.
 
 The merchant doesn't pick the rendering mode — it's automatic from the tier-quantity pattern.
 
@@ -75,13 +75,13 @@ If a merchant wants a sticker / promo-banner aesthetic on a quantity-tiered prod
 
 ### Cart-line display
 
-On the cart and checkout, the per-line price shows the **applied tier's `discount_value`** as the unit price — the line's own variant's price at the tier reached. The customer sees:
+On the cart and checkout, the per-line price shows the **applied tier's `discount_value`** as the unit price — the line's own variant's price at the tier reached, less the variant's active Fixed or no-code saving when the discount has `code_apply` on ([[quantity-discount-stacking]]). The customer sees:
 
 - Unit price = tier value (NOT the catalog price).
 - Line total = tier value × cart-line quantity.
 - The "saving versus catalog" computed dynamically per-line at cart-time (the saved amount is the delta between catalog and tier price; see [[discounts-storefront-display]] for the cross-cutting per-line saving display).
 
-The catalog price is NOT shown crossed-out next to the tier price on the cart line unless the theme implements it independently; the platform doesn't surface the strike-through automatically for Quantity tier replacements.
+The global cart template shows the regular line price next to the tier price.
 
 ### Admin order-edit display — saved tier price persists
 
@@ -97,7 +97,7 @@ This is intentional: it preserves order history and prevents retroactive price c
 
 The tier ladder shows the tiers and prices of the variant the page has selected (the default variant until the customer picks another). When the customer picks a different variant, the ladder is redrawn with that variant's prices; for a variant without tiers it is hidden.
 
-In the cart, each line counts alone by default; with `quantity_count_all_lines` on, 3 size-S + 2 size-M reach a buy-5 tier (see [[quantity-discount-line-counting]]). The ladder shows only the selected variant's prices in both modes.
+In the cart each line counts alone, so 3 size-S + 2 size-M do not reach a buy-5 tier (see [[quantity-discount-line-counting]]). The ladder shows only the selected variant's plain tier prices.
 
 ## Related
 

@@ -7,7 +7,7 @@ aliases: ["Existing discount eligibility", "Discount picker filter", "Which disc
 tags: [orders, discount, eligibility, filtering]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -17,11 +17,11 @@ source_count: 3
 
 ## Purpose
 
-The **filter that decides which existing [[marketing-discounts]] appear** in the Add Discount form's "Choose target" dropdown ([[orders-discount-add-form]]). The picker is intentionally narrow: it only surfaces discounts that could legitimately apply to THIS order, so the merchant cannot accidentally mis-apply one.
+The **filter that decides which existing [[marketing-discounts]] appear** in the Add Discount form's "Choose target" dropdown ([[orders-discount-add-form]]). The picker is narrow, but it does not run every check the storefront runs (see Business rules).
 
 ## Where to find it
 
-The filter runs server-side when [[orders-details]] → **Add Discount** → **Existing discount** is selected. The merchant never sees the filter directly — only its result (the narrowed dropdown, or the *"No discounts available"* alert when nothing qualifies).
+The filter runs server-side when [[orders-details]] → **Add Discount** → **Existing discount** is selected. The merchant never sees the filter directly — only its result (the narrowed dropdown, or the *"There are no discounts available."* alert when nothing qualifies).
 
 ## What the merchant can do here
 
@@ -39,7 +39,7 @@ The list of available existing discounts is built by excluding any discount that
 5. **Target-type whitelist** — only target types `all`, `order_over`, and `shipping` are allowed (see below).
 6. **Code-less exclusion** — a discount with NO code AND a target type that is NOT `order_over` is hidden (see below).
 
-So the merchant only sees discounts that could legitimately apply to this order.
+Inactive, expired and used-up discounts are also left out.
 
 ## Business rules
 
@@ -47,8 +47,8 @@ So the merchant only sees discounts that could legitimately apply to this order.
 
 The "Choose discount target" dropdown shows ONLY discounts whose target type is one of:
 
-- **all** — discount applies to the whole order regardless of which products.
-- **order_over** — discount triggers when subtotal exceeds a threshold.
+- **all** (*For every product in the cart*) — a percent comes off each line. A flat amount comes off every line in full, once per line, whatever the quantity, and a line can go below zero. Lines holding a product discount are skipped when `code_apply` is off. See [[discount-stacking-amount-by-target]].
+- **order_over** (*Orders over*) — one amount off the order, shown as a row in the totals, while the subtotal is strictly above the threshold.
 - **shipping** — shipping-cost discount.
 
 Other types — product-targeted, category-targeted, vendor-targeted, selection-targeted, category-vendor — are EXCLUDED even if eligible by every other criterion. A discount limited to a specific product category therefore cannot be applied as an order-level discount via this UI; the merchant uses a per-line discount ([[orders-products]]) instead.
@@ -57,13 +57,13 @@ Other types — product-targeted, category-targeted, vendor-targeted, selection-
 
 A subtler exclusion: if an existing discount has NO code AND its target type is NOT `order_over`, it is hidden from the dropdown. So code-less discounts targeting `all` or `shipping` are excluded. The rationale is that code-less discounts auto-apply at checkout already — manually attaching them here would double-apply.
 
-### Threshold does NOT auto-detach when subtotal drops
+### When the subtotal drops below the threshold
 
-Once a discount is applied, the `order_over` threshold check is NOT re-evaluated when subsequent line changes shrink the subtotal. If a discount required "Order over 100" and the merchant later removes products until the order falls to 80, the discount STAYS attached — no auto-detach. The merchant must manually remove the discount (see [[orders-discount-add-delete]]) to enforce the threshold.
+The `order_over` threshold is checked again on every recalculation. If a discount required "Order over 100" and the merchant later removes products until the order falls to 80, the discount stays listed on the order (see [[orders-discount-add-delete]] to remove it), but its amount stops being deducted. The amount keeps being deducted only if **Save the discount in the order** is on for that discount.
 
-### Filter guides the merchant toward valid applications
+### The picker is not the storefront's check
 
-Because the picker pre-filters by subtotal, customer group, type, and target type, the merchant cannot apply a discount the order doesn't qualify for. This is the same eligibility logic the storefront runs, surfaced as a back-office picker — see [[discount-stacking]] for how the same checks run on the storefront cart.
+The picker checks subtotal, customer group, type, and target type. It does not check region, registered-customers-only, per-customer limits or `code_apply`, which the storefront checks when a code is entered. A discount at exactly its threshold is listed and can be added, then deducts nothing unless **Save the discount in the order** is on. See [[discount-stacking]] for the storefront's rules.
 
 ## Related
 
@@ -71,7 +71,7 @@ Because the picker pre-filters by subtotal, customer group, type, and target typ
 - [[orders-discount-add-form]] — the dropdown this filter populates.
 - [[marketing-discounts]] — the discount rules being filtered.
 - [[customer-group]] — customer-group match check.
-- [[discount-stacking]] — the same eligibility checks on the storefront cart.
+- [[discount-stacking]] — the storefront's rules.
 - [[discount]] — entity page (target types, `order_over`, `is_container`).
 
 ## Open questions

@@ -5,7 +5,7 @@ aliases: ["Cart to order handoff", "Place order snapshot", "Order creation pipel
 tags: [cart, order, lifecycle, state-machine, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -38,7 +38,7 @@ Not covered here: cart data shape + cart states ([[cart-state-machine]]); order 
 
 1. **Final validation** — required fields filled, totals within caps, stock available (if `pending` decrement-timing — see [[inventory-tracking]]).
 2. **Discount re-evaluation** — all matching discounts re-attach against the FINAL cart state. A discount valid during the session but expired (or capped) by submit time drops off. The order's discount snapshot reflects what was ACTIVE at submit, not what was DISPLAYED 10 minutes earlier.
-3. **Cart Rules re-evaluation** — [[cart-rule|Cart Rules]] fire AFTER discounts on the post-discount total.
+3. **Cart Rules re-evaluation** — [[cart-rule|Cart Rules]] fire after product discounts and line-level codes, and before order-level discounts.
 4. **Order row created** with `status = pending`, `status_fulfillment = not_fulfilled`.
 5. **Child rows created** — Order Products (one per cart line: snapshot price + quantity + options + per-line discount), Order Addresses (shipping + billing), Order Payment (initially `initiated`), Order Discounts (one per discount).
 6. **Currency, locale, `unit_system` frozen** from the cart's session values; immutable thereafter.

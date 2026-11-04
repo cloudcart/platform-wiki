@@ -4,7 +4,7 @@ nav_path: "Entity → Cart Rule → Stacking"
 aliases: ["Cart Rule stacking", "Cart Rule priority", "Cart Rule sort order", "Cart-level vs product-level stacking"]
 tags: [entity, marketing, automation, discounts, rules-engine, stacking]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 5
 ---
 
@@ -30,11 +30,11 @@ Stacking semantics ride on these per-rule + per-action fields:
 - **`group`** (action) — `cart` (whole-cart) vs `product` (per-line). Drives the winner-takes-all vs accumulate split.
 - **`value`** (action) — used by the cart-level highest-`value`-wins tiebreaker.
 
-## Cart Rules run AFTER standard Discounts
+## Cart Rules run after product discounts and line-level codes
 
-The checkout pipeline evaluates [[discount|Discounts]] FIRST (per their own stacking rules — see [[discount-stacking]]). Once discounts have attached, Cart Rules run against the **post-discount** cart. This means a Cart Rule that says *"if cart total > 50 EUR, free shipping"* sees the cart total AFTER all discounts applied — so a 50% discount that brought a 100 EUR cart down to 50 EUR won't trigger this rule (the post-discount total is now exactly at the threshold, not over).
+Product discounts and codes applied per line come first, so a rule's conditions see the cart on that basis. A Cart Rule that says *"if cart total > 50 EUR, free shipping"* is not triggered when a 50% product discount brings a 100 EUR cart down to exactly 50 EUR.
 
-Cart Rules cannot be "seen" by standard Discounts. The reverse direction doesn't exist. See [[discount-stacking-evaluation-order]] for the full ordering.
+Order-level discounts come after the rules: an "Orders over" discount with or without a code, a Countdown and a payment-method discount. A rule's cart-total condition does not see them, so a 20 EUR "Orders over" discount on a 60 EUR cart leaves that condition at 60 EUR. Those discounts are worked out, and their thresholds checked, on the subtotal after the rule's product-level reductions. See [[discount-stacking-evaluation-order]] for the full ordering.
 
 ## Rules stack — split by scope
 
@@ -68,7 +68,7 @@ When a brand-new Cart Rule is saved (no `sort_order` supplied by the merchant �
 
 - [[cart-rules-stacking]] — feature-side aspect on the same topic from the merchant editor UX.
 - [[discount-stacking]] — concept page on overall stacking semantics including Discounts.
-- [[discount-stacking-evaluation-order]] — the cross-cluster ordering (Discounts then Cart Rules).
+- [[discount-stacking-evaluation-order]] — the full ordering of product discounts, codes, Cart Rules and order-level discounts.
 - [[discount-stacking-cart-rules-interaction]] — concept-side analysis of the interaction layer.
 
 ## Related
@@ -77,7 +77,7 @@ When a brand-new Cart Rule is saved (no `sort_order` supplied by the merchant �
 - [[cart-rule-rows-and-triggers]] — within-rule row OR-fallback (different mechanism from cross-rule stacking).
 - [[cart-rule-actions]] — the cart-level vs product-level split that drives stacking behaviour.
 - [[cart-rule-evaluation]] — when stacking re-computes.
-- [[discount]] — sibling engine evaluated first.
+- [[discount]] — product discounts and line-level codes are worked out before rules, order-level discounts after them.
 
 ## Open Questions
 

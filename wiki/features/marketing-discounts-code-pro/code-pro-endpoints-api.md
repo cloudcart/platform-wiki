@@ -7,7 +7,7 @@ aliases: ["Code PRO endpoints", "Code PRO JSON-API v2", "Code PRO programmatic a
 tags: [marketing, discounts, code-pro, api, endpoints, json-api-v2]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-This page documents the **HTTP surface** for Code PRO codes: the admin-panel endpoints (used by the Vue UI) and the JSON-API v2 endpoints (used by external integrations). Both paths trigger the same side-effects — the deletes-and-recreates transaction, the store-wide unique constraint, the `uses` counter recompute job. Use this page when answering *"what's the URL to bulk-toggle codes?"* or *"can I generate 10,000 codes via API?"*.
+This page documents the **HTTP surface** for Code PRO codes: the admin-panel endpoints (used by the Vue UI) and the JSON-API v2 endpoints (used by external integrations). Both paths write the same codes and conditions, each with its own validation. Use this page when answering *"what's the URL to bulk-toggle codes?"* or *"can I generate 10,000 codes via API?"*.
 
 For the field schema see [[code-pro-fields]]. For save-flow behaviour see [[code-pro-business-rules]].
 
@@ -60,37 +60,35 @@ The conditions array schema, validation rules, and writable / read-only attribut
 
 ## Business rules
 
-### Same side-effects principle
+### What the API shares with the admin save
 
-A POST / PATCH through JSON-API v2 triggers the same pipeline as the admin-panel save (see [[code-pro-business-rules]]):
+A POST / PATCH through JSON-API v2 writes the same codes and conditions as the admin-panel save (see [[code-pro-business-rules]]), with these differences:
 
-- The delete-then-recreate of `targets` and `customer_groups` join rows runs identically (on edit of an existing code).
-- The `discounts_code_pro.code` store-wide uniqueness is enforced by the **create-time form validator** (not a DB constraint, and not re-checked on edit) — see [[code-pro-overview]].
+- Conditions and customer groups are deleted and recreated only when they are sent in the request; the admin save always replaces both.
+- `discounts_code_pro.code` store-wide uniqueness is a form check, not a database rule. The API checks it on create and on edit; the admin checks it only on new codes — see [[code-pro-overview]].
 - The per-code `uses` counter recompute fires on order-status transitions (see [[code-pro-checkout]]).
-- **No internal audit-log entry is written** — discount CRUD has no audit log (only webhooks fire); the payload does not distinguish API from admin changes. See [[discounts-audit-trail]].
-
-This is the wiki-wide [[json-api-v2]] same-side-effects principle: the API path is **not** a shortcut around platform invariants. Whatever fires on the UI fires on the API.
+- **No audit-log entry is written** on either path — see [[discounts-audit-trail]].
 
 ### Plan-gating
 
-The `discount-code-pro` plan feature gates creation — API requests on plans that don't enable it return **HTTP 403 Forbidden** with the *"Not supported by plan"* message (older wiki phrasing said 402; corrected).
+In the admin, the `discount-code-pro` plan feature gates creating a campaign (403 *"This feature is not enabled for your plan. To access it, please upgrade your plan."*). JSON-API v2 does not read it: creating a campaign compares usage with `discount_coupon` and returns **402 Payment Required**. Adding, editing or generating codes has no plan check on the API.
 
-The store-wide unique constraint on `code` returns **HTTP 422** with the same *"Discount code is exists"* error (`code_pro.validation.code.unique`).
+A duplicate `code` returns **HTTP 422**.
 
-### Bulk-generate cap — 5,000 per request, HARD on the API path
+### Bulk-generate cap — 5,000 per request in random mode on the API
 
-The bulk-generate endpoint is **hard-capped at 5,000 codes per request regardless of the merchant's `discount-code-pro-generator` plan-feature value**.
+In random mode the JSON-API v2 generate endpoint is **hard-capped at 5,000 codes per request regardless of the merchant's `discount-code-pro-generator` plan-feature value**. Its range mode has no count limit.
 
 | Path | Cap |
 |---|---|
 | Admin-panel generator (`POST /admin/api/core/discounts/code-pro/{id}/generate`) | Reads `discount-code-pro-generator` plan-feature value (default 5,000; plan-specific). |
-| JSON-API v2 bulk-generate | Hard-coded ceiling of **5,000 codes per request**; plan-feature value is ignored. |
+| JSON-API v2 bulk-generate | Random: hard-coded ceiling of **5,000 codes per request**, plan-feature value ignored. Range: no count limit. |
 
-So a plan with `discount-code-pro-generator = 10000` will still be capped at 5,000 codes per call when invoked through the API. To generate more, the integrator must issue multiple sequential calls. See [[marketing-discounts-code-pro-generator]] for the admin-panel generator behaviour.
+So a plan with `discount-code-pro-generator = 10000` will still be capped at 5,000 codes per random-mode call through the API. To generate more, the integrator must issue multiple sequential calls. See [[marketing-discounts-code-pro-generator]] for the admin-panel generator behaviour.
 
 ### Listing filters via JSON-API v2
 
-The JSON-API v2 resource supports the same filters as the admin list (see [[code-pro-fields]] for the filter set) via `filter[active]`, `filter[time_used]`, `filter[uses_left]`, `filter[start_date]`, `filter[date_end]`. The exact operator syntax follows [[json-api-v2]] conventions — see [[api-discount-codes-pro]] for the resource-specific notes.
+The JSON-API v2 resource filters only by `filter[discount_id]`. The admin list's other filters (see [[code-pro-fields]]) are not available there — see [[api-discount-codes-pro]] for the resource-specific notes.
 
 ### Permission
 
@@ -98,24 +96,24 @@ Admin-panel endpoints require the `marketing.discounts` permission. JSON-API v2 
 
 ## How it works
 
-The admin endpoints and the JSON-API v2 endpoints share the same domain layer underneath, which is why the side-effects are identical. The only behavioural differences are:
+The admin endpoints and the JSON-API v2 endpoints write the same codes and conditions. The main differences are:
 
 - **Auth**: admin session vs API key.
-- **Response format**: admin returns HTML / redirect payloads in some legacy cases; JSON-API v2 returns the canonical resource document.
-- **The 5,000-codes hard cap on the API generate path** — the only place the API is more restrictive than the UI.
+- **Response format**: admin returns JSON for the Vue pages; JSON-API v2 returns the canonical resource document.
+- **Validation**: each path has its own rules and field names, including the 5,000-codes cap on random-mode API generate.
 
-The `discount.updated` webhook fires on the parent campaign whenever a child code is created / edited / toggled / deleted (see [[settings-hooks]]). Receivers must be idempotent — bulk-generate fires it once per affected parent (not per code).
+Changes to Code PRO codes send no webhook, whether created, edited, toggled, deleted or generated. `discount.created` / `discount.updated` fire when the campaign itself is saved through the form or JSON-API (see [[settings-hooks]]).
 
 ## Related
 
 - [[marketing-discounts-code-pro]] — hub.
 - [[api-discount-codes-pro]] — JSON-API v2 resource for individual Code PRO codes.
 - [[api-discounts]] — JSON-API v2 resource for the parent Code PRO discount.
-- [[json-api-v2]] — same-side-effects principle, auth, rate-limits, pagination.
+- [[json-api-v2]] — auth, rate-limits, pagination.
 - [[settings-api-keys]] — API key scopes for the `marketing.discounts` area.
-- [[settings-hooks]] — `discount.updated` webhook fires on per-code CRUD.
+- [[settings-hooks]] — discount webhooks; changes to Code PRO codes send none.
 - [[code-pro-overview]] — store-wide uniqueness on `discounts_code_pro.code`.
-- [[code-pro-business-rules]] — deletes-and-recreates save flow that the API path also follows.
+- [[code-pro-business-rules]] — the admin save flow.
 - [[code-pro-checkout]] — `uses` counter recompute job triggered after status transitions.
 - [[marketing-discounts-code-pro-generator]] — admin-panel generator (honours the plan-feature cap).
 - [[marketing-discounts-code-pro-export]] — CSV export endpoint.

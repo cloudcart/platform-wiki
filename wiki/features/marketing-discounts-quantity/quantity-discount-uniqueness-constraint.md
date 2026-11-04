@@ -7,7 +7,7 @@ aliases: ["Quantity discount one per product", "Volume discount conflict", "A vo
 tags: [marketing, discounts, quantity, validation, constraints]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 2
 ---
 
@@ -17,7 +17,7 @@ source_count: 2
 
 ## Purpose
 
-This aspect documents the **uniqueness constraint** on Quantity discounts — a given product can only be on one Quantity discount at a time, regardless of `active` status. It covers the validation strings on both client and server, the PATCH-vs-POST validator divergence, the workflow when a merchant needs to switch products, and the cascade behaviour when the discount or its target product is deleted.
+This aspect documents the **uniqueness constraint** on Quantity discounts — a given product can only be on one Quantity discount at a time, regardless of `active` status. It covers the validation strings on create and on edit, the workflow when a merchant needs to switch products, and the cascade behaviour when the discount or its target product is deleted.
 
 ## Where to find it
 
@@ -25,10 +25,7 @@ The conflict surfaces on the **Customer buys** product picker on the Quantity cr
 
 ## What the merchant can do here
 
-When the uniqueness validation blocks a save, the merchant has two paths:
-
-- **Edit the existing Quantity discount on that product** and adjust its tiers (preserves the row + customer-group settings).
-- **Hard-delete the existing discount** from the [[marketing-discounts]] list, then create a new one. Deactivation alone does NOT release the product slot — see Business rules below.
+When the uniqueness validation blocks a save, the merchant's path is to **edit the existing Quantity discount on that product** and adjust its tiers (preserves the row + customer-group settings). Neither deactivating nor deleting the conflicting discount from the list releases the product — see Business rules below.
 
 ## Settings & fields
 
@@ -36,9 +33,9 @@ The constraint is enforced on `product_id` — the field exposed on the Quantity
 
 | Field | Backend key | Constraint surface |
 |-------|-------------|--------------------|
-| **Customer buys** (product picker) | `product_id` | Form-validator: *"Product is already in use"*. Server-side on save: *"A volume discount with this product already exists"* (BG: *"Вече съществува количествена отсъпка с този продукт"*). |
+| **Customer buys** (product picker) | `product_id` | On create: *"Product is already in use"*. On edit, when switching to a product another Quantity discount uses: *"A volume discount with this product already exists"* (BG: *"Вече съществува количествена отсъпка с този продукт"*). |
 
-The constraint counts rows in the `quantity_discounts` table by `product_id` alone — `active` is NOT a filter, `deleted_at` IS (soft-deleted rows excluded). See [[quantity-discount-form]] for the picker UX and [[products-products]] for the target product's relation.
+The constraint counts rows in the `quantity_discounts` table by `product_id` alone — `active` is NOT a filter. See [[quantity-discount-form]] for the picker UX and [[products-products]] for the target product's relation.
 
 ## Business rules
 
@@ -48,25 +45,21 @@ A product can be on only **one** Quantity discount at a time, regardless of its 
 
 > *"Product is already in use"*
 
-So a deactivated-but-not-deleted Quantity discount still blocks a new one on the same product — the merchant must **hard-delete** (not just deactivate) the conflicting discount first. Two resolution paths:
+So a deactivated Quantity discount still blocks a new one on the same product. The way forward is to **edit the existing Quantity discount on that product and adjust its tiers** — that preserves the row and just changes the ladder.
 
-1. **Edit the existing Quantity discount on that product and adjust its tiers** — preserves the row, just changes the ladder.
-2. **Delete the existing discount first, then create a new one** — deactivation alone does NOT release the slot.
+The conflict check also runs when editing: switching an existing discount to a product another Quantity discount already uses is refused with *"A volume discount with this product already exists"*. Name, dates and customer groups changed in the same save stay saved.
 
-The conflict check runs **only when creating** a new Quantity discount. Changing the product on an existing discount through the modern panel is **not** re-checked for uniqueness — so a merchant editing an existing discount can in principle point it at a product another discount already uses.
-
-
-Net effect: if the merchant edits an existing Quantity discount and submits the **same** `product_id` (the most common case — they're tweaking the tiers), no conflict fires. If they edit the discount and try to **switch** the `product_id` to another product that's already taken, the model validator catches it.
+Net effect: if the merchant edits an existing Quantity discount and submits the **same** `product_id` (the most common case — they're tweaking the tiers), no conflict fires. If they edit the discount and try to **switch** the `product_id` to another product that's already taken, the save is refused.
 
 ### Why deactivation does not release the slot
 
 The guard query counts rows by `product_id` only, with no `active` filter. Setting `active = no` on a Quantity discount keeps the row in the table, so the slot stays held. This is intentional — the merchant's stored configuration shouldn't silently become "available to be overwritten" just because they paused the discount.
 
-For a merchant who wants to "temporarily replace" a Quantity discount on a product, the only path is: delete the old → create the new → optionally re-create the old later (but the tiers and customer-group settings are lost).
+A merchant who wants to temporarily replace a Quantity discount on a product edits its tiers; neither deactivating nor deleting it frees the product.
 
-### Delete cascade — parent discount → tier rows
+### Deleting the discount from the list
 
-When the discount is deleted (via the [[marketing-discounts]] list or via the delete-by-product helper triggered when the underlying product is itself deleted), all tier rows tied to its `discount_id` are deleted in the same transaction.
+Deleting a Quantity discount from the [[marketing-discounts]] list (or with `discountsBulkDelete`) removes the discount, but its tier rows stay and still count for the product: creating a new Quantity discount on that product keeps failing with *"Product is already in use"*. The left-over rows give no discount in the cart or on the product page.
 
 Order-discount history on past orders is **preserved** — analytics keep the trail, and the saved per-line tier price on an existing order doesn't change retroactively. See [[quantity-discount-tier-evaluation]] for the namespace gate that prevents admin order-edit from re-evaluating tiers (a deleted Quantity discount thus has no effect on already-placed orders, but the tier price on their lines stays).
 
@@ -76,9 +69,9 @@ When the **underlying product** is deleted, the delete-by-product helper deletes
 
 The merchant doesn't need to manually clean up the discount after deleting the product — the cascade runs in the same transaction as the product delete.
 
-### Soft-delete behaviour
+### Deleting a product is permanent for its Quantity discount
 
-The platform's products and discounts both support soft-delete. A soft-deleted product's Quantity discount also receives a soft-delete via the cascade helper (the row stays in the table with `deleted_at` set, hidden from the listing). A merchant who restores the soft-deleted product would also need to restore the discount manually — there's no automatic re-attachment.
+Deleting a product permanently deletes its Quantity discount and tiers. Restoring the product does not restore them; the merchant creates the discount again.
 
 ### Permission
 

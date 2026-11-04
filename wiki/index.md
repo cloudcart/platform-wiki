@@ -19,7 +19,7 @@
 - [[customer-group-targeting]] — what customer groups can drive (pricing via discounts, payment/shipping gating via Cart Rules, segments); the group is a gate, not a container.
 - [[delivery-scheduling]] — how an order's delivery day/time is decided + the slot↔shipping-method relationship.
 - [[digital-products]] — selling non-physical goods (downloadable file / membership page); no shipping.
-- [[discount-stacking]] — what wins when several discounts hit one cart (precedence, cooldowns, Cart Rules split).
+- [[discount-stacking]] — what wins when several discounts hit one cart, what an amount comes off for each target, and the Cart Rules split.
 - [[external-record-mapping]] — the ID↔ID table linking CloudCart records to an integration's external keys (ExternalMetaData); the matching/dedup backbone of every ERP / import sync + the internal read queries.
 - [[erp-integrations]] — connecting an external ERP / accounting / inventory system (catalogue / stock / price / order sync).
 - [[food-restaurant-grocery]] — running a food business: restaurant POS, on-demand delivery, grocery storefront.
@@ -157,7 +157,7 @@
 - [[api-customer-tags]] — CRUD on customer tags.
 - [[api-customers]] — CRUD on customers (registered + guests).
 - [[api-discount-codes-pro]] — Code PRO multi-code campaigns.
-- [[api-discount-codes]] — single-use Container coupon codes.
+- [[api-discount-codes]] — Container codes: the store-wide pool, reusable until turned off or deleted.
 - [[api-discounts]] — the parent promotion record.
 - [[api-images]] — product image gallery rows.
 - [[api-order-billing-address]] — read-only order billing address.

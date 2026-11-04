@@ -7,7 +7,7 @@ aliases: ["Code PRO generator form", "Generator page layout", "Generator setting
 tags: [marketing, discounts, coupons, code-pro, bulk-generation]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 5
 ---
 
@@ -36,13 +36,13 @@ The generator is the only way to produce more than a few Code PRO codes efficien
 
 ### Settings boxes rendered, in order
 
-The page uses the standard `CcSettingsBox` framework and renders these boxes top-to-bottom (verify):
+The page uses the standard `CcSettingsBox` framework and renders these boxes top-to-bottom:
 
 | Section box | Fields rendered |
 |-------------|-----------------|
-| **General settings** | Discount `active` switch (yes/no). |
-| **Code settings** | The code-config sub-block (Generator type + Range/Random parameters — see below), then `code_apply` switch ("Apply even on discounted products"), then a conditional `apply_regular_price` switch ("Apply to regular price", only visible when `code_apply = 1`). |
-| **Registered users only** | `only_customer` switch — "Discount available only to registered users". This whole box is conditionally visible based on customer-related conditions being present. |
+| **General settings** | Discount `active` switch (yes/no). Generated codes are saved as active whatever it says. |
+| **Code settings** | The code-config sub-block (Generator type + Range/Random parameters — see below), then `code_apply` switch ("The discount is applied even when the cart contains discounted products."), then a conditional `apply_regular_price` switch ("Apply to the regular price of products, if this discount is greater", only visible when `code_apply = 1`). |
+| **Registered users only** | `only_customer` switch — "Discount available only to registered users". This whole box shows only when at least one condition targets "Orders over". |
 | **Customer groups** | `customer_groups_target` switch ("All groups" yes/no); when "no", a multi-select customer-groups picker appears (searchable, request-on-search, queried against `/admin/api/core/customers/groups`). |
 | **Regions** | `all_regions` switch ("Make it Global" yes/no); when "no", a single-select region picker appears (searchable, request-on-search, queried against `/admin/api/core/settings/geo-zones/search`). |
 | **Date range** | `date_start` (required) + `date_end`, with a `no_expire` toggle that disables the end-date field. The campaign-countdown timer sub-feature is **HIDDEN** on this page (`hide-timer: true`) — the generator's terms do not include the storefront countdown banner that the standard discount form exposes. |

@@ -3,7 +3,7 @@ type: concept
 aliases: ["Shipping calculation", "Shipping cost", "Delivery cost", "Shipping rate", "How shipping is calculated", "Доставка", "Цена за доставка", "Изчисление на доставка", "Калкулация на доставка"]
 tags: [shipping, checkout, geo, couriers, omniship, concepts]
 created: 2026-05-21
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 1
 ---
 
@@ -27,7 +27,7 @@ This concept is split into 8 aspect pages. The Assistant should drill into the a
 - [[shipping-calc-rate-card-fields]] — the per-channel "Delivery price calculation" select and **the fields each type reveals** (processing fee, minimum-order-value for free delivery + free-service selects, the `fixed_*` rate tables, the fallback-price switch, the per-category sub-table) + which of the six types each courier offers.
 - [[shipping-calc-cascade]] — the full Step 1–8 checkout cascade; active → geo → rate → category → COD → allowed-payment → customer-group → present; zero-match debug checklist; auto-select-if-only-one rule.
 - [[shipping-calc-cod-surcharge]] — COD surcharge mechanics; custom methods (flat fee) vs. carrier integrations (carrier-quoted); the 10,000 BGN COD cap for BG carriers; re-quote on payment-method switch.
-- [[shipping-calc-discounts-rules]] — free-shipping discount with `order_over` vs. `$0` rate row; one-shipping-discount-per-cart cap; [[apps-cart-rules]] for percentage / fixed-amount / force-method overrides; Cart-Rules-run-AFTER-Discounts ordering.
+- [[shipping-calc-discounts-rules]] — free-shipping discount with `order_over` vs. `$0` rate row; one-shipping-discount-per-cart cap; [[apps-cart-rules]] and their one shipping action, Free shipping; the order among free-shipping sources.
 - [[shipping-calc-persistence]] — how the chosen method + quote is saved to `cart_shipping_quotes`, copied to the order at checkout, frozen on the order, and re-quoted via the order-detail "Recalculate shipping" action.
 
 ## Why it matters to the merchant

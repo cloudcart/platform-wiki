@@ -7,7 +7,7 @@ aliases: ["Generator API", "POST /generate", "Code PRO generator JSON-API", "API
 tags: [marketing, discounts, coupons, code-pro, bulk-generation, api, json-api-v2]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 5
 ---
 
@@ -17,36 +17,36 @@ source_count: 5
 
 ## Purpose
 
-The Code PRO bulk-generation pipeline is exposed programmatically through **JSON-API v2** via a custom `POST /generate` endpoint. This aspect documents what the API path shares with the admin-panel generator (everything except one critical cap), how to find the resource, and the divergence merchants and integrators must be aware of.
+The Code PRO bulk-generation pipeline is also exposed through **JSON-API v2** via a custom `POST /api/v2/discount-codes-pro/generate` endpoint. This aspect documents its route, fields and limits, and how they differ from the admin-panel generator.
 
 ## Where to find it
 
-See [[api-discount-codes-pro]] for the full resource (Schema, Attributes, Relationships, Filtering). The bulk-generation action lives at the resource-specific path `/code-pro/{id}/generate` and is the only batch-generation action in the discount API. See [[code-pro-endpoints-api]] for the endpoint catalogue.
+See [[api-discount-codes-pro]] for the full resource (Schema, Attributes, Relationships, Filtering). The bulk-generation action is `POST /api/v2/discount-codes-pro/generate`, with `discount_id` in the request data. See [[code-pro-endpoints-api]] for the endpoint catalogue.
 
 ## What the merchant can do here
 
 - Trigger the same bulk-generation pipeline from an external integration (no admin login).
-- Send the same generator-type / range / random / structure / length payload as the admin form.
-- Persist with the same shared discount terms (conditions, customer groups, region, dates, limits, stacking flags).
+- Send `generator_type`, `limit`, `length`, `structure`, `range_from` and `range_to`.
+- Persist with shared discount terms (`conditions`, `customer_groups`, `geo_zone_id`, dates, limits, stacking flags).
 
 ## Settings & fields
 
-The payload mirrors the admin form's field catalogue — see [[code-pro-generator-fields]] for backend keys. Validation messages are identical — see [[code-pro-generator-validation]].
+The fields are those above, with their own names rather than the admin form's (see [[code-pro-generator-fields]] for the admin keys). In `conditions`, `value` and `order_over` are stored as sent: money in minor units, percent × 100 (1000 means 10%). `date_start` is required, in `Y-m-d`.
 
 ## Business rules
 
-### Same pipeline, same side effects
+### Same save, own validation
 
-A POST through JSON-API v2 triggers the **same** pipeline as the admin-panel generator:
+A POST through JSON-API v2 saves codes the same way as the admin-panel generator:
 
 - The transactional all-or-nothing batch insert.
 - The collision pre-check (range mode) or collision-retry loop (random mode) — see [[code-pro-generator-modes]].
 - `customer_groups` and `targets` cascade-save per generated code.
 - Per-code, per-target, per-customer-group model events.
 
-### Critical divergence — JSON-API v2 hard cap is 5,000
+### JSON-API v2 cap is 5,000 in random mode
 
-In **random** mode the JSON-API v2 `POST /generate` endpoint is **hard-capped at 5,000 codes per request regardless of the merchant's `discount-code-pro-generator` plan-feature value** (the `limit` field is validated `max:5000`). Older wiki phrasing implied the plan-feature value drives the API cap as well — that's incorrect.
+In **random** mode the JSON-API v2 `POST /generate` endpoint is **hard-capped at 5,000 codes per request regardless of the merchant's `discount-code-pro-generator` plan-feature value** (the `limit` field is validated `max:5000`).
 
 **Only the admin-panel generator honours the higher plan-feature cap.** A merchant on a plan with `discount-code-pro-generator = 10000` can generate 10,000 codes in one batch from the admin panel but only **5,000 in a single random-mode API call**. To exceed 5,000 via random API calls, the integrator must issue multiple sequential calls.
 
@@ -54,16 +54,15 @@ In **random** mode the JSON-API v2 `POST /generate` endpoint is **hard-capped at
 
 **Over-cap random-mode API requests** return HTTP 422 with the validation error pointing at the `limit` field.
 
-### Validation rules carry over
+### Validation rules that differ
 
-The other validation rules carry over **verbatim** between admin and API paths:
+Both paths require a range `from` below `to`, a length of 6-18, and a structure in random mode. The API differs in these ways:
 
-- Range `from < to`.
-- Length 6-18.
-- Numeric-only soft cap (the helper that caps `range_to` when only `numeric` structure is selected).
-- At least one structure flag must be selected.
+- No numbers-only check: `limit` is limited only by the 5,000 cap.
+- A range clash returns *"Some of the codes in the specified range already exist."*
+- Other validation errors use the API's standard messages, not the admin form's.
 
-See [[code-pro-generator-validation]] for the full message reference.
+See [[code-pro-generator-validation]] for the admin message reference.
 
 ### No audit log
 
@@ -71,7 +70,7 @@ The platform does NOT capture an audit-log row for batch generation — no actor
 
 ### For non-batch single-code creation
 
-Use the standard JSON:API resource POST instead. See [[json-api-v2]] for authentication, rate-limit, and the same-side-effects principle, and [[api-discount-codes-pro]] for the resource Schema.
+Use the standard JSON:API resource POST instead. See [[json-api-v2]] for authentication and rate-limit, and [[api-discount-codes-pro]] for the resource Schema.
 
 ## Related
 
@@ -79,8 +78,8 @@ Use the standard JSON:API resource POST instead. See [[json-api-v2]] for authent
 - [[api-discount-codes-pro]] — JSON-API v2 resource (Schema, Attributes, Relationships, the `POST /generate` action).
 - [[code-pro-endpoints-api]] — endpoint catalogue including this action.
 - [[code-pro-generator-business-rules]] — admin-panel cap derivation (which the API does NOT honour for `> 5000`).
-- [[code-pro-generator-validation]] — message reference shared by both paths.
-- [[json-api-v2]] — auth, rate-limit, same-side-effects principle.
+- [[code-pro-generator-validation]] — admin message reference.
+- [[json-api-v2]] — auth, rate-limit.
 - [[settings-api-keys]] — auth credentials for API callers.
 
 ## Open questions

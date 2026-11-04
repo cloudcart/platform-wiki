@@ -6,9 +6,9 @@ related_entity: discount-code
 related_features: [marketing-discounts-code-pro, marketing-discounts]
 aliases: ["Discount Codes PRO side effects", "Code PRO uses recompute", "discount-codes-pro plan gating", "Code PRO cart exclusivity", "discount-codes-pro webhooks"]
 tags: [api, json-api-v2, discounts, code-pro]
-plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
+plan_gates: ["discount_coupon"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 7
 ---
 # Discount Codes PRO API — side effects, plan gating & cart exclusivity
@@ -41,7 +41,7 @@ Not applicable — this aspect covers write-time behaviour. Query reference: see
 - **Targets and customer-groups are written transactionally in `saved`** — every `conditions[]` write deletes existing `targets` rows then re-inserts; same for `customer_groups[]`. A PATCH that omits `conditions` leaves them intact; `conditions: []` clears them; an array replaces the entire set. (Detailed PATCH semantics on [[api-discount-codes-pro-attributes]].)
 - **Bool fields are cast to int on save** — `active`, `code_apply`, `apply_regular_price`, `barcode_prefix`, `only_customer` are cast via `(int)` in the adapter's `saving` hook regardless of input shape.
 - **`name` defaults to `code`** — when `name` is supplied but empty, the adapter falls back to the code string itself.
-- **No dedicated webhook event** for Code PRO CRUD. The platform's `HookEvent` enum exposes only `discount.created` / `discount.updated` / `discount.deleted`, fired from the parent Discount model. A PATCH on a single Code PRO code does NOT fire any of those events directly (the parent's `updated_at` isn't touched by a child-code write). The bulk `generate` controller calls `$discount->customPush` inside a DB transaction, which DOES save the parent — that path can fire `discount.updated`. See [[settings-hooks]].
+- **No dedicated webhook event** for Code PRO CRUD. The platform exposes only `discount.created` / `discount.updated` / `discount.deleted`, fired from the parent Discount record. A write on Code PRO codes, `generate` included, fires none of those. See [[settings-hooks]].
 - **Per-customer caps (`maxused_user`)** enforce per `customer_id` at checkout. Guest checkouts typically create one customer record per email — see [[discount-stacking]] for the edge cases.
 - **No per-product attachment regeneration** — Code PRO codes are code-based, with no storefront listing badges.
 - **No audit log** — no actor, no diff history, no created_by / updated_by. Only the row's `created_at` / `updated_at`.
@@ -50,7 +50,7 @@ Not applicable — this aspect covers write-time behaviour. Query reference: see
 
 ## Plan-feature gating
 
-- **Code PRO availability** — the parent Code PRO Discount requires the `discount-code-pro` plan-feature ON. Per-code POST/PATCH on this endpoint is NOT gated by a per-row counter once the parent exists.
+- **Code PRO availability** — over the API, the parent Code PRO Discount is gated only by the `discount_coupon` counter when created on [[api-discounts]]. Per-code POST/PATCH on this endpoint has no plan check.
 - **Generator batch size** — `POST /generate` enforces the hard `max:5000` validator rule, which does NOT read the merchant's `discount-code-pro-generator` plan-feature value. The JSON-API endpoint is fixed at 5,000 codes per request regardless of plan; only the admin-panel generator on [[marketing-discounts-code-pro-generator]] honours the higher plan-feature cap. See [[api-discount-codes-pro-generator]].
 - When a plan-feature gate fails on a parent-Discount create through [[api-discounts]], the exception surfaces as **HTTP 402 Payment Required** at the api2 handler — not 403.
 

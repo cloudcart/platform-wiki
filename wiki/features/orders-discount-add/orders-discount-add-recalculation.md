@@ -7,7 +7,7 @@ aliases: ["Order discount recalculation", "Discount side effects", "Discount tot
 tags: [orders, discount, recalculation, side-effects, webhooks]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -31,12 +31,12 @@ Nothing directly — this aspect documents the automatic consequences the mercha
 
 ### Recalculation cascade — product re-pricing then totals
 
-On both add and delete, the platform runs (in order, inside one DB transaction):
+Inside one DB transaction, adding runs both steps below and removing runs only the totals step:
 
-1. **Product re-pricing** — re-applies discount logic across the order's products (`updateOrderProductsFromSelf`).
-2. **Totals recompute** — recomputes subtotals, taxes, shipping, and the order total (`updateOrderTotals`).
+1. **Product re-pricing** — re-applies discount logic across the order's products.
+2. **Totals recompute** — recomputes subtotals, taxes, shipping, and the order total.
 
-Both run together; a failure rolls back the entire discount add / delete. Concretely:
+A failure rolls back the entire discount add / delete. Concretely:
 
 - **Subtotal** recalculation.
 - **Tax** recalculation (the new discounted total may fall into a different tax bracket — see [[settings-taxes]]).
@@ -44,11 +44,11 @@ Both run together; a failure rolls back the entire discount add / delete. Concre
 
 ### Existing-discount add sets `overwrite_product_price`
 
-When an existing discount has a CODE and is type `flat` / `percent` (and NOT shipping-targeted), the platform marks the order-discount with `overwrite_product_price = 1`, meaning the discount alters individual line prices instead of applying as a single line-level adjustment. Shipping discounts skip this. This affects how the discount appears on the invoice line items ([[orders-invoice]]).
+When an existing discount has a CODE and is type `flat` / `percent`, the platform marks the order-discount with `overwrite_product_price = 1`. The flag does not decide where the amount goes; the target does. A code for all products changes the product lines, and an Orders over code stays one amount on the order ([[discount-stacking-amount-by-target]]). Free-shipping codes skip the flag.
 
-### Existing-discount add copies code fields but doesn't surface them
+### Existing-discount add copies the code fields
 
-When the merchant picks an existing discount, the saved order-discount record copies the discount's `code`, `code_apply`, `code_prefix`, and `code_format`, but the customer-facing invoice does NOT show the code prominently — the discount appears as a labelled adjustment in the order's totals. The master record stays unchanged except for the recalculated usage count.
+When the merchant picks an existing discount, the saved order-discount record copies the discount's `code`, `code_apply`, `code_prefix`, and `code_format`. A code for all products shows inside each product line with the code in brackets and adds no totals row; in the admin order the figure is per unit (the amount ÷ the quantity). An Orders over code is a row in the totals. The master record stays unchanged except for the recalculated usage count.
 
 ## Business rules
 
@@ -66,11 +66,11 @@ When the merchant picks an existing discount, the saved order-discount record co
 - Master discount's usage restored (existing discounts only).
 - Order recalculated.
 - `order.updated` webhook fires.
-- History entry: `order_discount_remove` (and `order_product_modification_remove` for modification removal).
+- History entry: `order_discount_remove`. Removing order-level modifications writes no history entry.
 
 ### Uses-counter is a RECOUNT, not increment / decrement
 
-Adding an existing discount does NOT simply bump a counter. Instead the platform RECOUNTS the discount's total uses by counting orders that have the discount AND are in a "used status" (default `paid`, `completed`, `fulfilled` — configurable via the discounts-used-statuses setting on [[settings-cart]]). Consequences:
+Adding an existing discount does NOT simply bump a counter. Instead the platform RECOUNTS the discount's total uses by counting orders that have the discount AND are in a "used status" (default `paid`, `completed`, `fulfilled` — configurable in the discount statuses panel, setting `discounts_used_statuses`). Consequences:
 
 - Adding a discount to a **pending** order does NOT bump the counter (pending isn't a used status).
 - Once the order moves to paid / completed / fulfilled, a later event re-triggers the recount and the counter goes up.
@@ -96,10 +96,9 @@ The add / delete actions fire only the `order.updated` webhook for integrations 
 - [[orders-discount-add-form]] — add path that triggers the cascade.
 - [[orders-discount-add-delete]] — delete path that triggers the cascade.
 - [[settings-taxes]] — tax recalculation on discount change.
-- [[settings-cart]] — discounts-used-statuses driving the usage recount.
 - [[settings-hooks]] — `order.updated` webhook.
 - [[orders-history]] — `order_discount_add` / `order_discount_remove` audit entries.
-- [[orders-invoice]] — where `overwrite_product_price` affects line display.
+- [[orders-invoice]] — where the discount shows on the invoice.
 - [[marketing-discounts]] — master record whose usage is recounted.
 - [[order]] — entity page.
 

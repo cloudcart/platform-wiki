@@ -7,11 +7,11 @@ aliases: ["Countdown popup", "Countdown timer module", "Checkout countdown", "Co
 tags: [marketing, discounts, countdown, storefront, popup, timer]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 2
 ---
 
-> Part of [[marketing-discounts-countdown]]. See the hub for the other aspects (editor, eligibility, single-instance rule, cart totals + stacking, programmatic access).
+> Part of [[marketing-discounts-countdown]]. See the hub for the other aspects (editor, eligibility, a second Countdown, cart totals + stacking, programmatic access).
 
 # Countdown discount — storefront popup + timer
 
@@ -19,7 +19,7 @@ source_count: 2
 
 This page documents the customer-facing side of the Countdown discount: the checkout-only popup modal, the celebration animation that plays once on first view, and the live ticking timer rendered in the checkout summary's totals area.
 
-**The timer is checkout-only.** Older wiki phrasing claimed the same timer renders on category pages and product detail pages — that was incorrect. The Countdown timer is rendered ONLY in the checkout summary's totals area; category and product-detail pages do NOT show the countdown timer for this discount type. (The category / product-detail timer overlay seen on other discounts is driven by separate per-product fields like `timer_in_listing` / `timer_in_details` + `date_end`, NOT by Countdown's `countdown_minutes`.)
+**The timer is checkout-only.** The Countdown timer is rendered ONLY in the checkout summary's totals area `(verify)`; category and product-detail pages do NOT show the countdown timer for this discount type. (The category / product-detail timer overlay seen on other discounts is driven by separate per-product fields like `timer_in_listing` / `timer_in_details` + `date_end`, NOT by Countdown's `countdown_minutes`.)
 
 ## Where to find it
 
@@ -46,7 +46,7 @@ The merchant CANNOT trigger the popup outside of the checkout flow, cannot make 
 
 When the storefront's checkout page fetches `/checkout/countdown-discount-popup`:
 
-1. Look up the cart's Countdown discount via `getCountdownDiscount` (already eligibility-filtered — see [[countdown-discount-eligibility]]).
+1. Look up the cart's Countdown discount (already filtered by the validity chain, which does not check `only_customer` or `maxused_user` — see [[countdown-discount-eligibility]]).
 2. If a Countdown is eligible AND `countdown_discount_popup_was_shown` is not yet set on the cart:
    - Set `countdown_discount_popup_was_shown = 1` on the cart meta.
    - Set `countdown_popup_first_showing = <UTC now>` on the cart meta.
@@ -79,7 +79,7 @@ After the initial play the animation does not loop. The merchant can preview the
 
 ### Timer module at checkout
 
-The cart-totals line for Countdown is keyed `discount.before.countdown.<discount_id>` and carries the timer's expiry timestamp (`popupFirstShowDate + countdown_minutes`) as its `value`. The storefront timer module reads this directly to know when to stop ticking.
+The cart-totals line for Countdown is keyed `discount.before.countdown.<discount_id>` and carries the timer's expiry timestamp (first popup view + `countdown_minutes`) as its `value`. The storefront timer module reads this directly to know when to stop ticking.
 
 Merchants don't see this metadata in the admin order view — it's used purely for the storefront countdown module.
 
@@ -97,11 +97,11 @@ Once the platform sets `countdown_discount_popup_was_shown = 1`, subsequent chec
 
 ### Survives navigation, resets on cookie clearing
 
-The `countdown_popup_first_showing` is stored on the cart meta. As long as the customer keeps the same cart (same session / customer account), navigating away and returning doesn't reset the timer. But clearing cookies / logging out / starting a new cart resets the meta, and the timer restarts on the next checkout visit.
+The `countdown_popup_first_showing` is stored on the cart meta. As long as the customer keeps the same cart (same session / customer account), navigating away and returning doesn't reset the timer. But clearing cookies / logging out / starting a new cart resets the meta, and the timer restarts on the next checkout visit `(verify)`.
 
 ### Timer expiry is silent
 
-When a customer's `countdown_minutes` window elapses without an order being placed, the platform does NOT auto-deactivate the parent discount or auto-delete the cart's `countdown_popup_first_showing` meta. The cart-time evaluation simply returns null (the totals line vanishes) until the customer clears their cart or the discount expires by `date_end`.
+When a customer's `countdown_minutes` window elapses without an order being placed, the platform does NOT auto-deactivate the parent discount or auto-delete the cart's `countdown_popup_first_showing` meta. The totals line vanishes until the customer clears their cart `(verify)` or the discount expires by `date_end`.
 
 ### FastOrder app bypasses the popup entirely
 
@@ -109,7 +109,7 @@ The [[apps-fast-order]] integration (one-page-checkout buy-now flows) explicitly
 
 ### `disable_countdown_discount` cart-context suppression
 
-An internal flag `disable_countdown_discount` on the cart instance suppresses Countdown for specific cart contexts (e.g., admin-edited orders, B2B flows). When set, `getCountdownDiscount` returns null regardless of qualifying conditions. This is normally not user-controlled — set by integration code paths `(verify)`.
+An internal flag `disable_countdown_discount` on the cart suppresses Countdown regardless of qualifying conditions. Only fast order sets it, on the theme checkout and through the storefront API.
 
 ## Related
 
@@ -121,4 +121,4 @@ An internal flag `disable_countdown_discount` on the cart instance suppresses Co
 
 ## Open questions
 
-- Confirm the cart-context contexts that set `disable_countdown_discount` (admin order edit, B2B carts, anything else?) `(verify)`.
+None.

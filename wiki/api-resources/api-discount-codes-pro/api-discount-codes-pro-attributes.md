@@ -6,9 +6,9 @@ related_entity: discount-code
 related_features: [marketing-discounts-code-pro, marketing-discounts]
 aliases: ["Discount Codes PRO API attributes", "Code PRO API attributes", "discount-codes-pro conditions", "discount-codes-pro customer_groups"]
 tags: [api, json-api-v2, discounts, code-pro]
-plan_gates: ["discount-code-pro"]
+plan_gates: ["discount_coupon"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 7
 ---
 # Discount Codes PRO API — attributes & single-code CRUD
@@ -60,6 +60,8 @@ Each entry in the `conditions[]` array carries:
 | `setting` | required with `conditions`; `in:all,product,category,vendor,category_vendor,selection,order_over` | The target for this condition. |
 | `value` | required when `type` is `flat` OR `percent`; `int, min:1` | Discount amount. For `flat` = cents (flat amount). For `percent` = percent × 100, max 10000 (= 100%). |
 | `order_over` | nullable; `int, min:1` | Required when `setting = order_over`. Minimum cart total in cents. |
+
+A `flat` value on `setting: all` comes off every line in full, once per line — see [[discount-stacking-amount-by-target]].
 
 The adapter divides `value` and `order_over` by 100 before save (`convertConditionPricesFromCents`); the model's `setConditions` then converts back to integer cents via the platform code. Each condition row creates one underlying target / setting row on the code.
 

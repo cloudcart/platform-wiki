@@ -3,11 +3,11 @@ type: feature
 nav_path: "Marketing → Discounts → Products → Business rules"
 route_name: discounts-products
 route_path: /admin/marketing/discounts/products/:id
-aliases: ["Discount products business rules", "Fixed discount type guard", "Default fixed discount singleton", "Customer-group fan-out for discount products", "Picker only active products", "Бизнес правила за продукти в отстъпка"]
+aliases: ["Discount products business rules", "Fixed discount type guard", "Default fixed discount singleton", "Customer-group fan-out for discount products", "Бизнес правила за продукти в отстъпка"]
 tags: [marketing, discounts, fixed, products, business-rules, customer-groups, plan-gates]
 plan_gates: ["discount_fixed"]
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 2
 ---
 
@@ -31,8 +31,6 @@ Most of these rules describe behaviour the merchant **inherits** rather than con
 
 - Choosing the parent Fixed discount's customer-group restrictions on the parent edit form.
 - Choosing the parent Fixed discount's date window.
-- Activating products in the catalog before adding them to the discount.
-- Choosing a plan that includes `discount_fixed`.
 
 ## Settings & fields
 
@@ -42,19 +40,19 @@ This page documents behaviour driven by parent-discount settings (customer group
 
 ### Discount-type guard
 
-The parent record must be of type `fixed` — the controller hard-filters to that type. Visiting `/admin/marketing/discounts/products/<some-non-fixed-id>` returns 404. (Quantity discounts have their own products-management UI; this page is shared under the same modern Vue route name, but the backend rejects mismatched types.)
+The parent record must be of type `fixed` — the controller hard-filters to that type. Visiting `/admin/marketing/discounts/products/<some-non-fixed-id>` returns 404. (Quantity discounts have no products page; their tiers are on the discount form.)
 
-### Product picker only returns active products
+### Product picker searches the whole catalog
 
-The Add-modal product picker queries `/admin/api/core/products/search` with the typed string. That endpoint scopes by default to active / published products. Disabled or unpublished products won't appear in the picker — the merchant has to **activate the product first** before they can add it to a Fixed discount. This is also why a merchant who deactivates a product later still sees it on the discount's list (the row stays attached) but cannot re-add it via the picker.
+The Add-modal product picker queries `/admin/api/core/products/search` with the typed string, by product name, SKU or barcode. It finds inactive and unpublished products too; it leaves out wallet and gift-card items.
 
 ### Product picker search source
 
-The same `/admin/api/core/products/search` endpoint is used by other discount targets, cart rules, and the campaign builder — so the merchant sees a **consistent product result set across all of marketing**. A product that's missing from this picker is missing from all of them; the fix is on the product's status, not on the discount.
+The same `/admin/api/core/products/search` endpoint is used by other discount targets, cart rules, and the campaign builder — so the merchant sees a **consistent product result set across all of marketing**.
 
 ### Per-render price formatting
 
-The list cell renders `discount.price` (cents) ÷ 100 as `final`, and `discount.price + discount.save` (cents) ÷ 100 as `total`. The `save` column is precomputed at save time — see [[discounts-products-save-replace]] for the exact formula — so this page does no per-render computation. A merchant who changes the catalog price after saving the discount will NOT see the "Save X EUR" update until the discount row is re-saved.
+The list cell renders `discount.price` (cents) ÷ 100 as `final`, and `discount.price + discount.save` (cents) ÷ 100 as `total`. The `save` column is precomputed at save time — see [[discounts-products-save-replace]] for the exact formula — so this page does no per-render computation. Saving the product recalculates the saving automatically while the discount is active and unexpired.
 
 ### Single-source-of-truth for the product's discount data
 
@@ -62,7 +60,7 @@ The list endpoint returns rows grouped by `product_id` (one row per product, not
 
 ### Plan-gating
 
-This page inherits the `discount_fixed` plan feature from the parent Fixed discount. Merchants on plans without Fixed discounts can't reach this page (the parent discount type can't be created — see [[marketing-discounts]] for the gate).
+Creating a Fixed discount is checked by plan on create only — see [[fixed-discount-plan-gates]]. This page itself has no plan check.
 
 ### Permission
 
@@ -72,28 +70,28 @@ The page and all CRUD endpoints are scoped under the standard `marketing.discoun
 
 The platform has a concept of a **default Fixed discount** — a singleton Fixed discount marked with `for_products = yes` meta, auto-created on first need. Used as a fallback container for products discounted ad-hoc (e.g., via inline price edits on the product page). Most merchants never see this; it's an internal helper. A merchant who notices an unexpected Fixed discount appearing in their list is usually seeing this auto-created singleton — they shouldn't delete it manually.
 
-### Customer-group fan-out happens at the parent discount's save, not here
+### Customer groups are copied when a product's prices are saved
 
-When the parent Fixed discount has customer-group restrictions, the platform clones each variant row per group at the **parent's** save time. This products-list page doesn't expose customer groups — it inherits them from the parent. The merchant who wants to set per-customer-group prices must rely on Fixed discount's customer-group fan-out — they cannot override per-product per-group from this UI.
+When the parent Fixed discount has customer-group restrictions, the platform clones each variant row per group when a product's prices are saved here. This products-list page doesn't expose customer groups — it inherits them from the parent. Changing groups on an existing Fixed discount does not change products already attached until each is edited. The merchant who wants to set per-customer-group prices must rely on Fixed discount's customer-group fan-out — they cannot override per-product per-group from this UI.
 
 ### Per-variant date and discount_id inheritance
 
 When inserting variant rows, missing `date_start`, `date_end`, and parent-discount linkage are auto-filled from the parent discount before insert. Editing the parent discount's date range automatically updates every variant row's dates via the underlying model's update hook — the merchant doesn't have to re-save each product. See [[discounts-products-save-replace]] for the row-write details.
 
-### `fixed_price >= variant.price` is silently dropped
+### A price above the catalog price fails the save
 
-A row that fails the *"strictly cheaper than catalog"* check on save is **skipped without an error message**. The merchant sees the saved discount with FEWER variants than they entered. See [[discounts-products-save-replace]] for the full sequence — combined with the full-replace semantics, this is the single most common cause of "my discount lost variants" tickets.
+A price above the variant's catalog price fails the whole save with *"Price must be at least 1 and less than <variant.price>"*; nothing is dropped. A price equal to the catalog price is saved with no saving. See [[discounts-products-save-replace]].
 
 ## Related
 
 - [[marketing-discounts-products]] — hub.
 - [[marketing-discounts-fixed]] — parent discount; customer groups + date window are set here.
-- [[discounts-products-save-replace]] — the row-write details that the silent-drop and inheritance rules depend on.
+- [[discounts-products-save-replace]] — the row-write details that the inheritance rules depend on.
 - [[discounts-products-fields]] — error messages referenced inline.
 - [[customers-custom-groups]] — customer-group fan-out trigger.
-- [[products-products]] — product activation rule (only active products appear in the picker).
+- [[products-products]] — the products the picker searches.
 - [[marketing-discounts]] — `discount_fixed` plan gate.
-- [[settings-hooks]] — `discount.updated` webhook on each save / toggle / delete.
+- [[settings-hooks]] — `discount.updated` fires when the discount record itself is saved, not on product changes here.
 
 ## Open questions
 

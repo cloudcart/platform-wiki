@@ -8,7 +8,7 @@ aliases: ["Discounts API examples", "discounts curl examples", "discounts testin
 tags: [api, json-api-v2, discounts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 8
 ---
 # Discounts API — worked examples & testing checklist
@@ -54,7 +54,9 @@ curl -X GET 'https://<store-host>/api/v2/discounts?filter[discount_type]=percent
 
 Expected: `200 OK`.
 
-#### POST — create a flat discount (50 EUR off cart-wide)
+#### POST — create a flat discount (50 EUR off every product)
+
+Without a code, target `all` means 50 EUR off each unit of every product priced at 50 EUR or more, with no cart-level deduction. See [[discount-stacking-amount-by-target]].
 
 ```bash
 curl -X POST 'https://<store-host>/api/v2/discounts' \
@@ -94,7 +96,7 @@ curl -X POST 'https://<store-host>/api/v2/discounts' \
         "discount_type": "percent",
         "date_start": "2026-06-01",
         "date_end": "2026-08-31",
-        "type_value": 10,
+        "type_value": 1000,
         "active": "yes",
         "target": {
           "type": "product",
@@ -192,7 +194,7 @@ curl -X PATCH 'https://<store-host>/api/v2/discounts/42' \
   }'
 ```
 
-Expected: `200 OK`.
+Expected: `200 OK` (verify).
 
 #### DELETE
 
@@ -219,7 +221,7 @@ Expected: `204 No Content`.
         "discount_type": "percent",
         "date_start": "2026-06-01",
         "date_end": "2026-08-31",
-        "type_value": 10,
+        "type_value": 1000,
         "order_over": null,
         "max_uses": null,
         "code": null,
@@ -279,7 +281,7 @@ Expected: `204 No Content`.
       "discount_type": "percent",
       "date_start": "2026-06-01",
       "date_end": "2026-08-31",
-      "type_value": 10,
+      "type_value": 1000,
       "active": "yes",
       "uses": 0,
       "settings": "product",
@@ -314,7 +316,7 @@ Expected: `204 No Content`.
     {
       "status": "422",
       "title": "Unprocessable Entity",
-      "detail": "The order over field is required when target.type is order_over.",
+      "detail": "The order over field is required when target type is order_over.",
       "source": { "pointer": "/data/attributes/order_over" }
     }
   ]
@@ -373,12 +375,12 @@ End-to-end sequence for an AI agent to verify CRUD parity against a real store:
 ```
 1. GET /api/v2/discounts?page[size]=5
    → expect 200, confirm read access.
-2. POST /api/v2/discounts with discount_type=percent, target={type:all}, type_value=10, date_start=<today>
+2. POST /api/v2/discounts with discount_type=percent, target={type:all}, type_value=1000, date_start=<today>
    → expect 201, capture {id}.
 3. GET /api/v2/discounts/{id}
    → expect 200; verify name, discount_type, type_value, target match the POST.
 4. PATCH /api/v2/discounts/{id} with attributes.active="no"
-   → expect 200.
+   → expect 200 (verify).
 5. GET /api/v2/discounts/{id}
    → expect 200; verify active="no".
 6. POST /api/v2/discounts with discount_type=percent BUT no type_value

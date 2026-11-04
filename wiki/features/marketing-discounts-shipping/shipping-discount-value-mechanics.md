@@ -7,7 +7,7 @@ aliases: ["Free shipping value mechanics", "Shipping discount totals lines", "Fr
 tags: [marketing, discounts, shipping, totals, cart, value-type]
 plan_gates: ["discount_global", "discount_coupon"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -29,7 +29,7 @@ The value-type behaviour is determined by setting **Discount type → Free shipp
 
 - Set `type = shipping` from the Discount type select.
 - (Cannot) set a numeric `type_value` — the value-type IS the binary "remove shipping line".
-- Name the discount via `name`; the value rendered on the customer's cart-totals row is `name` only (no parenthetical suffix).
+- Name the discount via `name`; a no-code row shows the `name` only, and a code row shows the `name` and the code.
 
 ## Settings & fields
 
@@ -62,14 +62,14 @@ The actual saved amount is therefore **the shipping quote at the moment of check
 
 When the platform builds the cart's totals at checkout time:
 
-1. It computes the cart subtotal (line-items + taxes-before-shipping).
+1. It computes the total before shipping (line items, minus whole-order discounts, plus before-shipping taxes).
 2. It computes the shipping provider's quote (the chosen carrier + region + weight + insurance).
 3. It looks up active shipping discounts:
    - Match active scope (status + dates + uses) — see [[shipping-discount-eligibility]].
-   - Match customer group + region + `only_customer`.
-   - For target `order_over`: subtotal ≥ `order_over`.
-   - For target `all`: no additional check.
-4. If a code is in the cart and it's a shipping-typed code, the platform also runs the `code_apply` stacking rule — see [[shipping-discount-stacking]].
+   - Match customer group + region + specific customers.
+   - With a minimum (`order_over`): total before shipping at or above it.
+   - With no minimum saved: no additional check.
+4. If no no-code discount took the row and a shipping-typed code is in the cart, the code applies; its `code_apply` rule was checked at entry — see [[shipping-discount-stacking]].
 5. If a match wins, the platform adds two paired totals lines: the shipping quote (positive) and a free-shipping discount line of the same magnitude (negative). The net is zero.
 6. Order totals recompute with shipping effectively zeroed out.
 
@@ -77,8 +77,8 @@ When the platform builds the cart's totals at checkout time:
 
 Some shipping providers (e.g., couriers with delivery-hour add-ons) integrate with the platform's shipping totals. The free-shipping discount runs **on top of the provider's quote** — whatever amount the provider quotes is what the discount zeroes out. This means:
 
-- Insurance add-ons quoted by the provider are NOT separately discounted by free-shipping (they remain billed unless the provider folds them into the main quote).
-- "Pay to sender" providers (cash-on-delivery markup) — the markup is part of the shipping quote and IS removed by the free-shipping discount.
+- Insurance appears as text on the shipping row. There is no separate insurance row, and the free-shipping row equals the whole shipping row.
+- A courier's "pay to sender" setting is about who is paid for shipping, not a cash-on-delivery fee.
 - The actual saved amount is variable per order — surface it on order-detail rows for transparency.
 
 ### Free shipping applies to whatever the carrier quotes — including COD surcharges
@@ -87,14 +87,13 @@ The free-shipping discount zeroes out the shipping quote at the cart-totals leve
 
 - The carrier's base rate is removed.
 - "Cash on delivery" surcharges (when folded into the carrier's quote) are removed.
-- Insurance add-ons quoted as SEPARATE line items may NOT be removed (they're not part of the shipping quote).
 - The carrier's per-product surcharges (oversized items, fragile handling) are removed if part of the main quote.
 
-Merchants who want to discount only the base rate (not insurance) need to use [[apps-cart-rules|Cart Rules]] instead — Discounts can't distinguish quote sub-components.
+Neither Discounts nor [[apps-cart-rules|Cart Rules]] can target part of the quote: free shipping always zeroes the whole shipping row.
 
-### Discount-line description on shipping totals is always null
+### What the free-shipping row shows
 
-When a Free shipping discount appears in the cart-totals breakdown, the description field (typically used by Percent discounts to surface the percentage) is **always null** for shipping. The customer sees the discount line labeled with the discount's `name` only — no parenthetical "(-N%)" or "(-N EUR)" suffix.
+A no-code Free shipping row is labeled with the discount's `name` only — no parenthetical "(-N%)" or "(-N EUR)" suffix. A code row shows the `name` and the code.
 
 If the merchant wants the customer to see a specific phrase next to the free-shipping line on the cart summary, they should encode it in the discount's `name` field directly.
 
@@ -106,11 +105,10 @@ The discount's `name` field is rendered as the discount line's label, so merchan
 
 ### Save validation — type-specific rules
 
-The backend validator enforces, for `type = shipping`:
+The admin form's save enforces, for `type = shipping`:
 
 - `type_value` must be empty — else: *"Type value must be empty"*.
-- `force_save` is required — see [[shipping-discount-force-save]].
-- `products` and `product_categories` arrays are rejected — *"Type is not valid for products or product category targets"* (see [[shipping-discount-eligibility]] for the full target-restriction story).
+- `force_save` has to be sent, on or off — see [[shipping-discount-force-save]].
 - `type` must be one of `flat`, `percent`, `shipping`, `fixed`, `quantity` — else: *"Type must be one of: flat, percent, shipping, quantity"*.
 - All common discount rules apply (name length, code uniqueness for code-based shipping, etc.).
 
@@ -122,7 +120,7 @@ If the cart's shipping quote is already 0 (e.g., pickup, digital-only carts, or 
 
 - [[marketing-discounts-shipping]] — hub.
 - [[shipping]] — store's shipping providers; the free-shipping discount zeroes out the provider's quote.
-- [[apps-cart-rules]] — for partial-shipping discounts (e.g., "10% off shipping") or insurance-aware promos.
+- [[apps-cart-rules]] — Cart Rule free shipping, which also zeroes the whole row.
 
 ## Open questions
 

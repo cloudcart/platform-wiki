@@ -4,7 +4,7 @@ nav_path: "Entity → Discount → Webhooks and API"
 aliases: ["Discount webhooks", "Discount API", "Discount JSON-API v2", "discount.created", "discount.updated", "discount.deleted"]
 tags: [marketing, discounts, entity, webhooks, api]
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 6
 ---
 
@@ -14,7 +14,7 @@ source_count: 6
 
 ## Identity
 
-How the Discount entity is exposed for programmatic access — webhook events on CRUD, the internal `DiscountStatusChange` event used by the admin UI, and the JSON-API v2 endpoints / allowlist / same-side-effects guarantee.
+How the Discount entity is exposed for programmatic access — webhook events and the JSON-API v2 endpoints and allowlist.
 
 ## Aliases
 
@@ -25,21 +25,15 @@ How the Discount entity is exposed for programmatic access — webhook events on
 
 ### Webhook events
 
-Discount CRUD fires three webhook events via [[settings-hooks]]:
+Three webhook events fire via [[settings-hooks]]:
 
 | Event | When |
 |-------|------|
-| `discount.created` | A discount is created. |
-| `discount.updated` | A discount is edited or its `active` toggled. |
-| `discount.deleted` | A discount is deleted. |
+| `discount.created` | A discount record is saved for the first time through the form or JSON-API. |
+| `discount.updated` | A discount record is saved through the form or JSON-API. |
+| `discount.deleted` | A discount is deleted through JSON-API. |
 
-PRO child-code CRUD fires the parent discount's `discount.updated` event, not a separate event. (verify)
-
-### Internal `DiscountStatusChange` event (admin UI only)
-
-Toggling a discount's `active` flag fires the internal `DiscountStatusChange` event (broadcasted on the `discount` private channel for real-time admin UI updates) IN ADDITION to the `discount.updated` webhook. The webhook captures all discount edits including the active toggle; the broadcast event is specifically for the admin UI's per-product attachment regeneration spinner.
-
-This event is **internal** — merchants subscribing to webhooks should rely on `discount.updated`, not the private channel.
+The Active switch, bulk status, list delete, `changeDiscountsStatus`, `discountsBulkDelete`, the expiry sweep, the uses recount, and any change to Fixed products, Code PRO codes or Container codes send none.
 
 ### JSON-API v2 endpoints
 
@@ -49,21 +43,22 @@ The Discount entity is exposed via **JSON-API v2** — see [[api-discounts]] for
 
 **Relationships:** `products`, `categories`, `vendors`, `selections`, `customer-groups`, `geo-zone`.
 
-### Same-side-effects principle
+### Side effects of an API write
 
-Reads use the `index` / `show` endpoints; writes (POST / PATCH / DELETE) trigger **the same pipeline as the admin-panel save**:
+Reads use the `index` / `show` endpoints. A POST / PATCH runs the same save steps as the admin form:
 
-- Plan-feature usage-counter consumption (HTTP **402** on overflow).
-- Per-product attachment recompute (see [[discount-entity-lifecycle]]).
+- Plan quota check on create (HTTP **402** over quota).
+- Per-variant row recompute (see [[discount-entity-lifecycle]]).
 - Smart-collection refresh.
 - Listing-engine repath.
-- The 10-minute activation cooldown.
-- `discount.created` / `discount.updated` / `discount.deleted` webhooks via [[settings-hooks]].
-- Audit-log entry with `api2` as the source.
+- `discount.created` / `discount.updated` webhooks via [[settings-hooks]].
 
-### Type allowlist (admin parity)
+Neither API runs the admin form's checks; the three paths have separate validation.
 
-API writes are subject to the **same 5-type allowlist** as the admin-panel:
+
+### Type allowlist
+
+JSON-API v2 writes allow **5 types**:
 
 - `percent`
 - `flat`
@@ -71,29 +66,30 @@ API writes are subject to the **same 5-type allowlist** as the admin-panel:
 - `shipping`
 - `code-pro`
 
-`quantity` and `countdown` discounts cannot be created via JSON-API v2 (admin-panel only).
+The admin panel also creates Quantity, Countdown and Container discounts; those cannot be created via JSON-API v2.
+
 
 ### `uses` counter recompute parity
 
-The `uses` counter is recomputed identically (10-second-delayed job on `order-events6` queue) on order-status transitions to counted statuses regardless of how the parent discount was created — admin UI or API. See [[discount-entity-lifecycle]] for the full recompute semantics.
+The `uses` counter is recomputed identically (a 10-second-delayed job) on order-status changes regardless of how the discount was created — admin UI or API. See [[discount-entity-lifecycle]] for the full recompute semantics.
 
 ### Error responses
 
-- **HTTP 402** — plan-feature overflow (e.g., trying to create a 6th `discount_global` on a 5-cap plan).
-- **HTTP 422** — validation failure (e.g., `date_end <= date_start`, `flat` over 100,000 cents, etc. — see [[discount-entity-business-rules]] for the full validation set).
+- **HTTP 402** — over a plan quota on create (`discount_global`, `discount_fixed` or `discount_coupon`).
+- **HTTP 422** — validation failure from the API's own rules. The admin form's checks do not run here, so a percent is not limited to 100, and values are stored as sent (percent × 100, so 1000 means 10%).
 
 ## Where it appears
 
 - [[api-discounts]] — the JSON-API v2 endpoint catalogue.
 - [[settings-hooks]] — the webhook subscription screen where merchants enable `discount.created` / `discount.updated` / `discount.deleted`.
-- [[json-api-v2]] — the cross-cutting API concept (authentication, rate-limit, same-side-effects principle).
+- [[json-api-v2]] — the cross-cutting API concept (authentication, rate-limit).
 
 ## Related
 
 - [[discount]] — hub.
 - [[discount-entity-fields]] — fields exposed via the API.
 - [[discount-entity-lifecycle]] — `uses` recompute (parity with admin).
-- [[discount-entity-business-rules]] — validation enforced on API writes (HTTP 422).
+- [[discount-entity-business-rules]] — the admin form's rules and amount limits.
 - [[api-discounts]] — endpoint reference.
 - [[settings-hooks]] — webhook subscription.
 - [[json-api-v2]] — API concept.

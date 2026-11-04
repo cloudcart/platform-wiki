@@ -8,7 +8,7 @@ aliases: ["Order discount API", "Applied discount API", "JSON-API v2 order-disco
 tags: [api, json-api-v2, orders, discounts]
 plan_gates: []
 created: 2026-05-26
-updated: 2026-06-05
+updated: 2026-11-04
 source_count: 3
 ---
 # Order Discount (JSON-API v2)
@@ -38,12 +38,12 @@ All attributes are returned by GET only.
 | `order_id` | integer | Parent order. |
 | `discount_id` | integer | FK to the catalog [[discount\|Discount]] definition (nullable if the catalog row was deleted after order — snapshot fields below survive). |
 | `order_product_id` | integer | Nullable — set when the discount targets a specific line item; `null` for order-level discounts. |
-| `parent_id` | integer | Nullable — chains targets for multi-target discounts; when a parent `order-discount` row is deleted, all `parent_id`-children rows are deleted too (per the model's `deleting` hook). |
+| `parent_id` | integer | Nullable — set on a line's code row and points to the order's row for that code. One order can return an order-level row plus one row per discounted line for the same code, so do not sum them. When the order-level row is deleted, its line rows are deleted too. |
 | `name` | string | Discount name snapshot at order time. |
 | `code` | string | Discount code snapshot (the code the customer typed at checkout, if any). |
 | `discount_type` | string (appended) | The discount classification — `flat` (fixed-amount), `percent`, `shipping` (free / discounted shipping), `fixed` (fixed-price override). Mapped from the underlying `type` column (which is hidden on the response). |
-| `type_value` | number | The discount value (`10` for 10%, `5.00` for €5 off, etc.). |
-| `order_over` | number | Minimum order subtotal for the discount to apply (snapshot). |
+| `type_value` | number | The discount value as stored: percent × 100 (`1000` = 10%), flat in cents (`500` = 5.00). |
+| `order_over` | number | Order threshold in cents (snapshot). |
 | `apply_regular_price` | enum `yes` / `no` | Whether the discount applied on the regular price or the already-discounted price (per [[discount-stacking]]). |
 
 **Hidden by default:** `type` (the raw column — surfaced as `discount_type` via the appended accessor instead).
@@ -146,7 +146,7 @@ curl -s -X DELETE \
         "name": "Summer 20% off",
         "code": "SUMMER20",
         "discount_type": "percent",
-        "type_value": 20,
+        "type_value": 2000,
         "order_over": 0,
         "apply_regular_price": "yes"
       },
@@ -198,4 +198,4 @@ HTTP 405 Method Not Allowed
 ## Open questions
 
 - Verify whether deleting an `order-discount` row through admin actions cascades to the `order_total` rows accurately (totals recompute, but the relationship between the discount-row deletion and the resulting [[api-order-total]] adjustments is subtle).
-- Confirm exact semantics of `parent_id` for multi-target discounts (e.g., a single 10%-off-everything discount that creates separate per-line-item child rows linked to one parent row).
+

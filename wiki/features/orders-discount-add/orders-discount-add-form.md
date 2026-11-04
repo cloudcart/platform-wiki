@@ -7,7 +7,7 @@ aliases: ["Add discount modal", "Add discount form", "Order discount form fields
 tags: [orders, discount, smarty, form]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -45,7 +45,7 @@ Picking an option reveals the matching sub-form below; picking nothing hides eve
 |-------|---------|---------|-------|
 | **Choose target** | Select2 dropdown (name `discount_target_id`) | empty | Options come from the backend-pre-filtered `$discounts_targets` map keyed by `DiscountToTarget` id. Label format: discount name (+ code / barcode-prefix in parens when the discount has a code). |
 
-If there are NO eligible existing discounts, an inline `alert-danger` shows instead of the dropdown: *"No discounts available"* (`order.err.no_discounts`). The eligibility filter that builds this list is documented on [[orders-discount-add-existing-eligibility]].
+If there are NO eligible existing discounts, an inline `alert-danger` shows instead of the dropdown: *"There are no discounts available."* (`order.err.no_discounts`). The eligibility filter that builds this list is documented on [[orders-discount-add-existing-eligibility]].
 
 ### "Manual discount" sub-form (revealed when `discount_variant = manual`)
 
@@ -54,14 +54,14 @@ If there are NO eligible existing discounts, an inline `alert-danger` shows inst
 | **Discount type** | Select2 dropdown (name `type`, id `order_discount_type`) | **Percent** (selected) | Two options: `flat` ("Flat") OR `percent` ("Percent"). |
 | **Discount amount** | Text input (name `type_value`) | empty | Dynamic mask: when type = Percent, percent-mask + `%` affix on the right. When type = Flat, currency-mask + currency symbol (position before / after per the site's `currency.position` setting). Switches live via jQuery `switchClass` + `App.initAjaxInputMasks` on type change. |
 
-The default type is **Percent**, not Flat — the merchant must explicitly switch to Flat for currency-amount discounts. The detailed manual-discount validation (flat-less-than-subtotal, percent clamping) is on [[orders-discount-add-manual]].
+The default type is **Percent**, not Flat — the merchant must explicitly switch to Flat for currency-amount discounts. The manual-discount rules are on [[orders-discount-add-manual]].
 
-### Submission validation (the request validator)
+### Submission validation
 
 - `discount_variant` required, one of `existing` / `manual`.
 - `discount_target_id` required when `variant = existing`.
 - `type` required when `variant = manual`, one of `flat` / `percent`.
-- Custom `type_value` validator: flat requires `value < order.price_subtotal` (error *"Flat discount must be less than order subtotal"*); percent requires a non-empty value. Either type rejects empty value with a type-specific message.
+- `type_value` may be empty, in which case a zero-value discount is saved. On save, an amount above the subtotal is refused with *"The value of the rebate can not exceed the subtotal of the order"* — see [[orders-discount-add-manual]].
 
 On success, the form fires `cc.ajax.reload` on `#order_preview`, `#order_summary`, and `#order_history`.
 

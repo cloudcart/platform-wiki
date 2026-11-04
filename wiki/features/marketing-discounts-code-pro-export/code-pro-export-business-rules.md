@@ -7,7 +7,7 @@ aliases: ["Code PRO export business rules", "Export no filter scope", "Export co
 tags: [marketing, discounts, code-pro, export, csv]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -26,7 +26,7 @@ These rules govern the `discount-codes-pro.csv` file produced by the "Export" to
 ## What the merchant can do here
 
 - **Predict the file scope** — the export always contains the complete codes list for the chosen discount, never a filtered subset.
-- **Read the condition target type in merchant terms** — the export normalises raw backend setting names into the categories the merchant recognises (product-targeted vs cart-wide vs free-shipping vs over-threshold).
+- **Read the condition target type in merchant terms** — the export normalises raw backend setting names into the categories the merchant recognises (product-targeted vs every product in the cart vs free-shipping vs over-threshold).
 - **Rely on the same permission they already have** — if they can see the Code PRO discount, they can export it.
 
 ## Settings & fields
@@ -41,14 +41,14 @@ The export always emits the **full codes list** for the chosen discount. Even th
 
 ### Condition type semantics in the CSV
 
-The "Condition i type" column doesn't carry the **discount type** (flat / percent / shipping) — that's in "Condition i type value". Instead "type" carries the **target type**, with some normalisation:
+The "Condition i type" column doesn't carry the **discount type** (flat / percent) — that's in "Condition i type value". Instead "type" carries the **target type**, with some normalisation:
 
-- `setting = 'all'` with non-shipping type → emitted as `all_products`.
+- `setting = 'all'` with non-shipping type → emitted as `all_products` ("For every product in the cart": per line, not a cart-level amount).
 - `setting = 'order_over'` with non-shipping type → emitted as `order_over`.
 - `type = 'shipping'` (any setting) → emitted as `free_shipping`, with `order_over` filled if present.
 - `setting in ('product', 'category', 'vendor', 'selection', 'category_vendor')` → emitted as the setting name.
 
-This mirrors how merchants typically think about discount targeting (product-targeted vs cart-wide vs free-shipping vs over-threshold) better than the raw backend setting names. The companion "Condition i type value" column carries the discount mechanic (`flat` / `percent` / `shipping`), so the merchant can correlate target type with mechanic without back-translating. Both columns are listed on [[code-pro-export-columns]].
+This mirrors how merchants typically think about discount targeting (product-targeted vs every product in the cart vs free-shipping vs over-threshold) better than the raw backend setting names. The companion "Condition i type value" column carries the discount mechanic (`flat` / `percent`, empty on free-shipping rows), so the merchant can correlate target type with mechanic without back-translating. Both columns are listed on [[code-pro-export-columns]].
 
 ### Many target records per condition
 

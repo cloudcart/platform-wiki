@@ -5,9 +5,9 @@ route_name: discounts-codes_list
 route_path: /admin/marketing/discounts/codes
 aliases: ["Container codes list view", "Container codes row actions", "Container codes bulk actions", "Container codes columns", "Списък с промо кодове", "Масови действия върху промо кодове"]
 tags: [marketing, discounts, coupons, container, list-view, bulk-actions]
-plan_gates: ["discount_coupon"]
+plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-The list view is what the merchant sees when they open **Promo code management** on a Container discount. It shows every single-use code generated under all of the store's Container discounts, lets the merchant copy a code as a shareable cart link, toggle a code on/off, and run bulk status / delete operations. There is **no per-code edit form** — a code is generated, toggled, or removed, never edited in place.
+The list view is what the merchant sees when they open **Promo code management** on a Container discount. It shows every code in the store's shared Container code pool, lets the merchant copy a code as a shareable cart link, toggle a code on/off, and run bulk status / delete operations. There is **no per-code edit form** — a code is generated, toggled, or removed, never edited in place.
 
 ## Where to find it
 
@@ -30,7 +30,7 @@ From any Container-discount row in the [[marketing-discounts]] table, click "Pro
 - **Filter** by **Active** state (Yes / No).
 - **Sort** by Code, Value, Created At, or Active.
 - **Search** the table to find a specific generated code by string.
-- **Toggle a single code** active / inactive via the row switch. Inactive codes are rejected at checkout (the customer sees "invalid code").
+- **Toggle a single code** active / inactive via the row switch. An inactive code can no longer be typed at checkout (the customer sees *"Invalid discount code"*) — see [[discounts-codes-redemption]].
 - **Bulk-toggle status and bulk-delete** via the table action bar.
 - **Generate a new batch** via the *Generate codes* action — opens the modal documented on [[discounts-codes-generator]].
 
@@ -38,7 +38,6 @@ From any Container-discount row in the [[marketing-discounts]] table, click "Pro
 
 - **Edit an existing code's type or value** — there is no per-code form. A wrong-value code can only be deleted (or deactivated) and replaced.
 - **Choose the length, prefix, or character set** of generated codes — hard-coded at 10 characters, uppercase A-Z plus digits 0-9. For finer control use [[marketing-discounts-code-pro-generator]] (see [[discounts-codes-vs-code-pro]]).
-- **Generate more than 1,000 codes in one request on the legacy generator** — its validator returns *"You can generate maximum 1000 promo codes"*. The modern Vue "Generate codes" modal has no upper cap (see [[discounts-codes-generator]]).
 
 ## Settings & fields
 
@@ -74,9 +73,9 @@ The per-row Remove confirmation message is *"Remove this code?"*.
 
 ## Business rules
 
-- **Toggle revokes without deleting.** The per-row Active toggle flips the code's `active` flag. An inactive code is rejected at checkout — the customer sees the "invalid code" message. Use this to revoke leaked codes while preserving their history for analytics.
-- **Delete is a direct removal, parent untouched.** Deleting a Container code removes the code row directly. The parent Container discount is untouched, and historical order-discount rows that reference the deleted code remain in place for accounting — see [[discounts-codes-parent-terms]] for the cascade detail.
-- **No "uses" counter per code in this listing.** The merchant sees only the active flag (active = available; inactive = consumed or manually disabled). The parent's aggregate `uses` counter is documented on [[discounts-codes-parent-terms]].
+- **Toggle stops typing, without deleting.** The per-row Active toggle flips the code's `active` flag, and an inactive code typed at checkout gets *"Invalid discount code"*. To retire a leaked code fully, delete it.
+- **Delete is a direct removal.** Deleting a Container code removes the code row directly. No Container discount changes, and historical order-discount rows that reference the deleted code remain in place for accounting — see [[discounts-codes-parent-terms]].
+- **No "uses" counter per code in this listing.** Use is not tracked per code and an order does not change a code's row; the active flag shows only the merchant's own toggle. A Container's aggregate `uses` counter is documented on [[discounts-codes-parent-terms]].
 - **Permission.** The page and its endpoints are scoped under the same `marketing.discounts` permission as the rest of the Discounts engine.
 
 ## Related

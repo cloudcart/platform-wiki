@@ -7,7 +7,7 @@ aliases: ["Generator fields", "Generator backend keys", "Code PRO generator fiel
 tags: [marketing, discounts, coupons, code-pro, bulk-generation]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 5
 ---
 
@@ -36,7 +36,7 @@ Configure both the **generator-type-specific fields** (Range or Random parameter
 | **Generator type** | `code.generator_type` | `range` or `random`. | Implicit; defaults to `range`. |
 | **From** (range) | `code.from` | First integer in the sequence. | Required if generator_type = range; numeric, int, 1-999999999999999; numeric-range validator checks total count ≤ plan cap. |
 | **To** (range) | `code.to` | Last integer in the sequence. | Required if generator_type = range; numeric, int, 1-999999999999999; must be greater than `code.from`. |
-| **Limit** (random) | `code.limit` | How many codes to produce. | Required if generator_type = random; numeric, int, 1-`<plan-cap>`; numeric-random validator checks against max representable numeric of `length`. |
+| **Limit** (random) | `code.limit` | How many codes to produce. | Required if generator_type = random; numeric, int, 1-`<plan-cap>`; numbers-only with a fixed `length` is rejected at or above the largest number that length holds. |
 | **Length** (random) | `code.length` | Characters per code (uniform across the batch). | Numeric, int, 6-18; nullable (blank = random length per code between 6 and 18). |
 | **Structure** (random) | `code.structure[]` | Array containing `alpha` and/or `numeric`. | Required if generator_type = random; array; at least one element. |
 
@@ -48,10 +48,9 @@ These propagate uniformly — every code in the batch carries the **same** value
 
 | Field | Backend key | Notes |
 |-------|-------------|-------|
-| **Active** | `active` | Boolean — all generated codes share this flag. |
+| **Active** | `active` | All generated codes are saved as active, whatever the switch says. |
 | **Stack on discounted products** | `code_apply` | Boolean. |
 | **Apply to base price** | `apply_regular_price` | Boolean. Only visible when `code_apply = 1`. |
-| **Barcode prefix** | `barcode_prefix` | Boolean. |
 | **Only registered customers** | `only_customer` | Boolean. |
 | **Region** | `geo_zone_id` or `all_regions` | Either pick a [[geo-zone]] or check "All regions". |
 | **Max uses (total)** | `max_uses` or `unlimited` | Integer 1-100,000 or "Unlimited" → NULL. |
@@ -64,7 +63,7 @@ These propagate uniformly — every code in the batch carries the **same** value
 ## Business rules
 
 - The conditions builder is the **same** repeating `DiscountsCodeProConditionsConfig` block used by the per-code form — see [[code-pro-form]] for the condition schema and types.
-- `date_start` and `date_end` are parsed against the **store's display date format** (e.g., `d.m.Y` for BG, `Y-m-d` for ISO). Merchants typing in their preferred format always work — but copy-pasting a date in a different format will fail validation. The platform does not auto-detect the format.
+- `date_start` and `date_end` are parsed against the **store's display date format** (e.g., `d.m.Y` for BG, `Y-m-d` for ISO).
 - `apply_regular_price` is only visible when `code_apply = 1` — preventing the merchant from saving a nonsensical "stack-off + base-price-on" combination.
 - The campaign-countdown timer field is HIDDEN on this page (`hide-timer: true`) — see [[code-pro-generator-form-layout]] for why.
 

@@ -7,7 +7,7 @@ aliases: ["Remove order discount", "Delete order discount", "Delete modification
 tags: [orders, discount, delete]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-The flow for **removing an order-level discount** — and the sister action that removes any line-level **modifications** the discount introduced. Removing an existing discount also restores its consumed usage on the master [[marketing-discounts]] record.
+The flow for **removing an order-level discount** — and the sister action that removes the order's order-level **modifications**. Removing an existing discount also restores its consumed usage on the master [[marketing-discounts]] record.
 
 ## Where to find it
 
@@ -25,22 +25,22 @@ The flow for **removing an order-level discount** — and the sister action that
 
 Routes:
 - `admin.orders.discount.delete` (GET) — remove the order-level discount.
-- `admin.orders.modifications.delete` (GET) — remove discount-related modifications.
+- `admin.orders.modifications.delete` (GET) — remove the order's order-level modifications.
 
 ## What the merchant can do here
 
 - **Remove the order-level discount** — confirm the browser dialog; the discount is deleted and totals recalculate.
-- **Remove discount-related modifications** — a separate action that clears orphan line-level modifications left behind by an existing discount that had attached modifications.
+- **Remove order-level modifications** — a separate action, shown when the order has any.
 
 ## Settings & fields
 
 ### Delete-discount confirmation
 
-No modal — the Remove button uses a `data-confirm` browser dialog: *"Are you sure you want to remove this discount?"* (`order.confirm.remove_order_discount`). Confirmed = GET to `admin.orders.discount.delete`, which removes ALL non-line-targeted discount records on the order (all where `target_product_id IS NULL`) in one transaction.
+No modal — the Remove button uses a `data-confirm` browser dialog: *"Remove order discount"* (`order.confirm.remove_order_discount`). Confirmed = GET to `admin.orders.discount.delete`, which removes ALL non-line-targeted discount records on the order (all where `target_product_id IS NULL`) in one transaction.
 
 ### Delete-modifications is a SEPARATE flow
 
-The `delete-modifications` route removes ALL order-level modifications (those with no associated order product). This includes fixed-amount payment surcharges, custom line-fees, etc. — not only discount-related modifications. The merchant uses this to clean up orphan modifications AFTER deleting an existing discount that had attached modifications.
+The `delete-modifications` route removes ALL order-level modifications (those with no associated order product), such as a cart rule's amount off the whole order. Discounts do not create modifications, so this action is independent of removing a discount.
 
 ## Business rules
 
@@ -60,7 +60,7 @@ Because the platform enforces one order-level discount at a time ([[orders-disco
 
 ### Delete triggers the recalculation cascade + audit
 
-Removing a discount runs the same re-price → totals → tax → shipping cascade as adding, fires `order.updated`, and writes a history entry. The history action string is `order_discount_remove` (and `order_product_modification_remove` for modification removal). See [[orders-discount-add-recalculation]] and [[orders-history]].
+Removing a discount recalculates totals, tax and shipping, fires `order.updated`, and writes a history entry with the action string `order_discount_remove`. Removing order-level modifications recalculates totals and fires `order.updated` but writes no history entry. See [[orders-discount-add-recalculation]] and [[orders-history]].
 
 ## Related
 

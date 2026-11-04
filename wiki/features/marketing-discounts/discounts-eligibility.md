@@ -7,7 +7,7 @@ aliases: ["Discount eligibility", "Discount stacking", "Customer-group discount 
 tags: [marketing, discounts, promotions, eligibility, stacking, customer-groups, geo-zone]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -17,19 +17,19 @@ source_count: 3
 
 ## Purpose
 
-This aspect covers **who** a discount applies to and **how it composes** with other discounts: customer-group / geo-zone restrictions, the only-registered-users gate, per-customer caps (`maxused_user`), stacking semantics (`code_apply`, `apply_regular_price`), and the save-on-edit flag (`force_save`). These rules apply across every discount type; the cart engine resolves them in a fixed order — see "Resolution order" below.
+This aspect covers **who** a discount applies to and **how it composes** with other discounts: customer-group / geo-zone restrictions, the only-registered-users gate, per-customer caps (`maxused_user`), stacking semantics (`code_apply`, `apply_regular_price`), and the save-on-edit flag (`force_save`). Which of these a form offers depends on the discount type.
 
 ## Where to find it
 
-**Sidebar → Marketing → Discounts → Edit form.** Five field-blocks: **Customer groups**, **Regions** (geo zone), **Registered users only**, **Discount limits** (`max_uses` + `maxused_user`), and **Generate a discount code** (which holds `code_apply` + `apply_regular_price` for code-types).
+**Sidebar → Marketing → Discounts → Edit form.** Field-blocks, depending on the type: **Customer groups** (all types), **Regions** (geo zone; code, Container and Code PRO), **Registered users only** (Global, code, Code PRO, Countdown), **Discount limits** (`max_uses` + `maxused_user`), and **Generate a discount code** (which holds `code_apply` + `apply_regular_price` for code-types).
 
 ## What the merchant can do here
 
 - Restrict a discount to customer groups (loyalty tiers, VIPs, wholesale) and/or a geo zone.
-- Block **guests** entirely — only logged-in customers can use it.
+- Limit a discount to registered customers (`only_customer`).
 - Cap total uses (`max_uses`) and per-customer uses (`maxused_user`).
-- Decide whether a promo code can **stack** on already-discounted products (`code_apply`) and whether it re-evaluates against the original catalog price (`apply_regular_price`).
-- Pin a discount to a saved order so admin edits don't detach it (`force_save`).
+- Decide whether a promo code also applies to lines that already hold a product discount (`code_apply`) and whether it is worked out on the regular price instead (`apply_regular_price`).
+- Keep a discount deducting on a saved order after admin edits (`force_save`).
 
 ## Settings & fields
 
@@ -37,61 +37,63 @@ This aspect covers **who** a discount applies to and **how it composes** with ot
 |---|---|---|---|
 | **All groups** → **Customer groups** | `customer_groups_target` / `customer_groups[]` | An **"All groups"** switch (`customer_groups_target`, default ON); turning it OFF reveals the `customer_groups[]` multi-select to restrict to specific [[customers-custom-groups]]. | Group-list is **not** force-validated: turning "All groups" off and leaving the list empty saves without error (and behaves as no group filter). |
 | **Make it Global** → **Region (Geo zone)** | `all_regions` / `geo_zone_id` | A **"Make it Global"** switch (`all_regions`, default ON); turning it OFF reveals the `geo_zone_id` select to restrict to carts shipping inside one [[geo-zone]]. | Nullable; must exist. |
-| **Only registered users** | `only_customer` | Hides the discount from guest carts. | 1 / 0. |
+| **Only registered users** | `only_customer` | Limits the discount to logged-in customers, see below. | 1 / 0. |
 | **Discount limits** | `max_uses` | Total cap across all customers. NULL = unlimited. | Integer 1–100 000. |
 | **Discount limit for customer** | `maxused_user` | Per-customer cap. NULL = unlimited. | Integer 1–100 000. |
-| **Apply discount even if the cart contains products with a discount** | `code_apply` | Allows code to stack on existing per-product discounts. OFF (default) REJECTS code if any cart line is discounted. | 1 / 0. "Discount" + "Fixed Discount" only. |
-| **Apply to the regular price if this discount is higher** | `apply_regular_price` | Re-evaluates against original catalog price if that yields a bigger discount. | 1 / 0. Only visible when `code_apply = 1`. |
-| **Save the discount on your order** | `force_save` | Preserves discount on saved order despite admin edits. Rendered inside the **Discount target** block, shown only when target = "Orders over" (`order_over`) or for a Free-shipping discount targeting the whole cart. | 1 / 0. Required for `type=shipping` OR `type=flat/percent` with `settings=order_over`. |
+| **The discount is applied even when the cart contains discounted products.** | `code_apply` | ON: the code also applies to lines holding a product discount. OFF (default): see "Stacking" below. | 1 / 0. "Discount" + "Fixed discount" only. |
+| **Apply to the regular price of products, if this discount is greater** | `apply_regular_price` | Works the code out on the regular price and replaces the product discount on a line if that gives a lower price. | 1 / 0. Only visible when `code_apply = 1`. |
+| **Save the discount on your order** | `force_save` | Preserves discount on saved order despite admin edits. Rendered inside the **Discount target** block, shown only when target = "Orders over" (`order_over`) or for a Free-shipping discount on all orders. | 1 / 0. The merchant's own switch; it can be off. |
 
 ## Business rules
 
 ### Customer-group / region matching
 
-The cart engine evaluates against the cart's customer (or the guest group if no customer). `customer_groups[]` requires membership in one of those groups; `geo_zone_id` requires the shipping address to be inside the [[geo-zone]]; `only_customer = 1` blocks guests entirely regardless of the other settings. Customer groups and regions compose with **AND** semantics — a discount restricted to "VIP + Bulgaria" requires both.
+The cart engine evaluates against the cart's customer (or the guest group if no customer). `customer_groups[]` requires membership in one of those groups; `geo_zone_id` requires the shipping address to be inside the [[geo-zone]]. Customer groups and regions compose with **AND** semantics — a discount restricted to "VIP + Bulgaria" requires both.
 
-### Per-customer cap — auto-clear when hit
+`only_customer = 1` is enforced for codes at entry (*"The code is valid only for registered users"*) and for no-code Orders over and Countdown discounts in the totals. The customer list applies to no-code Orders over and no-code free shipping; codes use customer groups.
 
-When `maxused_user` is set, the platform counts how many orders from THIS customer (in counted statuses — see [[discounts-lifecycle]]) have used this discount. When the count reaches `maxused_user`, the cart engine **clears the code from the cart entirely** (not just blocks redemption) and returns *"You have already used this discount the maximum number of times"*. The customer enters a different code or finishes without one. Distinct from `max_uses` (global cap, deactivates for everyone): `maxused_user` only clears it for **this customer**.
+### Per-customer cap
 
-### Stacking — by default, NO stacking on already-discounted items
+When `maxused_user` is set, the platform counts this customer's uses on orders in counted statuses (see [[discounts-lifecycle]]). On Code PRO it counts across the whole campaign. A cancelled order that was already fulfilled still counts here. The limit applies to logged-in customers, on codes at entry and on no-code Orders over and Countdown discounts. When the limit is reached, the cart engine **clears the code from the cart entirely** and returns *"You have used this discount code the maximum number of times"*. Distinct from `max_uses` (global cap, deactivates for everyone): `maxused_user` only clears it for **this customer**.
 
-**The most important merchant-facing rule.** When `code_apply = 0` (default), a promo code is **REJECTED** at checkout if ANY cart line already has a discount applied (typically a Fixed discount on one of the products) `(verify exact validation string)`.
+### Stacking — `code_apply` and lines with a product discount
 
-To **allow** stacking, the merchant turns ON **"Apply discount even if the cart contains products with a discount"** (`code_apply = 1`). With it ON, the code applies on top of existing per-product discounts (additive). If `apply_regular_price = 1` is also ON, the code re-evaluates against the ORIGINAL catalog price (ignoring per-product Fixed discounts) if that would yield a larger total discount — the cart engine picks whichever gives the customer more savings.
+**The most important merchant-facing rule.** Only product-level discounts count as "already discounted". With `code_apply = 0` (default), an Orders-over code or a free-shipping code with a threshold is **refused** at entry if any line holds a product discount, with *"This discount code can not be applied because you already have a discounted products at your cart"*. Free shipping for all orders and Code PRO are refused with *"Invalid discount code"*. A code for every product or a specific target is **accepted**: lines with a product discount are skipped, and if all are discounted nothing comes off and no message shows.
 
-For free-shipping codes with target `all`, the same `code_apply = 0` rule blocks stacking — but `order_over` Free Shipping discounts CAN apply regardless (target type matters).
+With the switch ON (`code_apply = 1`), the code also applies to those lines, on the already reduced amount. If `apply_regular_price = 1` is also ON, the code is worked out on the regular price and compared with the current discounted price: if the code's price is lower it replaces the product discount, otherwise the line keeps the product discount and no code. See [[discount-stacking-code-apply]].
 
-### Cart engine picks ONE `order_over` discount — largest saving wins
+No-code discounts have no such switch.
 
-When the cart qualifies for multiple **non-code `order_over`** Flat / Percent discounts, the engine deduplicates into ONE winner by **largest absolute saving**, NOT highest threshold. Example: "10 EUR off over 50" vs "5 EUR off over 100" on a 150 EUR cart → 10 EUR wins. "20 % off over 50" vs "10 EUR off over 100" on 150 EUR → 30 EUR > 10 EUR, percent wins. Cannot stack two over-amount Flat / Percent discounts on the same cart. Shipping discounts use a separate path (see [[discounts-known-issues]] for the insertion-order ambiguity).
+### One no-code `order_over` discount — highest threshold wins
 
-### Discounts then Cart Rules — fixed ordering
+When the cart qualifies for several **no-code `order_over`** Flat / Percent discounts, the highest threshold the subtotal passes wins, whatever it saves. Example: "10 EUR off over 50" vs "5 EUR off over 100" on a 150 EUR cart → 5 EUR off. "20 % off over 50" vs "10 EUR off over 100" on 150 EUR → 10 EUR off. If that one cannot apply, no other is tried. An Orders-over code can apply alongside it. Shipping discounts use a separate path (see [[discounts-known-issues]]).
 
-[[apps-cart-rules]] run AFTER Discounts at checkout. Cart Rules see the per-line amount **POST-discount** — a "Cart total > 100 EUR" trigger evaluates against the discounted cart, not the pre-discount one. Merchants designing both should remember this when their Cart Rule thresholds seem to "not fire".
+### Cart Rules — after line-level discounts, before order-level discounts
+
+[[apps-cart-rules]] are evaluated after product discounts and line-level codes, and before order-level discounts. A "Cart total > 100 EUR" condition sees the total after product discounts and line-level codes, not after an Orders-over discount, Countdown or payment discount. Those order-level discounts are calculated, and their thresholds checked, on the subtotal after product-level rule reductions. See [[discount-stacking-cart-rules-interaction]].
 
 ### Strictly-greater subtotal check on `order_over`
 
-When a code requires `order_over`, the cart subtotal must be **strictly greater than** the threshold. A 50 EUR threshold rejects a cart at exactly 50 EUR with: *"The cart sum is not over the discount minimum"*. The merchant either sets the threshold slightly below the intended minimum (e.g., 49.99) or accepts the strict-greater semantic. See [[discounts-known-issues]].
+When a code requires `order_over`, the cart subtotal must be **strictly greater than** the threshold. A 50 EUR threshold rejects a cart at exactly 50 EUR with: *"The discount could not be applied because the minimum total price of the products has not been reached."* The merchant either sets the threshold slightly below the intended minimum (e.g., 49.99) or accepts the strict-greater semantic. See [[discounts-known-issues]].
 
 ### `force_save` — discount survives an order edit
 
-When `force_save = 1` and an admin edits a saved order on [[orders-details]], the discount stays on the order even if the new cart contents no longer meet the conditions. Critical for shipping discounts (keep free shipping when the qualifying product is removed) and `order_over` discounts (when admin edits push the cart below threshold). Without it, editing detaches the discount. The flag is **required** by validation when `type = shipping` OR `type = flat/percent` with `settings = order_over`. Each [[marketing-discounts-code-pro]] child code has its OWN `force_save` flag.
+When `force_save = 1` and an admin edits a saved order on [[orders-details]], the discount stays on the order even if the new cart contents no longer meet the conditions. Critical for shipping discounts (keep free shipping when the qualifying product is removed) and `order_over` discounts (when admin edits push the cart below threshold). Without it, the discount stays listed on the order, but stops being deducted while the conditions are not met. It is the merchant's own switch and can be off. Each [[marketing-discounts-code-pro]] child code has its OWN `force_save` flag.
 
 ### Resolution order at checkout
 
-For each cart, the engine evaluates in this fixed order (failing any step skips the discount): **active scope** (see [[discounts-lifecycle]]) → **customer-group match** → **geo-zone match** → **guest gate** (`only_customer`) → **per-customer cap** (`maxused_user`) → **stacking check** (`code_apply`) → **target check** (`settings` + targets). Code-types return a customer-facing message; no-code types silently don't fire.
+A code at entry is checked in this order, and failing any step refuses it: **active scope** (see [[discounts-lifecycle]]) with **customer group** and **region** → **registered-only** (`only_customer`) → **per-customer cap** (`maxused_user`) → **threshold** (`order_over`) → **stacking** (`code_apply`) and **target check**. Code-types return a customer-facing message; no-code types silently don't fire.
 
 ## Related
 
 - [[marketing-discounts]] — hub.
 - [[discounts-lifecycle]] — the active-scope check (status + date + `max_uses`) that runs FIRST.
-- [[discounts-known-issues]] — the strict-greater `order_over` check + Container-codes stacking carve-out + free-shipping resolution ambiguity.
+- [[discounts-known-issues]] — the strict-greater `order_over` check + Container codes + free-shipping resolution.
 - [[customers-custom-groups]] — the customer-group entity used by `customer_groups[]`.
 - [[geo-zone]] — the geo-zone entity used by `geo_zone_id`.
-- [[apps-cart-rules]] — the more flexible composable engine that runs AFTER Discounts.
+- [[apps-cart-rules]] — the more flexible composable engine.
 - [[orders-details]] — admin-side order edit; `force_save` controls whether the discount survives.
 
 ## Open questions
 
-- Exact validation string when `code_apply = 0` rejects a code on a cart with discounted products `(verify)`.
+None.

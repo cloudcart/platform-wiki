@@ -1,82 +1,87 @@
 ---
 type: concept
 nav_path: "Concept → Discount stacking → code_apply toggle"
-aliases: ["code_apply", "Apply discount only to products with no other discount", "apply_regular_price", "Shipping order_over carve-out", "Stacking toggle", "Reject-on-conflict toggle"]
+aliases: ["code_apply", "The discount is applied even when the cart contains discounted products", "apply_regular_price", "Apply to the regular price of products", "Code refused when cart has discounted products", "Stacking toggle"]
 tags: [marketing, discounts, stacking, code_apply, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
-> Part of [[discount-stacking]]. See the hub for the other aspects (evaluation order, cart code slots, uses counter, plan gating, Cart Rules interaction, cooldown / attachments).
+> Part of [[discount-stacking]]. See the hub for the other aspects (evaluation order, cart code slots, uses counter, plan gating, Cart Rules interaction, per-variant rows).
 
 # Discount stacking — code_apply toggle
 
 ## Definition
 
-Every code-based [[discount|Discount]] carries a **`code_apply`** flag that decides what happens when the customer types the code into a cart that already has another discount applied. This is the central stacking rule on CloudCart. (verify)
+Every code-based [[discount|Discount]] carries a **`code_apply`** flag that decides what happens to cart lines that already hold a product discount. Only product-level discounts count as "already discounted": an order-level discount such as a no-code Orders over, Countdown or a payment-method discount neither blocks a code nor is blocked by it. No-code discounts have no such switch.
 
-| Value | Label in admin | Behaviour at checkout |
-|-------|----------------|----------------------|
-| **`0`** (default) | "Apply discount only to products with no other discount" | The code is **rejected** if the cart contains any line that already has a discount (e.g., a Fixed discount on one product). The customer sees: the code didn't apply; the cart total stays the same. |
-| **`1`** | "Apply discount even if the cart contains products with a discount" | The code applies **on top of** existing per-product discounts. |
+**`code_apply = 1`** — label *"The discount is applied even when the cart contains discounted products."* The code also applies to lines holding a product discount, on the reduced amount.
 
-The toggle is editable per-discount on the discount-edit screen. The merchant flips it to `1` for, say, a 10%-off newsletter coupon that should stack with a permanent product-level Fixed discount.
+**`code_apply = 0`** (default):
 
-When `code_apply = 1`, a second toggle becomes available: **`apply_regular_price`**.
+| Code | Result |
+|------|--------|
+| Orders over, or free shipping with a threshold | Refused at entry if any line holds a product discount, with *"This discount code can not be applied because you already have a discounted products at your cart"*. A flat Orders-over code already in the cart is removed without a message if a discounted product is added later; free shipping is not rechecked. |
+| Free shipping for all, and Code PRO | Refused at entry with *"Invalid discount code"*. |
+| Every product or a specific target | Accepted; lines with a product discount are skipped. If all are discounted, nothing comes off and no message shows. |
+| Container | Never refused for this. Its default is on, and its form has no such switch. |
 
-- **`apply_regular_price = 0`** (default) — the code applies against the line's **post-discount** price. If the product already has a 20% Fixed discount, the 10% coupon stacks on the discounted price.
-- **`apply_regular_price = 1`** — the code re-evaluates against the **original catalog price** (ignoring the per-product Fixed discount) — whichever yields the larger discount wins. This is how merchants offer "10% off any product OR the existing sale, whichever is bigger".
+The toggle is editable per-discount on the discount-edit screen. The merchant flips it to `1` for, say, a 10%-off newsletter code that should also reach products with a permanent Fixed discount.
+
+When `code_apply = 1`, a second toggle becomes available: **`apply_regular_price`** (*"Apply to the regular price of products, if this discount is greater"*).
+
+- **`apply_regular_price = 0`** (default) — the code applies to the line's reduced price. On a line already 20% off, a 10% code takes 10% off the discounted price.
+- **`apply_regular_price = 1`** — the code is worked out on the regular price and compared with the current discounted price. If the code's price is lower, it replaces the product discount; otherwise the line keeps the product discount and no code. Never both.
 
 ## Scope
 
 Covered:
 
-- The `code_apply` 0 / 1 toggle and its merchant-facing labels.
-- The `apply_regular_price` modifier (only meaningful when stacking is allowed).
-- The max-of-two comparison semantics of `apply_regular_price = 1`.
-- The shipping-coupon `order_over` carve-out that bypasses `code_apply = 0`.
+- The `code_apply` 0 / 1 toggle and what it does to each kind of code.
+- The `apply_regular_price` modifier (available when `code_apply = 1`).
+- The comparison `apply_regular_price = 1` makes.
+- Free-shipping codes vs no-code free shipping.
 
 Not covered here:
 
 - The implicit evaluation order across multiple discount types — see [[discount-stacking-evaluation-order]].
 - The cart-level mutual exclusivity between stand-alone and Container codes — see [[discount-stacking-cart-code-slots]].
-- How Cart Rules sit on top of all of this — see [[discount-stacking-cart-rules-interaction]].
+- How Cart Rules fit in — see [[discount-stacking-cart-rules-interaction]].
+- What the amount comes off for each target — see [[discount-stacking-amount-by-target]].
 
 ## Contrasts
 
-- **`code_apply` vs. cumulation** — `code_apply = 1` does **not** mean "10% then 5% off the result". Each discount still computes against its own base; `code_apply` just decides whether a code is allowed to attach when other discounts exist.
-- **`code_apply` vs. `apply_regular_price`** — `code_apply` is the gate (allow / reject when other discounts present). `apply_regular_price` only matters once the gate is open and changes the **base** the code computes against.
-- **`apply_regular_price` is max-of-two, not blind override** — when `apply_regular_price = 1` and the matching line has a per-product discount, the runtime computes the code's discount against the **catalog price** and compares it to the existing per-product discount amount. Whichever yields the larger discount wins for that item. If the existing per-product discount is larger or equal, the item is skipped. (verify) For `flat`-type codes the comparison uses a proportional split: `line_amount = line_total × (code_value / cart_subtotal)`.
-- **Shipping `order_over` always applies — the carve-out** — a shipping discount with `settings = order_over` (free shipping over X) **always applies** when the cart total reaches the threshold, regardless of `code_apply`. The rationale: free-shipping promos are order-level perks the merchant wants honoured. A shipping discount with `settings = all` (free shipping on every order) follows the standard `code_apply` rule. (verify)
-
-The shipping-coupon `order_over` carve-out is the most common merchant pitfall — a merchant who sets `code_apply = 0` on a shipping coupon and expects rejection with other discounts present will see it apply anyway when the cart matches `order_over`.
+- **`code_apply` vs. cumulation** — on a line, `code_apply = 1` does compound: the code comes off the amount the product discount already reduced. It does not change how order-level discounts are calculated; those share one subtotal.
+- **`code_apply` vs. `apply_regular_price`** — `code_apply` decides whether a code reaches lines with a product discount. `apply_regular_price` only matters once it does, and changes the **base** the code computes against.
+- **`apply_regular_price` is a comparison, not an override** — the code replaces the product discount only on lines where it gives a lower price. Other lines keep the product discount and no code.
+- **Free-shipping code vs no-code free shipping** — a free-shipping code follows `code_apply` at entry, for both targets. A no-code free-shipping discount has no switch and ignores other discounts.
 
 ## Where it applies
 
-- **Storefront checkout** — when the customer types a code, the engine reads the discount's `code_apply` flag and either accepts, rejects, or stacks.
-- **Admin "apply discount to order"** on [[orders-discount-add]] — the same `code_apply` check runs server-side; the admin cannot bypass it by attaching from the back-office.
+- **Storefront checkout** — when the customer types a code, the engine reads the discount's `code_apply` flag and refuses the code, or accepts it and skips or reduces lines as above.
+- **Admin "apply discount to order"** on [[orders-discount-add]] — runs no `code_apply` check. The only refusal is an order that already has an order-level discount.
 - **JSON-API v2** — discounts POSTed through [[api-discounts]] with `code_apply = 0` behave exactly as admin-created ones; the rule is enforced at the **checkout engine layer**, not at the API write layer.
-- **Container codes** — when a child code is redeemed, the platform evaluates the **parent's** `code_apply` for the reject-on-conflict check, not the child's. See [[discount-stacking-cart-code-slots]] for the parent / child relationship.
+- **Container codes** — never refused for `code_apply`. See [[discount-stacking-cart-code-slots]].
 
 ### Storefront UI implications
 
-When stacking is rejected (`code_apply = 0` + cart has discount), the storefront customer sees code-entry feedback: the code is "invalid for this cart" — no auto-detachment of the pre-existing discount. The customer must remove the discounted product or use a different code.
+When a code is refused, the customer sees the message above and the code is not attached; the product discount stays. The customer must remove the discounted product or use a different code.
 
-When stacking applies, the cart shows both discounts as separate line items in the cart totals — line-discount + order-level discount = total discount. The customer never sees which `code_apply` flag is set.
+A code on every product or a specific target shows inside each product line with the code in brackets and adds no totals row. An Orders-over code is a row in the totals. The customer never sees which `code_apply` flag is set.
 
 ## Related
 
 - [[discount-stacking]] — hub.
-- [[discount-stacking-evaluation-order]] — the implicit priority chain that decides which discount evaluates first.
-- [[discount-stacking-cart-code-slots]] — Container parent `code_apply` rules child redemption.
-- [[discount-stacking-cart-rules-interaction]] — Cart Rules run after `code_apply` resolves.
+- [[discount-stacking-evaluation-order]] — the fixed chain that decides what is worked out first.
+- [[discount-stacking-cart-code-slots]] — stand-alone and Container codes in the cart.
+- [[discount-stacking-cart-rules-interaction]] — Cart Rules run after line-level codes.
 - [[discount]] — entity carrying `code_apply`, `apply_regular_price`.
 - [[marketing-discounts]] — primary CRUD screen where the toggles live.
-- [[marketing-discounts-shipping]] — `order_over` shipping discount, where the carve-out applies.
-- [[marketing-discounts-fixed]] — per-product Fixed discounts; the typical "existing discount" that `code_apply = 0` rejects against.
-- [[orders-discount-add]] — admin "apply discount to order"; runs the same `code_apply` check.
+- [[marketing-discounts-shipping]] — free-shipping discounts and codes.
+- [[marketing-discounts-fixed]] — per-product Fixed discounts; a typical product discount on a line.
+- [[orders-discount-add]] — admin "apply discount to order"; no `code_apply` check.
 - [[api-discounts]] — JSON-API v2 endpoint; same enforcement at the checkout engine layer.
 
 ## Open Questions

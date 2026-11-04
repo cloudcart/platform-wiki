@@ -7,7 +7,7 @@ aliases: ["Fixed discount product modal", "Common price vs Multiple price", "Add
 tags: [marketing, discounts, fixed, modal, ui]
 plan_gates: ["discount_fixed", "total_discounts"]
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -58,24 +58,26 @@ The save button persists the prices; backdrop / Esc are disabled while saving. S
 
 ### Common modal fields (always present)
 
-| Field | Backend key | What it does |
-|-------|-------------|--------------|
-| **Price type** | `price_type` | `single` or `multiple` — controls which validation set applies. |
-| **Prices array** | `prices[]` | One entry per variant: `variant_id`, `price` (catalog price, for validation), and `fixed_price`. |
+| Field | What it does |
+|-------|--------------|
+| **Pricing mode** | **Common price** (`single`) or **Multiple price** (`multiple`). Decides how many **New price** inputs show; it is not stored. |
+| **Price in store** | Read-only catalog price of the variant. |
+
+The save sends one entry per variant: `product_id`, `variant_id`, `price` (in cents).
 
 ### Per-product edit modal — `single` price mode
 
-| Field | Backend key | What it does | Validation |
-|-------|-------------|--------------|------------|
-| **Fixed price (single)** | `fixed_price` | The new price applied to **every variant** of the product. | Required, numeric, `maximum_single:prices.*.price` — must be ≤ the cheapest variant's price. |
+| Field | What it does | Validation |
+|-------|--------------|------------|
+| **New price** | The new price applied to **every variant** of the product. | From 0.01 up to and including the cheapest variant's catalog price; a higher one fails the whole save. |
 
 ### Per-product edit modal — `multiple` (per-variant) price mode
 
 For each variant:
 
-| Field | Backend key | What it does | Validation |
-|-------|-------------|--------------|------------|
-| **Fixed price (per variant)** | `prices.*.fixed_price` | The new price for this specific variant. | Required, numeric, `maximum:prices.*.price` — must be ≤ this variant's catalog price. |
+| Field | What it does | Validation |
+|-------|--------------|------------|
+| **New price** | The new price for this specific variant. | From 0.01 up to and including this variant's catalog price; a higher or blank one fails the whole save. |
 
 > The modal shows **Price in store** (read-only) and a **New price** input per variant.
 
@@ -93,9 +95,7 @@ No Discount-target block (Fixed discounts target products via the per-product at
 
 ### What the merchant CANNOT do here
 
-- **Set a fixed price higher than the variant's catalog price** — *"The discount price can not be higher than the price of the item"*; the per-variant validator `maximum:prices.*.price` rejects with the cap value.
-- **Add a product already covered by another Fixed discount** — the parent save validates uniqueness across active Fixed discounts (verify).
-- **Attach products from incompatible parent / child categories** — *"Parent and Child product categories, can not be included"*.
+- **Set a fixed price higher than the variant's catalog price** — *"Price must be at least 1 and less than &lt;catalog price&gt;"*; the whole save fails.
 - **Mass-import per-variant prices** — one product at a time here; for bulk price import, use the Products listing's price-import feature.
 
 See [[fixed-discount-validation-rules]] for the full validation set, including the cross-discount uniqueness story.
@@ -112,7 +112,7 @@ Closing via X, backdrop, or Esc resets all internal state (selected product, fet
 
 ### Active toggle is inline + immediate
 
-The Active column's switch is not part of the modal — it persists immediately via a separate status endpoint. Toggling triggers the same product-updated + search-engine-sync effects as a save, and counts against the 10-minute activation cooldown — see [[fixed-discount-plan-gates]].
+The Active column's switch is not part of the modal — it persists immediately via a separate status endpoint. Toggling triggers the same product-updated + search-engine-sync effects as a save.
 
 ## Related
 
@@ -125,4 +125,4 @@ The Active column's switch is not part of the modal — it persists immediately 
 
 ## Open questions
 
-- The legacy "Parent and Child product categories, can not be included" rejection — verify whether the modern modal surfaces this same error or filters categories pre-submit (verify).
+No outstanding questions.

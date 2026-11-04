@@ -7,7 +7,7 @@ aliases: ["Quantity counting", "Count the quantity from all cart lines of the pr
 tags: [marketing, discounts, quantity, cart, variants, personalisation]
 plan_gates: ["discount_quantity"]
 created: 2026-11-03
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 1
 ---
 
@@ -17,7 +17,7 @@ source_count: 1
 
 ## Purpose
 
-A customer can add the same product to the cart on several lines: different variants, or the same variant with different personalisations such as uploaded photos. This aspect documents the per-discount switch that decides whether those lines add up toward a tier. **By default each line counts alone.**
+A customer can add the same product to the cart on several lines: different variants, or the same variant with different personalisations such as uploaded photos. This aspect documents how those lines count toward a tier. **Each line counts alone.** The form shows a switch to add them up, but saving does not store it.
 
 ## Where to find it
 
@@ -27,16 +27,16 @@ A customer can add the same product to the cart on several lines: different vari
 
 ## What the merchant can do here
 
-- Leave the switch off, so each cart line reaches a tier with its own quantity.
-- Turn it on, so the pieces of the product on all cart lines add up.
+- Set tiers knowing that each cart line reaches a tier with its own quantity.
+- See the switch **Count the quantity from all cart lines of the product** on the form. Saving does not store it, so it is off again after a save.
 
 ## Settings & fields
 
 | Field | Key | Default | What it does |
 |---|---|---|---|
-| **Count the quantity from all cart lines of the product** | `quantity_count_all_lines` | Off | Per discount. Off: each line counts alone. On: all lines of the product count together. |
+| **Count the quantity from all cart lines of the product** | `quantity_count_all_lines` | Off | Per discount. Off: each line counts alone. On: all lines of the product count together. The form's save does not send it, so it stays off. |
 
-Discounts that existed before this setting start with it off. Saving a request that leaves the key out keeps the stored value.
+Discounts that existed before this setting start with it off. A save that leaves the key out keeps the stored value, and the form's save leaves it out.
 
 ## Business rules
 
@@ -52,28 +52,28 @@ With tiers `5 → 8 EUR` and `10 → 6 EUR`:
 | 10 size-S + 2 size-M | The size-S line pays 6 EUR. The size-M line reaches no tier and pays its regular price. |
 | 5 pieces with photo A + 5 pieces with photo B | Two lines, each at the "buy 5" tier. |
 
-### On: all lines add up
+### When the stored value is on
 
-The pieces of the product on all cart lines add up, and each line pays **its own variant's price** at the tier that total reaches. A variant left without a price at that tier pays its price at the highest lower tier it has, or its regular (or Fixed-discount) price.
+The form's save does not store this, so it applies only to a discount stored with the value on some other way. The pieces of the product on all cart lines then add up, and each line pays **its own variant's price** at the tier that total reaches. A variant left without a price at that tier pays its price at the highest lower tier it has, or its regular (or Fixed-discount) price.
 
 With the same tiers, 5 size-S + 5 size-M counts as 10, so both lines take the "buy 10" tier.
 
 ### Bundle lines stay out
 
-In both modes, pieces added as part of a bundle do not count toward a tier and take no tier price. The bundle prices its own lines.
+Pieces added as part of a bundle do not count toward another line's tier. A bundle line that gets a bundle price takes no tier price.
 
 ### Where the same rule applies
 
 - **The cart and checkout** — the prices the customer pays.
-- **The Storefront API** — `Product.quantityTierPrice` works out a selection of lines per line when the switch is off and pooled when it is on, so a headless storefront shows what the cart charges ([[headless-catalogue-reads]]).
+- **The Storefront API** — `Product.quantityTierPrice` works out a selection of lines per line while the stored value is off and pooled when it is on ([[headless-catalogue-reads]]).
 
 ### Setting it through the API
 
-The Admin GraphQL API has no field for this setting. A discount created there counts per line, and the switch is changed on the admin form.
+The Admin GraphQL API has no field for this setting either, so a discount created there counts per line.
 
 ### What the product page shows
 
-The tier ladder shows the tiers of the selected variant in both modes and says nothing about other lines — see [[quantity-discount-storefront-display]].
+The tier ladder shows the tiers of the selected variant and says nothing about other lines — see [[quantity-discount-storefront-display]].
 
 ## Related
 

@@ -7,7 +7,7 @@ aliases: ["Flat type_value", "Flat amount in cents", "Flat discount amount cap",
 tags: [marketing, discounts, flat, type_value, cents, validation]
 plan_gates: ["discount_global", "discount_coupon"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -17,9 +17,9 @@ source_count: 4
 
 ## Purpose
 
-This page documents **how the Flat amount is stored, validated, and gated against the matched subtotal at checkout** — the cents storage convention, the practically-uncapped amount validator nuance, the matched-subtotal-must-cover-the-amount rule, the strictly-greater check on code-based `order_over`, and the per-customer cap that silently removes the code from the cart.
+This page documents **how the Flat amount is stored, validated, and gated against the matched subtotal at checkout** — the cents storage convention, the absence of a maximum, what happens when the amount exceeds the subtotal, the strictly-greater check on `order_over`, and the per-customer cap that clears the code from the cart.
 
-Tickets that land here: *"my 20 EUR code doesn't apply to a 15 EUR cart"*, *"why does my customer get rejected at exactly 100 EUR when the threshold is 100 EUR"*, *"the code disappeared from the cart after one use"*, *"I typed 100,000 in the amount field and it saved as 1,000 EUR".
+Tickets that land here: *"my 20 EUR code doesn't apply to a 15 EUR cart"*, *"why does my customer get rejected at exactly 100 EUR when the threshold is 100 EUR"*, *"the code disappeared from the cart after one use"*.
 
 ## Where to find it
 
@@ -31,15 +31,14 @@ The **Discount value** field in the General settings block on the create / edit 
 
 ### What the merchant CANNOT do here
 
-- Enter a numeric value that exceeds the validator's character limit (decimal points included; see the practical guidance below).
-- Apply a Flat code to a cart whose matched subtotal is less than the discount amount.
-- Apply a code-based `order_over` Flat discount to a cart whose subtotal equals (but does not exceed) the threshold.
+- Apply a Flat code on `all` or a specific target to a cart whose matched subtotal is less than the discount amount.
+- Apply an `order_over` Flat discount, with or without a code, to a cart whose subtotal equals (but does not exceed) the threshold.
 
 ## Settings & fields
 
 | Field | Backend key | What it does | Validation |
 |-------|-------------|--------------|------------|
-| **Discount value** | `type_value` | The currency amount subtracted from the cart (or matched subtotal). Entered in EUR; stored as cents. | Required when `type = flat`. *"The field 'amount' can not be empty"*. See *"Amount value"* below for the validator nuance. |
+| **Discount value** | `type_value` | The currency amount; what it comes off depends on the target ([[discount-stacking-amount-by-target]]). Entered in EUR; stored as cents. | Numeric. A blank value is sent as 0 and saves. See *"Amount value"* below. |
 
 ## Business rules
 
@@ -49,11 +48,9 @@ The `type_value` is stored as an **integer in cents**. The UI shows the merchant
 
 Amounts are written in **cents** via the API as well — a 10 EUR flat discount is `type_value = 1000` regardless of source (see [[flat-discount-programmatic-access]]).
 
-### Amount value — practically uncapped (platform stores in cents)
+### Amount value — no maximum
 
-The flat amount field validates through the platform's currency-amount validator. Important nuance: the validator's "max" parameter is the **maximum number of CHARACTERS allowed in the input string** — NOT a numeric value cap. The default 100,000-character ceiling means a merchant can practically enter any reasonable value (decimal points and all) without hitting the limit. There is **no built-in numeric ceiling** on the flat amount.
-
-A merchant attempting to save what they read as "100,000" in the form is saving a value of **100,000 cents = 1,000 EUR** (the platform stores all monetary values in **cents**, so the displayed-vs-stored relationship is always ×100). If the merchant types a number that the form misinterprets (e.g., decimal-separator confusion), the platform will accept and store whatever it parsed. Sanity-check large amounts at save time by reviewing the resulting `type_value` on the listing — it shows the actual saved value.
+There is **no maximum amount** on a flat discount. The form takes euros: typing 1000 means 1,000 EUR, stored as `100000`. Raw cents apply only through the API.
 
 When the merchant genuinely wants:
 
@@ -61,36 +58,39 @@ When the merchant genuinely wants:
 - a per-product absolute-price replacement (e.g., "this product now costs 9.99 EUR") — use [[marketing-discounts-fixed]]
 - a free-shipping waive — use [[marketing-discounts-shipping]]
 
-### Discount capped to matched subtotal
+### Flat amount larger than the subtotal
 
-When the cart-engine applies the Flat amount, it **caps the applied amount to the matched subtotal** so the discount never exceeds what's available to discount. A 20 EUR flat on a matched subtotal of 15 EUR never produces a -5 EUR cart line — the platform applies at most 15 EUR.
+The amount is never capped. What happens depends on the discount — see [[discount-stacking-amount-by-target]]:
 
-### Flat code requires matched subtotal ≥ amount
+- **No code, `order_over`** — skipped, and no other `order_over` discount is tried.
+- **No code, products** — a product whose lowest price is below the amount gets no discount.
+- **Code, `all` or a specific target** — refused at entry if the matching lines add up to less than the amount (below). After that, lines and the total have no lower limit and can go below zero.
+- **Code, `order_over`** — only the threshold is checked, not the amount. The total can go below zero.
 
-For a **Flat code-based** discount, the customer's cart **matched subtotal** must be **at least** `type_value` (the flat amount). A 20 EUR code on a cart whose matched products sum to 15 EUR is **rejected at code-validation time** — the discount won't be applied because there's not enough to discount. The merchant sees their code fail at checkout with **no clear "less than amount" error**.
+### Flat code on `all` or a specific target requires matched subtotal ≥ amount
 
-- For target = `all`, the matched subtotal is the whole cart.
+For a **Flat code** on `all` or a specific target, the cart's **matched subtotal** must be **at least** `type_value` (the flat amount). A 20 EUR code on a cart whose matched products sum to 15 EUR is **refused at entry** with *"Invalid discount code"*, with no mention of the amount.
+
+- For target = `all`, the matched subtotal is all lines in the cart.
 - For target = `product` / `product_category` / etc., the matched subtotal is the sum of the matching lines only.
 
-This rule is **specific to code-based Flat discounts** — no-code Global / `order_over` Flat discounts cap-to-subtotal silently instead of rejecting (see above).
+### Strictly-greater subtotal check on `order_over` Flat
 
-### Strictly-greater subtotal check on `order_over` Flat code
+On `order_over`, with or without a code, the cart subtotal must be **strictly greater than** the threshold. The subtotal is the lines after product discounts, line-level codes and product-level Cart Rule reductions. A cart **exactly equal** to the threshold does not qualify. To allow "exactly N or more", merchants should set the threshold to **N − 0.01**.
 
-When a Flat **code** requires `order_over`, the cart subtotal must be **strictly greater than** the threshold. A cart **exactly equal** to the threshold is rejected. To allow "exactly N or more", merchants should set the threshold to **N − 0.01**.
+> No-code free shipping is at or above the threshold — see [[marketing-discounts-shipping|Shipping discounts]].
 
-> Contrast with the no-code Global Flat discount and with [[marketing-discounts-shipping|Shipping discounts]], which use inclusive `>=` — the strictly-greater rule is specific to code-based Flat / Percent.
-
-Example: a 10 EUR code with `order_over = 50 EUR` on a 50 EUR cart → **rejected**. On a 50.01 EUR cart → applies. The merchant working around this should set `order_over = 49.99 EUR` to admit the 50 EUR cart.
+Example: a 10 EUR code with `order_over = 50 EUR` on a 50 EUR cart → **refused** with *"The discount could not be applied because the minimum total price of the products has not been reached."*. On a 50.01 EUR cart → applies. The merchant working around this should set `order_over = 49.99 EUR` to admit the 50 EUR cart.
 
 ### Per-customer cap auto-clears the code
 
-When a customer has redeemed a code-based Flat discount up to the `maxused_user` cap, the next checkout where they enter the code **removes the code from the cart entirely** rather than rejecting it with a "limit reached" message. The customer would need a different code — they cannot retry the same one.
+When a logged-in customer has redeemed a code-based Flat discount up to the `maxused_user` cap, entering the code shows *"You have used this discount code the maximum number of times"* and **the code is cleared from the cart**. The customer would need a different code.
 
-The cap counter increments when the customer's order reaches one of the counted statuses (see [[flat-discount-eligibility]]).
+The cap counts the customer's uses on orders in a counted status (see [[flat-discount-eligibility]]).
 
-### Worked example — distribution + matched-subtotal cap
+### Worked example — distribution + matched-subtotal check
 
-Cart with two matched lines (target = `product_category`):
+Cart with two matched lines (code, target = `product_category`):
 
 - Line A: 12 EUR.
 - Line B: 8 EUR.
@@ -103,16 +103,16 @@ The engine distributes proportionally:
 - Line B share: `5 × (8 / 20) = 2.00 EUR`.
 - Total: 5.00 EUR — exact, no cent-fix needed.
 
-If the merchant had set Flat = 25 EUR instead, the engine would **cap the applied amount to 20 EUR** (the matched subtotal). Both lines go to zero. For a code-based variant, the same scenario instead **rejects at code-validation** since matched subtotal (20) < `type_value` (25) — see *"Flat code requires matched subtotal ≥ amount"* above. The merchant must either lower the code's amount or design the campaign for higher-value carts.
+If the code's amount were 25 EUR instead, it would be **refused at entry** since matched subtotal (20) < `type_value` (25) — see above. The merchant must either lower the code's amount or design the campaign for higher-value carts.
 
 ## Related
 
 - [[marketing-discounts-flat]] — hub.
-- [[flat-discount-targeting]] — what counts as the matched subtotal per target (cart-wide vs lines).
+- [[flat-discount-targeting]] — what the amount comes off per target.
 - [[flat-discount-eligibility]] — `maxused_user` cap + uses counter + counted statuses.
 - [[flat-discount-stacking]] — `code_apply` blocks (different reject path: existing discounts on lines, not matched-subtotal).
 - [[flat-discount-programmatic-access]] — `type_value` over JSON-API v2 + GraphQL is also in cents.
-- [[marketing-discounts-percent]] — sister type; same strictly-greater `order_over` rule on codes.
+- [[marketing-discounts-percent]] — sister type; same strictly-greater `order_over` rule.
 - [[marketing-discounts-fixed]] — different model (per-variant replacement price).
 - [[marketing-discounts-shipping]] — different model (no `type_value`; binary "remove shipping line").
 

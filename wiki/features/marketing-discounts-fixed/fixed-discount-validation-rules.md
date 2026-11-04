@@ -7,7 +7,7 @@ aliases: ["Fixed discount validation", "fixed_price ≤ catalog", "Fixed discoun
 tags: [marketing, discounts, fixed, validation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-This aspect documents **every rejection** a merchant can hit when saving a Fixed-discount price — at the parent form, the per-variant modal, and the modern JSON-API path. It also covers the **equality edge case** at `fixed_price = variant.price`, per-variant uniqueness within a single discount (and the absence of cross-discount uniqueness), and the `date_end = today` boundary.
+This aspect documents **every rejection** a merchant can hit when saving a Fixed-discount price in the admin — at the parent form and the per-variant modal. The APIs run separate checks (see [[fixed-discount-api-access]]). It also covers the **equality edge case** at `fixed_price = variant.price`, per-variant uniqueness within a single discount (and the absence of cross-discount uniqueness), and the end-date rule.
 
 ## Where to find it
 
@@ -35,38 +35,35 @@ The fields validated by these rules are documented field-by-field in [[fixed-dis
 | Validator | Target field(s) | Rejection message |
 |---|---|---|
 | Fixed price above catalog | `*.price` | *"Price must be at least 1 and less than &lt;catalog price&gt;"* |
-| Duplicate variant within the same discount | `variant_id` | *"Variant already exists in discount."* |
-| `date_end` past-day check | `date_end` | *"End date cannot be less than now"* — fires only for dates already past. |
+| Variant already on this discount, when adding | `variant_id` | *"Variant already exists in discount. Variant ID: &lt;id&gt;"* |
+| End date before the start date | `date_end` | *"The end date must be after the start date"* |
+| End date missing with **No expiration** off | `date_end` | *"The end date is required"* |
 
-Plan-gate and activation-cooldown rejections are not covered here — see [[fixed-discount-plan-gates]].
+Plan-gate rejections are not covered here — see [[fixed-discount-plan-gates]].
 
 ## Business rules
 
 ### `fixed_price ≤ variant.price` — equality is special
 
-A Fixed discount must not exceed the variant's catalog price — `fixed_price > variant.price` is rejected at validation. The modal rejects with *"Price must be at least 1 and less than &lt;catalog price&gt;"*, and a rejected price **fails the whole save** (it is not silently dropped).
+A price from 0.01 up to and including the variant's catalog price is accepted in the admin; `fixed_price > variant.price` is rejected at validation. The modal rejects with *"Price must be at least 1 and less than &lt;catalog price&gt;"*, and a rejected price **fails the whole save**.
 
-**Equality (`fixed_price = variant.price`) passes validation** — the validator compares "strictly greater than". The row is written with `save = 0`, and the storefront then shows a "0 EUR saving" tag: a no-op discount taking a per-product attachment slot.
+**Equality (`fixed_price = variant.price`) passes validation** — the validator compares "strictly greater than". The row is written with `save = 0`, and the storefront then shows a "0 EUR saving" tag (verify): a no-op discount taking a per-product attachment slot.
 
-To avoid the `save = 0` row, always set the fixed price **strictly below** catalog. For "no discount on this variant", omit the variant from the submitted `prices[]` array rather than submitting it at catalog price; after an API save, check the resulting `product_to_discount` rows for any `save = 0` rows that indicate accidental equality.
+In the admin every variant needs a price; a blank one fails the save. Entering the catalog price gives a no-saving row, which switches off at the next product save.
 
 When the catalog price later drops to or below the fixed price, the platform automatically **deactivates the row** — see [[fixed-discount-row-writes]] for the auto-deactivation feedback loop.
 
 ### Per-variant uniqueness within a single Fixed discount
 
-Within a single Fixed discount, each variant ID can appear **at most once** in the submitted `prices[]` array — the validator rejects duplicates with a validation error pointing at the duplicated variant.
+When adding a product, a variant already on this discount is rejected with the message above. Duplicates inside one submission are not checked, and an edit runs no such check.
 
-### A product effectively lives in ONE Fixed discount (the save deletes by product)
+### A product can sit on two Fixed discounts until it is edited
 
-There is **no save-time validation error** blocking two Fixed discounts from initially targeting the same product. But the modern save flow makes coexistence impractical: editing a product on any Fixed discount **deletes that product's per-variant rows by `product_id` — across every Fixed discount** (not just the current one — see [[fixed-discount-row-writes]]), then re-creates rows only for the discount being saved. So in practice a product belongs to **one** Fixed discount at a time: attaching or editing it on a second discount detaches it from the first.
+There is **no save-time validation error** blocking two Fixed discounts from targeting the same product. Adding a product to a second Fixed discount keeps it on the first, and the customer gets the cheaper. Editing its prices on either removes it from the other: the save deletes the product's rows on every discount, then re-creates rows only for the discount being saved (see [[fixed-discount-row-writes]]). For the storefront lookup when a row is present, see [[fixed-discount-storefront-display]].
 
-(Older wiki phrasing claimed a hard "one Fixed discount per product" uniqueness *error* — *"You can`t use same products in this type of discount."* — that string exists in the translation file but is **never triggered**; the effective single-discount-per-product behaviour comes from the product-keyed delete, not from a validation rule.) For the storefront lookup when a row is present, see [[fixed-discount-storefront-display]].
+### End date — today and past dates save
 
-### `date_end = today` — accepted (not rejected as "in the past")
-
-The save validator compares `date_end` against the **end of the current day** in store timezone using a strict less-than check, so a `date_end` equal to today IS accepted (it represents end-of-day today). The rejection message *"End date cannot be less than now"* fires only for dates that already passed, not for today.
-
-A merchant CAN save a Fixed discount with `date_end = today`; the per-variant rows stay valid through 23:59 today in store timezone. Auto-disable (the UTC sweep) won't pick it up until up to ~27 hours later — see [[background-queue-inventory]] for the daily expiry process.
+The form refuses only an end date before the start date, and asks for one unless **No expiration** is on. Past dates and today save. With `date_end = today` the per-variant rows stay valid through 23:59 today in store timezone; a past end date simply does not apply. The hourly expiry sweep switches the discount off at the first run after 00:00 UTC on the day after its end date — see [[background-queue-inventory]].
 
 ### Save outcome by submitted price
 
@@ -75,7 +72,8 @@ A merchant CAN save a Fixed discount with `date_end = today`; the per-variant ro
 | `fixed_price < variant.price` | Row inserted |
 | `fixed_price = variant.price` | Row inserted with `save = 0` |
 | `fixed_price > variant.price` | Rejected at validation |
-| Duplicate `variant_id` in `prices[]` | Rejected at validation |
+| `fixed_price` below 0.01 or blank | Rejected at validation |
+| Variant already on this discount, when adding | Rejected at validation |
 
 ## Related
 
@@ -83,10 +81,10 @@ A merchant CAN save a Fixed discount with `date_end = today`; the per-variant ro
 - [[fixed-discount-product-modal]] — where the merchant enters the prices that these validators check.
 - [[fixed-discount-row-writes]] — what lands in `product_to_discount` after a successful save (including the `save = 0` edge case).
 - [[fixed-discount-storefront-display]] — the "Save X EUR" label and the storefront price lookup.
-- [[fixed-discount-api-access]] — the API surface that produces `save = 0` rows when `fixed_price = variant.price` is submitted.
-- [[background-queue-inventory]] — the daily expiry sweep that respects the `date_end = today` boundary.
+- [[fixed-discount-api-access]] — the API paths, which do not compare the price with the catalog price.
+- [[background-queue-inventory]] — the hourly expiry sweep.
 - [[discount]] — entity page for the parent Fixed discount.
 
 ## Open questions
 
-- The modern API's lack of the silent-skip guard on `fixed_price = variant.price` — verify whether this is intentional (so integrators can see all submitted rows) or a known divergence to be patched (verify).
+No outstanding questions.

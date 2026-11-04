@@ -7,7 +7,7 @@ aliases: ["Discount product fields", "Discount product validation", "Discount pr
 tags: [marketing, discounts, fixed, products, fields, validation, errors]
 plan_gates: ["discount_fixed"]
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 2
 ---
 
@@ -34,7 +34,7 @@ This page is a reference page — the interactions are described on [[discounts-
 | Column | What it shows |
 |--------|---------------|
 | **Product Name** | Product image thumbnail + name. Image links to the storefront page (tooltip *"View in store"*). Name link opens the edit modal. |
-| **Price** | Two lines, formatted via `moneyFormat`: top line = original price (struck-through) and the new fixed price; second line shows the EUR-to-EUR dual display when EUR-display is active for the store. |
+| **Price** | Two lines, formatted via `moneyFormat`: top line = original price (struck-through) and the new fixed price; a second line shows while the currency-transition preview of [[apps-bgn2eur]] is active. |
 | **Active** | Per-row toggle — green = active, grey = inactive. |
 | (Remove) | Per-row remove action — immediately deletes the product from the discount. |
 
@@ -60,10 +60,10 @@ Sortable columns: **Price** (ascending / descending), **Active**.
 
 | Field | What it does | Validation |
 |-------|--------------|------------|
-| **Product** (Add mode only) | Searchable product picker — types product name, selects one. | Required when adding; once selected, the modal fetches the product's variants. The picker only returns active products. |
+| **Product** (Add mode only) | Searchable product picker — types product name, selects one. | Required when adding; once selected, the modal fetches the product's variants. The picker finds inactive and unpublished products too. |
 | **Pricing type** (multi-variant products only) | Radio: **Common price** (`single`) or **Multiple price** (`multiple`). | Defaults to `single` in Add mode; in Edit mode, auto-detected based on whether all existing per-variant prices are equal (`single`) or differ (`multiple`). |
 | **Price in store** | Read-only — shows the variant's current catalog price. | n/a |
-| **New price** (per variant or shared) | The fixed price the merchant wants to apply. Entered as decimal EUR; converted to integer cents on save. | Required, integer (in cents), strictly less than the variant's catalog price; must be at least 1 cent. |
+| **New price** (per variant or shared) | The fixed price the merchant wants to apply. Entered as decimal EUR; converted to integer cents on save. | Required. From 0.01 up to and including the variant's catalog price, sent as integer cents; a higher price fails the whole save. |
 | **Variant options** (multi-variant + Multiple-price mode) | Read-only — concatenation of the variant's property values (e.g., "S / Red", "M / Blue"). | n/a |
 
 ### Error messages (verbatim)
@@ -71,13 +71,12 @@ Sortable columns: **Price** (ascending / descending), **Active**.
 | Message | Triggered by |
 |---------|--------------|
 | *"Price is required"* | Missing `price` on a variant entry. |
-| *"Price must be at least 1 and less than <variant.price>"* | `price < 1` OR `price >= variant.price`. The validator runs per variant. The catalog price interpolates as cents. |
+| *"Price must be at least 1 and less than <variant.price>"* | `price < 1` OR `price > variant.price` (a price equal to the catalog price is accepted). The validator runs per variant. The catalog price interpolates as cents. |
 | *"Variant is required"* | Missing `variant_id` on an entry. |
 | *"Variant must be an integer"* | Non-integer `variant_id`. |
 | *"Variant does not exist"* | `variant_id` not found in the catalog. |
-| *"Variant already exists in discount. Variant ID: <id>"* | Add mode: the variant is already attached to this Fixed discount. (See [[marketing-discounts-fixed]] for the broader "one Fixed discount per product across the store" rule.) |
+| *"Variant already exists in discount. Variant ID: <id>"* | Add mode: the variant is already attached to this Fixed discount. A variant on another Fixed discount is not refused. |
 | *"You cannot update a product other than the one you selected"* | Edit mode: the submitted `product_id` doesn't match the route's `product_id`. |
-| *"threshold has invalid value"* (parent discount) | Not raised here, but the parent discount drives this; mentioned for cross-reference. |
 
 ### Toast strings (verbatim)
 
@@ -94,8 +93,8 @@ Sortable columns: **Price** (ascending / descending), **Active**.
 
 - **Validation is per-variant inside the modal save.** Each entry in the submitted array is checked independently — one bad variant's error message identifies the offending row by id.
 - **Price is stored as integer cents.** The modal accepts decimal EUR and converts at save; the backend expects and persists integers (cents). Display in the list divides by 100.
-- **`fixed_price >= variant.price` is **silently dropped, not errored** during save** — the validator fires only on `< 1`; the `< variant.price` check is enforced as a *skip* in the insert pass. The merchant sees the saved discount with FEWER variants than they entered. See [[discounts-products-business-rules]].
-- **Validation order: required → integer → range → uniqueness.** The first failure short-circuits the response with that error message; the merchant doesn't see a list of all failures at once.
+- **A price above the catalog price is rejected, not dropped.** It fails the whole save with the message above; a price equal to the catalog price is saved with no saving. See [[discounts-products-business-rules]].
+- **Validation order: required → integer → range → uniqueness.** The first failure short-circuits the response with that error message; the merchant doesn't see a list of all failures at once (verify).
 
 ## Related
 
@@ -103,7 +102,7 @@ Sortable columns: **Price** (ascending / descending), **Active**.
 - [[discounts-products-list-view]] — interactions over the list columns / filters / sort / bulk actions described here.
 - [[discounts-products-modal-flow]] — the Add / Edit sequence that uses the modal inputs described here.
 - [[discounts-products-save-replace]] — the backend save flow where the validation runs.
-- [[marketing-discounts-fixed]] — parent discount; defines the "one Fixed discount per product" rule.
+- [[marketing-discounts-fixed]] — parent discount.
 
 ## Open questions
 

@@ -8,7 +8,7 @@ aliases: ["Discounts API side effects", "discounts webhooks", "discounts uses re
 tags: [api, json-api-v2, discounts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 8
 ---
 # Discounts API — side effects & filtering
@@ -48,10 +48,11 @@ No JSON-API relationships are declared, so there is no relationship-write side e
 
 ## Side effects
 
-- **`discount.created` / `discount.updated` / `discount.deleted` webhooks** fire from the Discount model's lifecycle. Both admin-panel and JSON-API v2 writes trigger them identically. Subscribed receivers under [[settings-hooks]] receive them via [[notification-delivery]].
+- **`discount.created` / `discount.updated` webhooks** fire when a discount record is saved through the admin form or this API, and `discount.deleted` when this API deletes one. The active switch, bulk status, list delete, `changeDiscountsStatus`, `discountsBulkDelete`, the expiry sweep, the uses recount, and any change to Fixed products, Code PRO codes or Container codes send none. Subscribed receivers under [[settings-hooks]] receive them via [[notification-delivery]].
 - **Per-product attachment regeneration** runs after save for Global / Fixed / Quantity / Countdown discounts. The platform rebuilds the `product_to_discount` join table that drives the storefront's "from X / now Y" badges. On 10,000+-product catalogues this can take minutes; the merchant sees a *"Last update"* badge until it finishes.
 - **Listing-engine re-index** — products affected by this discount re-flow through the search engine / Algolia / Listing Engine queue (see [[apps-listing-engine]]). Storefront price labels reflect the change within a few minutes.
 - **Discount-uses recompute** — every related order's status change re-tallies `uses` (recompute, not increment) with a 10-second delay. Cancelled / refunded orders auto-decrement the counter, so a previously-`max_uses`-exhausted discount can become available again — see [[discount-stacking]].
+- **No waiting period on `active`** — there is no wait between changes of `active` over this API.
 - **Code-PRO parent aggregation** — when the parent is `code-pro`, the parent's `uses` is set to `SUM(uses)` across all child Code PRO codes on every recompute.
 - **No audit log** — the platform records no actor / no diff history / no created_by / no updated_by for discounts. Only the standard `created_at` / `updated_at` are written. Merchants who need a compliance trail for promotion changes must keep their own log externally. (Only orders + products / variants have per-resource actor capture — see [[json-api-v2]].)
 
@@ -73,4 +74,4 @@ No JSON-API relationships are declared, so there is no relationship-write side e
 
 ## Open questions
 
-- Confirm whether the 10-minute `active`-toggle cooldown that applies to admin-panel saves also applies to JSON-API v2 PATCHes. [[discount-stacking]] notes the cooldown is bypassed in dev / CLI contexts — the API context is not explicitly listed. `(verify)`
+None.

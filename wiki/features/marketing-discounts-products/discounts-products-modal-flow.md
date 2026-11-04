@@ -7,7 +7,7 @@ aliases: ["Discount product modal", "Add product to discount modal", "Edit produ
 tags: [marketing, discounts, fixed, products, modal, product-picker, pricing-mode]
 plan_gates: ["discount_fixed"]
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 2
 ---
 
@@ -82,7 +82,7 @@ Closing the modal (X / backdrop / Esc, when not saving) resets all internal stat
 - **Pricing-mode radio appears only when meaningful.** Single-variant products bypass the radio entirely and render `tableSimple` directly. Multi-variant products get the radio so the merchant chooses between one shared price or per-variant pricing.
 - **Pricing mode in Edit is detected, not stored.** The modal infers `single` vs `multiple` by comparing the existing per-variant prices; there is no "pricing mode" column on the discount row itself.
 - **Common price broadcasts at save, not at edit.** Even in Common mode, the backend receives one entry per variant (all with the same price). The "Common" UI is purely a convenience — the storage is always per-variant. See [[discounts-products-save-replace]].
-- **The picker only returns active products.** `/admin/api/core/products/search` scopes by default to active / published products. Disabled or unpublished products won't appear — activate the product first, then add it to the Fixed discount.
+- **The picker searches the whole catalog.** `/admin/api/core/products/search` finds inactive and unpublished products too; it leaves out wallet and gift-card items.
 - **Cannot add a product already on this discount.** The validator rejects with *"Variant already exists in discount. Variant ID: <id>"* in Add mode. To change prices on a product already attached, click the row to open Edit mode.
 
 ## Related

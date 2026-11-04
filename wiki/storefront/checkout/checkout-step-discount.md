@@ -8,7 +8,7 @@ aliases: ["Checkout discount code", "Apply coupon", "Coupon field checkout", "Di
 tags: [storefront, checkout, sidebar, discount, coupon]
 plan_gates: []
 created: 2026-06-12
-updated: 2026-06-12
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -18,7 +18,7 @@ source_count: 3
 
 ## Purpose
 
-The text input + Apply button in the sidebar where the customer enters a coupon code. On submit, the platform tries to resolve the code as a [[marketing-discounts-codes|regular discount code]] OR as a [[marketing-discounts-code-pro|discount container code]], applies it to the cart, and refreshes all dependent surfaces. This page documents the storefront UX + the backend endpoint behaviour — for what discounts CAN apply see [[marketing-discounts]].
+The text input + Apply button in the sidebar where the customer enters a coupon code. On submit, the platform tries to resolve the code first as a single discount code or a [[marketing-discounts-code-pro|Code PRO code]], then as a [[marketing-discounts-codes|Container code]], applies it to the cart, and refreshes all dependent surfaces. This page documents the storefront UX + the backend endpoint behaviour — for what discounts CAN apply see [[marketing-discounts]].
 
 ## URL & route
 
@@ -40,12 +40,11 @@ A single-row form:
 ┌──────────────────────────────────────────┐
 │ [ Enter discount code… ] [Apply] │
 └──────────────────────────────────────────┘
-  (error: "This code is not valid") ← shown if session('discount_error') is set
+  (error: "Invalid discount code") ← the reason the last attempt was refused
 
 Applied codes:
   ─────────────────
-  SUMMER25 [×] ← shown if any discount(s) attached to cart
-  WELCOME10 [×]
+  SUMMER25 [×] ← one promo code, or several Container codes
 ```
 
 Inputs:
@@ -53,15 +52,15 @@ Inputs:
 - **`<input name="discount_code">`** — placeholder *"Enter discount code"* (`sf.widget.cart.ph.enter_discount_code`).
 - **`<button type="submit">`** — labelled *"Apply"* (`sf.widget.cart.act.discount_code_submit`), starts **disabled** + becomes enabled when the input has text.
 
-Error display: when the previous submit attempt set `session('discount_error')`, the error string renders as `<span class="help-block-error">`. The session value is consumed on render — the error doesn't persist past one page render.
+Error display: a refused code comes back with its reason in the submit response, shown against the code field.
 
-Applied-code display: when the cart has any attached discount codes, each renders as a chip with a `×` remove icon. The remove link points to `route('checkout.discount.code.remove', $discount)` and is intercepted by `data-checkout-link-ajax="true"` so the page never reloads.
+Applied-code display: the promo code, or each Container code, renders as a chip with a `×` remove icon. The remove link points to `checkout.discount.code.remove` (with the code, for a Container code) and is intercepted by `data-checkout-link-ajax="true"` so the page never reloads.
 
 ## The submit pipeline (verified 2026-06-12)
 
-Form POSTs to `checkout.discount.code` → controller `submitDiscountCode(DiscountCodeRequest $request)`:
+Form POSTs to `checkout.discount.code`:
 
-1. **Two-step code resolution**: the platform first tries the platform code (regular discount codes — [[marketing-discounts-codes]]). If that returns a discount → `$cart->setDiscountCode($code)`. Otherwise it falls through to `$cart->setDiscountContainerCode($code)` (the [[marketing-discounts-code-pro|Code-Pro container]] path). So a single typed code can resolve via either path; the customer doesn't need to know which.
+1. **Two-step code resolution**: the platform first looks for a single discount code or a [[marketing-discounts-code-pro|Code PRO code]]. If one is found, it goes into the cart's one promo-code slot, replacing any code there. Otherwise the code is added to the cart's Container codes ([[marketing-discounts-codes]]), which clears the promo-code slot. So a single typed code can resolve via either path; the customer doesn't need to know which.
 2. **Step machine reset** — if the customer is past the `authorize` step, the step is reset to `shippingAddress` (so the customer re-confirms the address with the new total + re-quotes shipping).
 3. **Wide reload array** — returns:
    ```
@@ -78,13 +77,13 @@ Form POSTs to `checkout.discount.code` → controller `submitDiscountCode(Discou
 
 ## Removing a code
 
-The remove `×` link points to `GET /checkout/remove-discount-code/{code}` (`route('checkout.discount.code.remove')`). The controller calls `$cart->removeDiscountCode($code)` and returns a parallel reload array (same scope as submit). Step machine is reset to `shippingAddress` the same way.
+The remove `×` link points to `GET /checkout/remove-discount-code/{code}` (`checkout.discount.code.remove`). It returns a parallel reload array (same scope as submit). Step machine is reset to `shippingAddress` the same way.
 
-When the cart has multiple codes, the URL includes the specific code to remove; removing one leaves the others applied.
+Several codes can sit together only as Container codes: the URL includes the specific code to remove, and removing one leaves the others applied. Removing the promo code clears the slot.
 
 ## Eligibility — why a code may be rejected
 
-The actual *"is this code valid"* logic is documented across the discount cluster — see [[discounts-codes-redemption]] for redemption rules, [[discounts-eligibility]] for eligibility filters, and [[discount-stacking]] for the stacking rules when multiple discounts try to apply. From the storefront's perspective the only signal is `session('discount_error')` — a generic error string. The wiki documents the full rule catalogue; the storefront does not expose per-rule failure reasons to the customer.
+The actual *"is this code valid"* logic is documented across the discount cluster — see [[discounts-codes-redemption]] for redemption rules, [[discounts-eligibility]] for eligibility filters, and [[discount-stacking]] for the stacking rules when multiple discounts try to apply. The customer sees the specific reason: *"The code is valid only for registered users"*, *"You have used this discount code the maximum number of times"*, *"The discount could not be applied because the minimum total price of the products has not been reached."*, *"This discount code can not be applied because you already have a discounted products at your cart"* or *"Invalid discount code"*.
 
 ## Settings & fields
 
@@ -93,8 +92,8 @@ There are no per-store settings for the field itself — it's always shown in th
 ## Business rules
 
 - **Two-path resolution is invisible to the customer.** The customer types one code; the platform tries both code-types in order.
-- **Apply ALWAYS resets the step machine.** Even if the code applies cleanly, the customer is bounced back to the shipping-address step. This is by design — shipping methods + payment options can change with the new total.
-- **Errors come via session, not inline JSON.** The submit response carries the reload array but not the error text; the error is set in session and rendered on the next GET of the sub-section.
+- **Apply resets the step machine past the first step.** Even if the code applies cleanly, a customer past the `authorize` step is returned to the shipping-address step. This is by design — shipping methods + payment options can change with the new total.
+- **Errors come in the submit response.** A refused code returns the reason for the code field instead of the reload array.
 - **No client-side validation.** The customer can submit any string; the validation is fully server-side.
 - **Removal is also a step-reset.** Removing a code re-runs every dependent quote — shipping prices, payment availability, totals.
 - **Discount-code field is also in the cart drawer** ([[storefront-cart]]). The sub-template (`discount_code.tpl`) is shared between cart and checkout — exact same behaviour on both surfaces.
@@ -124,8 +123,8 @@ None recorded for this section. Any merchant-facing surprises specific to this s
 - [[checkout-step-sidebar]] — parent surface.
 - [[checkout-page-routing]] — step machine that the submit resets.
 - [[marketing-discounts]] — discount hub.
-- [[marketing-discounts-codes]] — regular discount-code mechanism (path 1 of resolution).
-- [[marketing-discounts-code-pro]] — Code-Pro container mechanism (path 2 of resolution).
+- [[marketing-discounts-code-pro]] — Code PRO codes (path 1 of resolution, with single discount codes).
+- [[marketing-discounts-codes]] — Container codes (path 2 of resolution).
 - [[discounts-eligibility]] — eligibility filters.
 - [[discounts-codes-redemption]] — redemption rules.
 - [[discount-stacking]] — stacking rules across types.
@@ -133,4 +132,4 @@ None recorded for this section. Any merchant-facing surprises specific to this s
 
 ## Open questions
 
-None — two-path resolution, step-reset, and reload arrays verified against the platform code + `removeDiscountCode` on 2026-06-12.
+None.

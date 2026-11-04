@@ -7,7 +7,7 @@ aliases: ["Cart rule stacking", "Cart-level stacking", "Product-level stacking",
 tags: [apps, cart-rules, marketing, promotions, stacking, evaluation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -25,7 +25,7 @@ When a cart matches multiple rules — or a multi-row rule has several matching 
 4. **Cart-level matches are winner-takes-all** — only the highest-`value` cart-level match applies.
 5. **Product-level matches accumulate** per line, subject to the negative-price guard.
 
-Cart Rules also stack with the simpler [[marketing-discounts]] system — Discounts first; Cart Rules see the discounted basis.
+Cart Rules also stack with the simpler [[marketing-discounts]] system: product discounts and line-level codes first, then Cart Rules on the discounted basis, then order-level discounts.
 
 ## Where to find it
 
@@ -53,7 +53,7 @@ No user-editable settings on this aspect. The merchant influences it via:
 
 Every time the cart's product list is read, active rules evaluate in **descending `sort_order`** (highest priority first). Two basis facts:
 
-- **Matching sees the post-discount price** — a rule matches the price the customer actually pays per line, **after** [[marketing-discounts]] has applied (or the regular price if none). So evaluation is **Discounts → then Cart Rules** on the discounted basis. See [[discount-stacking]] for the full matrix.
+- **Matching sees the post-discount price** — a rule matches the price per line **after** product discounts and line-level codes from [[marketing-discounts]] have applied (or the regular price if none). "Orders over", Countdown and payment-method discounts come after the rules, so a rule does not see them, and their thresholds are checked after the rule's product-level reductions. See [[discount-stacking-evaluation-order]].
 - A matching rule contributes both an **upsell message** (if its row has one) and a **discount action** (cart-level or per line). Only ONE message per rule shows — see *Message-row precedence*.
 
 ### Rows are an OR-fallback chain — highest-`sorting` row fires FIRST
@@ -106,7 +106,7 @@ Drag-dropping in the rules list reassigns `sort_order` to `1, 2, 3, …` (highes
 - [[cart-rules-actions]] — where the cents-vs-percent value scale is set.
 - [[cart-rules-scoping]] — what makes an action cart-level vs product-level.
 - [[cart-rules-cooldowns]] — date / status / priority gating that precedes stacking.
-- [[marketing-discounts]] — Discounts evaluate FIRST; Cart Rules see the discounted basis.
+- [[marketing-discounts]] — product discounts and line-level codes evaluate before Cart Rules, order-level discounts after them.
 - [[discount-stacking]] — cross-system stacking matrix.
 - [[cart-rules-known-issues]] — sort_order non-determinism; empty-row-trigger bug; A/B testing not supported.
 

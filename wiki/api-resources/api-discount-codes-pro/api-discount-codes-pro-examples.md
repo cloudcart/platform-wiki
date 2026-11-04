@@ -6,9 +6,9 @@ related_entity: discount-code
 related_features: [marketing-discounts-code-pro, marketing-discounts-code-pro-generator]
 aliases: ["Discount Codes PRO API examples", "Code PRO API curl examples", "discount-codes-pro filtering", "discount-codes-pro testing checklist"]
 tags: [api, json-api-v2, discounts, code-pro]
-plan_gates: ["discount-code-pro"]
+plan_gates: ["discount_coupon"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 7
 ---
 # Discount Codes PRO API — filtering, examples & testing checklist
