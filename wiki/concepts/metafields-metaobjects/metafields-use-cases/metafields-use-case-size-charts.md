@@ -5,7 +5,7 @@ aliases: ["Size chart metaobject", "Size guide", "Fit guide", "Structured size c
 tags: [metafields, metaobjects, use-case, fashion, size-chart]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -72,6 +72,7 @@ The product page reads `custom.size_chart`, `custom.fit` and `custom.fit_score` 
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[apps-size-chart]]: the platform's Size Chart app.
 - [[metaobjects-definitions]]: definitions, fields, entries.
 - [[products-variants-options]]: the sizes the shopper actually picks.

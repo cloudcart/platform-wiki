@@ -7,7 +7,7 @@ aliases: ["Themes catalogue", "Theme listing", "Free vs paid themes", "Theme car
 tags: [design, themes, templates, catalogue]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -48,7 +48,7 @@ Sidebar → **Design** → **Themes** → bottom section (below the "current the
 
 | Attribute | Meaning |
 |-----------|---------|
-| `mapping` | Machine slug used in URLs and the site record (e.g., `nitrogen`, `pro`, `basic`). |
+| `mapping` | Machine slug used in URLs and the site record (e.g., `flair`, `motion`, `summer`). |
 | `name` | Display name shown on the card. |
 | `description` | Tooltip / detail text. |
 | `demo_url` | Public URL where the theme can be previewed on CloudCart's demo store. |

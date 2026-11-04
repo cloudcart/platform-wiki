@@ -5,7 +5,7 @@ aliases: ["Designer profile metaobject", "Author page", "Artist profile", "Maker
 tags: [metafields, metaobjects, use-case, content, brand-story]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-21
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -74,6 +74,7 @@ The collection maintains itself as products are tagged with the designer. It is 
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[metaobjects-definitions]]: handles, display names, upsert.
 - [[metafields-capabilities]]: the smart-collection condition on a reference.
 - [[products-vendors]]: the platform's own brands.

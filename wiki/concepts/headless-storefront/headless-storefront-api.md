@@ -26,7 +26,6 @@ Covered:
 - The four `/api/sf` route variants (POST, GET, downloads, playground).
 - Required + optional HTTP headers.
 - Public vs private token semantics (where each lives, rotation rules, masked-display rules).
-- The default scope set + the platform's catalogue of scopes (stored, not shown in the admin, not checked by the Storefront API).
 
 Not covered:
 
@@ -83,23 +82,6 @@ Defaults at storefront creation:
 - `read_content`
 - `read_checkouts`
 - `write_checkouts`
-
-### Full scope catalogue
-
-The platform's catalogue of storefront scopes. The Storefront API tab on [[nitrogen-storefront-overview]] does not show them, and the Storefront API does not check them:
-
-- **Products** — `read_products`, `read_product_inventory`, `read_product_tags`.
-- **Customers** — `read_customers`, `write_customers`, `read_customer_tags`.
-- **Content** — `read_content` (articles, blogs, pages).
-- **Checkout** — `read_checkouts`, `write_checkouts`.
-- **Orders** — `read_orders`.
-- **Bulk Operations** — `read_bulk_operations` (and related write scopes — verify exact key list).
-
-No operation is refused for being outside the scope set.
-
-### Both tokens carry the SAME scope set
-
-Public and private tokens reach the same operations; the distinction is exposure surface (client-side vs server-side), not scope. Operations on a customer's own data, such as `customerUpdate`, also need that customer's access token, whatever the scope set says.
 
 ### Plan gating on scopes
 

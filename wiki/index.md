@@ -25,7 +25,7 @@
 - [[food-restaurant-grocery]] — running a food business: restaurant POS, on-demand delivery, grocery storefront.
 - [[fulfillment-and-warehouse]] — how orders get picked / packed / shipped: in-house, 3PL, dropshipping, suppliers.
 - [[geo-targeting]] — deciding if a customer is "in scope" by location (zones, polygons, distances, IP).
-- [[headless-storefront]] — a custom frontend on CloudCart's APIs (Nitrogen); admin stays, storefront is bespoke.
+- [[headless-storefront]] — a storefront of the store's own on CloudCart's APIs (Nitrogen); admin stays, full design freedom.
 - [[import-pipeline]] — bulk-loading data in (CSV / XML / feed / ERP): upload → map → queue → history.
 - [[inventory-tracking]] — per-SKU stock: how counts decrement, restock, oversell, multi-warehouse.
 - [[invoicing-and-accounting]] — issuing invoices / credit notes + BG fiscal compliance + accounting / e-invoicing apps.
@@ -35,11 +35,12 @@
 - [[platform-rate-limits]] — edge rate limits, bot policy, timeouts (429s, blocked crawlers, 504s).
 - [[merchant-roles]] — admin account roles (Owner / Moderator / API) and what each can do.
 - [[merchant-subscription-lifecycle]] — the merchant's own CloudCart subscription (plan / pay / renew / retry / cancel) — support hub.
-- [[metafields-metaobjects]] — the store's own typed fields on products / categories / customers + its own content types (metaobjects); mainly for Nitrogen storefronts.
+- [[metafields-metaobjects]] — the store's own typed fields on products / categories / customers + its own content types (metaobjects); shown on Nitrogen storefronts, not on standard themes.
 - [[mobile-admin-app]] — CloudCart Admin, the phone app (iOS / Android) for owners and Moderators alike: signing in, orders, new orders, push notifications, deleting the account.
 - [[multi-currency]] — single-currency-by-design store; no per-customer currency switching.
 - [[multi-language]] — running the admin + storefront in multiple languages.
 - [[multichannel-selling]] — selling beyond the storefront: marketplaces, shopping feeds / ads, platform migration.
+- [[nitrogen-vs-themes]] — START HERE when a merchant wants to make a design: Nitrogen, not theme templates; Nitrogen compared with a standard theme.
 - [[notification-delivery]] — how store events become outbound emails / SMS / webhooks / admin alerts.
 - [[online-sales-without-cash-register]] — BG fiscal regime: the courier issues the cash receipt for COD orders.
 - [[order-processing-pipeline]] — end-to-end side-effects of every order event (webhooks, emails, stock, jobs).
@@ -63,7 +64,7 @@
 - [[subscriber-vs-customer]] — Customer vs Subscriber: two separate person records, different purposes.
 - [[subscription-lifecycle]] — the shared state machine for any paid recurring item (technical reference).
 - [[tax-computation]] — how the tax line on each order is computed (rate, VAT / OSS, snapshot).
-- [[theme-customization-layers]] — the three stacked storefront-design customisation layers.
+- [[theme-customization-layers]] — the three layers that adjust a standard theme (a new design is [[nitrogen-vs-themes]]).
 - [[variants-model]] — Parameter × Option × Variant: three distinct catalogue concepts.
 - [[wallet-gift-instrument-checkout]] — rules for buying wallet top-ups and gift cards: separate cart, online payment only, no discounts, no invoice, no returns.
 - [[widget-vs-page-builder-block]] — two storefront-composition surfaces compared.
@@ -78,7 +79,7 @@
 - [[marketing]] — discounts, campaigns, channels, SEO, cross-sell / up-sell, subscribers, abandoned-cart.
 - [[analytics]] — dashboard boxes + reports (sales, orders, customers, sessions, traffic).
 - [[settings]] — store settings: general, shipping, payments, taxes, invoicing, staff, statuses, boxes, geo zones, hooks.
-- [[design]] — themes, storefront modules, page builder, widgets.
+- [[design]] — themes, storefront modules, page builder, widgets; to make a design of the store's own, see [[nitrogen-vs-themes]].
 - [[payment-providers]] — directory of every payment gateway (jump to a provider's config); CloudCart Pay, the built-in one, is free of transaction fees until 31.12.2026.
 - [[settings-payment-providers]] — the Payment methods screen (install / activate / order providers).
 - [[shipping]] — directory of every courier integration (jump to a courier's page).
@@ -87,7 +88,7 @@
 - [[account]] — the signed-in admin's personal profile / account.
 - [[merchant]] — the account-owner record (billing identity; owner-only).
 - [[contracts]] — long-term-agreement (LTA) surface for negotiated accounts.
-- [[nitrogen]] — headless storefronts (Nitrogen).
+- [[nitrogen]] — headless storefronts: every Nitrogen screen and what it does, at `/admin/nitrogen`; where a design of the store's own begins.
 - [[dashboard]] — the admin home screen (sign-in landing panels).
 - [[virtual-wallet]] — store credit per customer: top-up settings, transactions and approvals, wallet at checkout, expiry, refunds to wallet.
 

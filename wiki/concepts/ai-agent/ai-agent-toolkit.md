@@ -5,7 +5,7 @@ aliases: ["CloudCart AI Toolkit", "ai-toolkit", "cloudcart-plugin", "CloudCart C
 tags: [ai, agent, cli, mcp, setup, developer, concepts]
 plan_gates: []
 created: 2026-11-03
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -55,11 +55,11 @@ The agent asks which one fits before it installs anything:
 
 Every agent also installs the CLI and signs in, see [[ai-agent-access]].
 
-**The plugin's skills** teach the agent how to work: answering from the wiki (`cloudcart-platform-expert`), catalog work with its previews and safeguards (`cloudcart-product-management`), Nitrogen storefronts (`cloudcart-nitrogen`), planning a new project (`project-setup`) and installing the CLI and the Dev MCP. Agents without the plugin instead get three standing rules in their own instructions file: store data only through the CLI, validate each operation with the Dev MCP first, answer platform questions from the wiki.
+**The plugin's skills** teach the agent how to work: answering from the wiki (`cloudcart-platform-expert`), catalog work with its previews and safeguards (`cloudcart-product-management`), Nitrogen storefronts (`cloudcart-nitrogen`), planning a new project (`project-setup`) and installing the CLI and the Dev MCP. Agents without the plugin instead get four standing rules in their own instructions file: store data only through the CLI, validate each operation with the Dev MCP first, answer platform questions from the wiki, and read `cloudcart-nitrogen` from the toolkit before building a storefront ([[headless-starter]]).
 
 ### Staying up to date
 
-- **The wiki:** in Claude Code, a background check at the start of each session, at most once in 24 hours. Without the plugin, the agent refreshes its copy with `git pull` when asked.
+- **The wiki:** in Claude Code, a background check at the start of each session, at most once in 24 hours. Without the plugin, the agent refreshes its copy with a fetch and a hard reset when asked; the copy is read-only.
 - **The MCP servers** run from `@latest` on each start.
 - **The plugin in Claude Code** does not update by itself: `claude plugin marketplace update cloudcart-ai-toolkit`, `claude plugin install cloudcart-plugin@cloudcart-ai-toolkit`, then `/reload-plugins`.
 - **The CLI:** `cloudcart version` shows the installed one.
@@ -79,6 +79,7 @@ Every agent also installs the CLI and signs in, see [[ai-agent-access]].
 - [[ai-agent]]: hub.
 - [[ai-agent-access]]: the CLI's sign-in.
 - [[headless-storefront]]: what the build profile is for.
+- [[headless-starter]]: the starter, and when the `cloudcart-nitrogen` skill is required.
 
 ## Open Questions
 

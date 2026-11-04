@@ -5,7 +5,7 @@ aliases: ["What can the AI agent do", "AI agent bulk edit", "Bulk changes with A
 tags: [ai, agent, bulk-edit, products, concepts]
 plan_gates: []
 created: 2026-11-03
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -29,7 +29,7 @@ Once connected, the agent takes requests in plain language and in the merchant's
 | **Know the store** | Orders, best sellers, low stock, customers: "Which products are low on stock?" |
 | **Use the store as context** | "Write a Facebook ad for my three best sellers", better descriptions, e-mail campaigns from real products. |
 | **Tidy up** | Fix descriptions, organise categories, clean up the catalog. |
-| **Build** (when set up for development) | Pages and components of a Nitrogen storefront, see [[headless-storefront]]. |
+| **Build** (when set up for development) | A design of the store's own: a Nitrogen storefront made from the starter, with the `cloudcart-nitrogen` skill. See [[nitrogen-vs-themes]] and [[headless-starter]]. |
 
 The Admin GraphQL API also covers customers, discounts and marketing, design, payments and shipping settings, apps, metafields ([[metafields-admin-api]]), imports and exports.
 

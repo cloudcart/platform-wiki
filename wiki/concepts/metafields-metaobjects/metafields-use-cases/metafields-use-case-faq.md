@@ -5,7 +5,7 @@ aliases: ["FAQ metaobject", "Product FAQ", "Frequently asked questions entries",
 tags: [metafields, metaobjects, use-case, content, faq, support]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -74,6 +74,7 @@ An ordered page of questions can also be its own entry: a **`faq_page`** metaobj
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[page-faq]]: the classic-theme FAQ page.
 - [[metafields-use-case-category-content]]: the category's other landing blocks.
 - [[metaobjects-definitions]]: active/draft status, Used in.

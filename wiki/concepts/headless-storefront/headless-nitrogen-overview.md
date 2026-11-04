@@ -5,7 +5,7 @@ aliases: ["Nitrogen overview", "Nitrogen storefront limits", "Handle hash", "Sto
 tags: [nitrogen, headless, storefront-api, limits, permissions, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -40,7 +40,7 @@ Not covered here:
 
 ## Contrasts
 
-- **Nitrogen vs legacy theme** — legacy themes are fully managed by CloudCart and work out of the box. Nitrogen storefronts are custom apps the merchant builds and maintains, with full UI / framework control. The two **coexist** on the same CloudCart backend; the storefront's **Domains** tab decides which serves a domain.
+- **Nitrogen vs legacy theme** — legacy themes are fully managed by CloudCart and work out of the box. Nitrogen storefronts are custom apps the merchant builds and maintains, with full UI / framework control. The two **coexist** on the same CloudCart backend; the storefront's **Domains** tab decides which serves a domain. The full comparison is on [[nitrogen-vs-themes]].
 
 ## Where it applies
 
@@ -64,7 +64,7 @@ A store can run its theme and up to 10 Nitrogen storefronts at the same time. Th
 
 ### Same CloudCart data backs every storefront
 
-Products, categories, customers, orders, settings, content (CMS pages, blog) all live in the merchant's CloudCart admin. Whether a customer browses via the legacy theme or via a Nitrogen storefront, they see the same catalog and place orders into the same order list.
+Products, categories, customers, orders, settings, content (CMS pages, blog) all live in the merchant's CloudCart admin. Whether a customer browses via the legacy theme or via a Nitrogen storefront, they see the same catalog and place orders into the same order list. Metafields and metaobjects reach customers only through a Nitrogen storefront ([[metafields-nitrogen]]).
 
 ### Permissions
 
@@ -97,6 +97,8 @@ The list's confirmation reads: *"Delete this storefront? It is removed from Nova
 ## Related
 
 - [[headless-storefront]] — hub.
+- [[nitrogen-vs-themes]] — Nitrogen compared with a standard theme.
+- [[metafields-metaobjects]] — the store's own fields and content types.
 - [[nitrogen]] — Nitrogen admin hub.
 - [[nitrogen-storefronts]] — storefront list with the per-site limit counter.
 - [[nitrogen-create-storefront]] — creation wizard.

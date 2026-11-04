@@ -5,7 +5,7 @@ aliases: ["Color swatch metaobject", "Colour swatches", "Sibling products", "Pro
 tags: [metafields, metaobjects, use-case, fashion, swatches, merchandising]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -65,6 +65,7 @@ A plain `color` field on the product would repeat `#2E5E3E` on every forest-gree
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[metaobjects-definitions]]: the swatch entries.
 - [[products-variants-options]]: colours as variants instead.
 - [[metafields-use-case-related-products]]: other product-to-product relationships.

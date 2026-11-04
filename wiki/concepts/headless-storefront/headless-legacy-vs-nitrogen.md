@@ -5,7 +5,7 @@ aliases: ["Legacy storefront surfaces", "Nitrogen vs legacy endpoints", "Headles
 tags: [nitrogen, headless, legacy, seo, robots, sitemap, redirects, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 5
 ---
 
@@ -20,7 +20,7 @@ A Nitrogen storefront answers on two kinds of address, and who answers a path de
 - **A store domain routed to the storefront** (see [[headless-nova-platform]]): the platform keeps a fixed list of paths. Everything else goes to the storefront's worker.
 - **The storefront's own `{slug}.cloudcart.dev` address**: nothing is reserved. Its worker answers every path, those on the list included.
 
-This page maps what a merchant inherits on a routed domain and what the storefront has to do itself.
+This page maps what a merchant inherits on a routed domain and what the storefront has to do itself. Comparing the two for a merchant choosing is on [[nitrogen-vs-themes]].
 
 ## Scope
 
@@ -98,6 +98,7 @@ The classic storefront sends a guest from its home, catalog, product, search and
 ## Related
 
 - [[headless-storefront]] — hub.
+- [[nitrogen-vs-themes]] — Nitrogen compared with a standard theme.
 - [[headless-nova-platform]] — routing a domain, and the storefront's address.
 - [[headless-nitrogen-overview]] — coexistence with the store's theme.
 - [[seo-handling]] — SEO mechanics.

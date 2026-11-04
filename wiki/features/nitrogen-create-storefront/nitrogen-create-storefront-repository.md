@@ -3,11 +3,11 @@ type: feature
 nav_path: "Nitrogen → Storefronts → Create Storefront → Repository"
 route_name: nitrogen.storefront.select-repo
 route_path: /admin/nitrogen/create/repository
-aliases: ["Connect a Repository", "Nitrogen create new repo", "Nitrogen connect existing repo", "Nitrogen starter template", "cloudcart/nitrogen-starter"]
+aliases: ["cloudcart/nitro-starter", "Connect a Repository", "Nitrogen create new repo", "Nitrogen connect existing repo", "Nitrogen starter template", "cloudcart/nitrogen-starter"]
 tags: [nitrogen, storefronts, create, wizard, github, repository]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 5
 ---
 # Nitrogen → Create Storefront — Repository selection
@@ -67,9 +67,13 @@ The list is loaded from `GET /admin/api/core/nitrogen/github/repositories` → `
 
 ## Business rules
 
-### Starter template is fixed: `cloudcart/nitrogen-starter`
+### Starter template is fixed: `cloudcart/nitro-starter`
 
-The new-repo path always clones from `cloudcart/nitrogen-starter` (shown as a code label on the option card). The repo is created in the chosen visibility (Private by default) with the GitHub Actions deploy workflow pre-committed.
+The new-repo path always clones from `cloudcart/nitro-starter`, whatever the option card's label says: it still names `cloudcart/nitrogen-starter`, an address that does not exist. What the starter holds is on [[headless-starter]]. The repo is created in the chosen visibility (Private by default) with the GitHub Actions deploy workflow pre-committed.
+
+### A repository name that is taken
+
+The refusal reads *"A repository with this name already exists."*
 
 ### Visibility defaults to Private
 

@@ -5,7 +5,7 @@ aliases: ["Product documents metafield", "User manual download", "Datasheet", "S
 tags: [metafields, metaobjects, use-case, files, documents, warranty, compliance]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -86,6 +86,7 @@ Each product has its own manual or data sheet, and a plain download list is all 
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[metafields-types]]: `file_reference`, `page_reference`, `url` with allowed domains.
 - [[settings-files]]: the file manager.
 - [[digital-products]]: paid downloads, a different mechanism.

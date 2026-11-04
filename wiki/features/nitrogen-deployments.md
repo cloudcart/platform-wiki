@@ -7,7 +7,7 @@ aliases: ["Nitrogen deployments", "Deployment history", "Deployment status", "No
 tags: [nitrogen, deployments, staff-permission]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 3
 ---
 # Deployments
@@ -44,7 +44,7 @@ Columns **Deployment** (with the **Current** badge on the live one), **Status**,
 ### Details
 
 - Header: the commit message, the start date, *Deployment #{id}*, and **Current** when it is the live one.
-- **Deployment** card: **Status**, **Environment**, **Deployment URL**.
+- **Deployment** card: **Status**, **Environment**, **Deployment URL** with a copy button.
 - **Build details** card: **Source** (the short commit with a link, and the branch; or *"Deployed from the command line"*), **Workflow** (**View on GitHub**), **Duration**.
 
 ### Statuses

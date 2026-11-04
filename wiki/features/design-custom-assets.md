@@ -7,7 +7,7 @@ aliases: ["Custom CSS/JS", "Custom assets", "Custom CSS", "Custom JavaScript", "
 tags: [design, custom, css, js, advanced]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 0
 ---
 # Custom CSS/JS
@@ -16,7 +16,7 @@ source_count: 0
 
 The **Custom CSS/JS** screen is the merchant's "escape hatch" for inserting **arbitrary HTML, CSS, or JavaScript** into the head of every storefront page. This is the place to drop in third-party tracking pixels (Facebook Pixel, TikTok Pixel, Hotjar, etc. — when the dedicated integrations aren't enough), self-hosted webfont declarations (`@font-face`), chat-module snippets, A/B-testing tools, or per-store CSS overrides that the [[design-theme-editor]] doesn't expose as a named variable. The merchant pastes raw markup into a single full-width **CodeMirror code editor**; whatever they paste is injected verbatim into the `<head>` of every storefront page.
 
-This is an **advanced surface**: there is no validation, no sanitisation, no preview, no per-page targeting, and no plan gating. The merchant is fully trusted to write safe markup — bad code on this screen breaks the storefront immediately and globally.
+This is an **advanced surface**: there is no validation, no sanitisation, no preview, no per-page targeting, and no plan gating. The merchant is fully trusted to write safe markup — bad code on this screen breaks the storefront immediately and globally. It is not the way to make a design: that is Nitrogen ([[nitrogen-vs-themes]]).
 
 This page is a hub. The detail of the editor, the injection mechanics, and the storage / lifecycle behaviour each live on their own aspect page below.
 
@@ -64,6 +64,7 @@ The business rules split across the aspect pages:
 ## Related
 
 - [[design]] — parent Design pillar.
+- [[nitrogen-vs-themes]] — a standard theme compared with a Nitrogen storefront.
 - [[design-custom-assets-editor]] — the editor UI + field + Save action (aspect).
 - [[design-custom-assets-injection]] — where and how the code is injected (aspect).
 - [[design-custom-assets-storage]] — storage, theme-scoping, lifecycle, gating (aspect).

@@ -5,7 +5,7 @@ aliases: ["Product specifications metafields", "Spec sheet", "Technical data", "
 tags: [metafields, use-case, specifications, measurements, electronics]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -75,6 +75,7 @@ The 11 measurement types keep the unit entered. Filtering and comparison convert
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[metafields-types]]: the 11 measurement types and their units.
 - [[metafields-capabilities]]: admin filter and smart-collection conditions on numbers.
 - [[products-property]]: the filterable alternative.

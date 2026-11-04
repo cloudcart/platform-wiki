@@ -3,16 +3,18 @@ type: feature
 nav_path: "Design"
 route_name: admin.templates.list
 route_path: /admin/storefront/templates
-aliases: ["Design", "Дизайн", "Storefront pillar", "Магазин", "Мой магазин"]
+aliases: ["Design", "Дизайн", "Storefront pillar", "Магазин", "Мой магазин", "Направи ми дизайн", "Нов дизайн", "Собствен дизайн", "Редизайн", "Промяна на дизайна"]
 tags: [design, storefront, hub]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 3
 ---
 # Design
 
 ## Purpose
+
+> **Making a design? Go to Nitrogen.** When a merchant wants a design of their own, a redesign, or something a theme's settings cannot do, the answer is a Nitrogen storefront, not editing a theme's templates. See [[nitrogen-vs-themes]]. Nitrogen starts from [[headless-starter]], opens at the address `/admin/nitrogen` ([[nitrogen]]), which the menu does not link to, and an agent building it must use the `cloudcart-nitrogen` skill. The screens below adjust the standard theme the store already runs.
 
 Top-level sidebar pillar that groups every **storefront design** surface in one place. From here the merchant picks the store's **theme** (free or paid), edits the **navigation menus** (header, footer, mobile), drops in / re-orders **modules** on the homepage and category pages, opens the **Theme Editor** to tweak colours / fonts / CSS, opens the **Page Builder** to compose drag-and-drop landing pages, and reaches the **Static Pages** CMS (also surfaced under Marketing). The actual editing happens inside each sub-screen; this pillar is the navigation hub for everything that controls how the storefront LOOKS and how visitors NAVIGATE through it.
 
@@ -56,9 +58,9 @@ The pillar exposes these sub-screens, grouped by the three sub-headers in the su
 
 This is a navigation hub with no editable fields of its own — every operation happens inside a child screen. The merchant cannot:
 
-- Build a theme from scratch — only pick from CloudCart's catalogue (the Theme Editor tweaks the active theme; it does not create a new one).
+- Build a theme from scratch — only pick from CloudCart's catalogue (the Theme Editor tweaks the active theme; it does not create a new one). A design of the store's own is made with Nitrogen ([[nitrogen-vs-themes]]).
 - Create / publish custom module types — only configure the modules shipped by the active theme.
-- Edit the theme's underlying Smarty templates from this UI — that requires a CloudCart-staff customisation or a paid theme service.
+- Edit the theme's underlying Smarty templates. A different design is made with Nitrogen, not by changing a theme ([[nitrogen-vs-themes]]).
 
 ## Settings & fields
 
@@ -83,6 +85,11 @@ Many modules and page-builder block types are theme-shipped — the active theme
 If the merchant is on a **paid theme that hasn't been paid for yet** (`unpaid_template` flag on the site), every admin route — except Themes / Checkout / Login — redirects to the checkout for that theme. The merchant must complete payment or switch to a free theme before the rest of the admin panel becomes usable. See [[design-themes]] for the full flow.
 
 ## Related
+
+### Making a design
+- [[nitrogen-vs-themes]] — Nitrogen compared with a standard theme, and why a design of the store's own goes to Nitrogen.
+- [[headless-starter]] — the starter a Nitrogen storefront is made from, and the agent's `cloudcart-nitrogen` rule.
+- [[metafields-metaobjects]] — the store's own fields and content types; shown on Nitrogen storefronts, not on standard themes.
 
 ### Children of this pillar
 - [[design-themes]] — theme picker (free + paid catalogue, install, change, purchase flow); also the Logo / favicon / social-share image asset slots.

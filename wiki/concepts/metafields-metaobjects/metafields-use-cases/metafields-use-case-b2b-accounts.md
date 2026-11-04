@@ -5,7 +5,7 @@ aliases: ["B2B customer metafields", "Trade account data", "Credit limit metafie
 tags: [metafields, use-case, customers, b2b, wholesale]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -72,6 +72,7 @@ The `b2b` namespace keeps these apart from consumer fields. Namespaces other tha
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[b2b-wholesale]]: the platform's native B2B setup.
 - [[metafields-use-case-customer-profile]]: consumer customer data.
 - [[metafields-use-case-integration-data]]: ERP keys and sync.

@@ -7,13 +7,15 @@ aliases: ["Themes", "Templates", "Storefront theme", "Theme picker", "Storefront
 tags: [design, themes, templates]
 plan_gates: ["change_theme"]
 created: 2026-05-23
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 4
 ---
 
 # Themes
 
 ## Purpose
+
+> **Making a design of the store's own is not done here.** This screen installs ready themes, and their templates cannot be edited. A merchant who wants their own design goes to Nitrogen: [[nitrogen-vs-themes]].
 
 The **Themes** screen is the merchant's catalogue of storefront themes (also called "templates") — where they see the **currently active** theme, browse **free** and **paid** theme catalogues, preview any theme on a live demo URL, **install** a free theme (or one already purchased), and **purchase** a paid theme through the in-platform checkout. Each theme controls the storefront's look-and-feel: layout, default modules, page-builder block library, default colours, default typography, and the customisation options exposed by the Theme Editor.
 
@@ -46,7 +48,7 @@ Sub-routes:
 | Open purchase page (paid theme) | `admin.templates.purchase` | `/admin/storefront/templates/purchase/{mapping}` | GET |
 | Add theme to cart and start checkout | (paid theme buy) | `/admin/storefront/templates/purchase/{mapping}` | POST |
 
-Each theme is identified by a `mapping` slug (the theme's machine name, e.g., `nitrogen`, `pro`, `basic`).
+Each theme is identified by a `mapping` slug (the theme's machine name, e.g., `flair`, `motion`, `summer`).
 
 ## What the merchant can do here
 
@@ -63,7 +65,7 @@ Each theme is identified by a `mapping` slug (the theme's machine name, e.g., `n
 - Cannot **install a paid theme** without buying it first.
 - Cannot **return / refund** a purchased theme through this screen.
 - Cannot **revert** to a previous theme by undo — switching back means installing the previous theme again (customisations are preserved per theme).
-- Cannot **upload / import a custom theme** — only CloudCart's catalogue themes are installable.
+- Cannot **upload / import a custom theme** — only CloudCart's catalogue themes are installable. A design of the store's own is made with Nitrogen ([[nitrogen-vs-themes]]).
 
 ## Settings & fields
 
@@ -99,6 +101,7 @@ A separate orthogonal restriction applies to **paid themes** — each paid theme
 ## Related
 
 - [[design]] — parent Design pillar.
+- [[nitrogen-vs-themes]] — a standard theme compared with a Nitrogen storefront.
 - [[design-navigation]] — storefront menus (sibling).
 - [[design-modules]] — storefront modules (sibling — many modules are theme-shipped).
 - [[design-theme-editor]] — per-theme customisations (colours / fonts / images).

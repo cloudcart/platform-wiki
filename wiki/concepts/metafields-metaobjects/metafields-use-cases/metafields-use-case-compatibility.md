@@ -5,7 +5,7 @@ aliases: ["Compatibility metaobject", "Fitment", "Compatible with", "Fits model"
 tags: [metafields, metaobjects, use-case, compatibility, spare-parts, electronics]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-21
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -72,6 +72,7 @@ Details that vary **per pairing**, such as the yield of a cartridge on one print
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[product-compatibility]]: selling by fit with the Brand-Model app.
 - [[brand-model]]: the platform's brand → model compatibility app.
 - [[metafields-capabilities]]: filtering entries by fields, conditions on a reference.

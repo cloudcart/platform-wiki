@@ -5,7 +5,7 @@ aliases: ["Admin sidebar", "Sidebar navigation", "Left navigation", "Main menu",
 tags: [admin, navigation, sidebar, ui, structure]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -46,6 +46,8 @@ The **9 top-level items** in display order (labels verified against the BG and E
 | 7 | **Приложения** | Apps | `sidebar.apps` | `sidebar-apps-link` | Apps catalogue (see [[apps]]) |
 | 8 | **Дизайн** | **Design** | `sidebar.storefront` | `sidebar-store-link` | See sub-menu below — Дизайн → Модули lives here |
 | 9 | **Настройки** | Settings | `sidebar.settings` | `sidebar-settings-link` | See [[settings]] hub for the full sub-menu |
+
+**Nitrogen has no entry in this menu.** Its area opens at the address `/admin/nitrogen` ([[nitrogen]]).
 
 Items 8 and 9 are top-level chips, but their **sub-menus** are still rendered by the legacy admin layer rather than the modern one — so the "Дизайн" sub-menu structure below is the authoritative reference for that branch.
 

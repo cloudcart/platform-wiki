@@ -7,7 +7,7 @@ aliases: ["Nitrogen provisioning step", "Setting Up Your Storefront", "Nitrogen 
 tags: [nitrogen, storefronts, create, wizard, provisioning, github]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 5
 ---
 # Nitrogen → Create Storefront — Provisioning + success
@@ -41,7 +41,7 @@ The provisioning card (centered, `max-w-lg`) contains:
 ### Step list — Create-new-repo path (3 steps)
 
 1. *"Creating GitHub repository"* — POSTs `/admin/api/core/nitrogen/github/create-repo` with `{ name, private }`.
-2. *"Initializing from starter template"* — copies content from `cloudcart/nitrogen-starter` into the new repo.
+2. *"Initializing from starter template"* — copies content from `cloudcart/nitro-starter` into the new repo.
 3. *"Provisioning storefront & configuring deployment"* — creates the storefront with the GitHub linkage (`repository = full_name`, `branch = 'main'`, `is_new_repo = true`).
 
 ### Step list — Connect-existing path (2 steps)

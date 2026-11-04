@@ -5,7 +5,7 @@ aliases: ["Storefront architecture", "Smarty themes", "Theme system", "Storefron
 tags: [storefront, smarty, themes, architecture, frontend]
 plan_gates: []
 created: 2026-06-08
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 8
 ---
 
@@ -57,7 +57,7 @@ What it does NOT cover:
 ## Contrasts
 
 - **Smarty storefront vs Vue admin panel** — server-rendered Smarty for customers; Vue 3 SPA at `/admin/*` backed by [[json-api-v2]] for staff. Same the application framework monolith, different render layers.
-- **Smarty storefront vs Nitrogen headless** — Smarty is the default (works out of the box at `<store>.cloudcart.com`). [[headless-storefront]] is a separate optional product using Storefront GraphQL at `/api/sf`. A merchant can run **both at once** on different hostnames.
+- **Smarty storefront vs Nitrogen headless** — Smarty is the default (works out of the box at `<store>.cloudcart.com`). [[headless-storefront]] is a separate optional product using Storefront GraphQL at `/api/sf`. A merchant can run **both at once** on different hostnames. Choosing between them: [[nitrogen-vs-themes]].
 - **JSON-API v2 vs Storefront GraphQL** — `/api/v2/*` is admin-side (API-key auth, full CRUD); `/api/sf` is customer-side (Storefront token, scoped to one storefront).
 - **Per-theme JS bundles vs shared bundle** — each theme ships its own `js/scripts.min.js`. Cross-theme contract is conventions (`.js-*`, `cc.*`), not code. See [[storefront-arch-js-bundles]].
 - **Theme override vs per-merchant override** — the **theme** is the file-system layer (merchants don't edit the theme templates directly). The **per-merchant override** is the [[theme-customization-layers]] stack (Theme Editor variables, Custom CSS/JS, dynamic Page-Builder pages).
@@ -76,6 +76,7 @@ Every Smarty-rendered customer-facing storefront page — catalogue ([[home]], [
 - [[storefront-themes-catalog]] — sibling concept: the catalogue of themes available.
 - [[storefront-known-issues]] — sibling concept: cross-theme storefront issues.
 - [[headless-storefront]] — the Nitrogen alternative storefront.
+- [[nitrogen-vs-themes]] — a standard theme compared with a Nitrogen storefront.
 - [[json-api-v2]] — the admin-side REST API.
 - [[platform-rate-limits]] — the edge rate-limit and cache layer.
 - [[seo-handling]] — meta tags, canonical URLs, robots.txt, sitemap.

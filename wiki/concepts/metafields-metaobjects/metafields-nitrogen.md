@@ -1,11 +1,11 @@
 ---
 type: concept
 nav_path: "Concept → Metafields and metaobjects → On a Nitrogen storefront"
-aliases: ["Metafields on Nitrogen", "Metafields Storefront API", "metafield(namespace key)", "metafields(identifiers)", "metaobject(handle)", "metaobjects(type)", "HasMetafieldsIdentifier", "MetaobjectHandleInput", "Metafields on classic theme", "MetafieldRichText", "parseMetafield", "Render rich text metafield", "Parse metafield value", "@cloudcart/nitrogen-react", "Метаполета в Nitrogen", "Метаполета в темата"]
+aliases: ["Metafields on Nitrogen", "Metafields Storefront API", "metafield(namespace key)", "metafields(identifiers)", "metaobject(handle)", "metaobjects(type)", "HasMetafieldsIdentifier", "MetaobjectHandleInput", "Metafields on classic theme", "MetafieldRichText", "parseMetafield", "Render rich text metafield", "Parse metafield value", "@cloudcart/nitrogen-react", "Метаполета в Nitrogen", "Метаполета в темата", "Metafields not showing on theme", "Метаполетата не се показват", "Метаполета в стандартна тема", "Метаобекти в тема"]
 tags: [metafields, metaobjects, custom-data, nitrogen, headless, storefront-api, concepts]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 6
 ---
 
@@ -15,7 +15,7 @@ source_count: 6
 
 ## Definition
 
-At the time of writing, metafields and metaobjects are **mainly for headless stores built with Nitrogen**. The store's own themes do not display them. A Nitrogen storefront reads them through the **Storefront API** (`/api/sf`, [[headless-storefront-api]]) and decides itself where and how each value appears.
+Metafields and metaobjects are **for headless stores built with Nitrogen**. Standard themes do not display them ([[nitrogen-vs-themes]]). A Nitrogen storefront reads them through the **Storefront API** (`/api/sf`, [[headless-storefront-api]]) and decides itself where and how each value appears. An agent adding them to a storefront uses the `cloudcart-nitrogen` skill ([[headless-starter]]), whose `references/metafields.md` covers it.
 
 ## Scope
 
@@ -112,7 +112,7 @@ Nitrogen's `<Image data={…}>` takes the `MediaImage`'s `image`, and `url(trans
 - **Customer values** are read-only from the storefront: `READ_WRITE` reads as `READ`.
 - **Namespaces**: any valid one; those beginning `app--` are reserved.
 
-**Classic themes**: no CloudCart theme reads metafields or metaobjects yet. On a classic-theme store they can already be filled in, searched through the Admin GraphQL API, and drive smart collections. The storefront shows only what those collections produce.
+**Standard themes**: no CloudCart theme reads metafields or metaobjects. On a standard-theme store they can be filled in, searched through the Admin GraphQL API, and drive smart collections. The storefront shows only what those collections produce.
 
 ## Where it applies
 
@@ -122,6 +122,8 @@ Nitrogen's `<Image data={…}>` takes the `MediaImage`'s `image`, and `url(trans
 ## Related
 
 - [[metafields-metaobjects]]: hub.
+- [[nitrogen-vs-themes]]: Nitrogen compared with a standard theme.
+- [[headless-starter]]: the starter a storefront is made from.
 - [[headless-storefront]]: Nitrogen and headless storefronts.
 - [[headless-storefront-api]]: endpoint, tokens and scopes.
 - [[headless-legacy-vs-nitrogen]]: other things that differ between classic themes and Nitrogen.

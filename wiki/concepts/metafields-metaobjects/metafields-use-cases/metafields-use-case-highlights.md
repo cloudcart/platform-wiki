@@ -5,7 +5,7 @@ aliases: ["Product highlights metaobject", "Certification badges", "Eco badge", 
 tags: [metafields, metaobjects, use-case, merchandising, certifications, smart-collections]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -67,6 +67,7 @@ Renaming a highlight, changing its icon or fixing its text is one edit to its en
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[metafields-capabilities]]: smart-collection conditions on boolean and text.
 - [[products-banners-labels]]: native card labels and banners.
 - [[metafields-use-case-documents]]: certificates as downloadable documents.

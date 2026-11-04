@@ -5,7 +5,7 @@ aliases: ["Testimonial metaobject", "Customer testimonials", "Press mentions", "
 tags: [metafields, metaobjects, use-case, content, social-proof, marketing]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -75,6 +75,7 @@ A testimonial names a real person. Keeping it in **draft** until consent is give
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[apps-product-review]]: native product reviews.
 - [[metafields-use-case-page-sections]]: placing testimonials on landing pages.
 - [[metaobjects-definitions]]: active/draft status.

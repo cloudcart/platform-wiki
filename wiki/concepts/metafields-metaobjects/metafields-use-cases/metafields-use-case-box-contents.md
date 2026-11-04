@@ -5,7 +5,7 @@ aliases: ["What's in the box", "Box contents", "Kit contents", "Package contents
 tags: [metafields, metaobjects, use-case, products, kits]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -70,6 +70,7 @@ The same `box_item` entry (*USB-C cable, 1 m*) can be referenced by many product
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[bundle]]: products sold as a set.
 - [[metafields-types]]: variant references.
 - [[metafields-use-case-related-products]]: accessories and consumables.

@@ -5,7 +5,7 @@ aliases: ["Metafields use cases", "Metaobjects use cases", "Metafield examples",
 tags: [metafields, metaobjects, use-case, custom-data, nitrogen, concepts]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-11-04
 source_count: 8
 ---
 
@@ -20,7 +20,7 @@ A catalogue of data-model patterns for metafields and metaobjects. Each is built
 Every pattern assumes:
 
 - **Owners** are products, categories and customers. Variants and pages are reached through references.
-- **Shown on Nitrogen** storefronts. Classic themes do not display metafields yet ([[metafields-nitrogen]]).
+- **Shown on Nitrogen** storefronts. Standard themes do not display metafields ([[metafields-nitrogen]], [[nitrogen-vs-themes]]).
 - **No translations**, no web page per entry, and no writes from the storefront.
 - **Storefront listing filters** stay on category properties. Metafields reach listings through smart collections ([[metafields-capabilities]]).
 - **Metaobject entries** can be filtered on the Storefront API by fields with the admin filter on, and sorted only by id or last update.

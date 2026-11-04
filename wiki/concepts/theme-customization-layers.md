@@ -7,7 +7,7 @@ aliases: ["Theme customization layers", "Theme customisation layers", "Theme lay
 tags: [design, theme, customization, scss, css, concepts]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 5
 ---
 
@@ -22,6 +22,8 @@ CloudCart's storefront design is shaped by **three independent customisation lay
 3. **Layer 3 — Custom CSS/JS** ([[design-custom-assets]]) — the raw-code escape hatch at `/admin/storefront/custom-assets`. The merchant pastes arbitrary HTML / CSS / JavaScript into a CodeMirror editor; whatever they paste is injected verbatim into the `<head>` of EVERY storefront page. No validation, no sanitisation, no per-page targeting.
 
 Each layer's content survives across the others' changes, but **switching the active Theme hides ALL three layers' content for any non-active theme** — the customisations are scoped per-theme (keyed by the site's `template` slug), so re-installing the previous theme restores its Theme Editor variables AND its Custom CSS/JS. There is no "carry customisations to a new theme" affordance.
+
+**These layers adjust a standard theme.** Making a design of the store's own is done with Nitrogen, not by editing a theme's templates: [[nitrogen-vs-themes]].
 
 A small additional layer — the **sister-site module overlay** — exists for multi-site / "sister store" deployments and is read-only from the merchant's perspective; see [[theme-customization-overlay]].
 
@@ -90,6 +92,7 @@ The actionable rules sit on the aspect pages — see [[theme-customization-casca
 ## Related
 
 - [[design]] — parent Design pillar.
+- [[nitrogen-vs-themes]] — what a Nitrogen storefront gives beyond these layers.
 - [[design-themes]] — Layer 1; theme catalogue + install + purchase.
 - [[design-theme-editor]] — Layer 2; visual variable editor.
 - [[design-custom-assets]] — Layer 3; raw HTML / CSS / JS injection.

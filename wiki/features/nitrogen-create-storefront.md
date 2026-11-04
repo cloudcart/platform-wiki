@@ -7,7 +7,7 @@ aliases: ["Create Nitrogen Storefront", "Create headless storefront", "Nitrogen 
 tags: [nitrogen, storefronts, create, wizard, github, staff-permission]
 plan_gates: []
 created: 2026-05-27
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 5
 ---
 # Nitrogen → Create Storefront (multi-step wizard)
@@ -43,13 +43,13 @@ Both routes render inside the settings wrapper with the rocket icon (`far fa-roc
 - **Name the storefront** and pick a deployment method (**GitHub** or **Command line or CI/CD**) — see [[nitrogen-create-storefront-setup]].
 - **Take the CLI path** — create the storefront immediately, receive a one-time deployment token and the next-step commands, skip all repo steps — see [[nitrogen-create-storefront-setup]].
 - **Connect a GitHub account** via OAuth + the CloudCart Nitrogen GitHub App, or disconnect / switch accounts — see [[nitrogen-create-storefront-github-connect]].
-- **Create a new GitHub repo** from the `cloudcart/nitrogen-starter` template (choose name + Private/Public visibility), OR **connect an existing repo** from a searchable list — see [[nitrogen-create-storefront-repository]].
+- **Create a new GitHub repo** from the `cloudcart/nitro-starter` template (choose name + Private/Public visibility), OR **connect an existing repo** from a searchable list — see [[nitrogen-create-storefront-repository]].
 - **Watch provisioning** complete step-by-step, retry a failed step, and land on the new storefront's detail page — see [[nitrogen-create-storefront-provisioning]].
 
 ### What the merchant CANNOT do here
 
 - Pick a non-GitHub Git provider for auto-deploy — only GitHub is supported (GitLab / Bitbucket / self-hosted require the CLI / CI-CD path).
-- Pick which starter template to clone — the new-repo path always uses `cloudcart/nitrogen-starter`; a custom starter requires the existing-repo path.
+- Pick which starter template to clone — the new-repo path always uses `cloudcart/nitro-starter`; a custom starter requires the existing-repo path.
 - Pre-set variables — they are set on the storefront's **Environments and variables** tab after it is created.
 - Choose the storefront's address — the platform makes it from the name (`{slug}.cloudcart.dev`).
 - Connect more than one GitHub account on the same admin user — disconnect first to switch.
@@ -74,7 +74,7 @@ Per-field validation and the exact server rules live on the aspect pages: name/m
 - **Max 10 storefronts per site.** The `max_storefronts_per_site` cap (default 10) is enforced before the storefront is created, on top of the owner check. The list endpoint exposes the same value via `meta.max_storefronts`.
 - **GitHub via App, not personal tokens.** The integration uses the CloudCart Nitrogen GitHub App. Detail on [[nitrogen-create-storefront-github-connect]].
 - **Command-line path skips the repo steps.** Picking **Command line or CI/CD** goes from step 1 straight to the result page with a deployment token shown once. Detail on [[nitrogen-create-storefront-setup]].
-- **Starter template is fixed: `cloudcart/nitrogen-starter`.** The new-repo path always clones it. Detail on [[nitrogen-create-storefront-repository]].
+- **Starter template is fixed: `cloudcart/nitro-starter`.** The new-repo path always clones it. What it holds is on [[headless-starter]], the screen's detail on [[nitrogen-create-storefront-repository]].
 
 ## Sub-pages (in this cluster)
 

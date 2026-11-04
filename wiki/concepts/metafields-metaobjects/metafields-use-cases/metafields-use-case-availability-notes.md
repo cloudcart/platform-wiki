@@ -5,7 +5,7 @@ aliases: ["Lead time metafield", "Pre-order date", "Restock date", "Made to orde
 tags: [metafields, use-case, products, availability, shipping, messaging]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -71,6 +71,7 @@ A date in `restock_on` does not open the product for ordering; only stock and st
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[product-status]]: native availability labels.
 - [[delivery-scheduling]]: how delivery days are actually decided.
 - [[shipping-calculation]]: how delivery is priced.

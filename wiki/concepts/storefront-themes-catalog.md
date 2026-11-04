@@ -4,7 +4,7 @@ nav_path: "Concept → Storefront themes catalog"
 aliases: ["Storefront themes catalog", "Theme catalog", "Theme list", "Templates list", "Каталог теми", "Шаблони catalog"]
 tags: [storefront, themes, catalog, reference]
 created: 2026-06-08
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 1
 ---
 
@@ -80,6 +80,7 @@ See [[themes-catalog-inheritance]] for the full fallback resolution rules.
 
 ## Related
 
+- [[nitrogen-vs-themes]] — a standard theme compared with a Nitrogen storefront.
 - [[design-themes]] — the merchant-facing catalog screen (route, fields, install flow, purchase flow).
 - [[design-theme-editor]] — the per-variable customisation surface.
 - [[design-custom-assets]] — arbitrary Custom CSS / JS injection.

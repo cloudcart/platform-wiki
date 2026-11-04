@@ -3,11 +3,11 @@ type: concept
 nav_path: "Settings → Metaobjects"
 route_name: metafields.settings
 route_path: /admin/settings/metafields, /admin/settings/metafields/:ownerType/unstructured, /admin/settings/metafields/:ownerType/new, /admin/settings/metafields/:ownerType/:definitionId, /admin/settings/metafields/metaobjects/new, /admin/settings/metafields/metaobjects/:definitionId
-aliases: ["Metafields", "Metaobjects", "Metafields and metaobjects", "Custom data", "Metafield", "Metaobject", "Metafield definitions", "Metaobject definitions", "Metaobject entries", "custom namespace", "Метаполета", "Метаобекти", "Мета полета", "Мета обекти", "Допълнителни полета към продукт", "Собствени обекти"]
+aliases: ["Metafields", "Metaobjects", "Metafields and metaobjects", "Custom data", "Metafield", "Metaobject", "Metafield definitions", "Metaobject definitions", "Metaobject entries", "custom namespace", "Метаполета", "Метаобекти", "Мета полета", "Мета обекти", "Допълнителни полета към продукт", "Собствени обекти", "Метаполета в стандартна тема", "Метаобекти в стандартна тема"]
 tags: [metafields, metaobjects, custom-data, nitrogen, headless, concepts]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 13
 ---
 
@@ -24,7 +24,7 @@ Both work in two layers:
 
 Types have fixed technical names (`single_line_text_field`, `list.product_reference`, `metaobject_reference` …), used the same way in the admin, the Admin GraphQL API and the Storefront API.
 
-> **For now, metafields and metaobjects are mainly for headless stores built with Nitrogen.** The store's own themes do not show them. A Nitrogen storefront ([[headless-storefront]]) reads them through the Storefront API and decides itself how to show them. On a classic theme they are data the storefront does not yet use.
+> **Metafields and metaobjects are for Nitrogen storefronts. Standard themes do not show them.** A Nitrogen storefront ([[headless-storefront]]) reads them through the Storefront API and decides itself how to show them, which is why the two together give a fully custom store the merchant still manages from the admin ([[nitrogen-vs-themes]]). On a standard theme they can be filled in, but customers do not see them. The one effect there is indirect: a metafield can decide what goes into a smart collection ([[metafields-capabilities]]).
 
 ## Scope
 
@@ -66,7 +66,9 @@ What to build with them:
 
 ## Related
 
-- [[headless-storefront]]: Nitrogen, the main consumer of this data.
+- [[nitrogen-vs-themes]]: Nitrogen compared with a standard theme.
+- [[headless-starter]]: the starter a storefront is made from.
+- [[headless-storefront]]: Nitrogen, the consumer of this data.
 - [[headless-storefront-api]]: the API a Nitrogen storefront reads them through.
 - [[products-property]]: category properties, the filterable alternative.
 - [[customers-custom-fields]]: fields the shopper fills in at checkout.

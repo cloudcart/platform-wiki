@@ -5,7 +5,7 @@ aliases: ["Recipe metaobject", "Lookbook metaobject", "Shoppable content", "Buyi
 tags: [metafields, metaobjects, use-case, content, recipes, lookbook, shoppable]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -81,6 +81,7 @@ The reverse link is a product metafield, `custom.recipes` as `list.metaobject_re
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[blog-article]]: the native blog.
 - [[metafields-use-case-ingredients]]: ingredient entries for product labels.
 - [[metaobjects-definitions]]: handles, references between entries.

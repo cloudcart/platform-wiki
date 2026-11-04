@@ -7,7 +7,7 @@ aliases: ["Widgets", "Storefront widgets", "Widget editor", "Уиджети", "W
 tags: [design, widgets]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 0
 ---
 
@@ -100,6 +100,7 @@ The cross-cutting rules are stated in full on the aspect pages. The minimum rule
 ## Related
 
 - [[design]] — parent Design pillar.
+- [[nitrogen-vs-themes]] — modules belong to standard themes; a Nitrogen storefront has its own components.
 - [[design-themes]] — theme picker; theme choice controls which module instances appear here.
 - [[design-navigation]] — sibling; configures the `main` and `footer` menu trees (distinct from the `navigation.links` module instances configured via [[design-modules-navigation]]).
 - [[marketing-landing-pages]] — Dynamic pages use the page-builder, which reuses the same module config templates (see [[design-modules-page-builder]]).

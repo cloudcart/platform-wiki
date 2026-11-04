@@ -7,7 +7,7 @@ aliases: ["Theme edge cases", "Demo user theme behaviour", "Coming-soon themes",
 tags: [design, themes, templates, edge-cases]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -70,7 +70,7 @@ The card's normal Install button is hidden for the active theme (the **Current**
 
 ### Custom themes cannot be uploaded
 
-Only CloudCart's catalogue themes are installable from this screen. There is no "upload a theme zip" or "paste a theme manifest" feature. To get a custom theme, the merchant must either commission CloudCart staff or work with a CloudCart-approved theme developer (out of scope of this screen).
+Only CloudCart's catalogue themes are installable from this screen. There is no "upload a theme zip" or "paste a theme manifest" feature. A design of the store's own is made as a Nitrogen storefront instead: [[nitrogen-vs-themes]].
 
 ## Related
 

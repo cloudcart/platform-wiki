@@ -7,7 +7,7 @@ aliases: ["Nitrogen Storefronts", "Headless Storefronts list", "Storefronts list
 tags: [nitrogen, storefronts, headless, list, staff-permission]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 5
 ---
 # Nitrogen → Storefronts (list)
@@ -16,11 +16,11 @@ source_count: 5
 
 The **Storefronts list** is the landing screen of the Nitrogen (headless storefront) area. It shows every Nitrogen storefront the merchant has created on this site, with each row's name and address, deployment source, status and creation date. From here the merchant creates a storefront, opens one to manage it, or deletes one.
 
-Nitrogen is CloudCart's **headless** layer: the merchant's developers build a storefront on the Nitrogen library and deploy it to Nova, and it reads the store through the Storefront API. See [[headless-storefront]].
+Nitrogen is CloudCart's **headless** layer: an AI agent or the merchant's developers build a storefront from the starter ([[headless-starter]]) and deploy it to Nova, and it reads the store through the Storefront API. See [[headless-storefront]].
 
 ## Where to find it
 
-Sidebar → **Nitrogen** → `/admin/nitrogen`. Breadcrumb **Nitrogen → Storefronts**. The header reads "Nitrogen Storefronts", with the description *"Create and manage your headless storefronts. Each storefront gets its own API tokens and environment configuration."*
+Open the address `/admin/nitrogen`: the admin's menu has no link to this area ([[nitrogen]]). Breadcrumb **Nitrogen → Storefronts**. The header reads "Nitrogen Storefronts", with the description *"Create and manage your headless storefronts. Each storefront gets its own API tokens and environment configuration."*
 
 | Action | Route name | Path |
 |--------|------------|------|

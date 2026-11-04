@@ -5,7 +5,7 @@ aliases: ["Page sections metaobject", "Headless CMS metaobjects", "Homepage sect
 tags: [metafields, metaobjects, use-case, content, nitrogen, landing-pages]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-21
+updated: 2026-11-04
 source_count: 5
 ---
 
@@ -75,6 +75,7 @@ Active/draft status **on**: a new campaign page is built in draft and becomes vi
 
 ## Related
 
+- [[nitrogen-vs-themes]]: what a storefront of the store's own gives beyond a theme.
 - [[metafields-use-cases]]: all use cases.
 - [[metafields-use-case-banners]]: scheduled banners and announcements.
 - [[headless-storefront]]: Nitrogen storefronts.

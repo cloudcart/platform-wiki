@@ -7,7 +7,7 @@ aliases: ["Theme editor", "Design edit", "CSS Builder", "Customize theme", "Chan
 tags: [design, theme, customization, colors, fonts, scss]
 plan_gates: ["change_theme"]
 created: 2026-05-23
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 5
 ---
 
@@ -103,6 +103,7 @@ The related `storefront_builder` plan-feature gates the **Page Builder** ([[desi
 ## Related
 
 - [[design]] — parent Design pillar.
+- [[nitrogen-vs-themes]] — this screen adjusts a standard theme; a design of the store's own is made with Nitrogen.
 - [[design-themes]] — theme picker; the active theme decides which variables the Theme Editor exposes.
 - [[design-modules]] — sibling; configures module instances (header, footer, grid, buttons modules are deep-linked from the Theme Editor sidebar).
 - [[design-navigation]] — sibling; configures `main` and `footer` menu trees.

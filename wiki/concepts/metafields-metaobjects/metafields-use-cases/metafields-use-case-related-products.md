@@ -5,7 +5,7 @@ aliases: ["Complementary products metafield", "Accessories metafield", "Spare pa
 tags: [metafields, use-case, merchandising, cross-sell, references]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-11-03
+updated: 2026-11-04
 source_count: 4
 ---
 
@@ -65,6 +65,7 @@ What one list cannot say is **what kind** of relationship it is, for example:
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[products-editor]]: the native Linked products list.
 - [[marketing-cross-sell]]: conditional cart and checkout offers.
 - [[metafields-use-case-compatibility]]: when "fits" depends on a device rather than a product.

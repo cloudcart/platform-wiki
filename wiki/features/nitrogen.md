@@ -3,30 +3,88 @@ type: feature
 nav_path: "Nitrogen (Headless storefronts)"
 route_name: nitrogen
 route_path: /admin/nitrogen
-aliases: ["Nitrogen", "Headless storefronts", "Витрини Nitrogen", "Хедлес магазин"]
+aliases: ["Nitrogen", "Headless storefronts", "Nitrogen admin", "Nitrogen page", "Where is Nitrogen", "Витрини Nitrogen", "Хедлес магазин", "Къде е Nitrogen", "Страница Nitrogen"]
 tags: [nitrogen, hub, staff-permission]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-04
+source_count: 4
 ---
 # Nitrogen (Headless storefronts)
 
 ## Purpose
 
-Hub page for the **Nitrogen (Headless storefronts)** area of the CloudCart admin panel. Lists the screens that live under this section.
+The **Nitrogen** area of the admin is where a store's own storefront is created, connected, deployed and put on the store's domain. This is where a design of the store's own begins: see [[nitrogen-vs-themes]] for how it compares with a standard theme, and [[headless-starter]] for the starter it is made from and the `cloudcart-nitrogen` skill an agent must use.
+
+The area manages storefronts. It has no design tools: the storefront itself is code, written outside the admin by an AI agent or a developer. Its content comes from the rest of the admin, including metafields and metaobjects ([[metafields-metaobjects]]).
 
 ## Where to find it
 
-Nitrogen (Headless storefronts) (top-level sidebar entry).
+Open the address `/admin/nitrogen`. **For now, the admin's menu has no link to this area**: not in the main menu, nor under Design or Settings. The screens' breadcrumb starts at **Nitrogen**.
+
+## The screens
+
+| Screen | Address | Page |
+|---|---|---|
+| Storefronts list | `/admin/nitrogen` | [[nitrogen-storefronts]] |
+| Create storefront | `/admin/nitrogen/create` | [[nitrogen-create-storefront]] |
+| Create storefront: repository | `/admin/nitrogen/create/repository` | [[nitrogen-create-storefront-repository]] |
+| A storefront: **Overview** | `/admin/nitrogen/:storefrontId` | [[nitrogen-storefront-overview]] |
+| A storefront: **General** | `/admin/nitrogen/:storefrontId/general` | [[nitrogen-storefront-overview]] |
+| A storefront: **Environments and variables** | `/admin/nitrogen/:storefrontId/environment` | [[nitrogen-storefront-overview]] |
+| A storefront: **Deployments** | `/admin/nitrogen/:storefrontId/nova` | [[nitrogen-storefront-overview]] |
+| A storefront: **Storefront API** | `/admin/nitrogen/:storefrontId/api` | [[nitrogen-storefront-overview]] |
+| A storefront: **Domains** | `/admin/nitrogen/:storefrontId/domains` | [[nitrogen-storefront-overview]] |
+| Deployment history | `/admin/nitrogen/:storefrontId/deployments` | [[nitrogen-deployments]] |
+| One deployment | `/admin/nitrogen/:storefrontId/deployments/:deploymentId` | [[nitrogen-deployments]] |
 
 ## What the merchant can do here
 
-- Navigate to any sub-screen listed in `## Related`.
+**Storefronts**
+
+- See every storefront with its name, address, source, status and date, and how many of the 10 allowed are used.
+- Create one, open one, or delete one.
+
+**Creating a storefront**
+
+- Name it and choose how it deploys: **GitHub** or **Command line or CI/CD**. This cannot be changed later.
+- On GitHub: connect a GitHub account, then create a new repository from the starter (private or public) or connect an existing one, and follow the setup step by step ([[nitrogen-create-storefront-provisioning]]).
+- On the command line: receive the deployment token, shown once, and the commands to run.
+
+**Developing and deploying**
+
+- Copy the commands to develop locally and to deploy.
+- See what is live: the screenshot, commit, branch and address, or why the last deploy failed, with links to the build logs on GitHub.
+- Read the history of deploys and the details of each.
+
+**Variables**
+
+- Add custom variables, optionally secret, delete them, and copy their values.
+- Read the variables CloudCart sets. A change takes effect with the next deploy.
+
+**Tokens and access**
+
+- Create deployment tokens (up to 10), turn them off and on, and delete them.
+- Connect or disconnect the GitHub account.
+- Copy the public Storefront API token, and generate a new private one.
+
+**Going live**
+
+- Route a store domain to the storefront, and send it back to the store's theme.
+- Open the storefront, rename it, copy its address, or delete it.
+
+## What is not here
+
+- **Designing or editing the storefront.** That is code in the project.
+- **Deploying, redeploying, rolling back or reading logs.** A deploy starts from a push or from `cloudcart nitrogen deploy`; logs are on GitHub ([[headless-deployment-methods]]).
+- **Preview deploys.** Only production is served ([[headless-nova-platform]]).
+- **Replacing the public token, or choosing a token's scopes.** The public token has no replace button, and scopes are not shown.
+- **Defining metafields and metaobjects.** They are under Settings → Metaobjects ([[metafields-metaobjects]]).
+- **Adding a domain to the store.** That is [[settings-domains]]; the **Domains** tab only routes one that is already there.
 
 ## Settings & fields
 
-Not applicable — this is a navigation hub, not a screen with its own settings.
+Not applicable: the fields are on the screens above.
 
 ## Business rules
 
@@ -34,8 +92,16 @@ Not applicable — this is a navigation hub, not a screen with its own settings.
 
 The entire Nitrogen area (`/admin/api/core/nitrogen/*`: storefronts, tokens, deployments, deployment tokens, variables, domains, GitHub connection) requires the **Nitrogen Storefronts** permission, a row of its own in the [[settings-staff]] permission tree. The store owner always has it; a moderator can list, create, edit or delete storefronts and generate tokens only when that permission is ticked for them. Without it, the calls are refused with HTTP 403.
 
+### What an agent can do through the API
+
+The Admin GraphQL API lists storefronts, replaces the private token and sets variables ([[headless-environment-variables]]). Creating a storefront, deleting one, deployment tokens and routing a domain are done on these screens, so an agent asks the merchant to do them.
+
 ## Related
 
+- [[nitrogen-vs-themes]] — Nitrogen compared with a standard theme.
+- [[headless-starter]] — the starter, and the agent's rule.
+- [[metafields-metaobjects]] — the store's own fields and content types, which a Nitrogen storefront shows.
+- [[metafields-use-cases]] — what to build with them.
 - [[nitrogen-storefronts]] — the list of storefronts.
 - [[nitrogen-create-storefront]] — the create wizard.
 - [[nitrogen-storefront-overview]] — one storefront's page and tabs.

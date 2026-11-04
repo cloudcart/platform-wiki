@@ -5,7 +5,7 @@ aliases: ["Event metaobject", "Workshops", "Masterclass", "Tasting event", "In-s
 tags: [metafields, metaobjects, use-case, events, content, stores]
 plan_gates: []
 created: 2026-10-20
-updated: 2026-10-20
+updated: 2026-11-04
 source_count: 3
 ---
 
@@ -64,6 +64,7 @@ An entry is information. It does not take bookings, count seats, or sell tickets
 ## Related
 
 - [[metafields-use-cases]]: all use cases.
+- [[metafields-nitrogen]]: reading this on a Nitrogen storefront.
 - [[apps-stores]]: the shops events can take place in.
 - [[metafields-capabilities]]: filtering entries by date.
 - [[metafields-use-case-banners]]: announcing an event site-wide.
