@@ -7,8 +7,8 @@ aliases: ["Multilang", "Multi-language", "Multilingual storefront", "Translation
 tags: [apps, administration, multi-language, storefront, sync]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-08-06
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # Multilang (multilingual storefront)
 
@@ -56,7 +56,7 @@ Tab sub-pages (per existing wiki):
 
 This topic is split into three aspect pages, each covering a distinct concept. The Assistant should drill into the aspect that matches the question, not read all three.
 
-- [[apps-multilang-main-model]] — the master + sister-site model: one-way master → sister sync, no sister → master push, re-translate overwrites sister edits, per-site slugs, and how Multilang ("one catalog, many languages") differs from [[apps-stores]] ("many catalogs").
+- [[apps-multilang-main-model]] — the master + sister-site model: one-way master → sister sync, no sister → master push, re-translate overwrites sister edits, per-site slugs, and how Multilang (one source catalog copied into each language store) differs from [[apps-stores]] ("many catalogs").
 - [[apps-multilang-main-translation-engine]] — Google Cloud Translation API v3 (NOT Cloudio); `SYNC_TRANSLATE` / `SYNC_COPY` plan-feature quota gating; copy-vs-translate fallback; no review queue; 3-attempt retry; slug de-dup; in-body URL rewrite; internal cost accounting.
 - [[apps-multilang-main-seo-domains]] — auto-generated `hreflang` SEO tags; new-sister provisioning at `<slug>.cloudcart.net` then custom-domain mapping; language switcher (`show_language`).
 
@@ -75,7 +75,7 @@ Field-level detail lives on the aspect pages: translation engine + quota on [[ap
 - **Two distinct sync tasks** — `multilang_product_translate` (translates fields) and `multilang_product_copy` (copies verbatim, no translation). Both run on background queues; the merchant watches [[apps-multilang-progress]]. See [[apps-multilang-main-translation-engine]].
 - **Each sister can override** product content, pricing, payment / shipping providers, and templates / themes — making it a real localised storefront.
 - **SEO hreflang is auto-generated** across the network; the master gets `x-default`. See [[apps-multilang-main-seo-domains]].
-- **Multilang ≠ Stores.** Multilang is "one catalog, many languages"; [[apps-stores]] is "many catalogs / many businesses." Both can be active. See [[apps-multilang-main-model]].
+- **Multilang ≠ Stores.** Multilang is "one source catalog, copied into each language's store": every sister holds its **own copy** of the products (separate records, linked to the master's), filled by one-way copy / translation. [[apps-stores]] is "many catalogs / many businesses." Both can be active. See [[apps-multilang-main-model]].
 
 ### Permission
 

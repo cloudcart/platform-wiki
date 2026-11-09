@@ -5,8 +5,8 @@ route_path: /product/{slug}/{cart_key?}
 themes_using: [all]
 tags: [storefront, product, javascript, hooks, uicontrol, customisation]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 > Part of [[product-detail]]. See the hub for the other aspects (routing & load, on-page layout, the buying flow).
@@ -84,7 +84,7 @@ Module-level toggles (Theme Editor → Product page module → `productsDetails`
 
 Globally relevant settings:
 
-- `action_after_add_to_cart` — `panel` / `redirect` / `none` ([[settings-cart]]).
+- `action_after_add_to_cart` — `show_popup` / `go_to_cart` / `checkout_redirect` / `stay_on_page` ([[settings-cart-ui-behavior]]).
 - `cart_max_products` — per-variant cap (also enforced at add-to-cart time).
 - `cart_max_quantity` — total-cart cap.
 - `default_image_size` — image size used in galleries (not the product page directly, but used by modules).

@@ -7,8 +7,8 @@ aliases: ["Subscriber vs Customer", "Customer vs Subscriber", "Marketing record 
 tags: [customers, subscribers, marketing, concepts]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # Subscriber vs Customer
@@ -20,21 +20,21 @@ source_count: 5
 - A **Customer** ([[customer]]) is **someone who bought from the store or registered an account to buy**. The Customer record carries identity, addresses, login credentials (registered only), order history, lifetime revenue, loyalty group, and saved payment methods. The merchant manages Customers on [[customers]].
 - A **Subscriber** ([[subscriber]]) is **someone the platform has identified as a marketing-audience contact on at least one communication channel** (Email, Phone, Web Push, or Messenger). The Subscriber record carries an audience profile, per-channel rows, marketing-consent flags, RFM analytics, tags, custom fields, and segment memberships. The merchant manages Subscribers on [[marketing-subscribers]].
 
-The same person — same email, same phone — can exist as **both** a Customer and a Subscriber. The platform links them through a join table (one Subscriber can be linked to multiple Customers; one Customer is linked to at most one Subscriber-per-channel), but **the records are independent**: editing one does not auto-update the other, and deleting one does not auto-delete the other.
+The same person — same email, same phone — can exist as **both** a Customer and a Subscriber. The platform links them through a join table (one Subscriber can be linked to multiple Customers; one Customer is linked to at most one Subscriber-per-channel), but **the records are separate**: editing one does not auto-update the other, and deleting a Subscriber leaves the Customer. Deleting a Customer, however, also deletes the linked Subscriber (queued job).
 
 A Subscriber row can exist with `marketing = no` on every channel — being a Subscriber is about **having a contact identifier in the audience pool**, not about having opted in. The marketing flags are then separately checked to decide who gets sends.
 
-The merchant has to keep this distinction in mind every time they think about audience, marketing, sends, or privacy — because the answers to *"how many Customers do I have?"* and *"how many people will receive my next campaign?"* are different numbers, gated by different plan limits, and exported through different screens.
+The merchant has to keep this distinction in mind every time they think about audience, marketing, sends, or privacy — because the answers to *"how many Customers do I have?"* and *"how many people will receive my next campaign?"* are different numbers, gated by different plan limits, and managed on different screens.
 
 ## Sub-pages (in this cluster)
 
-This concept is split into 7 aspect pages, each covering one well-scoped slice. The Assistant should drill into the aspect that matches the question, not read every page.
+Drill into the aspect page that matches the question:
 
 - [[subscriber-vs-customer-records]] — the two-record model; what each side carries; the "what creates which record" matrix per storefront action; the guest-Customer case; "Mark as subscriber" on Customer import; data overlap vs divergence.
 - [[subscriber-vs-customer-channels]] — the 4 channels (Email / Phone / WebPush / Messenger), the SubscriberChannel row shape, the 4 per-channel deliverability flags (`marketing`, `verified`, `unsubscribed`, `bounced`).
 - [[subscriber-vs-customer-consent]] — the two-layer consent gate (Customer-level `marketing` AND per-channel `marketing`); the "Second marketing" auto-reset rule; opt-OUT cascade from Customer to all channels; opt-IN does NOT auto-cascade back.
 - [[subscriber-vs-customer-linkage]] — the `subscriber_to_customer` join; cardinality; Subscriber → Customer and Customer → Subscriber conversion paths; the anonymous-visitor / UUID-anchored upgrade path.
-- [[subscriber-vs-customer-privacy]] — channel-specific unsubscribe; Customer-delete vs Subscriber-delete (no cascade); async join-row cleanup; Customer ban does NOT cascade; GDPR right-to-erasure requires both sides.
+- [[subscriber-vs-customer-privacy]] — channel-specific unsubscribe; Customer delete also deletes the Subscriber (not the reverse); Customer ban does NOT cascade; GDPR erasure.
 - [[subscriber-vs-customer-limits]] — independent `customers` and `subscribers` plan caps; `subscribers.max_id` chronological-cap mechanism; over-cap Subscribers are visible but excluded from sends.
 - [[subscriber-vs-customer-surfaces]] — admin-panel navigation map: which screens manage Customers, which manage Subscribers, which surface both side-by-side.
 
@@ -53,7 +53,7 @@ Concrete consequences:
 
 ## Scope
 
-Covered across the 7 sub-pages: the two-record data model; the two-layer consent gate; the 4 channels + deliverability flags; conversion in both directions; the `subscriber_to_customer` join; privacy / unsubscribe / deletion (no auto-cascade); independent plan caps; the "Second marketing" auto-reset; the anonymous-visitor upgrade path.
+Covered across the 7 sub-pages: the two-record data model; the two-layer consent gate; the 4 channels + deliverability flags; conversion in both directions; the `subscriber_to_customer` join; privacy / unsubscribe / deletion (Customer → Subscriber only); independent plan caps; the "Second marketing" auto-reset; the anonymous-visitor upgrade path.
 
 NOT covered:
 
@@ -69,7 +69,7 @@ NOT covered:
 - **Subscriber vs Segment** — a [[segment|Segment]] is a rule-based set of Subscribers. Segments LIVE on Subscribers — a Customer with no Subscriber is invisible to every segment.
 - **Subscriber row vs SubscriberChannel row** — see [[subscriber-vs-customer-channels]].
 - **Marketing send vs transactional send** — see [[subscriber-vs-customer-consent]]. The two-layer gate covers marketing only.
-- **Customer delete vs Subscriber delete** — see [[subscriber-vs-customer-privacy]]. No auto-cascade either direction.
+- **Customer delete vs Subscriber delete** — see [[subscriber-vs-customer-privacy]]. Customer delete removes the Subscriber; not the reverse.
 - **`customers` plan cap vs `subscribers` plan cap** — see [[subscriber-vs-customer-limits]]. Separate meters.
 
 ## Where it applies

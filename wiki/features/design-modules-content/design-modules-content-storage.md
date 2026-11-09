@@ -7,8 +7,8 @@ aliases: ["Content module storage", "Content module cache", "Content module save
 tags: [design, modules, content, storage, cache, plan-gates]
 plan_gates: ["video_slider_widget", "storefront_builder", "static_pages"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Content modules — Storage, caching, and plan gates
@@ -31,7 +31,7 @@ Sidebar → **Design** → **Modules** — the merchant's interaction surface. T
 
 - **Save** — upserts the per-site row + bumps the cache key.
 - **Reset** — deletes the merchant's row (theme defaults take over) + bumps the cache key.
-- See changes on the next storefront request — no manual cache clear required.
+- See changes at once while signed in to the admin; guests within 20 minutes (no clear-cache button).
 
 The merchant CANNOT manage storage / cache directly — there is no admin "Clear module cache" button.
 
@@ -100,7 +100,7 @@ A merchant who configures a `videoSlider`, then downgrades off `video_slider_wid
 
 ### Cache invalidation is automatic
 
-Save and Reset both bump the per-site cache key. New settings are visible on the very next page load — no manual cache-clear button.
+Save and Reset both bump the per-site cache key, so pages rendered afterwards use the new settings; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]). There is no clear-cache button.
 
 ### Schema-derived validation silently drops unknown fields
 

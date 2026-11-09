@@ -7,8 +7,8 @@ aliases: ["XML Sync Features", "Xml Sync features", "Xml Sync capabilities"]
 tags: [apps, imports, xml, sync, features, capabilities]
 plan_gates: ["xml_sync_limit"]
 created: 2026-05-21
-updated: 2026-05-27
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # XML Sync → Features
 
@@ -31,7 +31,7 @@ Sidebar → Apps → XML Sync → **Features tab**. Route: `/admin/apps/xml_sync
 Features displayed (per [[apps-xml-sync]]):
 - **Recurring sync** (vs one-time [[apps-xml-import]]).
 - **Per-field update policy** — always-update / threshold / never per field.
-- **Discontinued-product handling** — Deactivate / Delete / Keep (the on_missing option in [[apps-xml-sync-step3]]).
+- **Discontinued-product handling** — Keep (default) or Deactivate via Step 1's "Disable missing products" switch; never Delete. See [[apps-xml-sync-discontinued]].
 - **3 queue mappings** for the parse/parse-single/insert pipeline.
 - **Plan-gated** — three buyable feature packs (product limit, processing priority, processing frequency) plus a `xml_sync_limit` active-task cap (see *Plan-feature meters* below).
 - **maxTasks** cap based on plan.
@@ -86,9 +86,11 @@ Standard apps permission scope.
 
 The merchant can buy **three feature packs** for XML Sync — **product limit, processing priority, and processing frequency** — and the plan separately caps the number of active tasks. The page surfaces these per-plan meters (when the corresponding plan feature is active in the platform registry):
 - **product limit** — grouped under "products". Caps how many products are processed across all sync tasks. When a run exceeds it, the over-limit products are **not processed** and the merchant gets an in-app notification + email — see [[apps-xml-sync-status]]. (Feature pack.)
-- **`xml_sync-priority`** — grouped under "priority", suffix `percent`. Higher plans get higher queue priority. (Feature pack.)
+- **`xml_sync-priority`** — grouped under "priority", suffix `percent`. A value N (1–9) moves the store's sync jobs from the shared `import1` queue to `import{N}`; whether that shortens the wait depends on how many workers serve each queue (verify). (Feature pack.)
 - **`xml_sync-interval`** — grouped under "interval", suffix `hours`. Lower interval = faster cadence; default falls back to 12h. (Feature pack.)
 - **`xml_sync_limit`** — grouped under "tasks". The per-plan cap on concurrent active sync tasks — not one of the three packs.
+
+Above the task list, **XML Sync priority task** and **XML Sync - interval** open the purchase panels for these two packs, and **Create a job** opens the wizard. Prices, per-plan availability and the selectable values are in the billing catalogue (verify).
 
 Each meter shows the plan ceiling and current consumption — when the `used` count approaches `current`, the UI surfaces an upgrade prompt.
 

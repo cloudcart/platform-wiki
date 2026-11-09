@@ -1,14 +1,14 @@
 ---
 type: feature
 nav_path: "Design → Navigation → Tree editing"
-route_name: admin.navigation.reorder
-route_path: /admin/storefront/navigation/{group}/reorder
+route_name: design.navigation
+route_path: /admin/design/navigation
 aliases: ["Navigation tree editing", "Menu drag and drop", "Menu reorder", "Menu nesting depth", "Delete menu item", "Преподреждане на меню"]
 tags: [design, navigation, menus]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 # Navigation — tree editing
 
@@ -20,13 +20,13 @@ This page documents how the merchant restructures a menu tree directly on the Na
 
 ## Where to find it
 
-Sidebar → **Design** → **Navigation**. Drag any node within the Main or Footer tree, or click a node's delete icon. Reorders POST to `/admin/storefront/navigation/{group}/reorder`; deletes hit `/admin/storefront/navigation/{group}/delete/{navigation_id}`.
+Sidebar → **Design** → **Navigation**. Drag any row within the open menu's tab (**Main menu**, **Footer menu**, or a custom menu on Liquid themes), or click a row's remove icon. Reorders and deletes are saved in the background from the same screen (`/admin/design/navigation`); neither has an address of its own.
 
 ## What the merchant can do here
 
 - Drag any node to a new position — drop **before**, **after**, or **inside** (nest into) another node to reorder or re-parent it. Drag-and-drop persists immediately.
-- Click a node to expand it and reveal child items. Trees auto-open on load.
-- Click the delete icon on any node to remove it and all its children.
+- Click the arrow on a row that has children to collapse or expand its sub-links (the row shows a **Sub-links** count); every level is expanded on load.
+- Click the remove icon on any row and confirm **Remove link?** to delete it and all its children.
 
 ## What the merchant cannot do here
 

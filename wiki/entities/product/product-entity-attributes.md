@@ -5,8 +5,8 @@ aliases: ["Product attributes", "Product fields", "Product validation", "Product
 tags: [entity, catalog, products, attributes, validation]
 plan_gates: ["products", "bundles"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[product]]. See the hub for the other aspects (lifecycle, business rules, relationships, side effects, API).
@@ -66,7 +66,7 @@ The full per-field schema for the [[product|Product]] record — every attribute
 | `app_import`, `imported`, `xml_import_id`, `xml_import_product_id`, `xml_import_name` | Import provenance | Which importer / sync app created the product. Drives "Imported with" filter on [[products-products]]. |
 | `views` | Hit counter | Public product-page views. Read-only. |
 | `date_added`, `date_modified` | Timestamps | `date_added` = creation; `date_modified` = last save. |
-| `deleted_at` | Soft-delete timestamp | When set, the product awaits hard-purge by the temporary-delete cleanup window (10 days). See [[product-entity-lifecycle]]. |
+| `deleted_at` | Delete marker | Set on delete; a queued task then removes the product. See [[product-entity-lifecycle]]. |
 
 ## Validation caps (server-enforced)
 

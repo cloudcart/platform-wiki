@@ -7,8 +7,8 @@ aliases: ["Google Analytics", "GA", "GA4", "Universal Analytics", "Google Analyt
 tags: [apps, google, analytics, tracking, measurement]
 plan_gates: ["google_analytics"]
 created: 2026-05-22
-updated: 2026-11-03
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 # Google Analytics
 
@@ -55,22 +55,22 @@ Google retired Universal Analytics in July 2023. New properties default to GA4 (
 
 CloudCart sends these GA4 events client-side, via the browser's `gtag.js`:
 - `view_item` — a product page.
-- `view_item_list` — a category, smart collection, brand, tag or search-results page, with every product on it.
+- `view_item_list`, `select_item` — listing pages (below).
 - `add_to_cart`, `remove_from_cart`, `add_to_wishlist`.
 - `view_cart` — the cart page; `begin_checkout` — the start of checkout.
 - `add_shipping_info`, `add_payment_info`.
-- `purchase` — the order-confirmation page.
+- `purchase` — the thank-you page (below).
 - `login` (Google, Facebook or the login form) and `sign_up` (registration form).
 
-These appear in GA's Realtime + Conversion reports.
+### Listing events: `view_item_list` and `select_item`
 
-### `select_item` is not sent (as of 2026-10-12)
+- `view_item_list` goes out on category, smart collection, brand, tag and search-results pages, with the products of the page shown. A filter, sort or page change that reloads the list in place brings a new page-data block, so the event is sent again with the new products. The home page, showcase and bundle lists, content pages and product-page carousels send none.
+- Its items carry `list_name` (the category, collection, brand or tag name; empty on search) and `list_position` (from 0). There is no `item_list_id` and no event-level `item_list_name` on it.
+- `select_item` is sent since 12.10.2026, when the listing cards started carrying the product's ID: a click on a card of that list sends it with `index`, `item_list_name` (the list's name) and `item_list_id` (the page type: `category`, `smart_collection`, `vendor`, `tag` or `search`). Cards outside the list, such as related or cross-sell products, are ignored.
 
-The storefront script contains a `select_item` event for a click on a product card in a listing. The version the storefront loads never identifies which card was clicked, so it stops before sending, on every store and theme. GA receives `view_item_list` on the listing and `view_item` on the product page, but no `select_item` in between.
+### `purchase` — once per order, no fallback
 
-### `purchase` event fires once per order — no duplicates on reload
-
-The `purchase` event is dispatched ONLY the first time the customer lands on the order-confirmation page. After that first pageview the order is flagged so subsequent reloads of the same thank-you URL emit `js_events: false` in the data layer, signalling GA / GTM tags to skip re-firing the purchase event. A customer who bookmarks the thank-you page and revisits it, or refreshes after a poor connection, does NOT cause duplicate conversion attribution. Confirmed in [[apps-datalayer]] — the same mechanism applies to TikTok Pixel and any other tag managers consuming the data layer.
+Sent on the first render of the thank-you page (or the fast-order success panel) for any status except `cancel`; later renders send nothing. No payment-status gate, no server-side copy for buyers who never return from the payment page, and `value` excludes shipping. Details, payload and checks: [[apps-google-analytics-purchase-event]].
 
 ### `refund` event is NOT fired automatically
 
@@ -78,11 +78,11 @@ GA4's `refund` event is not among the events above: the storefront never fires i
 
 ### Client-side on the classic storefront, server-side through the Storefront API
 
-On the classic storefront the integration is client-side. Clients of the Storefront API (a mobile app, a Nitrogen storefront) can report through GA's Measurement Protocol once the merchant enters its secret on [[apps-google-analytics-settings]]. See [[headless-analytics-consent]].
+On the classic storefront the integration is client-side. Storefront API clients, such as a Nitrogen storefront, can report through GA's Measurement Protocol once the merchant enters its secret on [[apps-google-analytics-settings]]. See [[headless-analytics-consent]].
 
 ### Cookie consent (Google Consent Mode v2)
 
-When [[apps-gdpr-overview]] is installed and its "Google Consent Mode" cookie group is active, the storefront emits **Google Consent Mode v2** signals before any GA tracking fires. The default state on page load is all-denied (`ad_personalization`, `ad_storage`, `ad_user_data`, `analytics_storage` all `denied`); when the customer accepts the banner, the storefront sends a consent `update` with the signals granted. Without the GDPR app + that cookie group active, no consent signals are emitted and GA fires unconditionally.
+When [[apps-gdpr-overview]] is active with its "Google Consent Mode" cookie group, the storefront emits **Google Consent Mode v2** signals (all `denied` on load, `granted` once the visitor accepts that group), and the Google tag and its events wait for that group, which counts as "no" until accepted. With the GDPR app active but that group inactive, no consent signals are sent and GA waits for the Performance group, which counts as "yes" until the visitor refuses it. Without the GDPR app GA always fires.
 
 ### Crawler and admin-preview traffic is excluded
 
@@ -90,11 +90,11 @@ The storefront tag loader skips crawler requests (so Googlebot's visits don't fi
 
 ### Changing the code requires a JS rebuild before it takes effect
 
-The GA snippet is not emitted inline per page; the merchant's code is baked into the shared storefront apps-config file that every page loads from CDN. When the merchant changes, installs, uninstalls, or activates the app, that file is **regenerated automatically** before browsers pick up the new code. The file URL is versioned by build timestamp, so a hard browser refresh isn't usually needed. Google Analytics and [[apps-google-dynamic]] share a single storefront loader: it boots whenever EITHER GA or Dynamic Remarketing is active, so running only one of the two still loads the shared runtime.
+The code lives in the shared storefront apps file every page loads. Saving, installing, uninstalling or activating the app **regenerates** that file; its address carries the build time, so no hard refresh is needed. Google Analytics and [[apps-google-dynamic]] share one storefront script, loaded while either is active.
 
 ### Two tabs: Overview + Settings
 
-Always **Overview** (`/admin/apps/google_analytics`) and **Settings** (`/admin/apps/google_analytics/settings`), with no extra tabs after configuration — the same as [[apps-google-tags]] and [[apps-google-dynamic]].
+**Overview** (`/admin/apps/google_analytics`) and **Settings** (`/admin/apps/google_analytics/settings`), as on [[apps-google-tags]] and [[apps-google-dynamic]].
 
 ## Plan gates
 
@@ -110,6 +110,7 @@ Behaviour: lower plans cannot install the app. Existing installs continue workin
 
 - [[apps]] — App Store.
 - [[apps-google-analytics-settings]] — settings sub-page.
+- [[apps-google-analytics-purchase-event]] — the purchase event: payload, value, consent, why purchases go missing.
 - [[apps-google-tags]] — Tag Manager for managing multiple tracking scripts in one place.
 - [[apps-google-dynamic]] — dynamic remarketing tags.
 - [[apps-google-connect]] — OAuth Connect (some GA features may use it).

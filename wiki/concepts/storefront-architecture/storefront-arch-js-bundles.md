@@ -5,8 +5,8 @@ aliases: ["Storefront JS bundles", "Per-theme JS", "scripts.min.js", "js hook cl
 tags: [storefront, javascript, jquery, themes, events, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[storefront-architecture]]. See the hub for related aspects (request lifecycle, theme inheritance, the search index read-side, Smarty plugins, CSS assets, caching).
@@ -15,11 +15,11 @@ source_count: 4
 
 ## Definition
 
-Every storefront theme ships **its own compiled JS bundle** at the theme's own override. There is **no shared platform-level storefront JS file** — the cross-theme contract is conventions, not code:
+Every storefront page loads a **shared platform layer** plus the active theme's **own compiled bundle** at the theme's own override. Beyond the shared layer, the cross-theme contract is conventions, not code:
 
 - **`.js-*` hook class names** that the JS binds to (e.g., `.js-add-to-cart`, `.js-quantity-input`, `.js-filter-list`).
 - **`cc.*` custom events on `document`** as a cross-component messaging bus (e.g., `cc.variant.changed`, `cc.filters.filters.after`, `cc.ajax.reload`).
-- **jQuery 3.x** as the framework of choice — each theme bundles its own copy.
+- **jQuery 3.2.1**, loaded once by the platform for every theme — themes do not bundle their own copy.
 
 The contract between template and JS is the hook class set: templates expose interactive surfaces by adding `.js-*` classes; the bundle binds behaviour to them on page load. A theme is free to use different class names — but the platform's shared `_global` templates assume the most common patterns, so a theme that doesn't override the cart template inherits the hooks `_global` emits, and the theme's JS must bind to those for the cart to work.
 
@@ -27,7 +27,7 @@ The contract between template and JS is the hook class set: templates expose int
 
 Covered:
 
-- How the per-theme bundle is composed (jQuery 3.x + theme code + third-party plugins).
+- The shared platform scripts, the per-theme bundle, and where and how each loads.
 - The `.js-*` hook-class convention + observed examples.
 - The `cc.*` custom-event bus + the verified storefront event vocabulary (cart / product / checkout / account / content / generic) and the server-side dispatch mechanism.
 
@@ -40,7 +40,7 @@ Not covered here:
 
 ## Contrasts
 
-- **Per-theme JS bundle vs shared platform bundle** — every theme ships its own `js/scripts.min.js`. There is **no shared platform-level storefront JS file**. Two CloudCart stores on different themes ship two different jQuery binaries to the browser cache.
+- **Per-theme JS bundle vs shared platform scripts** — every theme ships its own `js/scripts.min.js`, but jQuery and the shared plugins come from the platform's own files, the same on every theme.
 - **Conventions vs contracts** — `.js-*` class names and `cc.*` events are conventions, not hard contracts. A theme is free to deviate, but the shared `_global` templates assume the most common patterns. Anything that needs to behave identically across themes (GA tracking pixels, `cc-analytics` setup) is injected from the platform's global head partial, not from theme JS.
 - **Theme JS vs Custom JS** — the theme JS is shipped by the theme author and compiled into the bundle. The merchant's [[design-custom-assets]] Custom JS is rendered verbatim into the page head and runs in the same jQuery world but cannot modify the bundle.
 
@@ -50,13 +50,13 @@ Not covered here:
 - Cross-theme integrations and apps that listen for `cc.*` events to react to customer actions.
 - The platform's analytics setup script that fires alongside theme JS but is platform-managed, not theme-managed.
 
-## Bundle composition
+## Load order and bundle composition
 
-Each theme's `scripts.min.js` includes:
+On every theme page, from the shared page layout:
 
-- **A copy of jQuery 3.x** — bundled per theme, not shared across themes. Each theme version-pins independently (verify whether older themes still ship jQuery 1.x / 2.x).
-- **Theme-specific custom code** — the interaction behaviour for that theme (navigation, sidebars, tabs, carousels, sticky header, etc.).
-- **Third-party plugins** the theme depends on — typically a cookies helper, a modal, Swiper or a comparable carousel (OwlCarousel on older themes), jQuery UI on a few.
+- **Head, blocking (no `async` / `defer`)** — the platform's page config, its events and consent scripts, and `site/js/jquery.build.min.js`: jQuery 3.2.1 with js-cookie, Uniform, jQuery UI and helpers. The merchant's head code from [[design-custom-assets]] comes after the theme's stylesheets and loads exactly as written.
+- **End of the page** — `site/js/build.js`, the platform's shared storefront script (carousels, galleries, search autocomplete, product and listing widgets, lazy loading), without `defer`; then the platform's loader and data-layer scripts with `async`.
+- **The theme's `scripts.min.js`** — in the theme's footer with `defer`, on all 57 themes. It holds the theme's own interaction code (navigation, sidebars, tabs, sticky header) and its vendor plugins (for example Bootstrap, Select2, toastr), not jQuery.
 
 ## The `.js-*` hook-class convention
 
@@ -92,8 +92,6 @@ The verified storefront vocabulary, by area:
 
 A theme reacts by listening on `document`; a module / integration pushes UI changes by triggering one. Themes MAY emit additional theme-specific events beyond this core set.
 
-Anything that MUST behave identically across themes (analytics setup, GDPR consent banner script, the `cc-analytics` payload) is injected from the platform's global head partial, outside the theme bundle.
-
 ## Related
 
 - [[storefront-architecture]] — hub.
@@ -108,4 +106,4 @@ Anything that MUST behave identically across themes (analytics setup, GDPR conse
 
 - **The exact set of `.js-*` hook class names that every theme MUST implement** is not centrally documented. A theme author building a new theme has to read the `_global` templates plus several reference themes to infer the contract. Worth confirming whether platform engineering has a checklist (verify).
 - ✅ Resolved: the core `cc.*` storefront vocabulary is catalogued above, sourced from the `Site\*` controllers' AJAX-response `events` arrays + the `_global` theme triggers (events are mostly **server-dispatched**, not theme-emergent). Individual themes MAY still add their own theme-specific events on top of this core set.
-- **Per-theme JS minor-version drift on jQuery** — each theme bundles its own jQuery copy. The platform's policy on which jQuery version themes should ship is not documented. Worth checking whether old themes still ship jQuery 1.x / 2.x (verify).
+- ✅ Resolved: no theme bundles jQuery; the platform loads 3.2.1 for all of them.

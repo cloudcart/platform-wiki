@@ -7,8 +7,8 @@ aliases: ["XML Sync fetch transport", "XML Sync feed URL", "XML Sync HTTP only",
 tags: [apps, imports, xml, sync, recurring, transport, encoding]
 plan_gates: ["xml_sync_limit"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[apps-xml-sync]]. See the hub for the other aspects (job pipeline, update policy, discontinued handling, side effects).
@@ -62,6 +62,15 @@ The HTTP client uses the same configuration as XML Import — a **120-second tim
 ### Encoding: declared in the `<?xml encoding="..."?>` preamble; UTF-8 default
 
 The platform reads the **first 10 lines (120 chars each)** from the URL stream and parses the `<?xml encoding="..." ?>` attribute, passing the declared encoding to the XML reader. **CP1251 / Windows-1251 feeds are supported when correctly declared in the preamble.** If no preamble is found, **UTF-8 is assumed**. A Cyrillic feed served as Windows-1251 but lacking the declaration will mojibake — the fix is for the supplier to declare the encoding, not a CloudCart setting.
+
+### Step 1 "Validate XML and continue" is a separate, live fetch
+
+Validate reads the feed inside the admin request itself. It reads the opening lines for the encoding, then streams with a **10-second read timeout** only until it has read as many XML elements as the **Rows** value (20–1500; every element counts, not only products). It never downloads the whole feed. The admin's edge allows about **30 seconds** per request ([[platform-rate-limits]]), so a feed that is slow to start answering can fail Validate even though the 120-second background run would read it:
+
+- Under the field: *"Unable to open url"*, *"Unable to find search tag: …"*, *"Document is empty or is not valid XML"*, *"Unable to parse XML file"* (the feed's answer, or a read over 10 seconds (verify)).
+- As a pop-up: *"Server error"* when the edge cuts the request at about 30 seconds, or *"Unexpected error. Please, try again later"* on a server error (HTTP 500/502). Nothing is recorded on the store for an edge timeout.
+
+A task cannot be saved without passing Validate, and changing the URL or product tag locks the rest of the form until it is validated again.
 
 ### `xml_hash` short-circuit follows the fetch
 

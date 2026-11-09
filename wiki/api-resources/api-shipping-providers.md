@@ -8,8 +8,8 @@ aliases: ["Shipping providers API", "Couriers API", "Carriers API", "JSON-API v2
 tags: [api, json-api-v2, infra, shipping]
 plan_gates: []
 created: 2026-05-26
-updated: 2026-06-05
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # Shipping providers (JSON-API v2)
 
@@ -80,7 +80,7 @@ GET-only. **No writes triggered by this endpoint.**
 ## Plan-feature gating
 
 - **No app-installed middleware on this route** — every store can reach this endpoint regardless of which couriers are installed.
-- **Deprecated providers may still appear** — some integrations are deprecated at the **business level** (no longer recommended for new merchants) but their **code remains active** for existing merchants. E.g., Speedy and Rapido are deprecated (→ DPD BG) but still returned if rows exist. See [[apps-deprecated]].
+- **Deprecated providers may still appear** while their rows exist. Rapido (→ DPD BG) still works for existing merchants; the old Speedy app switches itself off at its first checkout quote. See [[apps-deprecated]].
 
 ## Error examples (common cases)
 

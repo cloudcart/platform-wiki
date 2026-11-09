@@ -4,8 +4,8 @@ nav_path: "Entity → Blog Article → Storefront & modules"
 aliases: ["Blog Article storefront", "Blog Article modules", "recentArticles", "blog-list module", "Article inline images", "Article relationships", "Blog index page", "Article relations"]
 tags: [entity, blog, marketing, content, storefront, modules]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[blog-article]]. See the hub for the other aspects (data model, lifecycle, business rules, programmatic access).
@@ -34,7 +34,7 @@ A Blog Article:
 - **Has many** translations — per-language overrides of title, body, excerpt, and SEO fields (see [[blog-article-entity-data-model]]).
 - **References** [[file-asset|File Assets]] for the featured image and any inline images embedded in the body.
 - **Appears in** storefront modules — `recentArticles`, `blog-list`, category-page feeds, and (optionally) related-products sections that point to an article.
-- **Appears in** SEO redirect entries — when the slug changes, a 301 redirect from the old slug is auto-recorded (see [[seo-redirect]]).
+- **Slug changes** — the old slug is kept in a hidden 30-day history, not as an entry on the 301 Redirects screen (see [[seo-redirect]]).
 
 ### Storefront surfaces
 

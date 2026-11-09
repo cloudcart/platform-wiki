@@ -3,12 +3,12 @@ type: feature
 nav_path: "Orders → open an order → Returns → Refund"
 route_name: admin.core.orders.returns.refund-card
 route_path: ""
-aliases: ["Return refund", "Refund to card", "Return refund method", "return bank refund", "return voucher refund", "partial card refund return", "refund_method", "refunded_amount", "return refund side effects", "Refund to wallet", "CloudCart Wallet refund", "Refund as store credit", "Връщане в портфейл", "CloudCart Портфейл"]
-tags: [orders, returns, refund, payment, card, credit-note, wallet]
+aliases: ["Return refund", "Refund to card", "Return refund method", "return bank refund", "return voucher refund", "partial card refund return", "refund_method", "refunded_amount", "return refund side effects", "Refund to wallet", "CloudCart Wallet refund", "Refund as store credit", "Връщане в портфейл", "CloudCart Портфейл", "Exchange", "Замяна", "replacement order", "Trade-in amount offset", "Прихваната сумата по замяна"]
+tags: [orders, returns, refund, payment, card, credit-note, wallet, exchange]
 plan_gates: []
 created: 2026-07-24
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[orders-returns]]. See the hub for the other aspect (lifecycle & states).
@@ -39,7 +39,7 @@ On the return, worked from [[orders-details]]. The return stores the chosen **re
 | **`bank`** | Manual bank transfer; the return captures the customer's **name / IBAN / BIC** for the payout. |
 | **`voucher`** | Store voucher / discount code recorded by hand, with the code in `refund_reference`. The return forms no longer offer it; it stays readable on older returns and is accepted by the API. |
 | **`wallet`** | **CloudCart Wallet** (`CloudCart Портфейл` in the Bulgarian returns list) — credits the customer's [[virtual-wallet|Virtual Wallet]] as store credit, with no gateway. Offered for a registered customer outside the Guests group. See below. |
-| **`exchange`** | Recorded as an exchange rather than a money refund. |
+| **`exchange`** | **Exchange** / **Замяна** — no money goes back; a replacement order is opened instead. See below. |
 | **`none`** | No refund (e.g. a goodwill restock). |
 
 The return also records `refunded_amount`, `refunded_at`, and `refund_reference` (the gateway refund id, transfer reference, or voucher code) once the refund is done.
@@ -68,6 +68,16 @@ Choosing **CloudCart Wallet** on the **Issue return** form credits the wallet as
 The returns list can be filtered by this method. The customer's account shows it as `Wallet` / `Портфейл`.
 
 Wallet top-up and gift card lines themselves never go on a return or a credit note; see [[wallet-gift-instrument-checkout]].
+
+### Exchange — a replacement draft order
+
+An exchange is made by the merchant from the order: **Issue return**, pick the lines (or the whole order), refund method **Exchange** (*Замяна*). Issuing it:
+
+- records the return as usual (a partial one stays pending until received; a full one reverses the order);
+- creates a new, **empty draft order** for the same customer, with the original's shipping and billing addresses, and takes the merchant straight to it to add the replacement products. The return's history links to the new order, and the new order's history to the original;
+- with the switch **Trade-in amount offset** (*Прихваната сумата по замяна*), on by default, the returned value is applied as a discount on the replacement order. Such a return gets no credit note and stays out of the NRA audit export ([[apps-n18-audit]]).
+
+There is no exchange request on the storefront: the customer's **My account → Returns** (`/account/returns`) only lists their returns read-only. The [[apps-aftercare|Withdraw from contract]] app takes withdrawals, and its exchange resolution is not operational ([[aftercare-free-vs-pro]]).
 
 ### The two scopes have different order-level side-effects
 

@@ -7,8 +7,8 @@ aliases: ["Engagement modules", "Contact modules", "Newsletter module", "Mailchi
 tags: [design, modules, engagement, contact, newsletter, reviews]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # Storefront Engagement Modules
 
@@ -68,7 +68,7 @@ Clicking **Reset module** wipes the merchant's saved settings for THAT instance 
 
 ### Cache invalidation
 
-Both **Save** and **Reset** regenerate the storefront cache for the site. The merchant doesn't need to manually clear cache — the next storefront request sees the new settings.
+Both **Save** and **Reset** renew the module cache for the site, so pages rendered afterwards use the new settings; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Plan gating & app dependencies
 

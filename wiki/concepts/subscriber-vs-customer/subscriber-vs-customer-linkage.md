@@ -5,8 +5,8 @@ aliases: ["subscriber_to_customer join", "Subscriber to customer linkage", "Subs
 tags: [customers, subscribers, marketing, linkage, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[subscriber-vs-customer]]. See the hub for the other aspects (records, channels, consent, privacy, plan limits, admin surfaces).
@@ -38,7 +38,7 @@ Covered:
 
 Not covered:
 
-- Cleanup of the join row on Customer hard-delete — see [[subscriber-vs-customer-privacy]].
+- Customer hard-delete — see [[subscriber-vs-customer-privacy]].
 - Customer-side ban (no cascade to Subscriber) — see [[subscriber-vs-customer-privacy]].
 - The two-layer consent gate that determines what reach actually happens after linkage — see [[subscriber-vs-customer-consent]].
 
@@ -58,14 +58,14 @@ Not covered:
 
 ### Subscriber → Customer (newsletter signup converts to buyer)
 
-1. Person fills the [[marketing-subscribers-subscribe-forms|popup form]] → Subscriber row created with `subscriber_from = subscribe_form`, Email channel `marketing = yes`, `verified` depends on flow (single opt-in vs double opt-in).
+1. Person fills the [[marketing-subscribers-subscribe-forms|popup form]] → Subscriber row created with `subscribed_from = subscribe_form`, Email channel `marketing = yes`, `verified` depends on flow (single opt-in vs double opt-in).
 2. Days/weeks later, the same email places an order → guest Customer (or registered Customer) row created.
 3. Order creation triggers the `order_creating` linkage flow → `subscriber_to_customer` join row created tying the existing Subscriber to the new Customer.
 4. The Subscriber's RFM bucket is recomputed (they now have orders, so they move from "Without RFM Analysis" toward "New", "Champ", etc.).
 
 ### Customer → Subscriber (buyer opts into marketing)
 
-1. Person registers / orders without ticking the marketing-consent box → Customer with `marketing = no`, AND a Subscriber row is auto-created with `subscriber_from = customer_creating` / `order_creating`, but the Email-channel `marketing = no`.
+1. Person registers / orders without ticking the marketing-consent box → Customer with `marketing = no`, AND a Subscriber row is auto-created with `subscribed_from = customer_creating` / `order_creating`, but the Email-channel `marketing = no`.
 2. Later, the Customer either:
    - Goes to their storefront Account preferences and ticks "Accept marketing" → Customer-level `marketing` flips to `yes`; the linked Subscriber's Email-channel `marketing` flips to `yes`.
    - Subscribes to the newsletter via a popup using the same email → the existing Subscriber's Email channel flips to `marketing = yes`.
@@ -99,11 +99,11 @@ Until identification, the row is an **"anonymous subscriber"** — visible to se
 - [[subscriber-vs-customer]] — hub.
 - [[subscriber-vs-customer-records]] — what each record carries; "what creates which record".
 - [[subscriber-vs-customer-consent]] — the two-layer gate that determines reach after linkage.
-- [[subscriber-vs-customer-privacy]] — Customer hard-delete cleans up the join row asynchronously.
+- [[subscriber-vs-customer-privacy]] — Customer hard-delete also deletes the linked Subscriber(s).
 - [[subscriber]] — Subscriber entity; detail page lists every linked Customer.
 - [[customer]] — Customer entity.
 - [[customers-details]] — surfaces the linked Subscriber's channels.
-- [[marketing-subscribers]] — shows `subscriber_from` source + linked Customers.
+- [[marketing-subscribers]] — shows `subscribed_from` source + linked Customers.
 - [[marketing-subscribers-subscribe-forms]] — popup forms that create newsletter-only Subscribers.
 - [[abandoned-cart-recovery]] — uses UUID-anchored behaviour to identify Subscribers before they identify themselves.
 

@@ -7,8 +7,8 @@ aliases: ["Conversation topics", "chat topics", "What customers ask about", "Con
 tags: [apps, ai, chat, topics, feedback, analytics]
 plan_gates: ["aura-chat-credit"]
 created: 2026-09-23
-updated: 2026-09-23
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Aura Chat — conversation topics and shopper feedback
@@ -95,6 +95,10 @@ New and renamed topics apply to conversations filed from then on. Conversations 
 ### One rating per conversation, the last press counts
 
 The rating belongs to the conversation, not a single reply. A shopper may change their mind; the last press is kept. A thumbs-up clears any reason given earlier.
+
+### Ratings do not change the assistant
+
+Ratings and topics are a record for the merchant. They are not fed back into the assistant's instructions, so a complaint does not by itself change how it answers; to change that, edit **Instructions for the assistant** or the skills ([[apps-aura-chat-skills]]).
 
 ### Read complaints, not a satisfaction rate
 

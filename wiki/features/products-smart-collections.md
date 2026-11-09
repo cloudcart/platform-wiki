@@ -7,8 +7,8 @@ aliases: ["Smart Collections", "Collections", "Selections", "Smart selections", 
 tags: [products, collections, selections, smart-grouping]
 plan_gates: ["product_collections"]
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 
 # Smart Collections
@@ -54,7 +54,7 @@ At a glance — the detail lives in the aspects above:
 
 What the merchant CANNOT do here:
 
-- Manually pick specific products into a collection — the manual cross-sell list lives on each product's editor under Linked Products in [[products-products]].
+- Keep a separate hand-picked product list — specific products go in through a **Products** rule ([[smart-collections-rule-types]]); the cross-sell list is Linked Products in [[products-products]].
 - Edit which discounts are linked to a collection — that's managed in the Discounts feature.
 - Reorder products within a collection from this screen — that happens via product-field sort on the storefront layer.
 

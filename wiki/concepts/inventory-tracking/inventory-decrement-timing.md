@@ -5,8 +5,8 @@ aliases: ["Inventory decrement timing", "Stock decrement timing", "order_status_
 tags: [catalog, inventory, stock, orders, decrement, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[inventory-tracking]]. See the hub for the other aspects (variant model, restock, oversell, bundle stock, multi-warehouse, in-stock badge, debugging playbook).
@@ -17,10 +17,12 @@ source_count: 3
 
 The single most consequential inventory setting in the platform is **`order_status_for_quantity_decrease`** on [[settings-cart]] (the "I want to decrease product quantity when the status is" dropdown). It picks **when** stock comes off the Variant's `quantity` count along the order lifecycle:
 
-- **`paid`** (default) — stock decrements ONLY when the order reaches `status = paid` AND `status_fulfillment = fulfilled`. Orders sitting in `pending` (awaiting payment) do NOT touch stock. Two customers can place pending orders against the same last unit; whichever pays first wins the inventory.
-- **`pending`** — stock decrements at order submission, when the order first hits `status = pending` AND `status_fulfillment = fulfilled`. Order placement immediately reserves stock; even unpaid orders block the inventory until the order is cancelled.
+- **`paid`** — stock comes off when the order reaches `paid` / `authorized` / `completed`, or earlier if it is marked fulfilled. Orders sitting in `pending` (awaiting payment) do NOT touch stock. Two customers can place pending orders against the same last unit; see *Two shoppers and the last unit* below.
+- **`pending`** — stock comes off when the order is placed (`pending`). Even unpaid orders block the inventory until the order is cancelled.
 
-The setting applies to **all** orders on the store — it is not per-product or per-customer.
+The setting applies to **all** orders on the store — it is not per-product or per-customer, and each order keeps the value it was placed with.
+
+**Default.** New stores are created with `pending`, and the Cart settings screen shows `pending` when nothing was saved. A store that never saved the setting has its orders placed with `paid`, although the screen shows `pending` (verify on such stores); saving the screen once makes the two agree.
 
 ## Scope
 
@@ -40,7 +42,7 @@ Not covered here:
 
 ## Contrasts
 
-- **`paid` decrement vs `pending` decrement** — `paid` (default) reserves stock only after the customer's payment clears; `pending` reserves at submission. Stores with mostly-paid checkouts (Stripe / card-on-file) typically pick `paid`; cash-on-delivery-dominant stores typically pick `pending` to avoid the "second customer races to the same last unit" problem during the delivery cycle.
+- **`paid` decrement vs `pending` decrement** — `paid` reserves stock only after the customer's payment clears; `pending` reserves at submission. Stores with mostly-paid checkouts (Stripe / card-on-file) typically pick `paid`; cash-on-delivery-dominant stores typically pick `pending` to avoid the "second customer races to the same last unit" problem during the delivery cycle.
 - **Decrement on transition IN vs re-credit on transition OUT** — decrement happens on status transitions INTO `paid` / `pending` (per setting); the symmetric re-credit happens on transitions OUT (cancelled / refunded / voided / failed). See [[inventory-restock]] for the symmetric flow.
 
 ## Where it applies
@@ -62,7 +64,7 @@ The decision is store-wide. Merchants with mixed payment mixes pick whichever ma
 
 ### The decrement-allowed matrix (verified against backend)
 
-For `order_status_for_quantity_decrease = paid` (default):
+For `order_status_for_quantity_decrease = paid`:
 
 | Order status | Fulfillment | Decrement on transition IN | Re-credit on transition OUT |
 |---|---|---|---|
@@ -74,6 +76,14 @@ For `order_status_for_quantity_decrease = paid` (default):
 For `order_status_for_quantity_decrease = pending`, the threshold drops one step: decrement fires as soon as the order is `pending` (or any later non-terminal status), or when it's fulfilled.
 
 **Fulfillment is an _additional, earlier_ decrement trigger — NOT a requirement** (corrected 2026-06-13, verified against `allowIncrementDecrementProducts`). With the default `paid` setting, reaching `paid` decrements stock **immediately, whether or not the order is fulfilled**; separately, marking an order **fulfilled while it is still `pending`** also decrements it early. So the decrement fires at the **earlier** of: the order reaching the setting's status threshold, or being marked fulfilled — so a "paid but not yet shipped" order on the default setting **has already taken stock**. Cancelling / refunding re-credits per [[inventory-restock]].
+
+### Two shoppers and the last unit
+
+Carts hold no stock: a unit is taken only when an order reaches the decrement point above. Changing a quantity in the cart is checked against the current stock for a tracked product without **Continue selling**, with *"Not enough quantity left (…)"*.
+
+- With `pending`, the first order placed takes the unit; with `paid`, both orders can be placed and the first one paid takes it.
+- When the other order then reaches its decrement point, stock of a product without **Continue selling** is never taken below zero: the decrement is refused with *"There is not enough quantity for <product>"* (*"Няма достатъчно количество за <product>"*). What the shopper and the order then show is not confirmed (verify).
+- With **Continue selling** on, the decrement goes through and stock stays at 0 ([[inventory-oversell]]).
 
 ## Related
 

@@ -7,8 +7,8 @@ aliases: ["Blog module", "Blog listing module", "blog.blog", "Storefront blog mo
 tags: [design, modules, blog, content, listing]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Storefront Modules — Blog listing (`blog`)
@@ -31,7 +31,7 @@ The form opens in a side panel with two fields: enable / disable + per-page coun
 
 - **Set how many articles per page** the storefront blog listing paginates by.
 - **Disable** the module — when off, the blog landing page renders an empty listing (the surrounding header / footer still appear; only the article list is suppressed).
-- **Save** to persist; storefront cache regenerates and the new setting is live on the next request.
+- **Save** to persist; pages rendered afterwards use the new setting (guests within 20 minutes).
 - **Reset** to revert to the theme's shipped default (10 per page).
 - **Cancel** to close without saving.
 
@@ -95,7 +95,7 @@ The route still resolves but renders a notification — the theme typically show
 
 ### Cache invalidation
 
-Save and Reset both bump the per-site modules cache key. The storefront picks up the new `per_page` on the next request — no manual cache-clear required. Adding or publishing an article in [[marketing-blog-articles]] surfaces in the listing immediately on the next storefront load (the article list is read live, not cached).
+Save and Reset both bump the per-site modules cache key. Pages rendered afterwards use the new `per_page`, and a newly published article in [[marketing-blog-articles]] appears in any listing rendered after it; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Settings precedence
 

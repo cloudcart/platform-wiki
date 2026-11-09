@@ -5,8 +5,8 @@ aliases: ["Product business rules", "Product publish rules", "Product hidden vs 
 tags: [entity, catalog, products, rules, validation, plan-gates]
 plan_gates: ["products", "bundles"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[product]]. See the hub for the other aspects (attributes, lifecycle, relationships, side effects and API).
@@ -95,11 +95,11 @@ At the plan cap, the **+ New product** button still opens the create dialog, but
 
 ### `physically` is a filter alias, not a stored type
 
-The `physically` value in product-search and storefront product-showcase module filters is a **filter alias** — it expands to `type IN (simple, multiple)` (all non-digital, non-bundle products). No product is ever saved with `type = physically`; the word appears only in filter dropdowns (e.g., "Show physical products only").
+The `physically` value in product-search and showcase filters is a **filter alias** for `type IN (simple, multiple)`. No product is saved with `type = physically`; the word appears only in filter dropdowns.
 
 ### `sale` field is legacy
 
-The `sale` field exists in the schema but is **not applied on save**. Modern sale handling routes through [[discount|Discount]] records exclusively. The merchant never sets or sees this field today.
+Every product save writes `sale` as No, so it always reads No, also as the Admin GraphQL `sale` flag and filter. It says nothing about discounts: the storefront sale price and the smart-collection **Sale** rule come from active [[discount|Discount]] rows (see [[smart-collection-entity-discount-link]]).
 
 ### SEO Spinner cap frees up immediately on soft-delete
 

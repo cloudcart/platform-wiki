@@ -7,8 +7,8 @@ aliases: ["Channel logs status", "Channel logs status enum", "Channel logs statu
 tags: [marketing, channels, logs, status, vocabulary]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-channels-logs]]. See the hub for the other aspects (table view, message preview, subscriber drill-down, row lifecycle, system vs campaign).
@@ -45,7 +45,7 @@ The platform stores every send's status in one of the following values — surfa
 |--------|---------------------------|-------------|
 | `SENT` | Handed off to the channel provider; not yet confirmed delivered. | Orange |
 | `ACCEPTED` | Channel provider acknowledged receipt of the request. | Orange |
-| `PENDING` | Provider is retrying (e.g., Elastic Email *WaitingToRetry*). | Orange |
+| `PENDING` | Provider is retrying (e.g., Elastic Email *WaitingToRetry*). Has no label: the pill reads "N/A". | Red |
 | `DELIVERED` | Recipient device / inbox received the message. | Green |
 | `SEEN` (alias: Opened for Email) | Recipient opened / saw the message. | Green |
 | `CLICKED` | Recipient clicked a link inside the message. | Green |
@@ -56,7 +56,7 @@ The platform stores every send's status in one of the following values — surfa
 | `EXPIRED` | Provider TTL elapsed without delivery (common for Viber when recipient offline). | Red |
 | `REJECTED` | Provider rejected (e.g., Viber number is not a Viber user). | Red |
 | `UNDELIVERABLE` | Provider classifies the destination as permanently undeliverable. | Red |
-| `NOT_SENT` | Platform skipped the send (subscriber failed pre-flight checks — unsubscribed, unverified, marketing = 0). See [[channels-logs-row-lifecycle]]. | Red |
+| `NOT_SENT` („Неизпратен“) | Status every send row is written with at dispatch, before the provider call. Email turns `SENT` on acceptance; left with no reason = never accepted. SMS / Viber / push: left after a provider error. Pre-flight failures never appear here. See [[channels-logs-row-lifecycle]]. | Red |
 | `ERROR` | Generic delivery error from the provider. | Red |
 | `BOUNCED` | Soft bounce (Email). | Red |
 | `HARD_BOUNCED` | Hard bounce (Email — permanent failure). | Red |
@@ -75,33 +75,36 @@ Each channel's status updates flow from a different provider:
 | SMS MsgHub | MsgHub DLR webhook | `DELIVERED`, `UNDELIVERED`, `EXPIRED`, `REJECTED`, `NOT_SENT`. |
 | SMS NTH | NTH DLR webhook | `DELIVERED`, `UNDELIVERED`, `REJECTED`, `EXPIRED`. |
 | Viber | InfoBip DLR webhook | `DELIVERED`, `SEEN` (Viber's read-receipt), `UNDELIVERED`, `EXPIRED`, `REJECTED`. |
-| Web Push | Browser push service ack | `CREATED` (subscription), `SENT` (request sent), `DELIVERED` / `SEEN` when the browser confirms. Most push services don't report `SEEN` reliably. |
+| Web Push | Browser push service ack | `CREATED` (subscription), `SENT` (request sent), `DELIVERED` when the notification is shown, `CLICKED` when tapped. `SEEN` never occurs. |
 
-If the webhook never fires (provider downtime, network failure, etc.), the row stays in `SENT` indefinitely — the platform doesn't speculatively flip it.
+Email and Viber also get background status checks (below).
 
 ## Business rules
 
 ### Status filter for `BOUNCED` auto-unions `HARD_BOUNCED`
 
-When the merchant filters by status `BOUNCED`, the query is `WHERE status IN ('BOUNCED', 'HARD_BOUNCED')` — both soft and hard bounces are returned. This is intentional merchant-friendly behaviour — most merchants don't care about the soft/hard distinction; they want to see "all failed-to-deliver emails". The hard-bounce-only view requires filtering by `HARD_BOUNCED` directly.
+When the merchant filters by status `BOUNCED`, the query is `WHERE status IN ('BOUNCED', 'HARD_BOUNCED')` — both soft and hard bounces are returned, since most merchants want "all failed-to-deliver emails". For hard bounces only, filter by `HARD_BOUNCED`.
 
 ### Status pill colour groups are fixed (verify)
 
 The colour mapping is hard-coded: green = `notification-green` ("enabled"-style) for success states (`SENT` / `DELIVERED` / `SEEN` / `CLICKED` etc.); red = `notification-red` ("required"-style) for failure states; orange = `notification-orange` for in-progress states. The merchant cannot customise these. (verify)
 
-### `SENT` is sticky when the webhook never fires
+### Background status checks (Email, Viber)
 
-If a channel provider's webhook never reports back (provider downtime, lost network, misconfigured destination), the row stays at `SENT` indefinitely. The platform does NOT timeout `SENT` rows or speculatively flip them to `UNDELIVERED`. A merchant looking for "is delivery confirmation slow or never coming?" should check the channel-provider dashboard, not assume the platform will retry the status check.
+Nothing times a row out to `UNDELIVERED`, but two channels re-check unresolved rows:
+
+- **Email** — an hourly background status check. A failed lookup (e.g. a dead key) sets `ERROR` *"Empty status message"*, which is not a real bounce.
+- **Viber** — rows still pending, older than 4 hours and younger than 7 days, are checked up to 10 times and may become `ERROR` *"No status information for message"*.
 
 ### `NOT_SENT` is the platform's own status — not a provider value
 
-`NOT_SENT` is written by the platform itself when the subscriber fails one of the per-channel pre-flight checks BEFORE the send is even attempted. See [[channels-logs-row-lifecycle]] for the full pre-flight rules and the `error` field that explains why.
+The platform writes `NOT_SENT` on every send row at dispatch, before the provider call (Email, SMS, Viber, Web Push). An Email row turns `SENT` when Elastic Email accepts it; one left at `NOT_SENT` with no reason was never accepted, typically a rejected key — see [[email-channel-reconnect]]. For SMS, Viber and push, a provider error leaves the row at `NOT_SENT` and puts the reason in the campaign's step log. Pre-flight failures (unsubscribed, unverified, no consent) write no row here — see [[channels-logs-row-lifecycle]].
 
 ### `SEEN` semantics are channel-specific
 
 - **Email** — provider open-pixel beacon fired (means: the email client downloaded images, which most modern clients defer or block, so undercounts).
 - **Viber** — Viber's native read-receipt (most reliable).
-- **Web Push** — depends on the browser push service; many don't report `SEEN` at all.
+- **Web Push** — `SEEN` never occurs (`DELIVERED` when shown, `CLICKED` when tapped).
 - **SMS (both MsgHub + NTH)** — `SEEN` never appears (SMS has no read-receipt).
 
 ### `PURCHASE` is an attribution status, not a delivery status

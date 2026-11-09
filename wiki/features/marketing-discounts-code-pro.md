@@ -7,8 +7,8 @@ aliases: ["Discount code PRO", "Code PRO codes", "Code PRO management", "Multi-c
 tags: [marketing, discounts, coupons, code-pro, multi-code-campaigns]
 plan_gates: ["discount-code-pro", "discount-code-pro-generator"]
 created: 2026-05-23
-updated: 2026-11-04
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 # Code PRO codes (multi-code campaign management)
@@ -98,7 +98,7 @@ Cluster-wide rules that span multiple aspects:
 - [[products-vendors]] — vendors used by `setting=vendor` / `category_vendor`.
 - [[settings-statuses]] — `discounts_used_statuses` setting determines which statuses count toward `uses`.
 - [[settings-hooks]] — changes to Code PRO codes send no webhook; `discount.created` / `discount.updated` fire when the campaign itself is saved.
-- [[marketing-campaigns]] — campaigns can substitute dynamic Code PRO codes via the `{triggered_dynamic_discount}` replacement (gated on `discount-code-pro`).
+- [[marketing-campaigns]] — `{$dynamic_discount_code}` issues one new code per recipient for their triggered products (`discount-code-pro`).
 - [[marketing-segments]] — segment conditions can reference Code PRO usage (also `discount-code-pro` gated).
 - [[api-discount-codes-pro]] — JSON-API v2 resource for individual Code PRO codes.
 - [[api-discounts]] — JSON-API v2 resource for the parent campaign (with `type=code-pro`).

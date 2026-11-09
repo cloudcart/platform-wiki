@@ -7,8 +7,8 @@ aliases: ["Subscribe form fields", "Form input slots", "Custom fields on subscri
 tags: [marketing, subscribers, forms, fields, custom-fields, validation, storefront]
 plan_gates: ["subscriber_forms"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-subscribers-subscribe-forms]]. See the hub for the other aspects (list view, builder, templates, layout, triggers, submission flow, GDPR consent, known issues).
@@ -33,7 +33,7 @@ pages.form.custom_fields[] = [ { id, is_visible, required, label, placeholder, .
 
 ## What the merchant can do here
 
-- Control which built-in slots appear (`is_visible`) — subject to the caveats below: email / phone additionally require the store channel to be active, and the two **name** slots have no hide toggle in their property panel.
+- Show, hide and drag-reorder the built-in slots in the **"Полета"** list — email / phone additionally require the store channel to be active.
 - Mark each visible slot as required vs optional.
 - Override the default storefront label and placeholder.
 - Apply custom styling to each input's field and label.
@@ -50,8 +50,8 @@ Four fixed inputs the form can show. Each carries an `is_visible` flag in the fo
 |------|-----------------|-----------------|
 | **Email** (`pages.form.fields.email`) | `is_visible`, `required`, custom label, placeholder, `fieldStyle`, `labelStyle`. | `email.is_visible` **AND** store **email channel** active. |
 | **Phone** (`pages.form.fields.phone`) | Same — plus storefront uses E.164 validation per the store's default country. | `phone.is_visible` **AND** store **phone channel** active. |
-| **First name** (`pages.form.fields.first_name`) | `is_visible`, `required`, label, placeholder, style. | `first_name.is_visible` only — **no** channel gate; **no** hide toggle in the field property panel. |
-| **Last name** (`pages.form.fields.last_name`) | Same. | `last_name.is_visible` only — **no** channel gate; **no** hide toggle in the field property panel. |
+| **First name** (`pages.form.fields.first_name`) | `is_visible`, `required`, label, placeholder, style. | `first_name.is_visible` only (its checkbox in the Fields list) — **no** channel gate. |
+| **Last name** (`pages.form.fields.last_name`) | Same. | `last_name.is_visible` only (its checkbox in the Fields list) — **no** channel gate. |
 
 ### Per-field configuration flags
 
@@ -110,13 +110,14 @@ The store-level communication channels gate **only the email and phone** built-i
 
 The store channels **override** the form's per-field `is_visible` for email / phone — the form cannot force-show an input for a channel the store has switched off. **First name / last name are never channel-gated** — their appearance depends on `is_visible` alone.
 
-### The name slots have no show/hide switch in their property panel
+### Showing, hiding and ordering the slots — the "Полета" (Fields) list
 
-The form data model carries an independent `is_visible` flag for **every** built-in slot, including `first_name` and `last_name` — so a form can technically store `last_name.is_visible = false`, and the submit validation honours it (a hidden name field is simply not validated or collected). **But the builder's field-property panel for the two name slots exposes only `required` / label / placeholder / styling — no per-field show/hide toggle.** Email and phone gain an effective on/off control from the store channel (disable the channel → the slot disappears), whereas the name slots have no such external gate. So from the standard form editor a merchant does **not** see a "hide first name / last name" option. Whether any other builder gesture clears `is_visible` for a name slot is not confirmed here. (verify — the exact builder control, if any, that sets `first_name.is_visible` / `last_name.is_visible`.)
+In the builder's **"Полета"** (Fields) section every slot the template allows is one row with: a drag handle (four-way arrows), a **checkbox** that shows or hides the slot (`is_visible`), an input for its caption (placeholder *"Въведете заглавие за полето"*) and a **"Промени"** (Edit) button that opens its property panel (**"Надпис"** label, **"Заместител"** placeholder, **"Задължително"** required, styling).
 
-### Built-in slots are fixed — no rename / no reordering
-
-The four built-in slots (`email`, `phone`, `first_name`, `last_name`) are keyed by name and cannot be renamed at the schema level — only labelled differently via `label`. They render in a fixed order set by the storefront module; the merchant cannot drag-reorder them. To insert content between them, the merchant uses custom fields which slot in their own rendering position.
+- **Hide first or last name:** untick its checkbox. No template forces a slot on, so every slot can be unticked.
+- **Reorder:** drag a row by its handle; the storefront form shows the visible slots in that order.
+- The **Bar** template has only the Email slot; the others allow first name, last name, phone and email. Email and phone rows appear only while that store channel is active (see above).
+- Slots cannot be renamed at the schema level (only re-captioned). Custom fields sit in their own **"Допълнителни полета"** list.
 
 ### No file-upload field type
 

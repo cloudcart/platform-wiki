@@ -1,14 +1,14 @@
 ---
 type: feature
 nav_path: "Design → Navigation → Side-effects"
-route_name: admin.navigation.list
-route_path: /admin/storefront/navigation/{group?}
+route_name: design.navigation
+route_path: /admin/design/navigation
 aliases: ["Navigation side-effects", "Menu cache invalidation", "boarding_menus", "Navigation icon support", "Navigation permission", "Странични ефекти на навигацията"]
 tags: [design, navigation, menus]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 # Navigation — save-time side-effects
 
@@ -43,7 +43,7 @@ This aspect surfaces no merchant-editable fields. The only user-visible control 
 
 ### Cache invalidation on every save
 
-Every save / delete / reorder regenerates the merchant's site cache key, which forces the storefront to rebuild the cached menu HTML on the next request. There is no manual cache-clear button — the storefront picks up changes within seconds.
+Every save / delete / reorder regenerates the merchant's site cache key, so every page rendered afterwards shows the new menu. There is no clear-cache button, and guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Onboarding flag side-effect
 

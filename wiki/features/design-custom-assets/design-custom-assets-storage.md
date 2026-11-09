@@ -2,13 +2,13 @@
 type: feature
 nav_path: "Design → Custom CSS/JS → Storage & lifecycle"
 route_name: admin.custom.assets
-route_path: /admin/storefront/custom-assets
+route_path: /admin/design/custom-assets
 aliases: ["Custom CSS/JS storage", "Custom code per theme", "Custom assets lifecycle", "custom-css-js row", "Persistiranе на персонализиран код"]
 tags: [design, custom, css, js, advanced]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 > Part of [[design-custom-assets]]. See the hub for the other aspects (editor, injection point).
 
@@ -20,7 +20,7 @@ This aspect covers **how the custom code is persisted, scoped, and removed** on 
 
 ## Where to find it
 
-The merchant manages the code on the [[design-custom-assets]] screen (route `/admin/storefront/custom-assets`). There is no separate storage / lifecycle screen, and no version-history or backup UI anywhere in the admin panel.
+The merchant manages the code on the [[design-custom-assets]] screen (route `/admin/design/custom-assets`). There is no separate storage / lifecycle screen, and no version-history or backup UI anywhere in the admin panel.
 
 ## What the merchant can do here
 
@@ -50,9 +50,9 @@ Saving with an empty editor stores an empty string in the custom-code row. The s
 
 The CodeMirror editor accepts any amount of text the merchant pastes. The server-side save does no length check beyond what the database column allows (typically large-text, accommodating tens of thousands of characters). The merchant should keep the code small — every byte is included in every storefront page response.
 
-### No cache invalidation step
+### Cached pages keep the old code for up to 20 minutes
 
-The save handler does NOT explicitly invalidate the merchant's site cache. The storefront still picks up the new code on the next page render because the head-injection partial re-reads from storage on each request (the read is cached statically in-process for the duration of a single request only — see [[design-custom-assets-injection]]). Visitors with cached pages, or external CDN / Cloudflare layers, may continue to see the previous code until their cache expires.
+The save does not clear the platform's full-page cache. Every page rendered after the save carries the new code (the head partial reads it from storage on each render — see [[design-custom-assets-injection]]), and a browser signed in to the admin or a signed-in customer always gets such a page. Guests get it when their cached copy of the page expires, within 20 minutes; crawlers within 1–2 days. Cart, checkout and account pages are never cached, so code there takes effect at once. See [[storefront-arch-caching-invalidation]].
 
 ### No plan gate, no permission of its own
 
@@ -66,11 +66,11 @@ The controller carries a helper method that can parse the submitted HTML and spl
 
 - [[design-custom-assets]] — hub.
 - [[design-custom-assets-editor]] — the editor + the single `custom_assets` field.
-- [[design-custom-assets-injection]] — why a save takes effect without a cache flush, and where the stored content is rendered.
+- [[design-custom-assets-injection]] — where the stored content is rendered, read afresh on each render.
 - [[design-theme-editor]] — shares the same per-theme variable store the custom code is saved into.
 - [[design-themes]] — the theme picker; switching themes hides the current custom code.
 
 ## Open questions
 
-- ⏸️ **Cache invalidation after save.** Saving does not flush external caches. Storefront CDN / Cloudflare caches may serve the old page until the cache TTL expires; merchants making time-sensitive changes should flush their CDN manually.
+- ✅ Resolved: a save leaves the full-page cache alone; guests see the change within 20 minutes, crawlers within 1–2 days.
 - ⏸️ **Auth beyond standard admin-panel auth.** `(verify)` whether the custom-assets route enforces any auth beyond standard admin-panel auth + the `store.builder` sidebar permission.

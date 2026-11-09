@@ -4,17 +4,17 @@ nav_path: "Apps → FGO → Settings"
 route_name: apps.fgo.settings
 route_path: /admin/apps/fgo/settings
 aliases: ["FGO Settings", "FGO credentials", "FGO config"]
-tags: [apps, administration, fgo, invoicing, settings, bulgaria]
+tags: [apps, administration, fgo, invoicing, settings, romania]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-27
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # FGO → Settings
 
 ## Purpose
 
-The **Settings** tab is where the merchant connects CloudCart to their **FGO** (Bulgarian online invoicing) account — enters API credentials, sets up document numbering series, configures defaults. See [[apps-fgo]] for the full feature set.
+The **Settings** tab is where the merchant connects CloudCart to their **FGO** (Romanian online invoicing) account — enters API credentials, sets up document numbering series, configures defaults. See [[apps-fgo]] for the full feature set.
 
 ## Where to find it
 
@@ -47,14 +47,13 @@ When the merchant saves credentials, CloudCart connects to FGO with the supplied
 | **Auto-send email** | Email the customer the invoice PDF. |
 | **Language for invoices** | EN / BG. |
 
-### Activate as invoicing provider
+### Activating does not change the invoicing provider
 
-Once credentials are valid, the merchant activates FGO → becomes the store's `invoicing_provider` (per [[apps-fgo]]).
+Activating FGO makes it issue its own documents for orders; it does not become the store's `invoicing_provider` and the platform's own invoices carry on (see [[apps-fgo]]).
 
 ### What the merchant CANNOT do here
 - Use FGO without an FGO subscription.
-- Activate FGO alongside another invoicing provider (single-provider model).
-- Edit historical FGO-issued documents — Bulgarian tax law forbids.
+- Edit FGO-issued documents from CloudCart.
 
 ## Settings & fields
 
@@ -69,11 +68,11 @@ The FGO integration (per [[apps-fgo]]) supports:
 
 ### Number + Series identification
 
-FGO documents are identified by series (prefix) + number (sequential within series). This is legacy Bulgarian accounting practice — different from Szamlazz's single-number model.
+FGO documents are identified by series (prefix) + number (sequential within series). Different from Szamlazz's single-number model.
 
-### NAP compliance
+### Compliance
 
-Per [[apps-fgo]]: FGO handles Bulgarian National Revenue Agency (NAP) reporting requirements. Without FGO active, the merchant must handle this manually.
+Reporting and retention of FGO's documents follow FGO's own rules ([[apps-fgo]]).
 
 ### Permission
 Standard apps permission scope.

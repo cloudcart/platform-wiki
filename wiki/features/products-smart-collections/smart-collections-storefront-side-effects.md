@@ -7,8 +7,8 @@ aliases: ["Smart Collections storefront", "Selection storefront URL", "/selectio
 tags: [products, collections, selections, storefront, ajax, side-effects, search]
 plan_gates: ["product_collections"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[products-smart-collections]]. See the hub for the other aspects (list view, editor, rule builder, rule types, evaluation, rules and limits).
@@ -48,6 +48,8 @@ The theme lazy-loads collection content via three AJAX endpoints rooted under th
 | `ajax.filters-ts.selection` | Filter sidebar — the faceted-filter facet counts for the collection's product set. |
 
 The theme calls these endpoints when the customer scrolls or applies a filter — keeping initial-page weight light.
+
+The filter values on a collection page, the **Brand** list included, are built from the search index over the products recorded as members of that collection for the visitor's customer group. A brand appears only through a member product; a discounted product that is not a member (for example of a stale **Sale** collection, see [[smart-collection-entity-discount-link]]) adds nothing to the list.
 
 ### Time-series tracking on `/selection/` routes
 

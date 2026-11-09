@@ -7,8 +7,8 @@ aliases: ["Dashboard", "Home", "Начален екран", "Табло"]
 tags: [dashboard, home, onboarding]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 # Dashboard
 
@@ -70,7 +70,7 @@ When all steps are complete, the **Switch to Full Dashboard** button appears cen
 The `go_live` step opens the **Switching to Live Environment** confirmation modal:
 
 - Body text: *"Please confirm that you want to move to the live environment. Note that this action is irreversible."*
-- **Confirm** flips the store from Sandbox to Live and, on success, deletes all sandbox test data.
+- **Confirm** flips the store from Sandbox to Live and deletes the test orders and customers ([[site-entity-lifecycle]]).
 - On failure, the modal shows an inline error box *"Something went wrong, please try again later"*.
 - If the merchant doesn't have an active plan AND the plan step is not done → opens the Plan picker first instead.
 
@@ -97,7 +97,7 @@ Three live chart panels rendered from the [[analytics-pipeline]]:
 - **Cart conversion funnel** — funnel chart.
 - **Percentage of orders** — bar chart, distribution across statuses.
 
-All three default to the last 30 days. The merchant can't change the range from the dashboard; for fine-grained control they go to [[analytics]].
+All three cover the last 30 days; other ranges are on [[analytics]].
 
 ### See Backup banner
 
@@ -108,7 +108,7 @@ The **Backup banner** advertises the [[backup]] feature when the store is on a p
 - **Account Manager** card — shows the assigned CSM with a **Book a meeting** button (only when the active plan has `csm_meetings: enabled`); a secondary card lists upcoming meetings.
 - **Support** card — always shown post-onboarding. Quick links to help center + ticket. A **Support meeting** card appears only when the plan has `support_meetings: enabled`.
 - **CloudCart Capital** card — financing offer banner.
-- **Release** card — what's new / changelog highlights.
+- **Release notes** card (*UpdateMaster AI* in the code's English) — CloudCart's own changelog: the newest entry with its date; **View more releases** loads older ones five at a time. CloudCart writes the entries and stores them centrally; they are not in the wiki.
 
 ### Go-live trigger (corner overlay)
 
@@ -130,11 +130,11 @@ The full dashboard body renders **only when** the dashboard route is visible in 
 
 ### Stats counters only render when non-zero
 
-The Statistics panel hides itself entirely when all four counters (new orders, abandoned, out-of-stock, customers) are zero — keeping the dashboard clean for empty / brand-new stores. If just one is non-zero, only those tiles render.
+The Statistics panel hides when all four counters (new orders, abandoned, out-of-stock, customers) are zero; otherwise only the non-zero tiles show.
 
 ### Plan modal opens from inside the checklist
 
-The Plan step's CTA opens the **Plan-picker modal** — the same modal used everywhere else when the merchant has to choose / upgrade a plan. On successful checkout the plan step is auto-marked complete.
+The Plan step's CTA opens the usual **Plan-picker modal**; a successful checkout marks the step complete.
 
 ## Related
 

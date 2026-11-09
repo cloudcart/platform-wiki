@@ -7,8 +7,8 @@ aliases: ["Reviews moderation", "Review queue", "Product reviews list", "Reviews
 tags: [marketing, apps, reviews, moderation, ratings]
 plan_gates: ["product_reviews_added_rating"]
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 9
+updated: 2026-11-09
+source_count: 10
 ---
 # Reviews (Moderation Queue) — hub
 
@@ -67,7 +67,7 @@ The hub itself has no settings. Each aspect documents its own controls:
 
 Cross-cutting rules that span aspects:
 
-- **Status change recomputes the product summary immediately.** Every Publish / Hide / Delete (review OR reply) updates the affected product's aggregate rating + total review count. The storefront product page's "X stars (Y reviews)" headline reflects the moderation decision on the next page load — no cache TTL. See [[marketing-reviews-moderation-queue]].
+- **Status change recomputes the product summary immediately.** Every Publish / Hide / Delete (review OR reply) updates the affected product's aggregate rating + total review count. The storefront product page's "X stars (Y reviews)" headline reflects the moderation decision on the next freshly rendered page; guests can get a cached product page for up to 20 minutes. See [[marketing-reviews-moderation-queue]].
 - **Delete is irreversible and cascades.** Per-row trash and bulk Delete both hard-delete the row and cascade to threaded replies. There is no soft-delete fallback. See [[marketing-reviews-moderation-queue]] and [[marketing-reviews-replies]].
 - **Manual-add always publishes.** The Add new review modal hard-codes `is_approved = 1` server-side, bypassing the arrival-flow policy. See [[marketing-reviews-modals]] and [[marketing-reviews-arrival-flows]].
 - **Plan-cap rejects, not Pendings.** When over the `product_reviews_added_rating` quota, submissions are blocked outright and never reach the queue in any state. See [[marketing-reviews-plan-cap]].

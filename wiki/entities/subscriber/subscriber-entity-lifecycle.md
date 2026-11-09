@@ -5,8 +5,8 @@ aliases: ["Subscriber lifecycle", "Subscriber states", "Subscriber creation", "S
 tags: [entity, marketing, subscribers, lifecycle, webhooks]
 plan_gates: ["subscribers"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[subscriber]]. See the hub for the other aspects (attributes, channels, consent rules, relationships, API + plan).
@@ -39,11 +39,11 @@ A Subscriber moves through these states:
 5. **Unsubscribed (per channel)** — Subscriber clicked "Unsubscribe" in an email footer or equivalent → THAT channel's `unsubscribed = yes`. Other channels unaffected. Future sends on that channel are skipped silently.
 6. **Bounced** — email subsystem detected a hard bounce → channel's `bounced = yes`. Silent drop from future sends.
 7. **Merged** — merchant edits a channel identifier to one already used by another Subscriber → merge flow folds the second Subscriber's history (orders, carts, segments, tags, custom fields, events) into the first and deletes the second.
-8. **Deleted** — hard delete on [[marketing-subscribers]]. Cascades all child rows (see below). Fires `subscriber.deleted` webhook. Per GDPR right-to-erasure, the platform writes a marketing-log row with the erasure reason but strips PII; the Subscriber-ID reference remains as a no-PII marker.
+8. **Deleted** — hard delete on [[marketing-subscribers]], or automatically when the linked Customer is deleted. Cascades all child rows (see below), including its segment log rows; nothing of the Subscriber is kept. Fires `subscriber.deleted` webhook.
 
 ### Save-time transitions worth noting
 
-- **Source is set at creation, immutable afterwards** — `subscriber_from` records HOW the Subscriber entered the audience. The merchant cannot edit it later. See [[subscriber-entity-attributes]] for the 13 sources.
+- **Source is set at creation, immutable afterwards** — `subscribed_from` records HOW the Subscriber entered the audience. The merchant cannot edit it later. See [[subscriber-entity-attributes]] for the 13 sources.
 - **Second-marketing auto-flip** — when the "Second marketing" setting is ON in [[marketing-subscribers]] → Settings, a Subscriber who originally accepted marketing but didn't re-confirm at checkout (when marketing-consent at checkout is not mandatory) automatically has their Email-channel `marketing` flipped to `no`. The reasoning: "if the customer didn't actively re-confirm at purchase, treat that as having changed their mind." The full consent-gate interaction is on [[subscriber-entity-consent-rules]].
 - **Linkage with Customer at creation** — when a Customer is created with the same email as an existing Subscriber, the `subscriber_to_customer` link row is created automatically. When an order is created, the same linkage runs. See [[subscriber-entity-relationships]].
 
@@ -78,7 +78,7 @@ The destruction of a Subscriber is **total** on the marketing side (all consent 
 
 ### Deletion is per-record (not bidirectional with Customer)
 
-Deleting a Subscriber on [[marketing-subscribers]] does NOT delete the linked Customer. For GDPR right-to-erasure, the merchant must delete BOTH records explicitly (or use the Customer-side delete which cascades to the Subscriber — see [[subscriber-entity-relationships]]). The platform writes a marketing-log row with the erasure reason for compliance audit.
+Deleting a Subscriber on [[marketing-subscribers]] does NOT delete the linked Customer. Deleting the Customer, by contrast, deletes the linked Subscriber(s) through a queued job — so for GDPR erasure, deleting the Customer covers both ([[subscriber-vs-customer-privacy]]). A later login, order or registration by the same person creates a new Subscriber.
 
 ### Webhook events fire per-lifecycle event
 

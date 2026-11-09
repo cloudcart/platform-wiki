@@ -5,8 +5,8 @@ aliases: ["Subscription states", "Subscription status enum", "Active / Past due 
 tags: [billing, subscription, plan, lifecycle, states, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[merchant-subscription-lifecycle]]. See the hub for the other aspects (renewal-retry, expiration, cancellation, feature packs, payment methods, invoices, support flow).
@@ -73,7 +73,7 @@ If the subscription was Canceled but the merchant still has paid time remaining 
 
 The store's site status field is updated to match the **plan-type subscription's** status on every state transition. Non-plan subscriptions (apps, packs, services, themes) only update the site status indirectly — specifically, the platform sets the site to Past due if ANY of the merchant's subscriptions are Past due (even if the plan itself is Active). The site-level Past due is what makes the *"You have unpaid subscriptions!"* indicator surface in the admin's profile dropdown even when the plan is fine.
 
-When a past-due add-on later **expires** and no other subscription is past due, the store takes the plan subscription's status again. If another subscription is still past due, the store stays Past due. An add-on's expiry never revives an Expired store. While the store is Past due or Expired, its APIs refuse requests — see [[expired-subscription-data-lifecycle]].
+When a past-due add-on is **paid** (Renew or a successful retry) or later **expires**, and no other subscription is past due, the store takes the plan subscription's status again at once. If another subscription is still past due, the store stays Past due. An add-on's expiry never revives an Expired store. While the store is Past due or Expired, its APIs refuse requests — see [[expired-subscription-data-lifecycle]].
 
 ## Related
 

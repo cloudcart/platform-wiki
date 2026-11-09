@@ -3,14 +3,16 @@ type: feature
 nav_path: "Apps → Etsy"
 route_name: apps.etsy.settings
 route_path: /admin/apps/etsy
-aliases: ["Etsy", "Sale on Etsy", "Etsy marketplace", "Etsy sync"]
+aliases: ["Etsy", "Sale on Etsy", "Etsy marketplace", "Etsy sync", "Etsy not available", "Etsy deprecated", "Приложението е временно недостъпно"]
 tags: [apps, marketplace, etsy, sync, two-way, handmade]
 plan_gates: ["etsy", "etsy_total_products"]
 created: 2026-05-22
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # Etsy (marketplace sync)
+
+> **Not available.** The Etsy integration cannot be used on CloudCart today. Its connection to Etsy is switched off in the platform, so nothing connects or syncs; in May 2026 its entry was removed from the admin menu, and `/admin/apps/etsy` now sends the merchant back to the Apps catalogue. The old screens, where reached, show only *"Приложението е временно недостъпно"* ("The app is temporarily unavailable"). A plan's feature list can still name Etsy (`etsy`, `etsy_total_products`): that list is separate from the Apps catalogue and does not make the app installable ([[apps-deprecated]]). The rest of this page describes the integration as it worked and is kept for stores with old Etsy data.
 
 ## Purpose
 
@@ -26,7 +28,7 @@ Used by merchants whose primary store is on CloudCart but who also want Etsy's r
 
 ## Where to find it
 
-Sidebar → **Apps** → install → **Etsy** (titled *"Sale on Etsy"*). The route is `/admin/apps/etsy` / `apps.etsy.settings`.
+No longer reachable (see the note at the top). It used to be Sidebar → **Apps** → **Etsy** (titled *"Sale on Etsy"*), route `/admin/apps/etsy`.
 
 Sub-views: install, config, listings (CloudCart-side), listings from Etsy, add listing, map parameters, not-available, tabs.
 

@@ -3,12 +3,12 @@ type: feature
 nav_path: "Apps → Google Sheets → Download"
 route_name: apps.google_sheets.tasks
 route_path: /admin/apps/google_sheets/tasks
-aliases: ["Google Sheets download", "Sheets import products", "Sheets to CloudCart", "Sheets pull edits"]
+aliases: ["Google Sheets download", "Sheets import products", "Sheets to CloudCart", "Sheets pull edits", "Изтегляне"]
 tags: [apps, google, sheets, download, import, sync]
 plan_gates: ["google_sheets"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 # Google Sheets → Download
 
@@ -60,9 +60,23 @@ Download **overwrites** matching CloudCart products with whatever is in the spre
 
 Rows are grouped by the `Product ID` column, so multiple variant rows for the same parent product collapse into one logical record on import. A row with an **empty Product ID** gets a synthetic `new-{uniqid}` ID, which triggers a **CREATE** — so the merchant adds products simply by adding rows with no Product ID.
 
+### Status flags, empty cells and missing columns
+
+- **Featured** and **Hidden** are always written: *yes* turns the flag on, anything else (including an empty cell) turns it off.
+- **Active** and **New** are written whenever the cell is not empty, so a sheet value of *yes* republishes a product deactivated in CloudCart after the last Upload. There is no Draft column; Download never changes draft status.
+- Other product cells: an empty cell leaves the CloudCart value as it is; a column absent from the sheet is not read.
+- **Quantity**: an empty cell on a product's first row can set 0 (verify). **Weight**: if any variant row of a product has an empty Weight, the product is set to not require shipping.
+- A new row (empty Product ID) creates a product with only the given name before the row is applied (its publish defaults: verify).
+
+Each saved change is logged in the product's change log under the app's name as the initiator. Tasks run only when started: from the Tasks tab, or through the Admin GraphQL mutation that creates a Sheets task; there is no schedule.
+
 ### Category auto-creation from a `>`-separated path
 
-If a row's `Category` cell holds a path like "Apparel > Shirts > T-Shirts", the platform splits it and creates each level that doesn't yet exist. The merchant can drop a product into a brand-new category just by typing the path — the integration builds the category tree.
+If a row's `Category` cell holds a path like "Apparel > Shirts > T-Shirts", the platform splits it and creates each level that doesn't yet exist. The merchant can drop a product into a brand-new category just by typing the path — the integration builds the category tree. The cell sets the **main** category only; additional categories are untouched.
+
+### Description HTML round trip
+
+A description cell is saved back as it reads, so formatting survives the round trip only if its HTML tags are left intact; plain text without tags saves as unformatted text. A description longer than 49,000 characters was cut on upload, and downloading that row saves the cut text (verify).
 
 ### Vendor (Brand) auto-creation
 
@@ -75,6 +89,8 @@ When tags are supplied in the sheet, the platform **deletes the product's existi
 ### CloudCart CDN image URLs are skipped
 
 When parsing image URLs, the platform **skips any URL containing `cdncloudcart.com`** — those images are already on CloudCart's CDN (from the prior Upload), so they aren't re-downloaded. Only NEW image URLs (e.g. external URLs the merchant pasted) are fetched and attached. Image downloads happen **after** the product is saved, so a slow download never holds up the save; if an image fails, the rest of the product still saves.
+
+**Download adds images, it never replaces them.** Images the product already has stay, even when their address is removed from the sheet; an address already imported for the product is not fetched again. To remove an image, delete it in the product editor.
 
 ## Related
 

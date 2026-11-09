@@ -1,12 +1,12 @@
 ---
 type: concept
 nav_path: "Concept → Import pipeline → Plan gates & 2FA"
-aliases: ["Import plan gates", "customer_import plan feature", "xml_import_limit", "xml_sync_limit", "xml_sync-interval", "2FA on customer import", "Import file format constraints"]
+aliases: ["Import plan gates", "customer_import plan feature", "xml_import_limit", "xml_sync_limit", "xml_sync-interval", "xml_import-interval", "Import interval minimum", "2FA on customer import", "Import file format constraints"]
 tags: [ops, imports, plan-gates, 2fa, file-formats, concepts]
-plan_gates: [customer_import, xml_import_limit, xml_sync_limit, "xml_sync-interval"]
+plan_gates: [customer_import, xml_import_limit, "xml_import-interval", xml_sync_limit, "xml_sync-interval"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[import-pipeline]]. See the hub for the other aspects (stages, concurrency lock, validation, upsert + provenance, history + recovery, XML Sync).
@@ -17,7 +17,7 @@ source_count: 1
 
 Different importers are gated by different **plan-feature keys**, and the customer CSV importer is additionally **2FA-gated** for PII protection. File-format constraints (CSV/TXT only, UTF-8, auto-delimiter, row-count caps) are also enforced at upload time. Together, these are the front-door gates that decide whether the merchant even reaches the wizard — let alone the queue.
 
-The relevant plan-feature keys are: `customer_import` (customer CSV), `xml_import_limit` (one-time XML imports — concurrent tasks quota), `xml_sync_limit` (recurring XML Sync — concurrent tasks quota), `xml_sync-interval` (XML Sync cadence — shorter intervals for higher-tier plans), `multilang_product_translate` and `multilang_product_copy` (multilang sync tasks). Product CSV has NO specific plan gate today.
+The relevant plan-feature keys are: `customer_import` (customer CSV), `xml_import_limit` (XML Import — concurrent tasks quota), `xml_import-interval` (XML Import cadence), `xml_sync_limit` (recurring XML Sync — concurrent tasks quota), `xml_sync-interval` (XML Sync cadence), `multilang_product_translate` and `multilang_product_copy` (multilang sync tasks). Product CSV has NO specific plan gate today.
 
 ## Scope
 
@@ -37,9 +37,9 @@ Not covered here:
 
 ## Contrasts
 
-- **Plan-gated vs ungated** — customer CSV, XML import, XML sync, multilang sync are plan-gated. Product CSV, JSON import, blog CSV are not (no specific plan gate). Without the plan feature, clicking the import button surfaces a paid-feature upgrade modal instead of the wizard.
+- **Plan-gated vs ungated** — customer CSV, XML import, XML sync, multilang sync are plan-gated. JSON import and blog CSV are not. Product CSV has a `csv_import` plan feature, whose usage is the number of products imported by CSV; no check in the import itself enforces it (verify how plans use it). Without the plan feature, clicking the import button surfaces a paid-feature upgrade modal instead of the wizard.
 - **2FA-gated vs not 2FA-gated** — customer CSV requires 2FA BEFORE the upload wizard opens (privacy / PII protection). Product imports do not require 2FA.
-- **Concurrent-task quota vs cadence cap** — XML Sync is gated by BOTH `xml_sync_limit` (how many sync tasks the merchant can have) AND `xml_sync-interval` (how often each one runs). XML one-time imports only have the `xml_import_limit` task quota.
+- **Concurrent-task quota vs cadence** — XML Sync is gated by BOTH `xml_sync_limit` (how many sync tasks the merchant can have) AND `xml_sync-interval` (how often they run); XML Import has the same pair (`xml_import_limit` + `xml_import-interval`). The interval is a value in seconds that replaces the 12-hour default, with no lower limit of its own, but a task read less than **1 hour** ago is always skipped, so no plan re-imports the same feed more often than about hourly (never every 20 minutes). Per-plan values live in the plan catalogue (verify).
 - **File-format constraint vs runtime validation** — file-format constraints (extension, encoding, row count) reject the upload at Step 1. Row-level validation runs later during background processing — see [[import-validation-and-errors]].
 
 ## Where it applies
@@ -51,8 +51,8 @@ Plan gates apply at the **Upload** step ([[import-pipeline-stages]]). The mercha
 | Importer | Plan-feature key |
 |----------|------------------|
 | Customer CSV | `customer_import` |
-| Product CSV | (no specific gate; included in standard plans) |
-| Product XML one-time | `xml_import_limit` (concurrent tasks limit) |
+| Product CSV | `csv_import` (usage = products imported by CSV; enforcement not in the import path (verify)) |
+| Product XML Import | `xml_import_limit` (concurrent tasks limit) + `xml_import-interval` (cadence) |
 | Product XML Sync | `xml_sync_limit` (concurrent tasks limit) + `xml_sync-interval` (cadence) |
 | Multilang sync | `multilang_product_translate`, `multilang_product_copy` |
 | App-specific imports | varies per app |
@@ -98,7 +98,7 @@ The exact row-count caps per plan vary by importer and are documented in the [[p
 - [[import-pipeline]] — hub.
 - [[import-pipeline-stages]] — the Upload step where plan + file-format gates fire.
 - [[customers-import]] — customer CSV (2FA-gated, `customer_import`).
-- [[apps-csv-import]] — product CSV (ungated).
+- [[apps-csv-import]] — product CSV.
 - [[apps-xml-import]] — one-time XML (`xml_import_limit`).
 - [[apps-xml-sync]] — recurring XML Sync (`xml_sync_limit` + `xml_sync-interval`).
 - [[apps-json-import]] — JSON import.

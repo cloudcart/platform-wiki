@@ -7,14 +7,14 @@ aliases: ["Google Search Console Settings", "GSC settings", "GSC verification"]
 tags: [apps, google, search-console, seo, settings]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-28
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # Google Search Console → Settings
 
 ## Purpose
 
-The **Settings** tab is where the merchant enters the **GSC verification code** (or completes another verification method) for site verification. See [[apps-google-search-console]] for the full feature set.
+The **Settings** tab is where the merchant pastes Google's **verification meta tag** for site verification. It offers no other verification method. See [[apps-google-search-console]] for the full feature set.
 
 ## Where to find it
 
@@ -22,17 +22,19 @@ Sidebar → Apps → Google Search Console → **Settings tab**. Route: `/admin/
 
 ## What the merchant can do here
 
-### Verification code field
+### The Meta tag box
 
-| Field | Notes |
+| Box / field | Notes |
 |---|---|
-| **Verification code** | The content of the meta tag Google provides in the verification flow. Validated against `ValidHtml` rule (per [[apps-google-search-console]]). |
+| Box titled **Meta tag**, one text field with no label of its own | Takes the whole meta tag Google gives in its verification flow, as the placeholder shows. Validated against the `ValidHtml` rule (per [[apps-google-search-console]]). |
+
+The Bulgarian wording of this tab and box comes from the admin's translation table and is not recorded here.
 
 The Manager's `getMeta` returns the formatted meta tag string for injection: `<meta name="google-site-verification" content="..." />`.
 
 ### Verification methods (alternative)
 
-While the meta-tag method is the default supported here, GSC also supports:
+The meta tag is the only method this app handles. Google also supports the following, done outside the app (a DNS TXT record goes in **Manage DNS** for a domain on CloudCart's nameservers, [[settings-domains-dns-cloudflare]]):
 - HTML file upload.
 - DNS TXT record.
 - Google Analytics property (when GA is already verified).
@@ -52,7 +54,7 @@ Per [[apps-google-search-console]] Manager:
 
 ### Validation
 
-`ValidHtml` rule (per [[apps-google-search-console]] Request) ensures the verification code is valid HTML. Pasting plain text instead of the full meta tag may surface validation errors.
+`ValidHtml` rule (per [[apps-google-search-console]] Request) ensures the pasted text parses as HTML. Pasting only the code instead of the full meta tag is refused with *"Code must be a valid HTML"*.
 
 ## Business rules
 
@@ -92,7 +94,7 @@ There is no current capability to pull queries / impressions / clicks data from 
 
 ### Vue UI is a single textarea — pasting the full meta tag
 
-The Vue settings page renders a single text field with placeholder `<meta name='google-site-verification' content='XXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'>`. The merchant is expected to paste the COMPLETE meta tag string (not just the content token). The ValidHtml rule will accept either, but Google's verifier needs the full tag — pasting only the token value passes save but fails verification.
+The Vue settings page renders a single text field with placeholder `<meta name='google-site-verification' content='XXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'>`. The merchant pastes the COMPLETE meta tag string. Only the content token, on its own, does not save: it fails the HTML check (see Validation).
 
 ### "Meta tag is required" trigger
 
@@ -100,7 +102,7 @@ When the app is active, leaving the field empty produces *"Meta tag is required"
 
 ### Single box, inline edit (no slide-over)
 
-The Vue page renders ONE settings box (`box-key: google_search_console`) with `editMethod: 'inline'` — clicking Edit reveals the textarea in place. There is no slide-over panel, no modal dialog, no separate Connect/Disconnect button (no OAuth in this app). The single field has no label text; the placeholder is the meta tag example. Save is via the standard top-right save action.
+The Vue page renders ONE settings box (`box-key: google_search_console`) with `editMethod: 'inline'` — clicking Edit reveals the textarea in place. There is no slide-over panel, no modal dialog, no separate Connect/Disconnect button (no OAuth in this app). The box's title is **Meta tag**; the single field inside has no label text, and the placeholder is the meta tag example. Save is via the standard top-right save action.
 
 ## Open questions
 

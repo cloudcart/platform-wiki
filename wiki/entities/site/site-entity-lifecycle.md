@@ -4,8 +4,8 @@ nav_path: "Entity → Site → Lifecycle"
 aliases: ["Site lifecycle", "Store lifecycle", "Site suspension", "Suspended store", "Site reactivation", "Account closure", "suspended_reason", "Store status", "Trial expiry", "Жизнен цикъл на магазина", "Спрян магазин"]
 tags: [multistore, lifecycle, entity, core, suspension]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 > Part of [[site]]. See the hub for the other aspects (identity & config, tenancy & resolution, relationships, maintenance & data).
@@ -33,6 +33,17 @@ This aspect covers **where the Site is in its life** — the phases it travels f
 4. **Suspended** — the platform sets the suspended state when the merchant lapses (causes below). Suspended storefronts serve a suspended-store page; the admin panel remains accessible for reactivation flows.
 5. **Reactivated** — the merchant clears the cause (pays the overdue invoice, upgrades the plan, etc.); the platform flips the status back to active and the storefront resumes serving normally. Existing data is intact.
 6. **Account closure** — full deletion of the Site is a CloudCart-support-led process. There is no merchant-facing "delete Site" button.
+
+### Test environment (sandbox) until Go live
+
+A store created through signup starts in the test environment. There, checkout accepts an order only when its email is the **store owner's** email:
+
+- **Compared email:** the login email of the owner administrator (not the store's contact email, not a moderator's). The comparison is exact, letter case included; a changed owner email may take up to an hour to apply (verify).
+- **Checked email:** the email submitted with the order form, or else the email of the customer on the cart: a logged-in customer's account email, or the email a guest typed.
+- **Where it applies:** the final checkout step (any payment method, cash on delivery and bank transfer included) and the Fast Order app's order form. Any other email gets, on the email field, *"Този магазин е в тестова среда. Поръчки се приемат само от акаунти с имейла на собственика на магазина."* Orders created in the admin are not checked.
+- **Customer emails** follow the plan's `test_mail` switch, not the test environment ([[order-pipeline-known-edge-cases]]).
+
+**Go live** ([[dashboard]] → **Go live** step) is allowed once, only from a paid plan, and cannot be undone. It switches the test environment off and deletes the test data: all orders with their payments, history, returns and carts, all customers with their addresses, saved cards, wallet balances and social logins, and the analytics data. Products, categories, content, settings and marketing subscribers are not in the deletion list. The plan's next billing date moves forward by the days since the plan subscription started, up to 30.
 
 ### Suspension causes
 

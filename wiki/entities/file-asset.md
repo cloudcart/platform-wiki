@@ -4,8 +4,8 @@ nav_path: "Entity → File / Asset"
 aliases: ["File", "File asset", "Asset", "Media", "Media asset", "Uploaded file", "Image", "Product image", "Файл", "Медия", "Качен файл", "Изображение"]
 tags: [entity, settings, media, storage, files, cdn]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 # File / Asset
@@ -34,7 +34,7 @@ Split into 6 aspect pages. The Assistant should drill into the aspect matching t
 - [[file-asset-quota]] — plan-gated storage quota shared across admin + customer uploads, the 100%-full upload block + Upgrade button, storage packs.
 - [[file-asset-lifecycle]] — the uploaded → referenced → orphan → deleted path, delete-protection (two in-use counters + bulk-delete confirmation messages), failed-upload cleanup, no-replace-everywhere rule.
 - [[file-asset-cdn-transforms]] — the image delivery service transform parameters, Image playground URL composer, SVG bypass, pad-to-square.
-- [[file-asset-customer-uploads]] — files customers attach at checkout via file-type product-options, the User files tab, indefinite persistence (no auto-purge), download-link email, 404-on-delete consequence.
+- [[file-asset-customer-uploads]] — files customers attach at checkout via file-type product-options, the User files tab, indefinite persistence (no auto-purge), the link on the customer's order, 404-on-delete consequence.
 - [[file-asset-image-pickers]] — every admin surface uploading into the same storage (product / category / blog / CMS / brand / email-template editors) and the unified-backend model.
 
 ## Key Attributes
@@ -83,7 +83,7 @@ It is NOT an external-system storage record (merchants cannot link external S3 b
 
 - [[plan-gates]] — the storage-quota gating framework.
 - [[checkout-flow]] — the storefront flow that produces customer-uploaded files (via file-type product-options).
-- [[notification-delivery]] — the `file_download` admin notification for large exports; the customer's "Files download link" email after checkout.
+- [[notification-delivery]] — the `file_download` admin notification for large exports; the *Files download link* email for [[digital-products]].
 
 ### Settings & feature pages
 

@@ -3,8 +3,8 @@ type: entity
 aliases: ["Geo Distance", "Geo Distance Rule", "Distance", "Radius zone", "Circular delivery zone", "Distance-from-point", "Гео разстояние", "Радиус", "Радиус зона"]
 tags: [shipping, settings, geo, distance, radius, maps, entity]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 # Geo Distance
 
@@ -23,7 +23,7 @@ This entity is split into four aspect pages (below). The Assistant should drill 
 - [[geo-distance-model]] — what the record stores (`name`, `text`, `distance`, `lat`, `lng`); the single-center-single-radius shape; read-only lat/lng; the Google Maps API-key prerequisite.
 - [[geo-distance-units]] — the radius unit gotcha: metres on metric stores vs feet on imperial; the `unit_system` snapshot + `distance_in_meters` column; the "entered 30 thinking 30 km" misconfiguration.
 - [[geo-distance-matching]] — how a distance is matched at checkout (great-circle / haversine against the customer's coordinates); performance + accuracy; the inputs-to-zones rule; why tax matching ignores distances.
-- [[geo-distance-lifecycle]] — create / edit / delete flow; live map auto-fit to radius; cache invalidation on save; multi-center coverage via several distances in one zone; permissions; no queue / notifications / webhooks.
+- [[geo-distance-lifecycle]] — create / edit / delete flow (delete removes the zone rules that use it); live map auto-fit to radius; no lookup cache; multi-center coverage via several distances in one zone; permissions; no queue / notifications / webhooks.
 
 ## Aliases
 
@@ -69,6 +69,5 @@ Full storage shape, the single-center-per-record constraint, and the Google Maps
 
 ## Open Questions
 
-- ⏸️ **FK-protected delete vs cascade** — confirm whether deleting a distance entry that's referenced by a Zone returns HTTP 422 with the affected Zone names, or silently cascades like the [[geo-polygon]] FK. See [[geo-distance-lifecycle]].
 - ⏸️ **Geocoding fallback when Google Maps is unset** — distances require coordinates for the customer's address. Without a Google Maps API key, the platform falls back to a bundled coordinate dataset (see [[geo-zone]] / [[geo-targeting]]), but the exact coverage / accuracy of that dataset is not published.
 - ⏸️ **Address re-geocoding on edit** — when the merchant re-types the address, does the platform re-geocode and overwrite lat/lng, or does it require an explicit autocomplete pick to update coordinates? See [[geo-distance-lifecycle]].

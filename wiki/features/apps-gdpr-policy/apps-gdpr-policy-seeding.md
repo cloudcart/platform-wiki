@@ -7,8 +7,8 @@ aliases: ["GDPR seeded policies", "Starter policies", "Default policies", "Polic
 tags: [apps, gdpr, compliance, policy, seeding, multilang]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # GDPR — Policy: seeding
 
@@ -20,7 +20,7 @@ This aspect documents what the platform **creates automatically when the merchan
 
 ## Where to find it
 
-Seeding happens once, at GDPR app install. The resulting policies appear in the Policy list (`/admin/apps/gdpr/policy`) and, for the ones auto-attached, on the storefront forms — see [[apps-gdpr-policy-forms]].
+Seeding happens once, at the store's first GDPR app install; a reinstall after an uninstall or a lapse keeps the existing policies, groups and cookie entries and seeds nothing ([[apps-gdpr-settings]]). The resulting policies appear in the Policy list (`/admin/apps/gdpr/policy`) and, for the ones auto-attached, on the storefront forms — see [[apps-gdpr-policy-forms]].
 
 ## What the merchant can do here
 
@@ -34,12 +34,16 @@ Seeding happens once, at GDPR app install. The resulting policies appear in the 
 
 When the merchant installs the GDPR app, the platform creates **4 starter policy records** with full text in the store language:
 
-| Policy mapping | Title (EN) | Default attachment |
-|---|---|---|
-| `privacy-policy` | Privacy policy | Attached as **required** to `register` + `submit_payment`. |
-| `marketing-policy` | Declaration of consent to the processing of personal data | Attached as **optional** to `register` + `submit_payment` + `segment_subscription_popup`; designated as THE `marketing_policy` (controls `customer.marketing` — see [[apps-gdpr-policy-forms]]). |
-| `terms-policy` | Terms of conditions | Attached as **required** to `register` + `submit_payment`. |
-| `cookie-policy` | Cookies Policy | Not auto-attached to forms (informational only — see [[apps-gdpr-policy-storefront]]). |
+| Policy mapping | Title (EN) | Title (BG) | Default attachment |
+|---|---|---|---|
+| `privacy-policy` | Privacy policy | Политиката за поверителност | Attached as **required** to `register` + `submit_payment`. |
+| `marketing-policy` | Declaration of consent to the processing of personal data | Декларация за даване на съгласие за обработване на лични данни | Attached as **optional** to `register` + `submit_payment` + `segment_subscription_popup`; designated as THE `marketing_policy` (controls `customer.marketing` — see [[apps-gdpr-policy-forms]]). |
+| `terms-policy` | Terms of conditions | ОБЩИ УСЛОВИЯ | Attached as **required** to `register` + `submit_payment`. |
+| `cookie-policy` | Cookies Policy | Ние използваме “Бисквитки” | Not auto-attached to forms (informational only — see [[apps-gdpr-policy-storefront]]). |
+
+The Bulgarian titles are the seed text itself, so they are what a Bulgarian store shows until the merchant renames a policy.
+
+The seeded **ОБЩИ УСЛОВИЯ** (heading "ОБЩИ УСЛОВИЯ НА ОНЛАЙН МАГАЗИН {domain}") is the only terms text CloudCart provides for a store. It is a starter text: it names the merchant's company, ЕИК, address, phone and e-mail from the placeholders below and includes a 14-day right-of-withdrawal section with returns. CloudCart does not issue a separate terms document for a bank or other third party; whether the text meets such a party's requirements is for the merchant (and their lawyer) to check.
 
 ### Placeholder-variable substitution
 
@@ -69,4 +73,4 @@ Once seeded, each starter policy behaves like any merchant-created policy: it ca
 
 ## Open questions
 
-- Whether re-installing the GDPR app re-seeds over edited policy records or skips existing ones (verify).
+None.

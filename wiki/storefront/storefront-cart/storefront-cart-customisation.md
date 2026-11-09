@@ -5,8 +5,8 @@ route_path: /cart/{cart_key}
 themes_using: [all]
 tags: [storefront, cart, settings, plan-gate, known-issues]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 > Part of [[storefront-cart]]. See the hub for the other aspects (the three render surfaces, cart actions / mutations + JS hooks).
@@ -29,14 +29,14 @@ Settings are read server-side when each cart surface renders (and when each muta
 
 ## What the customer sees
 
-Settings change what the customer sees: `show_cart=no` hides the cart UI entirely, `action_after_add_to_cart` decides whether the drawer opens after Add-to-cart, the `checkoutText` block adds copy under the totals, and `checkout_min_price` / `checkout_max_price` can block the "Proceed to checkout" CTA with an error message. The visual surfaces are detailed on [[storefront-cart-surfaces]].
+Settings change what the customer sees: `show_cart=no` hides the cart UI entirely, `action_after_add_to_cart` decides what follows Add-to-cart, the `checkoutText` block adds copy under the totals, and `checkout_min_price` / `checkout_max_price` can block the "Proceed to checkout" CTA with an error message. The visual surfaces are detailed on [[storefront-cart-surfaces]].
 
 ## Storefront behaviour
 
 The settings below directly alter storefront behaviour (the mutation mechanics they gate are on [[storefront-cart-actions]]):
 
 - `show_cart=no` removes every cart surface from the storefront.
-- `action_after_add_to_cart` switches the post-add behaviour between opening the drawer, redirecting to `/cart`, or staying silent + toast.
+- `action_after_add_to_cart` switches the post-add behaviour between a confirmation popup, the cart page (or its side panel), the checkout, and doing nothing.
 - `cart_max_products` / `cart_max_quantity` cause `cart.add` to throw translated cap errors.
 - `checkout_min_price` / `checkout_max_price` bound the checkout CTA.
 
@@ -49,7 +49,7 @@ These are server-side settings; they have no dedicated JS hooks of their own. Th
 **Store-wide settings ([[settings-cart]]):**
 
 - `show_cart` — `yes` / `no` — global kill-switch for the header cart bubble. When `no`, no cart UI shows anywhere on the storefront.
-- `action_after_add_to_cart` — `panel` (open drawer) / `redirect` (jump to `/cart`) / `none` (silent + toast).
+- `action_after_add_to_cart` — `show_popup` (*Show confirmation popup*, the default) / `go_to_cart` (*Forward to the cart page*; the side panel when *Show 'Cart page' as a side panel* is on) / `checkout_redirect` (*Forward to the checkout page*) / `stay_on_page` (*Do nothing*). See [[settings-cart-ui-behavior]].
 - `compact_cart_panel` — when on, clicking the header cart bubble opens the drawer instead of navigating to `/cart`.
 - `cart_max_products` — per-variant quantity cap (0 = unlimited).
 - `cart_max_quantity` — per-cart total quantity cap (0 = unlimited).
@@ -75,7 +75,7 @@ These are server-side settings; they have no dedicated JS hooks of their own. Th
 - **Cart key is permanent for a session** — once a customer's cart has a key, that key stays in the URL. Refreshing `/cart/{key}` shows the same cart. By design.
 - **Guest cart merge on login** — when a guest with items in their cart logs in, their guest cart merges into their stored customer cart. Quantities sum, duplicate variants are coalesced, customer-cart options win on conflict. By design (see [[cart-vs-order-lifecycle]]).
 - **"Clear cart" doesn't fire `cc.cart.product.updated`** — it fires `removed` and `deleted` instead. Listeners that only bind to `updated` will miss clear events. (Mechanics on [[storefront-cart-actions]].)
-- **`action_after_add_to_cart=none` still fires the cart-updated event and reloads the cart module** — the visual drawer just doesn't open. Some merchants expect "none" to be truly silent; this is by design.
+- **`action_after_add_to_cart=stay_on_page` (*Do nothing*) still fires the cart-updated event and reloads the cart module** — nothing opens (verify). Some merchants expect it to be truly silent; this is by design.
 - **Crawlers get 404** — search-engine crawlers requesting `/cart/*` get a 404 with `noindex`. By design — cart pages shouldn't be indexable.
 - **Plan-gate hard-crash** — when the merchant's plan doesn't include `checkout`, every cart route throws `checkout.disabled`. This affects sandbox / trial plans. By design.
 

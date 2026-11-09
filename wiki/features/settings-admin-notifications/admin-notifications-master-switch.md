@@ -7,8 +7,8 @@ aliases: ["Admin notifications master switch", "Send notifications to administra
 tags: [settings, notifications, email]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[settings-admin-notifications]]. See the hub for the other aspects (per-type toggles, mandatory three, recipient routing, delivery queue, alert triggers, permissions / locale).
@@ -62,16 +62,9 @@ None. The master switch is a single click. No confirm dialog. No "are you sure" 
 
 When `administrator_email_notifications=no`, the admin notification helper short-circuits dispatch for every notification that goes through the normal helper path — the queue task is never created. Affects all 14 toggleable rows. Mandatory notifications bypass this gate entirely (see [[admin-notifications-mandatory-three]]).
 
-### Two different defaults in code — the "flip once" gotcha (verify)
+### Default is ON in both places
 
-This is subtle and matters. Two code paths read `administrator_email_notifications` with DIFFERENT default values when the setting is missing:
-
-- **The display path** (the page's `getSettings` endpoint that populates the master switch): defaults to **`yes`** when missing. So the switch appears ON to a new merchant who has never touched it.
-- **The dispatch path** (the gate every notification goes through): defaults to **`no`** when missing. So if the setting is missing AND a notification fires, the notification is SUPPRESSED.
-
-For a freshly created store where the setting has never been saved, the merchant sees "Notifications are ON" in the UI but the actual notifications are NOT being sent. As soon as the merchant flips the switch (even just OFF and back ON), the setting is persisted with an explicit `yes` / `no` value and both paths align.
-
-**Practical guidance for a new merchant**: flip the master switch off and back on once after initial setup to ensure the setting is persisted with an explicit value. After that the displayed state matches reality.
+When the setting has never been saved, the switch shows ON **and** notifications are sent: both the screen and the sending code treat a missing value as `yes`, and new stores are created with it set to `yes`. No "flip it once" step is needed.
 
 ### Save is immediate; no draft / cancel
 
@@ -91,4 +84,4 @@ Each save flushes the settings cache. The next dispatched notification (anywhere
 
 ## Open questions
 
-- The "two different defaults" gotcha should be verified against the current dispatch-path code before being treated as gospel — the wiki entry was based on a May 2026 audit. `(verify)`
+None.

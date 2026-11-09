@@ -3,8 +3,8 @@ type: entity
 aliases: ["Import task", "Import job", "Bulk import", "Background import", "CSV import job", "XML sync run", "Импорт", "Импорт задача", "Качване от файл", "Масов импорт"]
 tags: [settings, ops, imports, csv, xml, entity, background-jobs]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 # Import Task
 
@@ -31,11 +31,11 @@ The Import Task is a multi-faceted record split across **six well-scoped aspects
 ## Sub-pages (in this cluster)
 
 - [[import-task-attributes]] — the full per-field schema: type, source filename / feed URL, field mapping (per-Task, NOT reusable), status enum, processed-rows counter, action counts (Created / Updated / No-action / Errors), Started-at / Finished-at timestamps, Created-by user, queue, wizard-step persistence for resume, provenance tag written on every imported record.
-- [[import-task-lifecycle]] — the six statuses (Pending-wizard, Pending-queued, Processing, Completed, Failed, Cancelled), the store-wide single-import lock that blocks parallel imports, HTTP 409 *"There cannot be more than {N} imports running simultaneously."*, what happens after completion (indefinite retention, no auto-cleanup), and the lack of a "retry failed rows" affordance.
+- [[import-task-lifecycle]] — the six statuses (Pending-wizard, Pending-queued, Processing, Completed, Failed, Cancelled), the store-wide single-import lock that blocks parallel imports, HTTP 409 *"There cannot be more than {N} imports running simultaneously."*, what happens after completion (how long history is kept), and the lack of a "retry failed rows" affordance.
 - [[import-task-types-and-queues]] — the importer families (customer CSV, product CSV, product XML one-time, XML sync recurring, JSON, blog CSV, multilang, ERP / app-specific like Szamlazz / FGO / SmartBill / Profics / FlixFacts / Frisbo) + their dedicated queues (`import1`, `import2`, app-specific) + plan-feature gates (`customer_import`, `xml_import_limit`, `xml_sync_limit`, `xml_sync-interval`) + customer CSV's 2FA requirement.
 - [[import-task-processing-model]] — chunked 500-row processing (50-row sub-chunks for ERP customer CSV), upsert-by-default behaviour (no "create only" / "update only" toggle), validation handling matrix (silent skip vs counted error vs abort), file-format constraints (csv / txt only, delimiter auto-detect, UTF-8 expected, header-row toggle, plan-capped row limit).
 - [[import-task-provenance-and-recovery]] — the provenance tag written on every imported record (`app_import` for CSV products, `xml_import_id` / `xml_import_product_id` / `xml_import_name` for XML, app-specific fields for other integrations), the **"Imported with"** filter on [[products-products]] / [[customers]], and the three recovery paths after a botched import (bulk-delete via filter, restore from [[backups-and-restore]], run a corrective Task) — there is NO undo button.
-- [[import-task-history-and-webhooks]] — indefinite retention on [[settings-import-history]] (no TTL, no auto-cleanup, no DELETE endpoint), Site-scoped shared history (every staff sees every Task, NO per-staff filter), the absence of `import.completed` / `import.failed` webhook events, and per-record webhook fan-out (`product.updated` / `customer.created` etc. fire on every row).
+- [[import-task-history-and-webhooks]] — retention on [[settings-import-history]] (set on the logging database, no delete in the UI), Site-scoped shared history (every staff sees every Task, NO per-staff filter), the absence of `import.completed` / `import.failed` webhook events, and per-record webhook fan-out (`product.updated` / `customer.created` etc. fire on every row).
 
 ## Where it appears
 
@@ -66,7 +66,7 @@ The Import Task is a multi-faceted record split across **six well-scoped aspects
 
 ### Cross-cutting concepts
 
-- [[import-pipeline]] — the platform-wide bulk-import pipeline this Task belongs to. Single-import lock, chunked processing, validation handling, provenance tagging, indefinite retention — all live there.
+- [[import-pipeline]] — the platform-wide bulk-import pipeline this Task belongs to. Single-import lock, chunked processing, validation handling, provenance tagging, history retention — all live there.
 - [[backups-and-restore]] — last-resort recovery when an import goes wrong.
 - [[plan-gates]] — `customer_import`, `xml_import_limit`, `xml_sync_limit`, `xml_sync-interval` plan-features gate which Task types are available.
 - [[notification-delivery]] — `file_download` admin alerts surface on related aggregate downloads (export side).

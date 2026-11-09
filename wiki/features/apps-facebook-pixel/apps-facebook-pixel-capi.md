@@ -7,8 +7,8 @@ aliases: ["Facebook CAPI", "Meta Conversions API", "Facebook CAPI gating", "Face
 tags: [apps, facebook, meta, capi, conversions-api, tracking, gdpr, pii]
 plan_gates: ["facebook.capi"]
 created: 2026-06-10
-updated: 2026-06-24
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[apps-facebook-pixel]]. See the hub for the other aspects (event vocabulary, `event_source_url` known bug) and the settings tab.
@@ -50,11 +50,11 @@ Server-side CAPI fires only when ALL of these are true:
 2. The merchant has filled **Access Token** AND switched the **Enable CAPI** toggle on in [[apps-facebook-pixel-settings]] (`capi_status = 1`).
 3. The visitor has accepted the **Targeting** cookie group (per [[apps-gdpr-cookies]]).
 
-If any gate fails, only the browser pixel fires (and the browser pixel itself is also gated by Targeting consent).
+If any gate fails, only the browser pixel fires.
 
 ### Targeting cookie group gates BOTH legs
 
-Both the browser pixel AND the server-side CAPI path check the `targeting` GDPR cookie group. If the visitor rejects the Targeting cookie category in the GDPR banner, neither path sends any data to Meta. See [[apps-gdpr-cookies]] for the cookie-group model.
+Both legs check the visitor's `targeting` answer. Before any answer it counts as accepted, so both fire from the first page. After a refusal the pixel is not loaded; the browser still posts events to the store's `/pixel/v2/…` address, but the store sends nothing to Meta. See [[apps-gdpr-overview-script-gating]].
 
 ### PII matching parameters
 

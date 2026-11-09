@@ -8,8 +8,8 @@ aliases: ["Orders API examples", "orders curl examples", "orders JSON responses"
 tags: [api, json-api-v2, orders]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Orders API — examples & testing
 
@@ -25,7 +25,7 @@ All examples target `/api/v2/orders`, `/api/v2/orders/{id}`, `/api/v2/orders/{id
 
 ## Attributes
 
-The PATCH examples write the four writable attributes (`status` via `status_id`, `invoice_number`, `invoice_date`, `usn`); the `/fulfill` example writes the fulfillment fields documented on [[api-order-fulfillment]]. Field-by-field reference: see [[api-orders-attributes]].
+The PATCH examples write `status` (via `status_id`), `invoice_number`, `invoice_date` and `usn`; the `/fulfill` example writes the fulfillment fields documented on [[api-order-fulfillment]]. Field-by-field reference: see [[api-orders-attributes]].
 
 ## Relationships
 

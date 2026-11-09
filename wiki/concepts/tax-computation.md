@@ -7,8 +7,8 @@ aliases: ["Tax computation", "VAT computation", "Tax calculation", "How taxes ar
 tags: [taxes, vat, finance, invoicing, concepts]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 # Tax computation
@@ -33,7 +33,7 @@ This concept is split into 7 aspect pages, each covering one well-scoped slice. 
 - [[tax-oss-semantics]] — `oss_registration` flag (B2B reverse-charge suppressor, NOT auto destination-rate lookup); manual per-country setup; VIES / APIS validation; *"without VAT reasons"* invoice wording.
 - [[tax-address-resolution]] — billing-vs-shipping priority via `invoicing_address`; the under-documented per-order address-priority snapshot.
 - [[tax-order-snapshot]] — frozen-on-order `orders_taxes` snapshot; `vat_included`; recompute-on-edit carve-out for `pending` / `paid` / `authorized` orders.
-- [[tax-fees-vs-vat]] — `vat = yes` (one winner) vs `vat = no` (additive); the corrected *"VAT applies to fees regardless of `vat = no`"* rule; `shipping` flag bucketing.
+- [[tax-fees-vs-vat]] — `vat = yes` (one winner) vs `vat = no` (additive); VAT applies to fees too; fees before shipping, VAT after.
 
 ## Why it matters to the merchant
 
@@ -64,7 +64,7 @@ What it does NOT cover:
 - The **invoice rendering** of the breakdown — that's [[settings-invoicing]] and [[orders-invoice]].
 - The merchant's own VAT registration with CloudCart (CloudCart billing the merchant) — that's [[billing-invoicing]].
 - The **discount mechanism** in the same totals pipeline — that's [[marketing-discounts]] / [[discount-stacking]].
-- The **shipping cost calculation** — that's [[shipping-calculation]] (though tax can bucket via the `shipping` flag — see [[tax-fees-vs-vat]]).
+- The **shipping cost calculation** — that's [[shipping-calculation]] (VAT on shipping is decided per quote, never by a rule's `shipping` flag — see [[tax-fees-vs-vat]]).
 
 ## Contrasts
 

@@ -7,8 +7,8 @@ aliases: ["Up Cross Sell", "Up Cross Up Sell", "Upsell", "Cross-sell", "UpCrossU
 tags: [apps, marketing, upsell, cross-sell, conversion]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-08-06
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Up/Cross-Sell
 
@@ -118,23 +118,19 @@ The management surface was reworked into **two distinct sections under Marketing
 
 The **Marketing dashboard** also shows promo bars — *"Try the new Cross Sell section"* / *"Try the new Up Sell section"* (*"We have redesigned the … section to make it easier for you"*) — pointing the merchant at the redesigned sections. The offer records themselves are unchanged; the redesign is about how Cross Sell and Up Sell are organised and reached.
 
-### Triggers on two cart events: add-to-cart + quantity update
-The app subscribes to TWO storefront events:
-- `cart.add.post` — after the customer clicks Add to Cart.
-- `cart.product.quantity.post` — after the customer changes a quantity in the cart.
-
-Both events fire the same handler — so cross-sell prompts can appear both at initial-add AND at quantity-edit time. Default state for these subscriptions is **INACTIVE** (the merchant must activate them in [[settings-hooks]] for the cross-sell prompts to fire).
+### How offers are triggered
+An offer's own **Event** decides when it fires (six events, [[cross-sell-trigger-events]]). The `add_to_cart` event hooks two internal storefront events, `cart.add.post` (Add to Cart) and `cart.product.quantity.post` (a quantity change); the other five are checked when the cart page, checkout or thank-you page renders, or when a shipping / payment method is picked. None of this is a merchant webhook: installing the app switches it on, and nothing is set in [[settings-hooks]].
 
 ### `hasStatusChange = false` — order events not used
-Cross-Sell does NOT listen to order-status changes. Cross-sell prompts only fire during the live cart flow, not after order placement.
+Cross-Sell does NOT listen to order-status changes. Its only post-order surface is the thank-you page (`return_page` event).
 
 ### Two display modes: popup OR add_to_cart
 Each cross-sell rule has a `display_type` set to either:
 - **`popup`** — a modal overlay is rendered with the cross-sell offer (using `modal-dialog-crosssell` class). The default cart side-panel is disabled when this fires.
-- **`add_to_cart`** — the cross-sell offer is automatically added to the cart inline (no modal). May still trigger a popup confirmation when an extra opt-in is required.
+- **`add_to_cart`** — the offered products are added to the cart; a popup of them shows only when **Display popup** = Yes ([[cross-sell-display-discounts]]).
 
 ### "Hide cart products from suggestions" toggle
-Each cross-sell rule has a `hide_cart_products` flag. When ON, the cross-sell engine filters out cart items that are themselves cross-sell TARGETS (so the customer doesn't see "Add product X" when X is already in their cart due to a previous cross-sell). The merchant uses this to avoid recommending things the customer already accepted.
+Each cross-sell rule has a `hide_cart_products` flag. When ON, offered products already in the cart, however they got there, are left out of the suggestions ([[cross-sell-filters-limits]]).
 
 ### Random rule selection (when multiple match)
 When multiple cross-sell rules match the current cart contents, the platform calls `inRandomOrder->first` — i.e., it randomly picks ONE rule to fire. There is no priority field, no sequential firing, and no "show two at once" mode. To favor specific rules, the merchant disables less-preferred ones.

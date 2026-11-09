@@ -7,8 +7,8 @@ aliases: ["Product Catalog Settings module", "Filters module", "filters module",
 tags: [design, modules, products, catalog, filters]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Product module — Product Catalog Settings (`filters`)
@@ -17,7 +17,7 @@ source_count: 4
 
 ## Purpose
 
-The **Product Catalog Settings** card (instance `filters`, type `product.filters`) is the master settings module for every product-listing page on the storefront — category, search, vendor, smart-collection, and wishlist pages. It controls per-page count, products per row, sort options, filter-sidebar visibility, price ranges, card visuals, out-of-stock handling, and the card-display toggles. There is no per-page override.
+The **Product Catalog Settings** card (*Настройки на продуктов каталог*, instance `filters`, type `product.filters`) sets every product-listing page of the storefront: category, search, vendor, smart-collection and wishlist pages. It controls per-page count, products per row, sorting ([[design-module-product-filters-sorting]]), the filter sidebar ([[design-module-product-filters-sidebar]]), price ranges, card visuals and out-of-stock handling. There is no per-page override.
 
 ## Where to find it
 
@@ -27,14 +27,10 @@ It drives the layout and filter sidebar of every product-listing page: `/categor
 
 ## What the merchant can do here
 
-- Set the default products-per-page and the per-page picker options shown to the customer.
-- Set the default sort + direction and the sort picker the customer can switch.
-- Pick products-per-row on desktop and mobile.
-- Toggle which filter chips appear in the sidebar (categories / vendors / sale / new / variants / per-page / sort / sort direction / price ranges).
-- Define pre-set price ranges OR (slider mode) set the price slider step.
-- Toggle card icons + actions (wishlist, compare, buy, price, quick view) and out-of-stock visibility, badge, and push-to-end ordering.
-- On new themes: pick a card template (`_list-one` / `_list-two` / `_list-horizontal`) + horizontal-size variant, and toggle second-image-on-hover, vendor-logo overlay, variant pickers, category-property facets, and facet counts.
-- Save / Reset / Cancel — as on every editable module.
+- Set products per page, the per-page options, and products per row on desktop and mobile.
+- Set the default sort and the shopper's sort options — [[design-module-product-filters-sorting]].
+- Choose the filter blocks — [[design-module-product-filters-sidebar]]. Define price ranges, or the slider step in slider mode.
+- Toggle card elements (wishlist, compare, buy, price, quick view, badges) and out-of-stock handling; on new themes, the card template and its extras.
 
 The merchant **cannot** override settings for one specific listing page — the same settings apply to all listings; per-page customisation needs a Dynamic page, see [[marketing-landing-pages]].
 
@@ -46,14 +42,14 @@ The merchant **cannot** override settings for one specific listing page — the 
 | `per_row_mobile` | `1` | 1-2 | Products per row on mobile |
 | `per_page` | `15` | int 2-100 | Default; must be present in `per_page_options` |
 | `per_page_options` | `[15, 30, 50]` | 2-10 entries, each 2-100 | Per-page picker options |
-| `order_by` | `id` | `id`, `name`, `price_from`, `sale`, `new`, `featured`, `sort_order` | Default sort |
-| `order_by_options` | `['sale','featured','id','name','price_from','sort_order']` | 2-20 entries from `featured`, `id`, `name`, `price_from`, `sale`, `sort_order` | Sort options shown to the customer |
+| `order_by` | `id` | one of the ticked `order_by_options` | Default sort — [[design-module-product-filters-sorting]] |
+| `order_by_options` | all six | the six admin options (`orders` / `views` are accepted but not offered) | Sort options shown to the customer |
 | `order_direction` | `asc` | `asc`, `desc` | Default direction |
 | `products_price_ranges` | `[]` | 1-2 rows of `{from,to}` (verify) | Price-range chips (when NOT in slider mode) |
 | `price_range_step` | — | positive int | Slider step (only with `mode: range_slider`) |
 | `hide_sale` | `false` | on / off | Hide the SALE badge on cards |
 | `hide_featured` | `false` | on / off | Hide the FEATURED badge on cards |
-| `filters_options` | `['sort','sort_direction','categories','price_ranges','vendors','per_page_filter','variants','new','sale']` | 0-20 entries from `sort`, `sort_direction`, `categories`, `price_ranges`, `vendors`, `per_page_filter`, `variants`, `new`, `sale`, `featured`, `brand_model`, `category_properties` | Filter chips shown in the sidebar |
+| `filters_options` | theme's list | 0-20 filter keys | Filter blocks in the sidebar — [[design-module-product-filters-sidebar]] |
 | `listing_show_compare` | `true` | on / off | Compare icon on the card |
 | `listing_show_wishlist` | `true` | on / off | Wishlist heart icon on the card |
 | `listing_show_buy` | `true` | on / off | Buy button on the card |
@@ -65,7 +61,7 @@ The merchant **cannot** override settings for one specific listing page — the 
 | `show_out_of_stock_products` | `false` | on / off | Include out-of-stock products in the listing |
 | `mark_out_of_stock_products` | `false` | on / off | Show OUT-OF-STOCK badge (when above is on) |
 | `order_latest_out_of_stock` | `false` | on / off | Push out-of-stock products to the END |
-| `list` | `lists/list-one.tpl` | theme-defined template paths | Filter-sidebar position template |
+| `list` | `lists/list-one.tpl` | theme-defined | **Позиция на филтрите**: Ляво / Отгоре / Дясно |
 | `list_class` | `_list-one` | `_list-one`, `_list-two`, `_list-horizontal` | Card-template class |
 | `list_horizontal_size` | `_list-horizontal-normal` | `_list-horizontal-small`, `_list-horizontal-normal`, `_list-horizontal-large` | Only when `list_class=_list-horizontal` |
 | `second_image_show` | `false` | on / off | Swap to the second image on hover |
@@ -77,14 +73,7 @@ The merchant **cannot** override settings for one specific listing page — the 
 
 ### Validation strings the merchant may see
 
-| Scenario | Message |
-|----------|---------|
-| Save success | *"Module successfully edited"* |
-| Reset success | *"Module successfully reset"* |
-| Reset confirmation | *"Are you sure you want to reset this module?"* |
-| Out-of-range `per_page` / `per_row` / `category_properties_limit` | Field-level integer-range error |
-| `per_page_options` length out of 2-10 | Field-level array-length error |
-| `filter` / `order_by` / `list_class` value not in its allowed enum | Field-level enum error |
+Save / Reset messages are the shared module ones ([[design-modules-products]]). An out-of-range number, a wrong count of per-page options or a value outside a field's list gets a field-level error.
 
 ### Which fields appear depends on the theme
 
@@ -102,25 +91,24 @@ The default `per_page` must be one of the values in `per_page_options`. If the m
 
 When the theme sets `"mode": "range_slider"` for the `filters` instance, the form shows `price_range_step` and hides `products_price_ranges`; otherwise it shows the price-ranges repeater. The mode is theme-controlled — not switchable from this form.
 
-### Cache invalidation on save / reset
+### Save and Reset
 
-Save and Reset both refresh the storefront cache, so the new layout is live on the next storefront request — no manual clear required.
+Both renew the module cache; guests see the change within 20 minutes ([[storefront-arch-caching-invalidation]]). Reset re-publishes the defaults for all listings.
 
 ### Out-of-stock layering
 
-The three out-of-stock toggles compose: `show_out_of_stock_products` OFF filters out-of-stock products out of every listing; ON shows them (with the "OUT OF STOCK" badge only if `mark_out_of_stock_products` is also ON); adding `order_latest_out_of_stock` ON pushes them to the END of the listing regardless of the sort.
+The three switches (Bulgarian admin: **Покажи продукти без наличност**, **Покажи маркирай продукти без наличност**, **Покажи продуктите без наличност в края на листинга**) apply to every listing, `/products` included:
 
-### Card-template change typically requires `per_row` adjustment
+- `show_out_of_stock_products` OFF drops products that cannot be bought (no stock, no overselling); ON keeps them.
+- `mark_out_of_stock_products` adds a red ribbon (storefront label, default "Няма наличност" / "Out of stock") and fades the card, where the theme shows labels on cards. A product with variants gets it when none of its variants can be bought; a product without variants only when its resolved stock status is of the out-of-stock type ([[products-statuses]]), so one whose status is, say, "Show as request" gets none. Bundles never get it.
+- `order_latest_out_of_stock` puts them after all others, whatever the sort.
 
-Switching `list_class` from `_list-one` to `_list-two` typically pairs with a different `per_row` (e.g., 4 not 3) — otherwise cards may overflow or crowd. Tune both together.
-
-### Reset restores defaults for all listings
-
-Reset clears the saved values and re-publishes the defaults, restoring the shared listing layout.
+The hiding and the push-to-end are done by the indexed listing engine; a store on the basic database engine lists sold-out products in their normal place ([[apps-listing-engine]]; verify a store's engine). On a store that never saved this card, the first switch shows as on while the engine treats it as off; saving stores what is shown. (verify) Stock reaching 0 never redirects or deactivates a product — see [[product-visibility]].
 
 ## Related
 
 - [[design-modules-products]] — hub.
+- [[design-module-product-filters-sorting]] / [[design-module-product-filters-sidebar]] — sorting; the filter sidebar.
 - [[design-modules]] — parent module editor.
 - [[design-themes]] — theme controls which fields render here.
 - [[products-products]] — products that flow into the listings.

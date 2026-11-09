@@ -7,8 +7,8 @@ aliases: ["Email send pipeline", "Email pre-flight checks", "Email merge tags", 
 tags: [marketing, channels, email, send, templates, merge-tags, utm, validation]
 plan_gates: ["campaign.channel.email"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[marketing-channels-email]]. See the hub for the other aspects (setup wizard, DNS records, Elastic Email sub-account, webhook feedback, suspend thresholds, settings pane).
@@ -24,14 +24,14 @@ Once the channel is configured ([[email-channel-setup-wizard]]) and verified ([[
 - **Saved templates** live on a separate route — `campaigns-email-saved-templates` (`/admin/marketing/campaigns/configuration/channel/email/saved`).
 - **Predefined templates** appear in the campaign editor's template picker alongside saved templates.
 - **Demo / test send** is invoked from the campaign action editor (see [[marketing-campaigns-edit]]).
-- **Pre-flight failures** appear as log rows on the campaign log with explicit error messages.
+- **Pre-flight failures** show their reason in the campaign's statistics step log and the subscriber's own log, not in the channel **Log**.
 
 ## What the merchant can do here
 
 - Manage **Saved templates** — merchant-curated reusable HTML email layouts. The thumbnail image is auto-generated from the rendered HTML.
 - Use **Predefined templates** — CloudCart-curated catalog, scoped by language with fallback to `app.fallback_locale` when the current language has no rows. Categorised, ordered, and shown as a starting point. Read-only to the merchant.
 - Insert merge tags from the editor's dropdown: universal tags plus the two Email-channel-exclusive tags `{$verify_url}` and `{$subscriber_email}`.
-- Send a **demo / test send** from the action editor — goes via the platform's transactional MailManager, NOT through the channel-send job and NOT through Elastic Email's sub-account API.
+- Send a **demo / test send** from the action editor — it bypasses the channel send and Elastic Email (see Business rules).
 - View **Logs** — per-recipient log rows with status, sent_at, delivered_at, seen_at + full content preview (iframe).
 
 ## Settings & fields
@@ -44,19 +44,20 @@ Once the channel is configured ([[email-channel-setup-wizard]]) and verified ([[
 | `subject` | `required\|max:191` |
 | `message_html` | `required\|string` AND base64-embedded local images are rejected: *"Local image paste has been disabled. Local images have been removed from pasted content."* |
 
-### Subscriber-side pre-flight checks (per recipient, before queuing the send)
+### Subscriber-side pre-flight checks (per recipient, at dispatch)
 
-For each email send, the platform checks the recipient's Email channel row:
+The platform checks the recipient's Email channel row, in this order:
 
-| Check | Required value | Error message on failure |
+| Check | Log reason (EN) | Log reason (BG) |
 |---|---|---|
-| `channel_identifier` | non-empty (subscriber has an email address) | (channel missing) |
-| `unsubscribed` | 0 | *"You haven't consented to marketing"* (or analogous) |
-| `marketing` | 1 | *"You haven't consented to marketing"* |
-| `bounced` | 0 | (bounced — skipped) |
-| `verified` | 1 (UNLESS `unconfirmed_send` is ON) | *"No message will be sent to this email because it has not been verified."* |
+| missing address | *"Missing email address to send message"* | „Липсва имейл адрес до който да бъде изпратено съобщението“ |
+| empty message | *"Empty message text"* | „Няма въведен текст за съобщение“ |
+| unsubscribed | *"Unsubscribed"* | „Абонатът е прекратил своя абонамент“ |
+| no marketing consent | *"Not accepts marketing"* | „Абонатът не приема маркетинг“ |
+| bounced | *"SPAM"* (means bounced, not spam) | „Спам“ |
+| unverified, `unconfirmed_send` OFF | *"The subscriber has not confirmed his email address"* | „Абонатът не е потвърдил имейл адреса си“ |
 
-Any failure short-circuits the send and writes a log row with the matching error message. The campaign's reached-count is **not** incremented for these subscribers.
+A failure writes **no** `NOT_SENT` row. It writes a campaign-log row with no delivery status and no channel, the reason as its message, and removes the subscriber from the campaign. The channel **Log** never shows it; the campaign's statistics step log does (reason in red under Destination), as does the subscriber's own log. Members excluded at launch leave no row at all — see [[campaigns-subscribers-enrolment]].
 
 ### UTM + tracking-attribution params injected on every link
 
@@ -74,7 +75,7 @@ URL shortening is also done at this step.
 
 ### Email-channel-exclusive merge tags
 
-`getMessageTags` injects two Email-channel-exclusive merge tags on top of the universal set:
+The Email channel adds two exclusive merge tags on top of the universal set:
 
 | Tag | Resolves to |
 |---|---|
@@ -96,9 +97,9 @@ Each predefined template thumbnail is rendered at 300×300. Saved-template thumb
 
 ### Per-message dispatch and queuing
 
-A campaign step targeting Email queues one send job per recipient on the campaign queue. The job calls Elastic Email's EmailSend API with the rendered HTML, subject, sender email (`send_email` from [[email-channel-setup-wizard]]), sender name, and per-message metadata (campaign_id, subscriber_id, action_id, channel_identifier, segment info, message_hash). Elastic Email assigns a `messageid` which gets stored on the log row — used later by [[email-channel-webhook-feedback]] to match inbound events back to the log row.
+A campaign step targeting Email queues one send job per recipient on the campaign queue. The job calls Elastic Email's EmailSend API with the rendered HTML, subject, sender email (`send_email` from [[email-channel-setup-wizard]]), sender name, and per-message metadata (campaign_id, subscriber_id, action_id, channel_identifier, segment info, message_hash). Elastic Email assigns a `messageid` which gets stored on the log row — used later by [[email-channel-webhook-feedback]] to match inbound events back to the log row. The row is written `NOT_SENT` when the job runs and turns `SENT` only once Elastic Email accepts the message; a rejected store key leaves it there with no reason — see [[email-channel-reconnect]].
 
-The platform also pre-emits the 80%-plan-cap notification if applicable, before the per-message send fan-out begins. Plan cap key: `campaign.channel.email`.
+The 80% usage notice is evaluated before each dispatch — see [[channels-usage-alerts]]. Plan cap key: `campaign.channel.email`.
 
 ### Variable substitution is done before queuing
 
@@ -106,13 +107,11 @@ The platform's variable-substitution helper resolves template variables (`{$cust
 
 ### `{$verify_url}` powers the double-opt-in subscriber link
 
-`{$verify_url}` resolves to `/subscribers/verify/{encrypted_subscriber_id}` — used in the "Email confirmation for subscription in store:site_name" template that lets unverified subscribers prove their email. Clicking the link sets their `verified = 1` and shows them: *"You have successfully verified your email address."*
-
-This is the standard double-opt-in flow merchants can plug into onboarding campaigns.
+`{$verify_url}` is used in the "Email confirmation for subscription in store:site_name" template that lets unverified subscribers prove their email. Clicking the link sets their `verified = 1` and shows them: *"You have successfully verified your email address."*
 
 ### Local image paste is rejected — bloat prevention
 
-The `message_html` validator rejects any value containing a `data:image/{type};base64` substring with the error: *"Local image paste has been disabled. Local images have been removed from pasted content."* This prevents bloated payloads (base64 images can be megabytes per email) and forces the merchant to upload images via the platform's image gallery first — keeping email payloads small and improving deliverability.
+The `message_html` validator rejects any `data:image/{type};base64` content (error in the table above). Base64 images can be megabytes per email, so the merchant uploads images to the platform's image gallery first, keeping payloads small.
 
 ### Demo / test sends bypass Elastic Email entirely
 
@@ -127,7 +126,7 @@ Returns a confirmation toast: *"Demo successfully sent to {to}"*. The trade-off:
 
 ### Predefined templates use language fallback
 
-Predefined templates are scoped by language with fallback to `app.fallback_locale` when the current language has no rows. So a merchant whose admin is set to a language with no curated catalog still sees the fallback-language predefined templates instead of an empty picker.
+A merchant whose admin language has no curated catalog sees the fallback-language predefined templates instead of an empty picker.
 
 ## Related
 
@@ -139,7 +138,7 @@ Predefined templates are scoped by language with fallback to `app.fallback_local
 - [[marketing-campaigns]] — campaign editor that drives this pipeline.
 - [[marketing-campaigns-edit]] — Demo / test send invoked from the action editor.
 - [[marketing-subscribers]] — pre-flight checks read per-subscriber Email channel flags.
-- [[marketing-omnichannel-mails-list]] — transactional emails go through this same pipeline when pointed at the Email channel.
+- [[marketing-omnichannel-mails-list]] — order and system notifications never use this pipeline; they go through the platform's notification mailer.
 
 ## Open questions
 

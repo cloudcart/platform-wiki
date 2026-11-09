@@ -5,8 +5,8 @@ aliases: ["Single-import lock", "Import 409 error", "Concurrent imports lockout"
 tags: [ops, imports, concurrency, locks, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[import-pipeline]]. See the hub for the other aspects (stages, validation, upsert + provenance, plan gates + 2FA, history + recovery, XML Sync).
@@ -15,9 +15,9 @@ source_count: 1
 
 ## Definition
 
-The **single-import lock** is the platform-wide rule that **only one import can be running per store at any time**, across ALL importer types — customers, products, redirects, subscribers, blog articles, XML feeds, JSON imports, and app-specific integrations. Trying to start a second import while one is already in flight returns HTTP 409 with the error message *"There cannot be more than {N} imports running simultaneously."* — the merchant has to wait for the running import to finish (or cancel it from [[settings-queue-view]]) before launching a new one.
+The **single-import lock** is the platform-wide rule that **only one import can be running per store at any time**, across ALL importer types — customers, products, redirects, subscribers, blog articles, JSON imports, and app-specific integrations. Trying to start a second import while one is already in flight returns HTTP 409 with the error message *"Another import is already running. Please cancel it before starting a new one."* — the merchant has to wait for the running import to finish (or cancel it from [[settings-queue-view]]) before launching a new one.
 
-The lock is **store-wide, not per-importer-type**: a customer CSV import blocks a product XML sync from starting (and vice versa). The lock isn't smart enough to allow parallelism between unrelated importers — the platform treats "any import running" as occupying the slot.
+The lock is **store-wide, not per-importer-type**: a customer CSV import blocks a product CSV import from starting (and vice versa). XML Import and XML Sync run on their own schedules and never check this lock. The lock isn't smart enough to allow parallelism between unrelated importers — the platform treats "any import running" as occupying the slot.
 
 ## Scope
 
@@ -38,7 +38,7 @@ Not covered here:
 ## Contrasts
 
 - **Single-import lock vs queue-job concurrency** — the lock is a logical "an import is running" flag, not a worker-count limit. The underlying queue workers can run other (non-import) jobs in parallel; only IMPORT jobs are mutually exclusive.
-- **Store-wide vs per-importer-type** — the lock spans all importer types. A customer CSV blocks a product XML sync.
+- **Store-wide vs per-importer-type** — the lock spans all importer types. A customer CSV blocks a product CSV.
 - **Cancel mid-batch vs full rollback** — cancelling releases the lock but does NOT undo already-imported rows. See "Cancel semantics" below.
 
 ## Where it applies
@@ -59,7 +59,7 @@ Allowing parallelism would frequently corrupt one or both imports' state. The lo
 ### Lock lifecycle
 
 1. **Merchant clicks Submit** on the wizard's Map step.
-2. **Platform checks the lock.** If `working = true` is already set by another importer, return HTTP 409 with *"There cannot be more than {N} imports running simultaneously."*
+2. **Platform checks the lock.** If `working = true` is already set by another importer, return HTTP 409 with *"Another import is already running. Please cancel it before starting a new one."*
 3. **If free**, set `working = true` and enqueue the import job onto its queue (`import1`, `import2`, or app-specific).
 4. **Worker picks up the job** and processes rows in chunks (see [[import-pipeline-stages]]).
 5. **On completion** (success, failure, or cancel), the worker clears `working = false`. The lock is now free for the next import.
@@ -74,18 +74,18 @@ Temp tables (used by customer CSV staging) are cleaned up by the cancel handler,
 
 ### Practical merchant impact
 
-- **Sequencing required during launches.** A merchant kicking off an XML sync at 9 AM cannot also run a customer CSV import at 9:01 — the second click returns 409. They schedule one after the other. This matters most during store launches and seasonal updates when several types of bulk data are being loaded simultaneously.
+- **Sequencing required during launches.** A merchant running a product CSV import at 9 AM cannot also start a customer CSV import at 9:01 — the second click returns 409. They schedule one after the other. This matters most during store launches and seasonal updates when several types of bulk data are being loaded simultaneously.
 - **Stuck imports must be cancelled to unblock.** If a worker hangs or a job fails to release the lock, the merchant goes to [[settings-queue-view]] and cancels the running job. The lock clears immediately.
 - **No queueing of next-up imports.** The platform does NOT queue "try again when free" — the 409 is terminal for that attempt. The merchant must manually re-click Submit after the running import finishes.
 
 ### Example — concurrent-import lockout
 
 1. Merchant starts a 50,000-row customer CSV import at 14:00 — task starts processing, ETA 8 minutes.
-2. At 14:02 the merchant tries to start an XML sync — clicks the sync's "Run now" button.
-3. Platform returns HTTP 409 with *"There cannot be more than 1 imports running simultaneously."*
+2. At 14:02 the merchant tries to start a product CSV import — clicks Submit.
+3. Platform returns HTTP 409 with *"Another import is already running. Please cancel it before starting a new one."*
 4. Merchant waits for the customer CSV to finish (sees progress in [[settings-queue-view]]).
 5. At 14:08 the customer CSV completes; the lock releases.
-6. Merchant re-clicks the XML sync "Run now" button — this time it accepts and the XML sync starts.
+6. Merchant re-clicks Submit on the product import — this time it starts.
 
 ## Related
 

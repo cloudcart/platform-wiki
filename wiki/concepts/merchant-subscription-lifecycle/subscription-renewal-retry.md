@@ -5,8 +5,8 @@ aliases: ["Subscription renewal", "Renewal retry schedule", "5-attempt retry", "
 tags: [billing, subscription, plan, renewal, retry, lifecycle, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[merchant-subscription-lifecycle]]. See the hub for the other aspects (states, expiration, cancellation, feature packs, payment methods, invoices, support flow).
@@ -95,7 +95,7 @@ A parallel daily job (`subscription_payments_notify`) fires the `subscription.up
 - A `next_billing_date` exists
 - Status = Active (Past-due and free / complimentary subscriptions do NOT get the pre-notify)
 
-The merchant uses this 7-day window to update [[subscription-payment-methods|the card on file]] before the first auto-charge fires. The actual email / SMS / push the merchant sees is delivered by their own notification configuration consuming this webhook — see [[notification-delivery]].
+The merchant uses this 7-day window to update [[subscription-payment-methods|the card on file]] before the first auto-charge fires. The platform also e-mails the merchant a pre-billing notice under the same conditions ([[subscription-lifecycle-renewal-retry]]); the Terms of Use promise this 7-day e-mail notice (§11.5, [[terms-of-use-billing-renewal]]).
 
 ### Manual Renew button
 

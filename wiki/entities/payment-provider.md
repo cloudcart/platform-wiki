@@ -4,8 +4,8 @@ nav_path: "Entity → Payment Provider"
 aliases: ["Payment Provider", "Payment gateway", "Payment method provider", "Payment integration", "Gateway", "PSP", "Платежен доставчик", "Платежен метод", "Платежен шлюз"]
 tags: [entity, payments, payment-providers, integrations, settings]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 # Payment Provider
@@ -75,7 +75,7 @@ This entity is split into 7 aspect pages. The Assistant should drill into the as
 - [[shipping-provider]] — sister entity; both are third-party integrations gated at checkout. A shipping method also carries an allowed-payments list that filters providers.
 - [[category]] — categories can restrict which providers are offered for orders containing products in that category.
 - [[customer-group]] — groups can restrict the available providers per loyalty tier.
-- [[geo-zone]] — providers are scoped by allowed countries.
+- [[geo-zone]] — payment methods take no zone; only a fee in [[settings-taxes]] can pair a method with a zone.
 
 ### Cross-cutting concepts
 

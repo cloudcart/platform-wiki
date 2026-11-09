@@ -7,23 +7,23 @@ aliases: ["Quantity Discount", "Buy-N-Get-M", "BOGO", "Volume discount", "Tier d
 tags: [marketing, discounts, quantity, bogo, tier]
 plan_gates: ["discount_quantity", "total_discounts"]
 created: 2026-05-23
-updated: 2026-11-04
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Quantity discount (volume / buy-more-pay-less)
 
 ## Purpose
 
-The **Quantity discount** is the merchant's "buy more, pay less" promotion type — a single product gets **tiered per-unit pricing** based on how many of it the customer puts in the cart. The merchant picks ONE product, then declares **tiers**: each tier says "starting from N pieces, the unit price drops to X" — one price for every variant of the product, or a different price for each variant. The customer sees the price ladder on the product page, and the platform automatically applies the matching tier when the pieces on a cart line cross each threshold.
+The **Quantity discount** is the "buy more, pay less" type: ONE product gets **tiered per-unit pricing**. Each tier says "from N pieces, the unit price is X", one price for all variants or one per variant. The customer sees the ladder on the product page, and the cart applies the matching tier when the pieces on a line cross a threshold.
 
 Typical merchant scenarios:
 
 - **Wholesale ladders** — "1-9 pcs: 10 EUR each; 10-49: 8 EUR each; 50+: 6 EUR each."
 - **Pack incentives** — "Buy 3 of this T-shirt, pay 15 EUR each (instead of 20)."
-- **BOGO equivalents** — "Buy 2, get 1 free" = "buy 3 pcs, set the unit price so the third is free."
+- **"3 for 2", approximately** — a tier at 3 pieces with the unit price at two-thirds of the regular price (rounded to the cent). The tier price applies to **every** piece on the line, once, not per group of 3: 3 pieces cost about the price of 2, 6 cost the price of 4, and 4 pieces also pay two-thirds each, not "one free". An exact "every 3rd free" has no native setting. The former **Buy X get Y** type (*Купи Х вземи Y*: buy N of one product, get 1 piece of another cheaper or free) was removed on 2026-03-05.
 
-Unlike [[marketing-discounts-fixed]] (fixed price per variant) and the **Global / Promo code** types (whole cart or a sub-total), a Quantity discount is **cart-quantity-aware on a single product**. Each Quantity discount is bound to **one product only**, and a product can only be on **one Quantity discount at a time, active or not** — see [[quantity-discount-uniqueness-constraint]].
+Each Quantity discount is bound to **one product only**, and a product can only be on **one Quantity discount at a time, active or not** — see [[quantity-discount-uniqueness-constraint]].
 
 ## Sub-pages (in this cluster)
 
@@ -71,7 +71,7 @@ The full per-field tables — labels, backend keys, validation strings, defaults
 
 ## Business rules (at a glance)
 
-The detailed rules — with validation strings, edge cases, cart-time consequences — live on the aspect pages. Headlines:
+Headlines; the detail is on the aspect pages:
 
 - **One product, one Quantity discount** — counted across active AND inactive. *"A volume discount with this product already exists"* (BG: *"Вече съществува количествена отсъпка с този продукт"*); form-validator *"Product is already in use"*. See [[quantity-discount-uniqueness-constraint]].
 - **12-tier cap + `empty(0)` rejection** — for a product with one variant, the UI hides **+ Add new condition** at 12 rows (the per-variant tier table has no cap); a tier price higher than the variant's current price is rejected with *"The quantity discount price cannot be higher than the variant current price"* (BG: *"Цената на количествената отстъпка не може да бъде по-висока от текущата цена на разновидността"*); with **Multiple price**, a variant's empty price only means no discount for that variant; tier values of exactly `0` are rejected with *"All conditions must be fulfilled"* (BG: *"Всички условия трябва да се попълнят"*). See [[quantity-discount-tier-evaluation]].
@@ -80,7 +80,7 @@ The detailed rules — with validation strings, edge cases, cart-time consequenc
 - **`code_apply` is on for a discount saved from the admin form** — the form does not show it. The tier price then also has the variant's active Fixed or no-code Flat/Percent saving taken off, with or without a code; the ladder shows the plain tier price. See [[quantity-discount-stacking]].
 - **Plan checks on create only** — the admin form checks whether the kind is enabled on the plan (`discount-quantity`). The Admin GraphQL API's `createDiscount` compares usage with `discount_quantity`, extendable via feature pack. `total_discounts` is a displayed figure, not enforced. Not exposed on JSON-API v2; the Admin GraphQL API ([[settings-pat-tokens]]) creates and edits it with `createDiscount` / `updateDiscount`, per-variant tier prices included. See [[plan-gates]], [[plan-vs-feature-pack]], [[plan-features]], and [[quantity-discount-plan-gating]].
 - **`max_uses` / `maxused_user` / `force_save` / region / code — not used** for this type. Only `name`, `active`, `product_id`, and the tier rows are validated. See [[quantity-discount-plan-gating]].
-- **Auto-disable runs in UTC** — an hourly sweep switches a discount off at the first run after 00:00 UTC on the day after its end date. Storefront cart-engine evaluates in store timezone, so customers' carts stop applying tiers at expected local time, while the merchant's listing keeps showing Active until that run. Part of [[background-queue-inventory]].
+- **Auto-disable runs in UTC** — an hourly sweep switches a discount off at the first run after 00:00 UTC on the day after its end date; carts stop applying tiers at the end of that date in store time. See [[background-queue-inventory]].
 - **Always-automatic, never code-based** — no code field. Activates purely from the counted pieces. See [[quantity-discount-stacking]] for interaction with externally-applied promo codes.
 
 ## Related

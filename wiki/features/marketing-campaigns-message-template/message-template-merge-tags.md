@@ -3,12 +3,12 @@ type: feature
 nav_path: "Marketing → Campaigns → Edit → Set message → Merge tags"
 route_name: admin.api.campaigns.email-templates.variables
 route_path: /admin/api/core/marketing/campaigns/email-templates/variables
-aliases: ["Merge tags", "Campaign variables", "Personalisation variables", "{$shop.name}", "{$customer.first_name}", "{$dynamic_discount_code}", "Variables legend", "Променливи в кампания", "Динамичен код за отстъпка"]
+aliases: ["Merge tags", "Campaign variables", "Personalisation variables", "{$shop_name}", "{$subscriber_first_name}", "{$products_leave_feedback_url}", "{$dynamic_discount_code}", "Variables legend", "Променливи в кампания", "Динамичен код за отстъпка"]
 tags: [marketing, campaigns, message, template, variables, personalisation]
 plan_gates: ["campaigns"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-campaigns-message-template]]. See the hub for the other aspects (Email designer, channel variants, saved + predefined, demo send, validation, save flow).
@@ -19,7 +19,7 @@ source_count: 2
 
 Merge tags (a.k.a. variables) let the merchant write **one** message template that personalises per recipient at send time. The editor renders them as `{$variable_name}` literal strings everywhere (preview, demo, body) — substitution happens inside the per-channel send job against the real recipient's data, never inside the editor.
 
-This aspect documents the variables catalogue, the dynamic-discount variables that depend on [[marketing-discounts]] setup, the segment-dependent variables (`{$triggered_products:N}`), the Variables legend UI, and how variables are extracted from the body for validation.
+This aspect documents the variables catalogue, the discount variables, the segment-dependent variables (`{$triggered_products:N}`), the Variables legend UI, and how variables are extracted from the body for validation.
 
 ## Where to find it
 
@@ -45,23 +45,27 @@ These resolve on every campaign:
 
 | Variable | Resolves to |
 |----------|-------------|
-| `{$shop.name}` | Store's display name. |
-| `{$shop.url}` | Store's storefront URL. |
-| `{$customer.first_name}` | Recipient subscriber's first name. |
-| `{$customer.last_name}` | Recipient subscriber's last name. |
-| `{$customer.email}` | Recipient subscriber's email address. |
-| `{$unsubscribe_url}` | Per-subscriber unsubscribe URL. Required-by-policy in many jurisdictions. |
+| `{$shop_name}` | Store's name. |
+| `{$shop_url}` | Store's storefront URL. |
+| `{$logo}` | URL of the store's logo. |
+| `{$subscriber_first_name}` / `{$subscriber_last_name}` | Recipient's first / last name. |
+| `{$subscriber_email}` | Recipient's email address (Email only). |
+| `{$unsubscribe_url}` | Link to the recipient's subscription page ([[storefront-notifications]]); the platform does not add it. Not in Web Push. |
+
+Web Push offers only `{$shop_name}`, `{$subscriber_first_name}` and `{$subscriber_last_name}`. Any `{$...}` still unresolved at send time is **removed**, so a button or link pointing to it ends up empty.
 
 ### Dynamic discount variables
 
-These require campaign-level discount setup at [[marketing-discounts]]. If the merchant uses these without configuring the discount, the per-variable validator surfaces an error at save time (see [[message-template-validation]]).
-
 | Variable | Resolves to |
 |----------|-------------|
-| `{$dynamic_discount_code}` | A discount code generated per subscriber from the campaign's linked discount. |
-| `{$generate_discount_code:10%}` | Same as above but with an inline percentage argument the platform parses out of the `:N%` suffix. |
+| `{$dynamic_discount_code}` | A **new** code generated for each recipient, valid only for the products the segment triggered for that recipient. Offered only when the segment provides `{$triggered_products:N}` and the plan includes `discount-code-pro` ([[marketing-discounts-code-pro]]). |
+| `{$discount_code:CODE}` | One entry per active discount with a code (EAN8 / EAN13 excluded). Resolves to a **link to the cart with that discount applied**, not to the code text. |
 
-The save flow's regex `~{\$([^{}]*)(:([^:\}]*))?}~` extracts every `{$var}` and `{$var:arg}` occurrence; the per-variable validator then verifies the linked discount exists.
+For `{$dynamic_discount_code}` the message must also contain the triggered-products block, and the server requires a discount type, value and max uses (or unlimited). Today's campaign editor sends none of them, so such a message fails with *"Field is required"* (from the code; verify in the live editor). On save the platform creates a Code PRO discount named *"Campaign action order N - <campaign title>"* that holds the generated codes.
+
+`{$generate_discount_code:10%}` is only a leftover label string: no legend offers it and nothing replaces it, so it is removed at send time like any unresolved variable.
+
+The save flow's regex `~{\$([^{}]*)(:([^:\}]*))?}~` extracts every `{$var}` and `{$var:arg}` occurrence and runs the per-variable validators (see [[message-template-validation]]).
 
 ### Segment-dependent variables
 
@@ -69,9 +73,8 @@ When the campaign targets a segment that emits dynamic tags (e.g., abandoned-car
 
 | Variable | Resolves to |
 |----------|-------------|
-| `{$triggered_products:1}` | First product the segment matched against this subscriber (e.g., the abandoned-cart product). The `:N` suffix is the 1-based index. Hidden products are included, since they open by direct link; a product must be active, not a draft, published and within its active-to date. |
-| `{$triggered_products:2}` | Second matched product. |
-| ... | etc. |
+| `{$triggered_products:N}` | The first N products the segment matched for this subscriber (e.g. the abandoned-cart products), rendered as product blocks with links. Hidden products are included, since they open by direct link; a product must be active, not a draft, published and within its active-to date. |
+| `{$products_leave_feedback_url}` | Link to a page where the subscriber reviews the products they bought. Only with a Product Reviews condition in the segment — see [[apps-product-review-campaign-link]]. |
 
 The legend pane is campaign-aware: it only shows these when the campaign's segment supports them.
 
@@ -87,7 +90,7 @@ Variables are stored verbatim in the saved template — substitution happens ins
 
 ### Demo-send substitution uses synthetic subscriber data
 
-The demo handler builds a `new Subscriber(['first_name' => 'FirstName', 'last_name' => 'LasName', 'country' => setting('country')])` plus a synthetic `SubscriberChannel`. Variables in the message body resolve against this synthetic record — `{$customer.first_name}` → `FirstName`, `{$customer.last_name}` → `LasName`, `{$shop.name}` → the merchant's actual shop name.
+The demo handler builds a `new Subscriber(['first_name' => 'FirstName', 'last_name' => 'LasName', 'country' => setting('country')])` plus a synthetic `SubscriberChannel`. Variables in the message body resolve against this synthetic record — `{$subscriber_first_name}` → `FirstName`, `{$subscriber_last_name}` → `LasName`, `{$shop_name}` → the merchant's actual shop name.
 
 The typo *"LasName"* (missing second `T`) is verified in source — the demo really does render `LasName` for the last name, while real sends use the real subscriber's last name. Full demo flow on [[message-template-demo-send]].
 
@@ -108,11 +111,11 @@ A save can fail for two distinct reasons: malformed body fields OR un-resolvable
 
 ### Missing dynamic-discount setup is an error
 
-`{$generate_discount_code:25%}` or `{$dynamic_discount_code}` without a linked discount on the campaign fails the second validation pass. The merchant must configure the discount at [[marketing-discounts]] before saving the template. At send time, an un-resolvable discount variable resolves to an empty string AND fires an error into the channel log.
+`{$dynamic_discount_code}` without the triggered-products block, or without the discount type / value / max uses, fails the second validation pass. At send time it comes out empty when the plan lacks Code PRO or the recipient has no triggered products; a code that fails to save is logged as an error.
 
 ### Variable names are stable
 
-The variable names (`{$shop.name}`, `{$customer.first_name}`, `{$unsubscribe_url}`, etc.) are stable platform identifiers — they don't change across plan tiers, languages, or channel types. The same variable resolves the same way across Email / SMS / Viber / Web Push.
+The variable names (`{$shop_name}`, `{$subscriber_first_name}`, `{$unsubscribe_url}`, etc.) are stable platform identifiers — they don't change across plan tiers, languages, or channel types. A variable resolves the same way on every channel that offers it.
 
 ### Tracking URL shortening + UTM stamping applies to Email
 
@@ -126,7 +129,7 @@ The editor doesn't pre-resolve variables for preview — the preview pane shows 
 
 - [[marketing-campaigns-message-template]] — hub.
 - [[marketing-campaigns-edit]] — parent campaign editor.
-- [[marketing-discounts]] — discount setup that backs `{$dynamic_discount_code}` and `{$generate_discount_code:N%}`.
+- [[marketing-discounts]] — the active discounts listed as `{$discount_code:CODE}`; [[marketing-discounts-code-pro]] — the code type `{$dynamic_discount_code}` generates.
 - [[marketing-segments]] — segments that emit dynamic tags consumed by `{$triggered_products:N}`.
 - [[message-template-validation]] — the two-pass validation that runs the per-variable validators.
 - [[message-template-demo-send]] — synthetic-subscriber substitution path.

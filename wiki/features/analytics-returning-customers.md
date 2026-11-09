@@ -7,8 +7,8 @@ aliases: ["Returning customers", "New vs returning customers", "Returning custom
 tags: [analytics, ccanalytics, orders, customer, returning-customers, total-customers]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-06-10
-source_count: 10
+updated: 2026-11-09
+source_count: 11
 ---
 # Returning customers
 
@@ -62,13 +62,13 @@ Each order carries a `customer_orders` field — the count of orders the custome
 
 - `customer_orders == 0` AND `customer_id != null` → **New** (first-ever order).
 - `customer_orders > 0` AND `customer_id != null` → **Returning**.
-- `customer_id == null` (guest checkout) → **excluded entirely** from New, Returning, and Total.
+- `customer_id == null` (order linked to no Customer record) → **excluded entirely** from New, Returning, and Total. Storefront guest orders are linked to the guest's Customer record (Guests group), so they count.
 
 Because the prior-order check uses **all** historical orders regardless of status, a customer whose only previous order was cancelled is still "Returning" on their next order — even if the merchant excludes cancelled orders from the analytics filter. If `customer_id` is later back-linked to a guest order, the classification can flip on the next re-ingest.
 
-### Guests are dropped, not just hidden
+### Orders without a Customer record are dropped
 
-Guest orders (`customer_id` empty) are **deleted** from the returning-customers data at ingest, so they cannot land in any bucket. If Total Orders exceeds Total Customers, the gap is guest-checkout volume. See [[subscriber-vs-customer]] for the customer / guest / subscriber distinction.
+Orders with an empty `customer_id` are **deleted** from the returning-customers data at ingest. Guest checkouts are not among them (see above and [[subscriber-vs-customer]]).
 
 ### Unique counting + headline de-duplication
 
@@ -95,7 +95,7 @@ The industry benchmark computes returning rates with a **fixed** status set (`pa
 - [[analytics-total-customers]] — the Total Customers box that hosts this New/Returning split.
 - [[customer]] — entity definition.
 - [[customers]] — customer list page where merchants filter by order history.
-- [[subscriber-vs-customer]] — customer / guest / subscriber distinction; relevant because guests are excluded here.
+- [[subscriber-vs-customer]] — customer / guest / subscriber distinction.
 - [[settings-statuses]] — the used-statuses filter this box depends on.
 - [[analytics-top-categories-by-sales]], [[analytics-top-brands-by-sales]] — peer Orders-area boxes.
 

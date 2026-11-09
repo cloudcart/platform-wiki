@@ -5,8 +5,8 @@ aliases: ["Customer lifecycle", "Customer states", "Guest to registered", "Custo
 tags: [entity, customers, lifecycle, states]
 plan_gates: ["customers"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[customer]]. See the hub for the other aspects (attributes, status flags, relationships, auth + email, API + webhooks).
@@ -29,13 +29,13 @@ The seven named states:
 
 | State | How to recognise | What it blocks |
 |-------|------------------|----------------|
-| **Guest** | `group_id = <guests-group-id>`, no password | No storefront login (no password). Subsequent guest orders with the same email typically attach to the same Guest record. |
+| **Guest** | `group_id = <guests-group-id>`, no password | No storefront login (no password). Later guest orders with the same email attach to the same Guest record. |
 | **Pending confirmation** | `email_confirmed = no`, registered (non-guest group) | Depending on `unconfirmed_accounts_restrict`, login or checkout may be restricted. See [[customer-entity-auth]]. |
 | **Active** | `active = yes`, `banned = no` | Nothing — standard live state. Can log in, place orders, manage addresses, change password. |
 | **Inactive** | `active = no` | Storefront login throws `'sf.err.account.inactive'`. Past orders remain intact. The merchant can re-enable by toggling `active = yes` (inline toggle on [[customers]]). |
 | **Banned** | `banned = yes`, `banned_reason` filled, `date_banned` set | Login AND order placement. Detail page shows a red **Banned** chip. Storefront: `'sf.global.err.customer_banned'`. Admin: `'customer.err.user_banned'`. See [[customer-entity-status-flags]]. |
 | **Marketing-suppressed** | `marketing = no` | Excluded from marketing campaign sends (newsletters, promo blasts). Does NOT block transactional emails (order confirmation, password reset, etc.). |
-| **Deleted** | Record removed (hard delete) | All `Cart` rows (where `user_id = customer.id`) are cascade-deleted. `customer.deleted` webhook fires. **Orders survive but become orphaned** — the bulk-delete endpoint does NOT block when the customer has orders. |
+| **Deleted** | Record removed (hard delete) | All `Cart` rows are cascade-deleted; a queued job then deletes the linked Subscriber(s). `customer.deleted` webhook fires. **Orders survive** with their own copy of name and email; no delete path blocks on orders. |
 
 The three operational flags — `active`, `banned`, `marketing` — are **independent** (see [[customer-entity-status-flags]]). Banning does NOT auto-deactivate, deactivating does NOT auto-clear marketing consent, and clearing marketing consent does NOT deactivate the account.
 
@@ -70,16 +70,14 @@ So a buyer who has a registered account but proceeds as guest creates a **parall
 
 The platform exposes two factory entry points with different defaults:
 
-- **`addGuest`** (used at checkout) — sets `group_id = <guests-group-id>`, forces `marketing = no`, `banned = no`, `imported = no`, and skips the welcome-email branch.
+- **Checkout** finds or creates the Guests-group record by email; **`addGuest`** (used by [[apps-fast-order]]) sets the Guests group, forces `marketing = no`, `banned = no`, `imported = no`, and skips the welcome email.
 - **`add`** (used by the admin "Add customer" form on [[customers]]) — goes through full validation, group resolution, and triggers the welcome / confirmation emails per the store's `unconfirmed_accounts_restrict` setting.
 
 Both fire `customer.created` (see [[customer-entity-api-and-webhooks]]).
 
-### `isEmpty` protection against accidental deletion
+### No protection against deleting a Customer with orders
 
-The Customer has an `isEmpty` check that returns `true` only when the customer has **NO shipping addresses, NO billing addresses, AND NO orders**. Flows that respect this check refuse to delete non-empty customers. The merchant should **archive (deactivate) non-empty customers** rather than deleting them — historical order data orphans otherwise.
-
-**Caveat**: the [[customers]] bulk-delete endpoint does NOT honour this check — see the deletion cascade row above. To preserve order history while preventing further customer activity, use **Ban** or **Deactivate** instead of Delete.
+The `isEmpty` check (no addresses, no orders) is used only at checkout: when a shopper who started as a guest logs in or registers, the empty guest record is deleted. Single and bulk delete on [[customers]] do not check for orders. To keep the history while stopping activity, use **Ban** or **Deactivate** instead of Delete.
 
 ### Ban does NOT email the customer
 
@@ -92,7 +90,8 @@ Guests share most of the lifecycle but with carve-outs:
 - Have **no password**; cannot log in.
 - Are still subject to `banned`, but `active` toggles are irrelevant since there's no login.
 - Can still receive **transactional** emails (order confirmation, etc.).
-- Are excluded from many merchant-facing filters (e.g., the [[customers]] list typically filters out guests via the `customer` scope; guests are listed separately or under a guest filter).
+- Are listed and exported with all Customers on [[customers]]; filter by the **Guests** group to see or exclude them.
+- Become registered Customers at the first order placed while **Convert guests into members** is on ([[checkout-flow-guest-vs-registered]]).
 
 ## Where it appears
 

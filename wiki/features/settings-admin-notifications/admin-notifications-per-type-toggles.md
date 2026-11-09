@@ -7,8 +7,8 @@ aliases: ["Admin notification rows", "mail_label settings", "Per-notification to
 tags: [settings, notifications, email]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[settings-admin-notifications]]. See the hub for the other aspects (master switch, mandatory three, recipient routing, delivery queue, alert triggers, permissions / locale).
@@ -86,9 +86,9 @@ When CloudCart ships a new event type later, its `mail_<label>` setting doesn't 
 
 If the master switch (`administrator_email_notifications`) is OFF, no per-type row matters — every toggleable notification is suppressed regardless. See [[admin-notifications-master-switch]].
 
-### The hidden 18th notification — `product_review_added` (verify)
+### The 18th notification — `product_review_added`
 
-The admin-helper's internal label map includes ONE notification (`mail_product_review_added`) that is NOT in the page's standard 17-row table. It's used by the Product Reviews app to alert admins when a customer posts a review. Whether it appears as an 18th row depends on whether the per-store install has a translation row for the `product_review_added` label — most stores have it via the Product Reviews module install. So depending on which apps the merchant has installed, the table might show 18 rows instead of 17.
+Installing the Product Reviews app adds a "New review added" admin email, so the table can show 18 rows instead of 17. It goes to the store's email for every review submitted from a product page, pending or published, but not for answers, questions, admin-added reviews or campaign-link reviews; see [[apps-product-review-internals]].
 
 ### Locale filtering can hide rows
 

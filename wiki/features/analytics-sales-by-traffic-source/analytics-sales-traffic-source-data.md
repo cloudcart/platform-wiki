@@ -7,8 +7,8 @@ aliases: ["Sales by traffic source data source", "Sales by traffic source pipeli
 tags: [analytics, ccanalytics, orders, traffic, sales-by-traffic-source]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 11
+updated: 2026-11-09
+source_count: 12
 ---
 
 > Part of [[analytics-sales-by-traffic-source]]. See the hub for related aspects (UI surfaces, attribution capture).
@@ -39,13 +39,22 @@ The only merchant-facing control is **Settings → Analytics → Order statuses*
 
 ## Business rules
 
-### Status filter — driven by Settings → Analytics → Order statuses
+### Status filter — driven by the dashboard's Settings panel
 
-The match filter applied to every query incorporates the merchant's used-statuses-by-type list. The set of order statuses included in revenue and order counts is **the same set the merchant chose in Settings → Analytics** — there is no per-box override. This is the standard "depend on selected order statuses in Settings" rule from the box tooltip.
+The match filter applied to every query incorporates the merchant's used-statuses-by-type list. The set of order statuses included in revenue and order counts is **the set chosen under "Order statuses that will be included in the analyses"** in the panel the **Settings** button (cog icon) opens on the Analytics dashboard ([[analytics-overview-settings]]) — there is no per-box override. This is the standard "depend on selected order statuses in Settings" rule from the box tooltip.
 
 ### Amounts are `amount_without_shipping`
 
-`aggregate` is summed from `amount_without_shipping` and divided by 100 (cents → currency units) in the final stage. **Shipping fees are excluded** from this box's revenue total — only the goods portion is counted. (This matches other Orders-tab boxes that exclude shipping.)
+`aggregate` is summed from `amount_without_shipping` and divided by 100 (cents → currency units) in the final stage. This is the order total; only shipping the receiver pays the courier directly is taken off, as in the other Orders-tab boxes ([[analytics-total-sales-order-filter]]).
+
+### Views / Sessions and Conversion rate (Details)
+
+The Details table and its export add two columns per row:
+
+- **Views / Sessions** — arrivals from the visits side, the data behind [[analytics-sessions-by-traffic-source]]: one per visitor per hour for each outside source (a referring site, or none for **Direct**) and set of UTM tags. Navigation inside the store is not counted. A row gets the arrivals whose `{group}-{name}` label equals its own, in the same period.
+- **Conversion rate** — the row's orders ÷ its views × 100, or 0 when it has no views. It can exceed 100%.
+
+Orders and visits meet only through that label, never per visitor. The visits side labels an arrival by the referring site and the UTM tags alone: it never reads click IDs or `utm_source=cloudcart`. So the order rows **Google Ads …**, **Meta Ads**, **TikTok Ads** and **CloudCart** never find a visits row with their label and always show 0 views and 0.00% conversion, while their orders and amounts count normally. Those visits are counted under the referring site's row, or under **Direct**. How an order gets its label is on [[analytics-sales-traffic-source-attribution]].
 
 ### Mobile / desktop split
 

@@ -7,8 +7,8 @@ aliases: ["Total Sales details", "Total Sales drill-down", "Total Sales line ite
 tags: [analytics, ccanalytics, orders, total-sales]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 > Part of [[analytics-total-sales]]. See the hub for the other aspects (which orders count, comparison math, industry-compare badge).
 
@@ -46,7 +46,10 @@ The rows come from the per-line `analytics.orders_detailed` collection:
 | `quantity` | Quantity | Количество | Number-formatted |
 | `total_sale` | Total sale | Крайна цена | Line subtotal × qty, money-formatted |
 
-Because the table breaks the order into typed lines, it is where the **shipping and tax components excluded from the headline** become visible — the headline sums `amount_without_shipping`, but Details separately surfaces `shipping_amount`, `shipping_discount_amount`, `tax_amount`, `vat_amount`, and the discount fields (see [[analytics-total-sales-order-filter]] for the headline field).
+Because the table breaks each order into typed lines, it shows the parts of the headline separately (headline field: [[analytics-total-sales-order-filter]]):
+
+- **Shipping:** one *"Доставка"* row per order with the shipping amount and, under Discounts, its shipping discount. It is **0** when the receiver pays the courier directly, and 0 for an order without shipping.
+- **VAT:** rows of type `vat` appear only for prices entered **without VAT**; with VAT-inclusive prices the VAT is already inside the product and shipping rows.
 
 ### Money units
 

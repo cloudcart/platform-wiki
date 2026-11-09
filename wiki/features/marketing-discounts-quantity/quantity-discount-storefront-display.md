@@ -7,8 +7,8 @@ aliases: ["Quantity discount product page", "Quantity tier ladder", "Volume disc
 tags: [marketing, discounts, quantity, storefront, product-page]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-discounts-quantity]]. See the hub for the other aspects (form, tier evaluation, stacking, uniqueness constraint, plan gating).
@@ -21,14 +21,14 @@ This aspect documents what the customer sees on the **storefront product detail 
 
 ## Where to find it
 
-Rendering happens on the **storefront product detail page** for any product that has at least one tier configured. It is automatic — there is no admin toggle for "show / hide tier ladder". The merchant configures tiers at `/admin/marketing/discounts/create/quantity` (see [[quantity-discount-form]]); the storefront picks them up from the product automatically. The admin-side counterpart is [[orders-details]], where the merchant viewing an existing order sees the saved per-line tier price.
+The **storefront product detail page** of any product with at least one tier, automatically (no show / hide toggle). Tiers are set at `/admin/marketing/discounts/create/quantity` ([[quantity-discount-form]]). The admin-side counterpart is [[orders-details]], where the merchant viewing an existing order sees the saved per-line tier price.
 
 ## What the merchant can do here
 
 The merchant cannot directly control storefront rendering of the tier ladder — but understanding the rules helps them design tier ladders that present clearly:
 
 - **Use tight consecutive tier quantities** (e.g. 2, 3, 4, 5) to get the radio-button picker UX.
-- **Use sparse tier quantities** (e.g. 5, 10, 50) to get the read-only ladder (which signals "step up by N at a time, not one piece").
+- **Use sparse tier quantities** (e.g. 5, 10, 50) to get the read-only ladder (until a variant redraw, see below).
 - **Combine with a per-variant Fixed discount** to provide a fallback price below the smallest tier; its saving then also comes off the tier price — see [[quantity-discount-stacking]].
 
 ## Settings & fields
@@ -60,9 +60,10 @@ The customer reads the ladder top-to-bottom as a price schedule that gets cheape
 The ladder's interactivity depends on the tier quantity pattern:
 
 - **Tight / consecutive ladders** — when all tier deltas are tight (consecutive `quantity` values, e.g. tiers at 2, 3, 4, 5), the storefront renders **radio-button selectors** next to each row so the customer can click a tier to auto-fill the quantity input.
-- **Sparse / gap ladders** — when deltas are non-consecutive (e.g. tiers at 5, 10, 50), the tier list shows as a **read-only ladder** — the customer reads it as reference but must manually adjust the quantity input to reach the next tier. After the customer picks another variant the rows are radio buttons, whatever the gaps.
+- **Sparse / gap ladders** — when deltas are non-consecutive (e.g. tiers at 5, 10, 50), the page first draws a **read-only ladder**; the customer types the quantity.
+- **Redrawn for a variant** — whenever the ladder is redrawn for a variant, its rows are radio buttons whatever the gaps. So a gap ladder (e.g. 50 / 150) on a product with variants shows radio buttons after a variant pick, and from the start if the theme's script announces the default variant on load (verify).
 
-The merchant doesn't pick the rendering mode — it's automatic from the tier-quantity pattern.
+The merchant doesn't pick the mode.
 
 ### No storefront timer, no sticker overlay
 

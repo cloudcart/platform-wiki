@@ -7,8 +7,8 @@ aliases: ["Google Analytics Settings", "GA settings", "GA4 config"]
 tags: [apps, google, analytics, settings]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # Google Analytics → Settings
 
@@ -107,7 +107,7 @@ The fields on this page are the tracking ID, the API secret and the debug flag. 
 
 ### Settings save triggers a global JS regenerate
 
-The Google Analytics manager class implements an `AppJsRegenerate` contract. Saving the GA settings (changing the code or toggling debug) causes the shared `cc_applications_config.js` file in CDN/S3 to be regenerated with the new `code`. Until that regenerate completes and the storefront browser fetches the new file, the OLD code keeps firing. The file is versioned by `last_build` timestamp so it cache-busts naturally on the next page load.
+The Google Analytics manager class implements an `AppJsRegenerate` contract. Saving the GA settings (changing the code or toggling debug) causes the shared `cc_applications_config.js` file in CDN/S3 to be regenerated with the new `code`. Until that regenerate completes and the storefront browser fetches the new file, the OLD code keeps firing. Its address carries a version stamp written into the page HTML, so signed-in visitors get the new file on the next page load and guests within up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### No GA dashboard or "View Analytics" inside CloudCart
 

@@ -7,8 +7,8 @@ aliases: ["Subscribe form triggers", "Form display triggers", "startDisplaying",
 tags: [marketing, subscribers, forms, triggers, popup, storefront]
 plan_gates: ["subscriber_forms"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-subscribers-subscribe-forms]]. See the hub for the other aspects (list view, builder, templates, layout, fields, submission flow, GDPR consent, known issues).
@@ -44,6 +44,8 @@ pages.form.stopDisplaying = [ ... ]
 | **`auto`** | Immediately on page load. | (none) | Default for embedded forms — the controller force-sets `startDisplaying = [{type: 'auto'}]` on save for any form with `embedded = true`. |
 | **`exitIntent`** | When the visitor's cursor moves toward the browser tab close (top edge) — classic exit-intent detection. | (none) | Desktop-only behaviour; mobile has no cursor exit-intent equivalent. |
 | **`timeOnPage`** | After N seconds on the current page. | `seconds: <int>` (also displayed in the UI in hours/days units). | The module shows the popup after the configured delay. |
+
+Builder labels (Bulgarian, bundled with the builder): **"Веднага"** (`auto`), **"При опит за излизане"** (`exitIntent`), **"Време на страницата"** (`timeOnPage`, units **"Секунди" / "Минути" / "Часове" / "Дни"**), **"След затваряне"** (the stop rule, e.g. *"завинаги след като потребителя го затвори"*). Page targeting: **"Показване на формата"** with **"Да се показва на"** / **"Да НЕ се показва на"**; **"Покажи формата и за вече абонирани потребители"** is the show-to-subscribers switch.
 
 ### `stopDisplaying[]` — symmetric suppression
 

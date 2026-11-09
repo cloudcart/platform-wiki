@@ -7,8 +7,8 @@ aliases: ["Export customers", "Customer export", "CSV export", "Download custome
 tags: [customers, export, csv, 2fa, plan-gated]
 plan_gates: ["customer_export"]
 created: 2026-05-23
-updated: 2026-11-03
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 
 # Export customers
@@ -17,7 +17,7 @@ source_count: 7
 
 The **Export customers** action lets the merchant download their customer list as a CSV file. It is **not a standalone page in the sidebar** — it is launched from the **header of the Customers list** ([[customers]]) via the **Export customers** button. The download is **gated by two-factor authentication** (admin must enter a 2FA code) and **gated by plan feature** (`customer_export`).
 
-The exported CSV reflects the current filter state of the Customers list: if the merchant has applied filters (active, banned, marketing, tag, group, country, state), only matching customers are exported. For small result sets the file is generated synchronously and returned in the response; for larger sets the platform falls back to a background job delivered through the **Queue jobs** page ([[settings-queue-view]]).
+The exported CSV reflects the current filter state of the Customers list: if the merchant has applied filters (active, banned, marketing, tag, group, country, state), only matching customers are exported. For small result sets the file is generated synchronously and returned in the response; above 5 000 customers a background job builds it and delivers **one ZIP** to the File manager, with an email to the store's email address and an admin notification carrying the download link ([[customers-export-sync-vs-async]]). Guest buyers are Customer records too (group **Guests**), so they are listed and exported unless filtered out by group.
 
 This concept is split into 5 aspect pages — drill into the one that matches the question rather than reading the cluster end-to-end.
 
@@ -25,7 +25,7 @@ This concept is split into 5 aspect pages — drill into the one that matches th
 
 - [[customers-export-trigger-2fa]] — the Export button location, the mandatory 2FA modal flow, TOTP vs email code expiry windows, the "fresh code per export" rule, and the no-bypass requirement.
 - [[customers-export-filter-scope]] — how the export inherits the Customers-list filters and drops pagination and sorting.
-- [[customers-export-sync-vs-async]] — the 5 000-row synchronous threshold, the `csv` vs `queue` response shapes, the 10 000-row queue chunking, and the multi-part file delivery for large exports.
+- [[customers-export-sync-vs-async]] — the 5 000-row synchronous threshold, the `csv` vs `queue` response shapes, the 10 000-row queue chunking, and the ZIP + email + notification delivery of large exports.
 - [[customers-export-csv-schema]] — the fixed 19-column layout + appended custom-field columns, the Phone fallback chain, the store-currency conversion of "Total Spent", and the UTF-8 BOM difference between sync and queued files.
 - [[customers-export-plan-permissions]] — the `customer_export` plan gate, the `customers.export` permission grant, what the export does NOT include, the audit side-effects, and the JSON-API v2 alternative for live integrations.
 
@@ -64,7 +64,7 @@ The Export action itself has no merchant-facing settings on this surface — it 
 - **Every export needs a fresh 2FA code.** No "remember this device" option. See [[customers-export-trigger-2fa]].
 - **Export respects the current filter scope.** Captured at click time; pagination / sort are stripped. See [[customers-export-filter-scope]].
 - **Synchronous threshold — 5 000 rows.** Above it the export goes to a background job; the merchant cannot force sync mode. See [[customers-export-sync-vs-async]].
-- **Large exports arrive as multiple part files.** A 60 000-row export delivers six `part_N.csv` files, not one. See [[customers-export-sync-vs-async]].
+- **Large exports arrive as one ZIP of part files.** A 60 000-row export is one ZIP holding six CSVs of up to 10 000 rows; no overall row cap or time limit. See [[customers-export-sync-vs-async]].
 - **Sync and queued files open differently in Excel.** Only the queued path prepends the UTF-8 BOM. See [[customers-export-csv-schema]].
 - **Plan-gated by `customer_export`.** Without it the button surfaces an upgrade prompt. See [[customers-export-plan-permissions]].
 - **Default shipping address only.** Customers with multiple addresses collapse to one row. See [[customers-export-csv-schema]].
@@ -78,7 +78,7 @@ The Export action itself has no merchant-facing settings on this surface — it 
 - [[customers-details]] — per-customer detail page (the export aggregates these fields per customer).
 - [[account-cc2fa]] — authenticator-app 2FA setup; required to authorise exports.
 - [[account-cc2fa-email]] — email fallback for 2FA.
-- [[settings-queue-view]] — where queued large exports complete and become downloadable.
+- [[settings-files]] — where the ZIP of a large export is stored.
 - [[settings-import-history]] — sibling concept (imports rather than exports).
 - [[settings-staff]] — moderator permission grants for the Customers export.
 - [[plan-gates]] — `customer_export` is a plan-gated feature.

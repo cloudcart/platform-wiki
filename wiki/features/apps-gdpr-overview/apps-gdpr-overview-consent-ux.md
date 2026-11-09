@@ -7,8 +7,8 @@ aliases: ["GDPR cookie bar", "GDPR cookie wall", "Cookie consent UX", "cc-cookie
 tags: [apps, gdpr, compliance, privacy, cookies, storefront]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # GDPR — Cookie consent UX (storefront)
 
@@ -27,13 +27,13 @@ The merchant configures this from the GDPR app's **Cookies** tab (`/admin/apps/g
 - Choose **Cookie bar** OR **Cookie wall** as the consent presentation mode.
 - Edit bar / wall text and styling.
 - Define the standard cookie groups and the individual cookie definitions inside each (vendor name, purpose, duration) — see [[apps-gdpr-cookies]].
-- Rely on the built-in "manage preferences" trigger so customers can re-open consent at any time.
+- Add a `#cookie-settings` menu link so customers can re-open the settings at any time.
 
 ### Cookie bar vs cookie wall — mutually exclusive in the modern UI
 
 The modern Vue settings UI presents the cookie consent UX as a single dropdown ("Cookie Consent Mode") with two choices: **Cookie bar** OR **Cookie wall** — selecting one sets the other to 0. Behind the scenes the legacy backend has both `show_cookies_bar` and `show_cookies_wall` settings that COULD both be enabled, but the merchant-facing UI doesn't allow that combination.
 
-- **Cookie wall** (`show_cookies_wall` ON) — the storefront JS opens the consent modal automatically on page load IF the visitor has no `cc-cookie-consent` cookie yet. The modal effectively blocks interaction with the page underneath until the customer accepts or sets preferences.
+- **Cookie wall** (`show_cookies_wall` ON) — the storefront opens the settings dialog on page load, without a close button, until the visitor answers.
 - **Cookie bar** (`show_cookies_bar` instead) — the bar is dismissible and non-modal.
 
 ## Settings & fields
@@ -56,13 +56,13 @@ The seed data ships translations for these groups in EN, BG, RO, EL, HU. The mer
 
 The consent cookie is named `cc-cookie-consent`. Its value is a space/plus-separated list of `group:yes|no` pairs (e.g., `system:yes+performance:yes+targeting:no+consent_mode_for_traffic:no`). When no cookie is set, all groups fall back to their seed defaults — `system`, `performance`, `functional`, `targeting` default to **yes**; `consent_mode_for_traffic` defaults to **no** (explicit opt-in required — see [[apps-gdpr-overview-script-gating]]).
 
-### Consent choice expires after 365 days
+### An answer lasts 180 days, and any answer dismisses the prompt
 
-The storefront JS sets the `cc-cookie-consent` cookie with `expires: 365` days. After one year (or when the customer clears their browser cookies), the bar reappears so the customer can re-consent. **This is the only built-in re-consent trigger** — there is no automatic re-prompt when the cookie LIST changes (the merchant adding a new cookie does not force existing visitors to re-consent).
+Since 06.11.2026 every answer (Accept, Save settings, Reject) dismisses the bar or wall and is kept for 180 days (before: 365 days, and the bar returned until every group was accepted). The prompt shows again when the answer expires, when the visitor clears cookies, or when the store switches on a group the answer does not name. Adding a cookie to a group asks nobody again. See [[apps-gdpr-cookies-consent-state]].
 
-### "Manage preferences" trigger — `#gdpr-trigger` / `#cookies-trigger` hooks
+### "Manage preferences" — a `#cookie-settings` link
 
-The storefront ships JavaScript click handlers bound to elements with id `gdpr-trigger` or `cookies-trigger`. When the merchant's theme renders a button/link with one of those ids, clicking it opens the cookie consent modal (`#gdpr_popup`). The theme is responsible for placing the trigger — no admin setting controls its visibility.
+After an answer the settings dialog stays on every page, closed. Any link whose address ends in `#cookie-settings` opens it, as does an element with the id `cookies-trigger`. Themes place no such link; the merchant adds one, typically as a footer menu item. See [[apps-gdpr-cookies-bar-wall]].
 
 ## Business rules
 

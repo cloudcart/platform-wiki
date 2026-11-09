@@ -7,8 +7,8 @@ aliases: ["Social module", "social", "extra.social", "Social icons module", "Soc
 tags: [design, modules, navigation, footer, social]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-10-05
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Storefront Modules — Social (`social`)
@@ -27,7 +27,7 @@ The module typically lives in the footer near the social-proof block; some theme
 |---------|----------|
 | Storefront slot | Theme-controlled — usually footer, sometimes header or contact page |
 | Admin edit card | Sidebar → **Design** → **Modules** → **Others** tab → **Social links** card |
-| Global URL fallbacks | [[settings-general]] (e.g., `facebook_link`, `instagram_link`, etc.) |
+| Store-level fallback URLs | Created empty with the store; no admin screen edits them |
 
 The underlying module mapping is `extra.social`; the instance name is usually `social`.
 
@@ -36,7 +36,7 @@ The underlying module mapping is `extra.social`; the instance name is usually `s
 - **Master enable / disable** the whole module — when off, the row hides on the storefront.
 - **Fill the URL** for each network — autofocused on Facebook by default.
 - **Toggle visibility per network** — only networks with `show = on` render an icon on the storefront.
-- **Leave a URL blank** — the module falls back to the corresponding global setting from [[settings-general]] (e.g., `facebook_link`).
+- **Leave a URL blank** — the module then uses the store-level `<network>_link` value, which stays empty.
 
 What the merchant CANNOT do:
 
@@ -97,18 +97,13 @@ Each `<network>_link` text input is capped at 255 characters in the merchant for
 
 ## Business rules
 
-### URL + show toggle BOTH required for an icon to render
+### The show toggle decides; the URL comes from the module
 
-For each network, the icon only appears on the storefront when BOTH:
+An icon renders when its `<network>_show` toggle is ON; a URL filled with `show` off stays hidden. In the classic themes the icon renders even with no URL, linking nowhere useful, so fill the URL of every network shown. An untouched module shows Facebook, X and Instagram linking to the networks' home pages (the defaults above).
 
-1. The `<network>_link` field has a value (or the global fallback in [[settings-general]] has a value), AND
-2. The `<network>_show` toggle is ON.
+### The store-level fallback is empty
 
-Filling the URL but leaving `show` off means the icon stays hidden. Toggling `show` on but leaving URL blank means the module consults the global fallback URL.
-
-### Global URL fallback when module URL is blank
-
-If the merchant leaves `<network>_link` blank but `<network>_show` is ON, the module reads the global setting `setting('<network>_link', '')` instead. This lets merchants set the URL once in [[settings-general]] and have it apply across the store. The clean practice is to fill the URL directly in the module; the fallback exists for migration from older versions where social URLs lived only in general settings.
+A blank module URL falls back to the store-level `<network>_link` setting. Those settings are created empty with the store and no current admin screen edits them (they also feed the store's RSS feed), so in practice the module's own URL is the only one that counts.
 
 ### Whole row hides when all networks are off
 
@@ -120,11 +115,11 @@ Stores migrated from the pre-rebrand era (when the network was Twitter) had a `t
 
 ### Cache invalidation
 
-Save / Reset regenerate the storefront cache key — the new icon row applies on the next request.
+Save / Reset regenerate the storefront cache key — pages rendered afterwards show the new icon row; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Reset behaviour
 
-**Reset module** restores the 14 settings + master enable to the defaults shown above (Facebook / X / Instagram ON; Pinterest / YouTube / LinkedIn / TikTok OFF; canonical default URLs). The global-settings fallbacks ([[settings-general]]) are NOT touched.
+**Reset module** restores the 14 settings + master enable to the defaults shown above (Facebook / X / Instagram ON; Pinterest / YouTube / LinkedIn / TikTok OFF; canonical default URLs). The store-level fallbacks are not touched.
 
 ### No plan-gating
 
@@ -133,13 +128,11 @@ Save / Reset regenerate the storefront cache key — the new icon row applies on
 ## Related
 
 - [[design-modules-navigation]] — hub.
-- [[settings-general]] — global social URL fallbacks (`facebook_link`, `instagram_link`, `x_link`, etc.).
 - [[design-module-navigation-links]] — alternative for unsupported networks (WhatsApp, Telegram, Discord) via an `external` link with `https://wa.me/...` / `tg://...` URLs.
 - [[design-modules]] — parent module catalogue.
 - [[apps-social-feed]] — shows the posts themselves, not icons.
 
 ## Open questions
 
-- 📡 **Social URL fallbacks.** The module reads `setting('<network>_link', '')` when its own URL is blank. GraphQL-resolvable: query [[settings-general]] for the configured global social URLs.
 - 📡 **Per-language social URLs.** With `multylang` installed, social URLs may differ per language (e.g., a regional Facebook page per market). Verify whether the module JSON honours per-language keys or whether the URLs are language-agnostic.
 - ⏸️ **Adding a network.** Currently requires a platform code change (extend the restrictions array + add the FontAwesome icon mapping in the template). No merchant-facing UI for custom networks.

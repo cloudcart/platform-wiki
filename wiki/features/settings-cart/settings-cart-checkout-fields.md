@@ -7,8 +7,8 @@ aliases: ["Checkout fields visibility", "Required checkout fields", "Hide billin
 tags: [settings, cart, checkout, fields, address, vat, b2b]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-cart]]. See the hub for the other aspects (accounts, abandoned reminder, payment/shipping defaults, limits, UI behavior, Google Maps, marketing consent).
@@ -68,7 +68,7 @@ For B2B / VAT-registered orders.
 
 ### `post_code_not_required` is inverted
 
-The Vue field config uses `trueValue: false, falseValue: true` for this switch — meaning the UI's "ON" position stores literal `false` in settings (postal code IS required). Practical merchant-facing wording is positive (*"Require postal/zip code at checkout"*) but storage is the opposite. A support agent looking at a raw API dump should mentally invert this key. See the hub [[settings-cart]] for the cross-cutting list of inverted switches.
+The switch's "ON" position stores `false` (postal code IS required): the wording is positive (*"Require postal/zip code at checkout"*), the stored value the opposite. Invert this key when reading raw settings. See the hub [[settings-cart]] for the cross-cutting list of inverted switches.
 
 ### `checkout_hide_billing_address` hides the dependent dropdown
 
@@ -86,12 +86,11 @@ VIES service availability is outside CloudCart's control — VIES outages can sp
 
 ### BULSTAT and MOL keys reflect Bulgarian origin
 
-The setting keys `checkout_hide_company_bulstat` and `checkout_hide_company_mol` use Bulgarian terminology:
+`checkout_hide_company_bulstat` and `checkout_hide_company_mol` use Bulgarian terms: **BULSTAT** (now EIK) is the company registration code, **MOL** the company representative. The labels are generic ("Company registration number", "Company owner"), so merchants in any country can use them.
 
-- **BULSTAT** is the Bulgarian unified company registration code (now called EIK).
-- **MOL** is the Bulgarian abbreviation for "Material Liability Person" (the company representative).
+### Company fields default to Required
 
-The **field labels** rendered to the merchant are generic ("Company registration number" and "Company owner") so non-Bulgarian merchants see neutral wording, but the underlying keys remain BG-named. This is purely internal naming; merchants in any country can use these fields for the equivalent local concepts.
+All four company fields are **Required** until the merchant changes them, so by default the checkout's billing step asks for all of them ([[checkout-step-billing-address]]). **Don't ask for billing address** is off and **Require billing address on checkout** is Not required by default.
 
 ### State field uses a different option set
 
@@ -99,7 +98,7 @@ The `checkout_hide_state_name` field uses a "fieldless" option set with only **s
 
 ### "Don't ask for billing address" + `invoicing_address` interaction
 
-When billing address is hidden entirely, fee/tax computation falls back to the shipping address (the only one collected), invoices use the shipping address as the billing party (see [[settings-invoicing]]), and the `invoicing_address` setting has no practical effect. For B2B-friendly stores that need invoices with separate billing party, leave `checkout_hide_billing_address` OFF and configure the billing fields to be **required**.
+When billing address is hidden entirely, fees and taxes use the shipping address and `invoicing_address` has no effect. Orders then have no billing address, so while **Issue an invoice only if a billing address is selected** is on (the default) they get no invoice at all; with it off they are invoiced to the shipping address ([[settings-invoicing-activation-modes]]). The step itself is on [[checkout-step-billing-address]].
 
 ### Field visibility doesn't affect data already collected
 

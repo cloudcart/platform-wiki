@@ -3,12 +3,12 @@ type: feature
 nav_path: "Apps → Econt → Waybill recipient mapping"
 route_name: apps.econt.overview
 route_path: /admin/shipping/econt
-aliases: ["Econt recipient mapping", "Econt B2B waybill", "упълномощено лице", "Econt billing override", "Econt company waybill", "name_person Econt", "Econt legal entity waybill error", "Econt юридическо лице грешка", "Econt recipient name legal entity", "add dot recipient name Econt"]
+aliases: ["Econt recipient mapping", "Econt B2B waybill", "упълномощено лице", "Econt billing override", "Econt company waybill", "name_person Econt", "Econt legal entity waybill error", "Econt юридическо лице грешка", "Econt recipient name legal entity", "add dot recipient name Econt", "Econt Квартал", "Econt quarter missing", "Нужно е да посочите един от тях в поле Квартал"]
 tags: [apps, shipping, courier, bulgaria, econt, waybill, b2b, billing]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-07-29
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[apps-econt]]. See the hub for the other aspects (Settings, addresses, shipments, pallet, COD / insurance, coverage / caches).
@@ -17,9 +17,7 @@ source_count: 3
 
 ## Purpose
 
-When the merchant clicks **Generate waybill** on an order, the recipient block sent to Econt is **NOT** a direct copy of the order's shipping address. For B2B (company-customer) orders, Econt's API requires both a company name AND an authorized person ("упълномощено лице") — and these come from TWO different parts of the order. This page documents the exact mapping and the well-known UX issue that trips merchants on manually-created orders.
-
-Important: this billing-override applies **only at waybill generation** (товарителница). The earlier real-time shipping quote at checkout uses only the shipping address — it does NOT pull from billing.
+When the merchant generates an Econt waybill, the recipient block sent to Econt is **NOT** a direct copy of the order's shipping address. For B2B (company-customer) orders, Econt's API requires both a company name AND an authorized person ("упълномощено лице") — and these come from TWO different parts of the order. This page documents the exact mapping, the quarter, and the UX issue that trips merchants on manually-created orders.
 
 ## Where to find it
 
@@ -40,13 +38,17 @@ The recipient block sent to Econt is composed by **merging the order's shipping 
 
 | Econt API field | Bulgarian Econt label | Source on the CloudCart order |
 |---|---|---|
-| `name` | Име (на получател) | **Billing address Company name** when the billing party is a company; otherwise the recipient's First name + Last name from the **shipping address** |
-| `name_person` | **Упълномощено лице** (Econt sends this only when receiver is a company) | First name + Last name from the **shipping address** |
+| `name` | Име (на получател) | **Billing address Company name** whenever the order has a billing address with a Company name filled in; otherwise First name + Last name from the **shipping address** |
+| `name_person` | **Упълномощено лице** (sent only when a company name is sent) | First name + Last name from the **shipping address** |
 | `phone_num` | Телефон | Phone from the shipping address |
-| Country / city / office / quarter / street / post code | Адрес | Shipping address |
+| Country / city / office / street / post code | Адрес | Shipping address |
+| Street number, block, entrance, floor, apartment | Адрес | Shipping address, each sent when filled in; with no additional-info line, street + number also go in the free-text line |
+| Quarter | Квартал | No input anywhere — see below |
 | VAT / MOL / Bulstat | Дан. данни | Billing address (company-side fields) |
 
 So for a B2B waybill the merchant must populate **two different places**: company-side info (Company name, VAT, MOL, Bulstat) goes on the **billing address**; the receiving person's name goes on the **shipping address** (First name + Last name).
+
+**The legal-entity test is only this:** a non-empty **Company name** (**Име на фирма**) on the order's billing address. There is no separate company switch and no contact-person field; the shipping address has no company fields at all, in the admin or at checkout. Labels in the address panel (**Редакция на адрес**): **Име**, **Фамилия**, and on billing **Име на фирма**, **МОЛ на фирма** (Company owner).
 
 ## Business rules
 
@@ -60,19 +62,23 @@ When a merchant creates an order manually from [[orders-add]] for a B2B customer
 
 **Workaround for the merchant:** before clicking Generate Waybill, open the order's shipping address and enter a real **First name + Last name** of the authorized person who will receive the parcel (warehouse manager, MOL, owner, employee). Save the address; the Econt validation then passes.
 
+### Quarter (Квартал) — no field for the recipient
+
+No form lets the merchant or the customer enter the recipient's quarter: not checkout, not the order address panel, not the customer's saved address, not the Econt waybill form. The address forms have only the street (help text *"В това поле въведете името на улицата"*) and **Номер на улица**; a district typed into the street field stays part of the street text. The quarter fields in the Econt app are for the **sender** only ([[econt-addresses-tab]]). For a typed home address the platform matches only the street to Econt's street list, never a quarter, so the waybill normally goes without one (verify that no other path fills it). The platform does not check the quarter itself. When Econt answers *"…Нужно е да посочите един от тях в поле Квартал"*, there is no field to fix it: the merchant creates that shipment in Econt's own system, or sends it to an office.
+
 ### Econt rejects an individual as a legal entity — differentiate the name
 
 Econt matches the recipient **name** against its own register of legal entities (companies). When an **individual** recipient's name coincides with a **registered company name**, Econt's system flags the shipment as a legal entity and refuses to generate the waybill — it then demands the legal-entity data / *упълномощено лице* — even though the customer is a private person.
 
-**Workaround:** edit the recipient name on the order's **shipping address** so it no longer matches the registered company **exactly** — e.g. add a **trailing full stop (`.`)** at the end of the name. The altered name no longer matches Econt's legal-entity record, so the courier treats the recipient as an individual and the waybill generates. (This is a courier-side name match on Econt's end; the only lever CloudCart exposes is the recipient name on the shipping address.)
+**Workaround:** edit the recipient name on the order's **shipping address** so it no longer matches the registered company **exactly** — e.g. add a **trailing full stop (`.`)** at the end of the name. This is a courier-side name match on Econt's end (verify how Econt treats the altered name); the only lever CloudCart exposes is the recipient name on the shipping address.
 
 ### How this differs from other couriers
 
-Only **Econt** and (to a lesser extent) **[[apps-dpdbulgaria-speedy|DPD Bulgaria]]** pull company info from the billing address during waybill generation. DPD Bulgaria sends the billing company name as a separate parameter and does not reject when empty, so the symptom does not appear there. All other CloudCart couriers — Speedy, Cargus, DPD Romania, Fan Courier, Sameday, EuShipment, Sendcloud, DHL Express, GLS, ACS, Speedex, TCS, Evropat, GrabIt MK, MikMik, NTC Logistics, Albanian Courier, FedEx, Glovo, BoxNow, UltraCep — read both the recipient name AND the company info from the **shipping address only**.
+**Econt** sends the billing company as the recipient. **[[apps-dpdbulgaria-speedy|DPD Bulgaria]]**, Pigeon Express, MPL and Next Level send a filled-in billing Company name as a separate client name (DPD Bulgaria does not reject when it is empty). The other couriers send no company, because the shipping address has none.
 
 ### Quote vs waybill — billing only used at waybill time
 
-The billing-override **only** runs at waybill generation. The real-time shipping quote at checkout uses only the shipping address — it does NOT pull from billing. So a B2C-looking quote can still produce a B2B waybill once the merchant fulfills the order, because the company info on billing is honored only when the товарителница is requested.
+The billing-override **only** runs at waybill generation; the checkout quote uses the shipping address alone. So a B2C-looking quote can still produce a B2B waybill.
 
 ## Related
 

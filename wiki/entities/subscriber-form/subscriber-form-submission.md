@@ -3,8 +3,8 @@ type: entity
 aliases: ["Subscribe form submission", "Subscribe form validation", "Subscribe form submit rules", "Subscribe form save defaults", "Subscribe form terms consent", "Subscribe form tags", "Подаване на форма за абонамент"]
 tags: [marketing, customers, gdpr, entity]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Subscribe Form — Submission & validation
@@ -34,7 +34,7 @@ source_count: 4
 
 ## Create-or-merge behaviour
 
-A submission creates a new [[subscriber|Subscriber]] OR merges into an existing one. The match is on the channel identifier (email / phone): the same email can only be **one** Subscriber row, so a repeat submission updates the existing row rather than creating a duplicate. Every form-originated subscriber carries `subscriber_from = 'subscribe_form'` AND `form_id = <this form's id>`, which is what the `subscriber.from_form` [[segment]] condition filters on. If the submitted email matches an existing [[customer|Customer]], the new Subscriber MAY link to that Customer — but the form itself never creates a Customer (see [[subscriber-vs-customer]]).
+A submission creates a new [[subscriber|Subscriber]] OR merges into an existing one. The match is on the channel identifier (email / phone): the same email can only be **one** Subscriber row, so a repeat submission updates the existing row rather than creating a duplicate. Every form-originated subscriber carries `subscribed_from = 'subscribe_form'` AND `form_id = <this form's id>`, which is what the `subscriber.from_form` [[segment]] condition filters on. If the submitted email matches an existing [[customer|Customer]], the new Subscriber MAY link to that Customer — but the form itself never creates a Customer (see [[subscriber-vs-customer]]).
 
 ## Validation rules at submission
 
@@ -67,7 +67,7 @@ Two model hooks run before every form save:
 ## Where it appears
 
 - [[marketing-subscribers-subscribe-forms]] — where the required-input flags, terms, and tags are configured.
-- [[marketing-subscribers]] — destination of the created / merged subscriber; "Subscribed by" shows "Popup and Form builder".
+- [[marketing-subscribers]] — destination of the created / merged subscriber; "Subscribed from" shows "Popup and Form builder".
 - [[marketing-subscribers-custom-fields]] — defines the custom fields a submission can carry.
 - [[apps-gdpr-policy]] — the legal terms pages whose tick flips the marketing flag.
 

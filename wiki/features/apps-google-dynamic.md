@@ -7,16 +7,14 @@ aliases: ["Google Dynamic", "Google Dynamic Remarketing", "Dynamic Remarketing",
 tags: [apps, google, ads, remarketing, marketing]
 plan_gates: ["google_dynamic"]
 created: 2026-05-22
-updated: 2026-05-27
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Google Dynamic Remarketing
 
 ## Purpose
 
 **Google Dynamic Remarketing** integration — fires Google Ads dynamic remarketing tags on the storefront. When a customer views products, adds to cart, or completes a purchase, the integration sends the product IDs + page categorization to Google Ads. Google then re-targets these visitors with **personalised ads showing the EXACT products they viewed** (instead of generic brand ads).
-
-Critical for high-intent retargeting campaigns — dynamic remarketing typically has 2-5x higher conversion rates than static remarketing.
 
 ## Where to find it
 
@@ -40,7 +38,7 @@ The Manager exposes:
 
 Configuration typically requires:
 - **Google Ads Conversion ID** (`AW-XXXXXXXXXX` format).
-- **Conversion label** (per event type).
+- **Conversion label** — the label of the purchase conversion (below).
 
 ## Business rules
 
@@ -48,28 +46,18 @@ Configuration typically requires:
 
 The cleaner pattern: install [[apps-google-tags]] (GTM) and configure the dynamic remarketing tag IN GTM's UI. This integration is the legacy direct-injection alternative for merchants who don't use GTM.
 
-### Page-category emission
+### What the tag sends
 
-CloudCart emits the page type (`ecomm_pagetype`) along with each page view:
-- `home` — homepage.
-- `category` — category browsing.
-- `product` — product detail page.
-- `cart` — cart page.
-- `purchase` — order confirmation.
+The tag is `gtag('config', 'AW-…')` with page views and enhanced conversions allowed, plus these events addressed to the Ads ID. Each item is `{id, google_business_vertical}`: the product's ID and the **type** setting (`retail` or `custom`). No `ecomm_pagetype`, `ecomm_prodid` or `ecomm_totalvalue` parameters are sent.
 
-This drives Google Ads' dynamic ad serving — the right ad creative for the right context.
-
-### Product ID + value emission
-
-Each event includes:
-- `ecomm_prodid` — product ID(s) being viewed.
-- `ecomm_totalvalue` — order / cart value.
-
-These are required for dynamic remarketing audiences in Google Ads.
+- `view_item_list` on category, smart collection, brand and tag pages; `view_search_results` on search results.
+- `view_item` on a product page, only while **Remarketing event snippet** is on.
+- `add_to_cart` for a product or a bundle.
+- On the thank-you page and the fast-order panel, once per order: the buyer's e-mail, phone, name and address set as enhanced-conversion data, then `purchase` (value = the order total, currency, transaction ID = the order ID, items), then `conversion` to `AW-ID/Conversion label` with the same value, currency and transaction ID. The label serves only this conversion: it is the part after the slash in a Google Ads `send_to` value. Like the GA4 purchase, it is sent for any return status except `cancel`, with no fallback for buyers who never reach the page; see [[apps-google-analytics-purchase-event]].
 
 ### Cookie consent integration
 
-Same as [[apps-google-analytics]] — remarketing tags should NOT fire when [[apps-gdpr-overview]] indicates the customer rejected marketing cookies.
+With [[apps-gdpr-overview]] active, the events wait for the Targeting cookie group ("yes" until the visitor answers), or for the Google Consent Mode group ("no" until accepted) when that group is active. The Google tag library itself waits for the Performance group, or the Consent Mode group.
 
 ### Permission
 
@@ -101,9 +89,9 @@ Behaviour: lower plans cannot install the app. Existing installs continue workin
 
 Per the controller's `$only` allowlist, the merchant configures four fields:
 - `google_dynamic` — Google Ads Conversion ID. Stored either with or without the `AW-` prefix — the Manager's `getCode` auto-prepends `AW-` if missing.
-- `google_variable` — Google Ads variable (used in the conversion / remarketing tag firing).
-- `type` — the conversion type (likely controls which event type the tag fires).
-- `remarketing_event_snippet` — optional custom event snippet code.
+- `google_variable` — the **Conversion label**, used only for the purchase conversion.
+- `type` — **Retail** or **Custom**, sent as `google_business_vertical` with each item.
+- `remarketing_event_snippet` — a switch that adds the product-page `view_item` event.
 
 ### Validation
 
@@ -123,7 +111,7 @@ The Settings page accepts only the four fields above (`google_dynamic`, `google_
 
 ### Consent Mode v2 applies through the same GDPR mechanism
 
-Like [[apps-google-analytics]], the remarketing tag respects Google Consent Mode v2 when [[apps-gdpr-overview]] is active with the "Google Consent Mode" cookie group enabled. The storefront emits the standard `gtag('consent', 'default', ...)` all-denied state on page load and `gtag('consent', 'update', ...)` with `ad_storage` / `ad_user_data` / `ad_personalization` granted after the customer accepts. The remarketing tag honours these signals because it uses the same `gtag.js` runtime.
+When [[apps-gdpr-overview]] is active with the "Google Consent Mode" cookie group, the storefront emits the all-denied `gtag('consent', 'default', ...)` on load and the `update` granting `ad_storage` / `ad_user_data` / `ad_personalization` once the visitor accepts; the tag shares the same `gtag.js` runtime.
 
 ### No installation warning when Google Shopping is missing
 
@@ -131,11 +119,7 @@ The app does not check whether [[apps-google-shopping]] is also installed. Merch
 
 ### Conversion type is "Retail" or "Custom"
 
-The `type` field on the Vue Settings is a dropdown with two options:
-- **Retail** — uses Google's retail-vertical schema (sends product IDs in the format Google Ads expects for product-based audiences; pairs well with Merchant Center feeds via [[apps-google-shopping]]).
-- **Custom** — generic remarketing tag (no product-vertical schema).
-
-The merchant picks based on whether their business is ecommerce-retail (use Retail) or a service / non-retail vertical (use Custom). Default is "custom" if unset.
+The `type` field is a dropdown, **Retail** or **Custom** (default `custom`). Its value is sent as `google_business_vertical` with every item; the product IDs are the same either way. Retail audiences in Google Ads rely on a Merchant Center feed ([[apps-google-shopping]]).
 
 ### Dynamic Remarketing rides the SAME storefront loader as Google Analytics
 
@@ -152,7 +136,7 @@ The Google Dynamic manager implements `AppJsRegenerate`. Saving the settings pag
 
 ### `remarketing_event_snippet` is a switch — not a free-text snippet
 
-Despite the field name suggesting a paste-area for custom HTML, the Vue Settings actually renders this field as a **switch** (true=1, false=0) — toggling whether the merchant's custom event snippet from Google Ads' tag generator should fire. The actual snippet body is generated by CloudCart from the conversion ID + variable + type; the merchant just toggles whether to include the event-snippet portion.
+Despite its name, the field is a **switch** (1 / 0), not a paste area. Its only effect is the `view_item` event on product pages; the listing, cart and purchase events go out either way.
 
 ### Two tabs: Overview + Settings
 

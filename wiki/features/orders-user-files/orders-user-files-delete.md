@@ -7,8 +7,8 @@ aliases: ["User files delete", "Delete customer file", "Order file deletion", "B
 tags: [orders, files, customer-uploads, delete, smarty]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[orders-user-files]]. See the hub for the other aspects (list view, data model, storage & delivery).
@@ -56,9 +56,9 @@ If any step fails, the merchant sees an error toast carrying the underlying exce
 
 There is no undo, no soft-delete, no trash. On success the blob is gone from storage immediately. The order-product-option row itself remains (with `value = null`) for audit purposes, but no downloadable file is attached. To audit a deletion the merchant must use webhooks ([[settings-hooks]]) or scan the order's product-option history — the User Files list will not show "this file used to exist".
 
-### Deleting breaks the customer's download link
+### Deleting breaks the customer's link
 
-The customer's post-checkout *"Files download link"* email points at the same storage blob. Once the merchant deletes the file here, that link returns 404 — see [[orders-user-files-storage-delivery]].
+The link to the upload on the customer's order and in order emails points at the same storage blob. Once the merchant deletes the file here, that link returns 404 — see [[orders-user-files-storage-delivery]].
 
 ### Only file-type options can be deleted via this path
 

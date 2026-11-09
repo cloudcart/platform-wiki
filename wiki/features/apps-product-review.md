@@ -7,8 +7,8 @@ aliases: ["Product Review", "Product Reviews", "Reviews + Q&A", "Customer review
 tags: [apps, others, reviews, qa, moderation]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-08-06
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # Product Reviews (CloudCart Reviews)
 
@@ -16,7 +16,7 @@ source_count: 6
 
 **Product Reviews** is the integration that adds **customer reviews** AND optionally **Questions & Answers** to the storefront's product detail pages. Customers see star ratings + written reviews from past buyers; they can leave their own (subject to merchant moderation rules) and ask questions that other customers / merchants can answer.
 
-Used by virtually every consumer-facing CloudCart store — reviews are a primary conversion driver (social proof). The app drives both the per-customer review tab seen in [[customers-details-reviews]] AND the storefront product-page reviews module. This page is the hub; the detail lives in the five aspect sub-pages below.
+Used by virtually every consumer-facing CloudCart store — reviews are a primary conversion driver (social proof). The app drives both the per-customer review tab seen in [[customers-details-reviews]] AND the storefront product-page reviews module. This page is the hub; the detail lives in the six aspect sub-pages below.
 
 > **Has an on/off control.** The app screen carries an **Enable / Disable** button, so it can be switched off without uninstalling it. A disabled app stops working while keeping its settings.
 
@@ -42,6 +42,7 @@ The Overview is the standard app overview — installation state + key metrics.
 - [[apps-product-review-submission]] — the storefront review / reply / question form validation, the post-purchase time window, no photo uploads, reply-requires-email asymmetry.
 - [[apps-product-review-qa]] — the opt-in Questions & Answers feature: toggle, question-create field set (no rating), moderation gate.
 - [[apps-product-review-internals]] — install-hook segment reactivation + email seeding, per-review / per-question lifecycle hooks, the 11 segment-condition managers, the aggregate-recompute command, no import / export.
+- [[apps-product-review-campaign-link]] — review requests by campaign: the review segment conditions, the `{$products_leave_feedback_url}` variable and when it is empty, what the link opens, `max_days` on it.
 
 ## What the merchant can do here
 

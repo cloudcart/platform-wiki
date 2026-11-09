@@ -5,8 +5,8 @@ aliases: ["VAT vs Fee", "Tax vs Fee", "vat flag", "Single-winner VAT", "Stacking
 tags: [entity, taxes, fees, vat, type-discrimination]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[tax]]. See the hub for the other aspects (attributes, overrides, order snapshot, validation, business rules).
@@ -31,7 +31,7 @@ How the platform distinguishes a Tax row from a Fee row, what changes between th
 | **Add modal** | Add Tax button | Add Fee button |
 | **Rate type radio** | Hidden — percent-only via UI | Visible at top of form (Percent / Flat) |
 | **`price_with_vat`** | Toggleable (`0` net, `1` gross) | **FORCED to `0`** at save validator |
-| **`shipping`** | `yes` default — bucketing flag, no UI toggle | **FORCED to `no`** at save validator |
+| **`shipping`** | `yes` default — stored, not read by the totals; no UI toggle | **FORCED to `no`** at save validator |
 | **`oss_registration`** | Visible when target = `regions` | Not applicable |
 | **`without_vat_reasons` / `_non_eu`** | Visible (max 64k chars each) | Not applicable |
 | **`payment_active` / `payment_provider`** | Not applicable | Visible — Fee-only scoping switch |

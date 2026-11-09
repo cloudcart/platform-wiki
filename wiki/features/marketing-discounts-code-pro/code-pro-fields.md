@@ -7,8 +7,8 @@ aliases: ["Code PRO fields", "Code PRO validation", "Code PRO field reference", 
 tags: [marketing, discounts, code-pro, fields, validation, reference]
 plan_gates: ["discount-code-pro"]
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-discounts-code-pro]]. See the hub for the other aspects (overview, form, business rules, checkout, endpoints).
@@ -17,7 +17,7 @@ source_count: 2
 
 ## Purpose
 
-This page is the **citation-level reference** for the per-code form. Every field on [[code-pro-form]] is listed here with its backend key, what it does, and the verbatim validation rule. Use this page when answering *"what's the exact error message when X is empty?"* or *"what's the max length of the code field?"*.
+The **citation-level reference** for the per-code form: every field on [[code-pro-form]] with its key, what it does and the verbatim validation rule.
 
 ## Where to find it
 
@@ -35,7 +35,7 @@ Look up the exact field name, key, default, and validation string for any contro
 |-------|-------------|--------------|------------|
 | **Active** | `active` | An inactive code is rejected at checkout. The form's switch saves the code as active either way; turn a code off with the Active toggle in the codes list. | `yes` / `no`. Default on. |
 | **Code** | `code` | The literal string the customer enters. | Required, max 20, `alpha_num`, **unique on `discounts_code_pro.code`** when a new code is created. Error: *"Discount code is exists"* (`code_pro.validation.code.unique`). |
-| **Code prefix (barcode)** | `code_prefix` | Treats the code as a barcode (with `code_format` ean13 / ean8). | 1 / 0; auto-set from `code_format` presence on save. There is NO separate input control for `code_prefix` — picking `code_format = ean13` or `ean8` implicitly sets `code_prefix = 1`; picking null sets it to 0. |
+| **Code prefix (barcode)** | `code_prefix` | Treats the code as a barcode (with `code_format` ean13 / ean8). | 1 / 0; no input of its own: set to 1 when `code_format` is ean13 / ean8, else 0. |
 | **Barcode format** | `code_format` | Barcode standard. | `ean13` / `ean8` / null. |
 | **Barcode prefix** | `barcode_prefix` | When ON, treats the entered `code` as a prefix and the scanner's value as `code + scanned`. | 1 / 0. |
 | **Stack on discounted products** | `code_apply` | Allow code on top of existing per-product discounts. | 1 / 0. Default 0 in the form; a single code created through JSON-API v2 without it is on. |
@@ -84,7 +84,7 @@ The amount is never compared with the subtotal, for any target: lines and the to
 - `all` reaches only lines no specific condition matched; with two `all` conditions the later one overwrites.
 - Each flat condition is split on its own, except when all specific conditions are smart collections with the same value: they act as one pool, and one line at the minimum price opens the collection for all its lines.
 - Among `order_over` conditions, only the largest passing saving applies.
-- Line conditions, one `order_over` amount and free shipping add up on the same order; the threshold uses the subtotal before the code.
+- Line conditions, one `order_over` amount and free shipping add up on the same order. The `order_over` minimum is checked on the subtotal of **every** cart line before the code, not only the lines a condition matched: after product discounts, or at regular prices with **Apply to base price** on.
 
 ### Listing columns (codes list table)
 

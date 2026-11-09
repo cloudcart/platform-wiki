@@ -7,8 +7,8 @@ aliases: ["Plan gates", "Plan limits", "Plan restrictions", "Plan feature gates"
 tags: [billing, plans, gating, concepts]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 # Plan gates and limits
@@ -54,7 +54,7 @@ Plan gates are the most-referenced concept in the wiki — they touch virtually 
 
 - **The paywall** — [[plan-features]] (the `/admin/plan/feature/<mapping>` upsell screen, destination of every quota-exhausted redirect), backed by the [[plans]] catalog and the [[plans-purchase]] flow.
 - **Numeric quotas** — pages that show "X of Y used": [[products]], [[customers]], [[orders]], [[settings-staff]], [[settings-files]], [[marketing-segments]], the XML apps, etc. The per-feature key for each (e.g. `products`, `customers`, `orders_amount` / `orders_revenue`, `xml_sync_limit`) follows the naming scheme catalogued on [[plan-gates-feature-naming]].
-- **Boolean on/off features** — [[settings-ssl]] (`ssl_certificate`), [[design-theme-editor]] (`storefront_builder`), [[apps-cloudio-overview]] (`cloudio_ai`), [[customers-import]] / [[customers-export]], [[orders-abandoned]] (`abandoned_notification`), [[analytics-pipeline]] (`cc_analytics`), and similar.
+- **Boolean on/off features** — [[settings-ssl]] (`ssl_certificate`), the Page Builder on [[landing-pages-builder-rules]] (`storefront_builder`; the Theme Editor is not gated by it), [[apps-cloudio-overview]] (`cloudio_ai`), [[customers-import]] / [[customers-export]], [[orders-abandoned]] (`abandoned_notification`), [[analytics-pipeline]] (`cc_analytics`), and similar.
 - **Service / consumable quotas** (deplete-as-used) — [[marketing-channels-viber]] (`viber_messages`), [[apps-multilang-stores]] (`machine_translation`).
 
 The full per-prefix key catalogue (entity counters, `discount_*`, `cart_rules_*`, `<erp>_total_products`, boolean toggles, `*_report`) lives on [[plan-gates-feature-naming]]. The per-discount-type counters specifically (`discount_global` for codeless, `discount_coupon` for code-based, `discount_fixed`, `discount_quantity`, plus the `discount-code-pro` boolean and its `discount-code-pro-generator` cap) split as explained on [[discount-stacking]].
@@ -80,7 +80,7 @@ The full per-prefix key catalogue (entity counters, `discount_*`, `cart_rules_*`
 - [[notification-delivery]] — admin alerts include plan / subscription warnings.
 - [[marketing-discounts]] — discount counts gate-split by codeless vs. code-based.
 - [[orders-abandoned]] — `abandoned_notification` gate.
-- [[design-theme-editor]] — `storefront_builder` boolean gate.
+- [[landing-pages-builder-rules]] — `storefront_builder` boolean gate on the Page Builder.
 
 ## Open Questions
 

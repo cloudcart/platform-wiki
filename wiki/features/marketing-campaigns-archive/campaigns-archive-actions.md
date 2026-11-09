@@ -7,8 +7,8 @@ aliases: ["Archive icon", "Unarchive icon", "Delete campaign icon", "Bulk delete
 tags: [marketing, campaigns, archive, actions, bulk-delete]
 plan_gates: ["abandoned_orders", "campaigns"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-campaigns-archive]]. See the hub for the other aspects (the tab, triggers, unarchive/restore, delete cascade).
@@ -23,14 +23,15 @@ This page documents the actions-column affordances on the campaign list as they 
 
 The actions cell at the right of each campaign row, on the relevant tab:
 
+- **Copy** icon — on every tab, Archived included.
 - **Archive** icon — on the Active / Inactive / Draft tabs.
 - **Unarchive** + **Delete** icons — on the Archived tab (`/admin/marketing/campaigns/archived`).
 - **Bulk-delete** bar — at the bottom of the page, Archived tab only.
 
 ## What the merchant can do here
 
-- **Archive** an Active / Inactive / Draft campaign (one click, no confirm) — moves it to the Archived tab.
-- **Unarchive** an archived campaign (one click, no confirm) — moves it back to the Inactive tab. See [[campaigns-archive-unarchive-restore]].
+- **Archive** an Active / Inactive / Draft campaign (one click, no confirm) — moves it to the Archived tab and stops its remaining sends.
+- **Unarchive** an archived campaign (one click, no confirm) — moves it back to the tab of its unchanged status (a completed Regular campaign returns to Active); it does not resume sending. See [[campaigns-archive-unarchive-restore]].
 - **Delete** an archived campaign via an inline confirm panel — permanently removes it. See [[campaigns-archive-delete-cascade]].
 - **Bulk-delete** multiple selected archived campaigns at once.
 
@@ -50,7 +51,7 @@ The Archived tab's actions column has three icons (instead of the Active tab's t
 
 | Icon | Tooltip | Action |
 |------|---------|--------|
-| `fa-light fa-copy` | *"Copy campaign"* | One-click copy — generally not surfaced for archived rows; the merchant should unarchive first if they want to duplicate. |
+| `fa-light fa-copy` | *"Copy campaign"* | One-click copy to a new Draft — offered on the Archived tab as on every other tab. |
 | `fa-light fa-inbox-out` | *"Unarchive campaign"* | One-click unarchive |
 | `fa-light fa-trash-alt` (inside `CcDeleteComponent`) | *"Remove campaign"* | Inline confirm *"Remove campaign?"* with two-step **Cancel** / **Delete** picker |
 
@@ -74,7 +75,7 @@ Same pattern as Archive, but with action code `0`:
 1. `GET /admin/api/core/marketing/campaigns/archive/{id}/0`
 2. On success: toast *"Unarchived successfully"*, row removed from the Archived tab.
 
-The unarchived campaign reappears on the **Inactive** tab (because `active=0` is preserved) — see [[campaigns-archive-unarchive-restore]] for why it doesn't return Active.
+The unarchived campaign reappears on the tab of its preserved `active` value (Active, Inactive or Draft) — see [[campaigns-archive-unarchive-restore]].
 
 ### Delete — `CcDeleteComponent` inline confirm
 

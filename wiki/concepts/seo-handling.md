@@ -7,8 +7,8 @@ aliases: ["SEO", "Search engine optimization", "SEO handling", "Storefront SEO",
 tags: [marketing, seo, sitemap, robots, canonical, meta-tags, indexing, concepts]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-25
-source_count: 14
+updated: 2026-11-09
+source_count: 15
 ---
 
 # SEO handling
@@ -34,15 +34,18 @@ Each card on [[marketing-seo]] saves its setting in isolation; the storefront co
 
 ## Sub-pages (in this cluster)
 
-This concept is split into 7 aspect pages, each covering one well-scoped slice. The Assistant should drill into the aspect that matches the question, not read every page.
+This concept is split into 10 aspect pages; drill into the one that matches the question.
 
 - [[seo-sitemap-robots]] — `/sitemap.xml` (sitemap-index, 1-hour cache, 1,000 URLs per sub-sitemap, `.xml.gz` variant) + `/robots.txt` pipeline (merchant body + platform-appended `Disallow: /checkout|/cart|/wishlist|/bbt` block + `Crawl-Delay: 3`, 5-minute cache).
 - [[seo-canonical-noindex]] — `<link rel="canonical">` self-canonical rule + special cases; `<meta name="robots" content="noindex">` on filtered/sorted pages over the `noindex_query_limit` threshold (0-5); pagination word ("Page", "Страница", etc.) prepended to paginated meta.
 - [[seo-meta-tags]] — `<title>` / `<meta name="description">` four-step fallback chain (per-entity → per-section → language file → English); per-section meta on [[marketing-seo-meta]] (per-language + per-theme); the other sections have no screen since the legacy page was removed (2026-10-21).
-- [[seo-301-redirects]] — per-URL 301 redirect manager (24-hour cache, wildcards via `*`, marketing-param preservation `fbclid|gclid|gclsrc|msclkid|utm_*|dclid|zanpid`, CSV import with 2FA gate); auto-tracked URL handle history (30-day TTL); prefix optimization for 7 named prefixes.
+- [[seo-301-redirects]] — per-URL 301 redirect manager (24-hour cache, wildcards via `*`, carries `fbclid`, `gclid`, `gclsrc`, `msclkid`, `dclid`, `zanpid`, `utm`, `utm_source`, `utm_medium`, `utm_campaign` but not `utm_term` / `utm_content` / `utm_id`, CSV import with 2FA gate); auto-tracked URL handle history (30-day TTL).
+- [[seo-structured-data]] — the product JSON-LD fields (no GTIN / MPN), microdata on other pages, no Organization schema; image alt text.
+- [[seo-ai-visibility]] — per-bot robots.txt, llms.txt, how crawlers are treated, Bing verification, AI feeds, CAPTCHA, page speed.
+- [[seo-search-console-indexing]] — each Search Console "Page indexing" reason mapped to the storefront behaviour behind it; the automatic http→https, www / other-domain, trailing-slash and renamed-address 301s.
 - [[seo-sharing-rss]] — dead AddThis module (only `og:image` matters); sharing card POSTs to `/admin/api/core/seo/settings/add-this` (no handler on 2026-10-21, verify); `/feed` RSS 2.0 (products-only, no cache, `rss_feed_count` 1-100 default 20).
 - [[seo-plan-overrides]] — trial / `plan_expired` / development stores serve hard-coded `User-agent: *` + `Disallow: /`; `cc-demo` plan stores always emit `<meta name="robots" content="noindex, nofollow">`.
-- [[seo-route-catalog]] — verbatim lists of indexable routes / noindex-eligible routes / always-noindex routes / robots-meta-exempt routes.
+- [[seo-route-catalog]] — verbatim lists of indexable / noindex-eligible / always-noindex / robots-meta-exempt routes.
 
 ## Critical merchant-facing realities (verified)
 
@@ -55,17 +58,15 @@ This concept is split into 7 aspect pages, each covering one well-scoped slice. 
 
 ## Scope
 
-Covered across the 7 sub-pages: the ten SEO surfaces and their request-time combination; trial / `plan_expired` / dev / `cc-demo` overrides; per-card vs global save model; the four-step meta fallback chain; auto-tracked URL slug history (30-day TTL); 301 CSV import; sitemap cache (1h) / robots.txt cache (5m) / RSS (no cache); the AddThis EOL (May 2023) consequence.
+Covered across the 10 sub-pages: the ten SEO surfaces and their request-time combination; trial / `plan_expired` / dev / `cc-demo` overrides; per-card vs global save model; the four-step meta fallback chain; auto-tracked URL slug history (30-day TTL); 301 CSV import; sitemap cache (1h) / robots.txt cache (5m) / RSS (no cache); the AddThis EOL (May 2023) consequence.
 
 Not covered:
 
 - Per-card admin UI (button copy, modal labels) — see the dedicated [[marketing-seo-canonical]] / [[marketing-seo-deindex]] / [[marketing-seo-robots]] etc. feature pages.
 - Merchant's external work in Google Search Console, Bing Webmaster Tools, audit tools.
-- Schema.org / structured-data / JSON-LD — theme template layer.
 - AI meta / description generation — see [[apps-seo-spinner]].
 - Cross-domain redirects between the merchant's **own** CloudCart stores — see [[apps-domain-redirect]] (geo-routing, 302, lands at target root; **not** an external-domain forwarder).
 - Google Shopping / Skroutz / Pricerunner full product feeds — `/feed` RSS is a coarse fallback only.
-- HTTP-level redirects (HTTPS upgrade, www↔non-www, trailing slash) — storefront infrastructure.
 - **Path-preserving whole-domain forward to an arbitrary EXTERNAL domain** — there is no self-serve native feature for this. The per-URL `external` redirect is a fixed target per rule (no path preservation), and [[apps-domain-redirect]] is own-stores only — see the boundary on [[seo-301-redirects-types]]. A full external migration path-by-path needs per-path rules or an infrastructure / edge-level (the platform edge / CDN / DNS) redirect.
 
 ## Contrasts
@@ -87,13 +88,7 @@ Not covered:
 
 ## Related
 
-- [[seo-sitemap-robots]] — sitemap and robots aspect.
-- [[seo-canonical-noindex]] — canonical / noindex / pagination word aspect.
-- [[seo-meta-tags]] — meta tag fallback chain aspect.
-- [[seo-301-redirects]] — 301 redirects + URL handle history aspect.
-- [[seo-sharing-rss]] — Open Graph + RSS feed aspect.
-- [[seo-plan-overrides]] — trial / expired / demo override aspect.
-- [[seo-route-catalog]] — storefront route catalog aspect.
+- The 10 aspect pages are listed under Sub-pages above.
 - [[marketing-seo]] — Main SEO settings hub.
 - [[marketing-seo-canonical]] / [[marketing-seo-deindex]] / [[marketing-seo-meta-title]] / [[marketing-seo-sitemap]] / [[marketing-seo-robots]] / [[marketing-seo-sharing]] / [[marketing-seo-rss]] — 7 cards on the Main SEO hub.
 - [[marketing-seo-meta]] — Per-section meta titles and descriptions.

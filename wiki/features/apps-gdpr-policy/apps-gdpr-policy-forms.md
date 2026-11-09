@@ -3,12 +3,12 @@ type: feature
 nav_path: "Apps → GDPR → Policy → Form mapping"
 route_name: apps.gdpr.policies
 route_path: /admin/apps/gdpr/policy
-aliases: ["Policy form mapping", "Required policy", "Optional policy", "Marketing policy", "customer.marketing", "Policy checkbox order", "Policy on checkout", "Policy on registration"]
+aliases: ["Policy form mapping", "Required policy", "Optional policy", "Marketing policy", "customer.marketing", "Policy checkbox order", "Policy on checkout", "Policy on registration", "Consent sections", "Completing an order", "I accept checkbox", "Приемам отметка", "Free-text consent"]
 tags: [apps, gdpr, compliance, policy, consent, marketing]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # GDPR — Policy: form mapping
 
@@ -20,7 +20,7 @@ This aspect documents how policies **attach to storefront forms** — the many-t
 
 ## Where to find it
 
-The attachment is configured under the form sections of the GDPR app (the per-form policy selector), saved via the form-section saves documented on [[apps-gdpr-settings]]. The 5 form types come from [[apps-gdpr-overview]]: `register`, `contacts`, `submit_payment`, `segment_subscription_popup`, `policies_popup`.
+Sidebar → Apps → GDPR → **Consent sections** tab (`/admin/apps/gdpr/settings`), one box per form: **Completing an order** (`submit_payment`, the checkout), **User Registration** (`register`), **Contact Form** (`contacts`), **Subscribers - subscription forms** (`segment_subscription_popup`) and **Request for consent for registered users after login** (`policies_popup`). In a box: the policy dropdown, the **Required** checkbox, and **Add policy**. See [[apps-gdpr-settings]].
 
 ## What the merchant can do here
 
@@ -41,7 +41,11 @@ Each policy can be attached to any number of the 5 form types. Per attachment th
 
 ### Render order
 
-The mapping renders **"optional first, then by id"** — optional policies appear before required ones in the form. (verify) whether this ordering can be customised by the merchant; it is currently fixed.
+The mapping renders **"optional first, then by id"** — optional policies appear before required ones in the form. The order is fixed; there is no control for it.
+
+### The checkbox text is fixed
+
+Each policy is one checkbox: **I accept** / **Приемам**, then the policy's name as a link to its page. Only the name is the merchant's: there is no free-text consent line, so wording such as a consent sentence goes into the policy's name or its page.
 
 ## Business rules
 
@@ -71,4 +75,4 @@ When the customer ticks "I accept," the platform records the acceptance in [[app
 
 ## Open questions
 
-- Whether the "optional first, then by id" render order is merchant-customisable. Currently fixed (verify).
+None.

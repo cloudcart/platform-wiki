@@ -5,8 +5,8 @@ aliases: ["Permissions tree", "Permission inheritance", "Delegation downward onl
 tags: [access, permissions, admin, plan-gates, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[merchant-roles]]. See the hub for the other aspects (owner, moderator, API access, force sign-out + 2FA, notifications + audit, storefront contrast).
@@ -46,13 +46,13 @@ Not covered here:
 - **Permission grant vs Plan gate** — a permission grant restricts what a specific Moderator can do (Moderator-level). A plan gate ([[plan-gates]]) restricts what the entire store can do based on what was paid for. **Both gates must pass** — even a Moderator with full permissions can't access a feature the store's plan doesn't include.
 - **Plan-gated permission auto-hide vs runtime permission check** — when the store's plan doesn't include a feature, the corresponding permission node is removed from the **delegation tree** entirely (auto-hide). Separately, the **runtime check** verifies the acting user's granted set when they hit an endpoint. Auto-hide is "you cannot grant"; runtime is "you cannot exercise."
 - **Admin panel vs Admin GraphQL** — the same sections apply to a staff member's sign-in on the [[admin-graphql-api]].
-- **Tree shape vs flat storage** — the checkbox tree displays hierarchy; the DB stores a flat list. Ticking a parent writes all its children's IDs separately. Inheritance is a UX convention, not a runtime rule.
+- **Tree shape vs flat storage** — the checkbox tree displays hierarchy; the DB stores a flat list. Ticking a parent saves the parent and every child. Some screens accept the parent alone, some a specific row, and some ask for both (see [[settings-staff-permissions-tree]]).
 
 ## Where it applies
 
 ### The tree shape — sample sections
 
-The platform ships a static permission hierarchy that mirrors the admin-panel sidebar: **Products** (with leaves like Products → Products / Variants / Properties / Vendors), **Orders** (Orders / Abandoned carts / Refunds), **Settings** (General / Staff with `settings.admins.all` and `settings.admins.create` / Domains / Backups — plan-gated, auto-hidden if plan doesn't include `backups`), **Marketing** (Discounts / Campaigns / Segments / Subscribers), **Apps** (per-app permission nodes), etc.
+The platform ships a static permission hierarchy that mirrors the admin-panel sidebar: **Products** (with leaves like Products → Products / Variants / Properties / Vendors), **Orders** (Orders / Abandoned carts / Refunds), **Settings** (General / Staff with `settings.admins.all` / Domains / Backups — plan-gated, auto-hidden if plan doesn't include `backups`), **Marketing** (Discounts / Campaigns / Segments / Subscribers), **Apps** (per-app permission nodes), etc.
 
 The tree's exact membership changes as new features ship. The Create / Edit modal renders the current snapshot. See the per-feature pages (e.g., [[settings-staff]], [[settings-backups]]) for the section IDs they declare.
 
@@ -74,11 +74,11 @@ Example: Moderator C holds `Products + Orders`. In the tree, `Settings → Gener
 
 The checkbox tree's "tick parent ticks all children" behaviour is a UX convention layered on flat storage. In practice:
 
-- **Checking a parent** translates to writing all its children's IDs to the granted-permissions list.
-- **Unchecking one child of a parent** that was checked means that child's ID is NOT written — the rest of the children are kept.
-- **The runtime check intersects the user's granted IDs with the endpoint's required IDs.** "Inheritance" is not enforced at runtime; it's just what the form does on save.
+- **Checking a parent** saves the parent and all its children.
+- **Unchecking one child** drops that child and also the parent directly above it; the other children are kept.
+- **Each screen names the rows that open it.** Most accept the parent or the row; Orders → Returns and Credit notes need the **Orders** box and their own row. See [[settings-staff-permissions-tree]].
 
-This means a Moderator can have `Products → Products` (the leaf) without holding the parent `Products` if the merchant unticks the parent but leaves the child — and the runtime check still works on the leaf ID.
+So a Moderator can hold a row without its parent; whether that row opens its screen depends on the screen.
 
 ### Runtime check — every page load + every API endpoint
 
@@ -86,7 +86,7 @@ The permission check runs on every admin-panel page load and on every API endpoi
 
 - The endpoint declares which permission sections grant access (often a small list like `settings,settings.admins.all,store.admins`).
 - The acting user's permissions are loaded once at the start of the request.
-- If the user is the Owner OR any declared section intersects with the user's granted set, access is allowed; otherwise, access is denied (the sidebar entry is hidden, the API returns 403).
+- If the user is the Owner OR any declared section intersects with the user's granted set, access is allowed; otherwise, access is denied (the sidebar entry is hidden, the API returns 403). A screen inside a section can check both the section and its own row.
 
 ### Plan-gated permission auto-hide — `backups` as the canonical example
 

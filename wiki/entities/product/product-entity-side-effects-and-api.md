@@ -5,8 +5,8 @@ aliases: ["Product save side effects", "Product webhooks", "product.created", "p
 tags: [entity, catalog, products, webhooks, api, side-effects]
 plan_gates: ["products", "bundles"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[product]]. See the hub for the other aspects (attributes, lifecycle, business rules, relationships).
@@ -44,7 +44,7 @@ The `product.*` webhooks fire ONLY for admin-panel changes:
 
 - `product.created` — on first save.
 - `product.updated` — on any field change. **Chatty** — receivers must be idempotent.
-- `product.deleted` — on hard-delete (after the 10-day soft-delete window expires, or on immediate permanent delete).
+- `product.deleted` — when the product is removed permanently.
 
 **Webhook caveat.** JSON-API v2 saves and the order-driven stock decrements **bypass** these webhook events. Receivers that need full coverage must combine the admin webhooks with API-side polling or inventory-specific signals. (verify)
 
@@ -52,7 +52,7 @@ See [[settings-hooks]] for subscription management.
 
 ## Hard-delete cascade
 
-When a product is hard-deleted (either via the 10-day soft-delete window expiring or via immediate permanent delete), the platform:
+When a product is removed permanently (by the queued task after an admin delete, or at once by a GraphQL delete), the platform:
 
 - Deletes attached files.
 - Deletes all variants.
@@ -63,7 +63,7 @@ When a product is hard-deleted (either via the 10-day soft-delete window expirin
 - Cancels pending queued jobs targeting this product.
 - Fires `product.deleted` to subscribed webhooks.
 
-See [[product-entity-lifecycle]] for the soft-delete window mechanics that precede this cascade.
+See [[product-entity-lifecycle]] for the delete model that precedes this cascade.
 
 ## JSON-API v2 access
 
@@ -78,7 +78,6 @@ The Product entity can also be read, created, updated, or deleted via **JSON-API
 - 100 tags per product, each ≤ 191 characters.
 - 250,000-char description.
 - 191-char name.
-- Soft-delete 10-day window.
 - The `physically` filter alias (filter-only, not a stored type).
 
 See [[json-api-v2]] for authentication, rate limit, pagination, and the side-effects principle that applies to all resources.

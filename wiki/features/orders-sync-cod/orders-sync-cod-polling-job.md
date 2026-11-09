@@ -7,8 +7,8 @@ aliases: ["COD sync polling job", "COD sync background job", "COD sync schedule"
 tags: [orders, cod, sync, background-job, courier-integration]
 plan_gates: ["shipping_payment_sync"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # COD sync — polling job
 
@@ -32,7 +32,7 @@ No merchant control surface. The job is queued on the platform's background-job 
 
 ### Schedule and queue
 
-The COD-sync job is queued on the platform's `system3` background queue and is re-fired automatically by the platform's scheduler — not visible to or controllable by the merchant. Runs are typically several hours apart depending on courier rate limits.
+The COD-sync job is queued on the platform's `system3` background queue and is re-fired automatically by the platform's scheduler — not visible to or controllable by the merchant. It runs **every 20 minutes** for all couriers with the sync on, taking up to 100 eligible orders per run; each order is checked at most once a day ([[orders-sync-cod-eligibility]]).
 
 ### Throughput cap — 100 orders per job invocation
 
@@ -70,4 +70,4 @@ So a merchant whose site is suspended / in maintenance / plan-expired won't see 
 
 ## Open questions
 
-- Exact scheduler interval between COD-sync runs is courier-dependent and not surfaced to the merchant. (verify)
+None.

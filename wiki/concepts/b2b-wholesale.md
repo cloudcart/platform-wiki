@@ -7,8 +7,8 @@ aliases: ["B2B", "Wholesale", "B2B selling", "Wholesale store", "Trade pricing",
 tags: [b2b, wholesale, customer-groups, pricing, concepts, hub]
 plan_gates: []
 created: 2026-06-11
-updated: 2026-06-11
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # B2B & wholesale selling
 
@@ -20,7 +20,7 @@ source_count: 1
 
 - **Customer groups** — define groups (Wholesale, VIP, B2B) on [[customers-custom-groups]]; assign each customer to one group (per-customer on [[customers-details]] or bulk on [[customers]]).
 - **Group pricing** — express wholesale prices as group-targeted [[marketing-discounts]] (e.g. "15% off for Wholesale").
-- **Checkout restrictions** — payment ([[settings-payment-providers]]) and shipping ([[settings-shipping]]) methods can be gated to specific groups (wholesale sees invoice-on-delivery; retail sees card only).
+- **No checkout restriction by group** — payment ([[settings-payment-providers]]) and shipping ([[settings-shipping]]) methods carry no customer-group setting, so they cannot be shown per group; they can be restricted per product category only ([[products-categories-cart-restrictions]]).
 - **Company / VAT invoicing** — B2B billing fields (company name, VAT ID) on the billing address feed the invoice — see [[invoicing-and-accounting]].
 - **Restricted / trade-only storefront** — [[apps-private-store]] hides the store (or parts) behind login.
 - **Fast bulk ordering** — [[apps-fast-order]] lets buyers add many SKUs quickly.
@@ -35,7 +35,7 @@ source_count: 1
 
 - Group assignment per customer ([[customers-details]]) or in bulk ([[customers]]).
 - Company / VAT invoices — see [[invoicing-and-accounting]].
-- Group-gated payment & shipping at checkout.
+- Group-targeted discounts and Cart Rules at checkout ([[customer-group-targeting]]).
 
 ## Related
 
@@ -48,5 +48,6 @@ source_count: 1
 
 ## Open Questions
 
+- **Not native:** a per-customer price list (a discount's customer list is read only for no-code Orders-over and free-shipping discounts, see [[discounts-eligibility]]), a customer credit limit, an account balance owed, or order approval against a limit. The [[virtual-wallet]] is prepaid store credit, not a credit line. There is no separate "B2B app", and ERP links are listed on [[erp-integrations]].
 - Per-group **fixed price lists** do NOT exist — verified against code. The group record carries no price; differentiated pricing is achieved only via group-targeted [[discount|Discounts]] (incl. free-shipping discounts + [[marketing-discounts-code-pro|Code PRO]]). See [[customer-group-targeting]].
 - Whether a customer can be auto-assigned to a group on registration by rule (verify).

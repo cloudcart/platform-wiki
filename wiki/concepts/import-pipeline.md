@@ -5,8 +5,8 @@ aliases: ["Bulk import pipeline", "Import pipeline", "CSV import", "XML import",
 tags: [ops, imports, csv, xml, concepts]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 # Import pipeline
@@ -30,7 +30,7 @@ This concept is split into 7 aspect pages, each covering one well-scoped slice. 
 - [[import-validation-and-errors]] — silent-skip vs counted-error vs abort per importer; failed-row tracking; how the merchant discovers skipped rows; re-import workflow.
 - [[import-upsert-and-provenance]] — upsert match-by-identifier semantics (email / SKU / `product.id`); per-record provenance tags (`app_import`, `xml_import_id`); the "Imported with" filter on [[products-products]].
 - [[import-plan-gates-and-2fa]] — plan-feature keys (`customer_import`, `xml_import_limit`, `xml_sync_limit`, `xml_sync-interval`); 2FA-gated customer CSV; file-format constraints (CSV/TXT, UTF-8, auto-delimiter); row-count caps.
-- [[import-history-and-recovery]] — [[settings-import-history]] indefinite-retention audit log; aggregate counts + per-record drill-in; recovery paths when no undo exists ("Imported with" + bulk delete, [[backups-and-restore]], corrective upsert).
+- [[import-history-and-recovery]] — [[settings-import-history]] audit log (short retention, verify); counts + per-record drill-in; recovery without undo ("Imported with" + bulk delete, [[backups-and-restore]], corrective upsert).
 - [[import-xml-sync-recurring]] — [[apps-xml-sync]] specifics: recurring schedule (default 12 h), per-field update policies, feed-hash short-circuit, discontinued-product handling, HTTP/HTTPS-only transport constraints.
 
 ## Why it matters to the merchant
@@ -76,7 +76,7 @@ The import pipeline spans many source screens, a central monitoring layer, and c
 - [[apps-json-import]] — JSON-format import.
 - [[apps-blog-csv-import]] — blog article CSV import.
 - [[apps-multilang]] — multilang sync tasks (translation + copy).
-- [[settings-import-history]] — historical audit of all past imports (indefinite retention).
+- [[settings-import-history]] — audit of recent imports (short retention).
 - [[settings-queue-view]] — live in-flight queue progress.
 - [[plan-gates]] — `customer_import`, `xml_import_limit`, `xml_sync_limit`, `xml_sync-interval` plan features.
 - [[backups-and-restore]] — last-resort rollback path when no undo is available.

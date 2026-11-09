@@ -7,8 +7,8 @@ aliases: ["Product bulk actions", "Products mass tools", "Bulk publish products"
 tags: [catalog, products, bulk, mass-actions, list]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[products-products]]. See the hub for the other aspects (list view, editor, variants matrix, AI content, change log, known issues).
@@ -46,7 +46,7 @@ This aspect documents:
 | **Activate track quantity** | Turns on stock tracking. Opens a popup to set the starting quantity. |
 | **Deactivate track quantity** | Turns off stock tracking. |
 | **Set product tags** | Opens a popup to assign tags to all selected. |
-| **Change main category** | Opens a popup to reassign all selected to a different primary category. |
+| **Change main category** | Opens a popup to set one main category on all selected. Only the main category changes: each product's additional (**Show also in**) categories are kept. |
 | **Change vendor** | Opens a popup to reassign all selected to a different vendor. |
 | **Sort number** | Opens a popup to set a specific sort order across selected. |
 | **Change product status "Available"** | Opens a popup to set product status to a specific Available value (custom statuses — see [[products-statuses]]). |
@@ -55,7 +55,7 @@ This aspect documents:
 
 ### Bulk-action sub-popup
 
-Many list-page bulk actions don't apply immediately — they open a small **bulk-action popup** that captures one input value, then applies it to all selected products in a single API call:
+Many bulk actions open a small popup that captures one value, then apply it to all selected products at once:
 
 | Bulk action type | Popup field |
 |------------------|-------------|

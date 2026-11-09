@@ -7,8 +7,8 @@ aliases: ["Zopim", "Zendesk Chat", "Zopim Live Chat", "Zopim module"]
 tags: [apps, others, chat, support]
 plan_gates: ["zopim"]
 created: 2026-05-22
-updated: 2026-05-27
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Zopim (Zendesk Chat)
 
@@ -94,7 +94,7 @@ CloudCart does not push order data or customer history to Zendesk tickets. The i
 
 ### No AppJsRegenerate — code change requires a manual cache refresh
 
-Unlike [[apps-live-chat]] and [[apps-click-to-call]] (both implement `AppJsRegenerate` for instant storefront pickup), the Zopim integration does NOT implement that contract. Saving a new Zopim code may not appear on the storefront immediately if the page is cached — the merchant should clear cache or wait for the natural cache TTL. This is a minor inconsistency between the two chat integrations.
+Unlike [[apps-live-chat]] and [[apps-click-to-call]] (both rebuild the storefront apps file on save), the Zopim code is written straight into each page's HTML. Either way a signed-in visitor sees a change on the next page load, while guests can keep a cached page for up to 20 minutes and crawlers for 1–2 days; the merchant has no clear-cache button ([[storefront-arch-caching-invalidation]]).
 
 ### Operating hours, styling, routing — all in Zopim
 

@@ -7,8 +7,8 @@ aliases: ["MicroBG", "Micro.bg", "micro.bg", "MicroBG ERP", "Микро БГ", "
 tags: [apps, erp, bulgaria, accounting, inventory-sync, order-sync]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-08-06
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # MicroBG (Micro.bg cloud accounting + warehouse)
 
@@ -53,8 +53,8 @@ This is where the actual sync runs:
 ### What the merchant CANNOT do here
 
 - Use Micro.bg without an active license for at least 2 users.
-- Use Micro.bg on a CloudCart plan lower than STARTUP.
-- Run sync in currencies other than BGN or with VAT not set to Bulgaria.
+- Use Micro.bg without the `microbg_subscription` add-on (CloudCart's only check).
+- Expect CloudCart to vet currency or VAT: those are Micro.bg's own requirements.
 - Edit historical Micro.bg records from CloudCart.
 - Bypass the API key mechanism (see [[settings-api-keys]]).
 
@@ -79,7 +79,7 @@ The integration depends on the `microbg_subscription` plan feature (a paid add-o
 
 The full business-rules catalogue is distributed across the aspect pages:
 
-- **Prerequisites** (≥ 2-user Micro.bg license, plan above STARTUP, BGN currency, BG VAT, mandatory settings on both sides, Обект choice) → [[apps-microbg-prerequisites]].
+- **Prerequisites** (≥ 2-user Micro.bg license, the add-on, Micro.bg's currency and BG VAT rules, mandatory settings on both sides, Обект choice) → [[apps-microbg-prerequisites]].
 - **Install paths** (new vs existing Micro.bg customer) → [[apps-microbg-registration]].
 - **Product matching, sync cadence, order push, Поръчка → Продажба rule** → [[apps-microbg-sync-mechanics]].
 - **Partner matching cascade** (EIK → email) → [[apps-microbg-partner-matching]].

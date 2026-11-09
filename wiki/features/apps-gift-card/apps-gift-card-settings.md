@@ -7,8 +7,8 @@ aliases: ["Gift card settings", "Gift card amounts", "Gift card validity", "Gift
 tags: [apps, gift-card, settings]
 plan_gates: []
 created: 2026-11-03
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # Gift Card — Settings tab
 
@@ -35,8 +35,8 @@ Sidebar → Apps → **Gift Card** → **Settings**, at `/admin/apps/gift_card/s
 |---|---|---|---|---|
 | Product | **Product Name** (placeholder `Gift card`) | on the hidden product | `Gift card` | Shown on the gift card screen, the order line and the receipt |
 | Product | **Description** | on the hidden product | Empty | Rich text, shown on [[storefront-gift-card]] |
-| Product | **Product image** | on the hidden product | Bundled artwork | Follows the store's upload size limit |
-| Product | **PDF logo** | its own logo | None | Printed on the PDF. Without one, the store name is used |
+| Product | **Product image** | on the hidden product | Bundled artwork | JPG, PNG, GIF, BMP or WebP. See below |
+| Product | **PDF logo** | its own logo | None | Same file types. Printed on the PDF. Without one, the store name is used |
 | Gift card amounts | Repeater with **Add amount** | `amounts` | 10, 25, 50, 100 in the store currency | The fixed values on sale |
 | Custom amount | **Allow custom amount** | `custom_amount_enabled` | Off | |
 | Custom amount | **Minimum**, **Maximum** (placeholder `No limit`) | `min_amount`, `max_amount` | None | Outside the limits: `Please choose a valid gift-card amount.` |
@@ -60,7 +60,11 @@ The app keeps one internal gift card product, and each amount is a hidden varian
 
 ### The app and its product switch together
 
-The header toggle activates the app and the product together. While the app is inactive, [[storefront-gift-card]] returns 404, and no redeem form is offered.
+The header toggle activates the app and the product together. Activating also saves the settings, so the hidden product is created if missing and its amounts are synced. While the app is shown as deactivated in the header, [[storefront-gift-card]] returns 404, and no redeem form is offered.
+
+### Which images are accepted
+
+The server accepts **JPG, PNG, GIF, BMP and WebP**, judged by the file's content, not its name. Anything else is refused on save with `The image field must be an image.` / `Полето image трябва да бъде изображение.` (for the logo, the field name reads `pdf logo`). The picker's hint lists SVG, but an SVG is refused here, and so are HEIC, AVIF and TIFF. Convert the file to PNG or JPG and save again.
 
 ### Validity and a scheduled send
 
@@ -76,4 +80,4 @@ If a card's code lapses before its **Send on** date, the recipient email is not 
 
 ## Open questions
 
-None.
+- Code-read, not reproduced: the header Activate / Deactivate switch resends the settings with the saved image's address as text, which the image check refuses. With a custom product image or PDF logo saved, the switch may fail with the same `image` message. (verify)

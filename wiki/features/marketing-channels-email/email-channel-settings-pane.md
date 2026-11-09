@@ -3,12 +3,12 @@ type: feature
 nav_path: "Marketing → Channels → Channels setup → Email → Settings"
 route_name: campaigns-channels
 route_path: /admin/marketing/campaigns/channels
-aliases: ["Email channel settings modal", "Sending emails to unverified subscribers", "unconfirmed_send", "Email channel unverified send", "Изпращане на имейли към непотвърдени абонати"]
+aliases: ["Email channel settings modal", "Sending emails to unverified subscribers", "unconfirmed_send", "Email channel unverified send", "Изпращане на имейли до непотвърдени абонати"]
 tags: [marketing, channels, email, settings, unverified, unconfirmed-send]
 plan_gates: ["campaign.channel.email"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-channels-email]]. See the hub for the other aspects (setup wizard, DNS records, Elastic Email sub-account, webhook feedback, send pipeline, suspend thresholds).
@@ -17,7 +17,7 @@ source_count: 2
 
 ## Purpose
 
-The **Settings - Email** modal (`MarketingChannelsSettingsModalEmail`) exposes a single, per-Email-channel switch: *"Sending emails to unverified subscribers"* (`unconfirmed_send`). This is the merchant's deliberate choice to trade verification quality (subscriber confirmed their email) for reach (every subscriber gets the campaign). The setting affects the per-recipient pre-flight check in the send pipeline ([[email-channel-send-pipeline]]).
+The **Settings - Email** modal (`MarketingChannelsSettingsModalEmail`) exposes a single, per-Email-channel switch: *"Sending emails to unverified subscribers"* (BG, as seen on a merchant screen: „Изпращане на имейли до непотвърдени абонати“; `unconfirmed_send`). This is the merchant's deliberate choice to trade verification quality (subscriber confirmed their email) for reach (every subscriber gets the campaign). The setting affects the per-recipient pre-flight check in the send pipeline ([[email-channel-send-pipeline]]).
 
 ## Where to find it
 
@@ -36,7 +36,7 @@ This is **separate** from the Configuration wizard ([[email-channel-setup-wizard
 
 | Setting | Default | Effect when ON | Effect when OFF |
 |---|---|---|---|
-| `unconfirmed_send` | `false` (OFF) | Campaign emails are sent even to subscribers whose `single_channel.verified = 0`. | Unverified subscribers are skipped with the log error: *"No message will be sent to this email because it has not been verified."* |
+| `unconfirmed_send` | `false` (OFF) | Campaign emails are sent even to subscribers whose `single_channel.verified = 0`. | Unverified subscribers are not enrolled at campaign launch (no log row). One reaching dispatch (e.g. a new Automated entrant) is skipped with *"The subscriber has not confirmed his email address"* („Абонатът не е потвърдил имейл адреса си“) in the campaign's statistics step log. |
 
 Footer Save button persists immediately on click → toast *"Saved successfully"* + modal closes.
 
@@ -44,7 +44,7 @@ Footer Save button persists immediately on click → toast *"Saved successfully"
 
 ### Default OFF protects sender reputation
 
-Default OFF means: until the merchant explicitly opts in, campaign emails to unverified subscribers are skipped with the log error *"No message will be sent to this email because it has not been verified."* and the campaign's reached-count does NOT increment for those subscribers. This is the per-recipient pre-flight check `verified` step on [[email-channel-send-pipeline]].
+Default OFF means: until the merchant explicitly opts in, unverified subscribers get no campaign email — excluded at launch, or skipped at dispatch with the reason above — and the campaign's reached-count does NOT increment for them. This is the `verified` pre-flight check on [[email-channel-send-pipeline]]. The text *"No message will be sent to this email because it has not been verified"* is a tooltip on the subscriber list, not the log reason.
 
 The reasoning: sending to unverified addresses is a top driver of hard-bounces and spam complaints. The default OFF protects the merchant's sender reputation — which in turn protects them from the auto-suspend thresholds in [[email-channel-suspend-thresholds]] (`SUSPENDED_SPAM`, `SUSPENDED_BOUNCED`).
 

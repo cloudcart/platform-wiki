@@ -7,15 +7,15 @@ aliases: ["Email notifications", "Customer emails", "Transactional emails", "Cus
 tags: [marketing, omnichannel, email, notifications, transactional]
 plan_gates: ["change_email_notifications", "abandoned_orders"]
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Email notifications
 
 ## Purpose
 
-The **Email notifications** screen is where the merchant edits the **transactional / system emails** that CloudCart sends to **customers** on platform events — *"Welcome"*, *"Order confirmation"*, *"Order status changed"*, *"Payment received"*, *"Abandoned cart restore link"*, *"Password reset"*, *"Email confirmation"*, *"Product back in stock"*, and many others. These are the **per-event customer-facing emails**, distinct from the **promotional campaigns** the merchant builds under [[marketing-campaigns]]: campaigns are merchant-authored marketing blasts targeting subscribers; mails are platform-authored event responses with merchant-customisable templates.
+The **Email notifications** screen is where the merchant edits the **transactional / system emails** that CloudCart sends to **customers** on platform events — *"Welcome"*, *"Order confirmation"*, *"Order status changed"*, *"Payment received"*, *"Abandoned cart restore link"*, *"Password reset"*, *"Email confirmation"*, and many others. There is no back-in-stock email here: that one is a campaign ([[products-missing-product]]). These are the **per-event customer-facing emails**, distinct from the **promotional campaigns** the merchant builds under [[marketing-campaigns]]: campaigns are merchant-authored marketing blasts targeting subscribers; mails are platform-authored event responses with merchant-customisable templates.
 
 Per template, the merchant edits the **Name**, **Subject**, and **HTML body** with a per-label allow-list of variables (`{$customer_first_name}`, `{$order_id}`, `{$total}`, `{$tracking_link}`, etc.). A **global on/off switch** at the top silences the entire customer-notification system in one click. **Last edited** timestamps surface in the list.
 
@@ -31,15 +31,15 @@ The page header reads **"Email notifications"** (BG: **"Имейл извест�
 
 ## What the merchant can do here
 
-- See the list of all transactional mail templates as a table with columns **Name**, **Subject**, **Last edited**. (List does not paginate — `:hide-pagination="true"`; roughly 20–30 entries.)
-- Toggle the global switch **"Send notifications to customers"** in the page header — when OFF, no customer transactional emails are sent at all. See [[omnichannel-mails-toggles-gating]].
+- See all transactional mail templates in a table: **Name**, **Subject**, **Source**, **Last edited**, **Active** (a per-mail switch, disabled on locked mails). No pagination.
+- Toggle the global switch **"Send notifications to customers"** in the page header; what it stops is narrower than its name — see [[omnichannel-mails-toggles-gating]].
 - Click a row's Name cell to open the **template editor modal** — see [[omnichannel-mails-editor-modal]] for the editor anatomy and Unlayer designer details.
 
 ## Settings & fields
 
 | Field | Setting key | Default | Effect when OFF |
 |-------|-------------|---------|-----------------|
-| **Send notifications to customers** | `customer_email_notifications` | `yes` | Stops the platform from sending any customer transactional email — including security mail like password reset. See [[omnichannel-mails-toggles-gating]]. |
+| **Send notifications to customers** | `customer_email_notifications` | `yes` | Store-wide switch for customer emails; the two-factor code email ignores it. See [[omnichannel-mails-toggles-gating]]. |
 
 A second backend-only setting controls rendering format:
 
@@ -53,11 +53,12 @@ Each row corresponds to one **mail label** (e.g., `order_add`, `abandoned_restor
 
 ## Sub-pages (in this cluster)
 
-This screen is split into 5 aspect pages — each well-scoped. The Assistant should drill into the aspect that matches the question, not read every page.
+Drill into the aspect page that matches the question:
 
 - [[omnichannel-mails-labels]] — the fixed catalogue of platform mail labels (`welcome`, `order_add`, `abandoned_restore_link`, etc.) and what triggers each.
-- [[omnichannel-mails-editor-modal]] — the shared `CampaignEmailTemplateScratchModal` (Unlayer designer, variables legend, Send example, three-mode prop signature).
-- [[omnichannel-mails-toggles-gating]] — global `customer_email_notifications` toggle + per-mail the platform code flag + three forced-on security labels (`email_confirmation`, `two_factor_action`, `alert_notification`).
+- [[omnichannel-mails-editor-modal]] — the shared editor (Unlayer designer, variables legend, Send example).
+- [[omnichannel-mails-order-confirmation]] — the four order-confirmation templates by payment method, the VAT line, the `{$product_list}` block (captions, brand line, colours), the language sent.
+- [[omnichannel-mails-toggles-gating]] — global `customer_email_notifications` toggle + per-mail Active switch + locked (forced-on) mails.
 - [[omnichannel-mails-variables]] — per-label `allowed_vars` / `allowed_subject_vars` / `required_subject_vars` allow-lists, server-side filtering, variable-insertion via the legend.
 - [[omnichannel-mails-abandoned-cart]] — the `abandoned_restore_link` recovery subsystem; `AbandonedCartSend` job on the `system` queue; `abandoned_remainder` + `abandoned_remainder_interval` settings; `abandoned_orders` plan gate.
 - [[omnichannel-mails-customisation-limits]] — what the merchant CAN / CANNOT edit; per-locale `MailLanguage` rows; `customer_email_notification_type` (plain vs HTML); re-firing workflows on existing orders.
@@ -83,10 +84,10 @@ The wallet mails ([[virtual-wallet-emails]]) and, once the app is installed, the
 
 ### Two layers of gating apply at send time
 
-1. The global `customer_email_notifications` setting (must be `'yes'`).
-2. The per-mail the platform code row flag (must be `1`) — except for three forced-on security labels.
+1. The global `customer_email_notifications` setting, applied only where the send asks for it.
+2. The per-mail **Active** switch on the list — except on locked mails, which always send.
 
-Both checks happen inside `sendNotification` in the customer-notification helper. The Vue UI surfaces only layer (1); layer (2) is a legacy-admin field. See [[omnichannel-mails-toggles-gating]] for the full mechanics.
+See [[omnichannel-mails-toggles-gating]] for the mechanics.
 
 ### Anti-spam policy NOT required
 

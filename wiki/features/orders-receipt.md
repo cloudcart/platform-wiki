@@ -7,8 +7,8 @@ aliases: ["Receipt", "Receipt PDF", "Касова бележка", "Разпис
 tags: [orders, receipt, pdf, invoicing, smarty]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 # Receipt (per order)
 
@@ -20,13 +20,15 @@ Some merchants do not issue formal invoices for every order (e.g. B2C cash-on-de
 
 The platform delegates receipt rendering to the active Invoicing provider (configured in [[settings-invoicing]] / an installed invoicing app). The whole receipt flow is gated on the **N18 Audit** app ([[apps-n18-audit]]) being installed — receipts are primarily for Bulgarian fiscal-compliance (Наредба № Н-18). Merchants in other countries typically rely on the invoice flow instead.
 
+Its heading, in Bulgarian, is *"Документ за регистриране на продажба"*: the sale-registration document of Н-18's alternative regime for online payments, not a fiscal-device (cash-register) receipt. Whether that regime fits a given merchant is for their accountant (verify).
+
 This page is the **hub** for the per-order receipt cluster. The detailed mechanics live in the four aspect pages below — drill into the one that matches the question rather than reading all of them.
 
 ## Sub-pages (in this cluster)
 
-This feature is split into 4 aspect pages, each covering one well-scoped slice. The Assistant should drill into the aspect that matches the question.
+This feature is split into 4 aspect pages:
 
-- [[orders-receipt-surfaces]] — where the receipt link actually lives (Order-history entry only — NO toolbar button), the automatic customer-email on `paid`/`completed`, the absent "Send receipt" action, the unused legacy translation key.
+- [[orders-receipt-surfaces]] — where the receipt link actually lives (Order-history entry only — NO toolbar button), the automatic attachment to customer emails, the absent "Send receipt" action, the unused legacy translation key.
 - [[orders-receipt-eligibility]] — the gates that decide when a receipt exists: N18 Audit app installed, active provider, `isReadyForReceipt` mirroring invoice eligibility (paid/completed/fulfilled/digital-only), provider-gated 404.
 - [[orders-receipt-numbering]] — the separate sequential receipt series, `max + 1` generation with retry-5 backoff, number permanence, auto-generation via order events (not a click), the `order_receipt_sent` history row (action code 48).
 - [[orders-receipt-rendering]] — the small thermal-size (format `B`) PDF, print-only protection, order-locale language, order-currency amounts, download filename pattern, N18-controlled template, "Powered by" footer gating.

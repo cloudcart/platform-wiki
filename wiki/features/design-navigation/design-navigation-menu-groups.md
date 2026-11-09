@@ -1,14 +1,14 @@
 ---
 type: feature
 nav_path: "Design → Navigation → Menu groups"
-route_name: admin.navigation.list
-route_path: /admin/storefront/navigation/{group?}
+route_name: design.navigation
+route_path: /admin/design/navigation
 aliases: ["Navigation menu groups", "Main menu", "Footer menu", "Menu group keys", "Главно меню", "Меню във футъра"]
 tags: [design, navigation, menus]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 # Navigation — menu groups (main + footer)
 
@@ -16,21 +16,22 @@ source_count: 0
 
 ## Purpose
 
-The Navigation screen surfaces exactly two menu trees: the **Main menu** (group `main`, rendered in the store header) and the **Footer menu** (group `footer`, rendered at the bottom of every page). This page explains the two-group model, why a third group key is rejected, and how these two trees differ from the `navigation.links` storefront modules.
+The Navigation screen shows one tab per menu. Every store has the **Main menu** (group `main`, rendered in the store header) and the **Footer menu** (group `footer`, rendered at the bottom of every page); a Liquid-theme store also lists its custom menus. This page explains which menus are listed per theme type, why an unknown group key is rejected, and how these menus differ from the `navigation.links` storefront modules.
 
 ## Where to find it
 
-Sidebar → **Design** → **Navigation**. The two trees sit side-by-side on `/admin/storefront/navigation`. The `{group}` URL parameter (`main` or `footer`) selects which tree's data is fetched — see [[design-navigation-link-resolution]] for the dual full-HTML / AJAX request handling on this route.
+Sidebar → **Design** → **Navigation**, at `/admin/design/navigation`. Each menu has its own tab on this screen. The group key (`main`, `footer`, or a custom menu's key on Liquid themes) selects which menu's tree is fetched — see [[design-navigation-link-resolution]] for how the screen and its tree data load.
 
 ## What the merchant can do here
 
-- Build the **Main menu** tree (left) — *"The content here will be visible in the main menu of your store."*
-- Build the **Footer menu** tree (right) — *"The content here will be visible in the footer of your store."*
-- Add the first item to an empty tree via the **Add your first menu item** link.
+- Build the **Main menu** tree (first tab) — *"This content is shown in the top (main) menu of your store."*
+- Build the **Footer menu** tree (second tab) — *"This content is shown in the footer menu of your store."*
+- On a Liquid-theme store, build each custom menu on its own tab; the tab shows that menu's own description.
+- Add the first item to an empty menu via the **Add the first link** button.
 
 ## What the merchant cannot do here
 
-- Create a third menu group from this screen. Addressing any group key other than `main` or `footer` from the URL returns a 404.
+- Create, rename or delete a menu — the screen has no control for it (on Liquid themes, verify where custom menus are created). `main` and `footer` are created automatically when missing and cannot be deleted; requesting a menu key that does not exist returns a 404.
 - Manage top-bar links, footer-column links, or page-menu pages here — those are `navigation.links` module instances configured on [[design-modules-navigation]], not menu groups.
 
 ## Settings & fields
@@ -39,20 +40,23 @@ Sidebar → **Design** → **Navigation**. The two trees sit side-by-side on `/a
 
 | Group key | Storefront placement | Description |
 |-----------|----------------------|-------------|
-| `main` | Top header menu (or the theme's primary navigation) | *"Add menu items to the store's main navigation."* |
-| `footer` | Bottom of every storefront page | *"Add menu items to the store footer section."* |
+| `main` | Top header menu (or the theme's primary navigation) | *"This content is shown in the top (main) menu of your store."* |
+| `footer` | Bottom of every storefront page | *"This content is shown in the footer menu of your store."* |
+| custom key (Liquid themes only) | Wherever the theme places that menu (verify) | The menu's own description |
 
 The exact rendering of the `main` group depends on the active theme's primary-navigation layout — see [[design-themes]].
 
+Each tab shows the menu's stored name. `main` and `footer` get their names when first created, in the admin's language at that moment: in Bulgarian „Главно меню“ / „Долно меню“, in English "Main menu" / "Footer menu" (verify on an older store).
+
 ## Business rules
 
-### Two menu groups only — `main` and `footer`
+### Which menus are listed depends on the theme type
 
-The Navigation screen surfaces exactly two menu trees: **Main menu** (group `main`) and **Footer menu** (group `footer`). Any attempt to address a different group key from the URL returns a 404.
+On a Smarty-theme store the screen lists only the two system menus, **Main menu** (`main`) and **Footer menu** (`footer`). On a Liquid-theme store it lists those two first, then every custom menu. A request for a menu key that does not exist returns a 404.
 
 ### Additional menu surfaces come from modules, not groups
 
-Other storefront menu surfaces — top-bar links, footer-column links, page-menu pages — are powered by `navigation.links` module instances configured under [[design-modules-navigation]]. They are NOT additional groups on this screen. A merchant looking for "a third menu" should be directed to the Modules screen, not here.
+On Smarty themes, other storefront menu surfaces — top-bar links, footer-column links, page-menu pages — are powered by `navigation.links` module instances configured under [[design-modules-navigation]]. They are NOT additional groups on this screen. A merchant looking for "a third menu" should be directed to the Modules screen, not here.
 
 ### The active theme governs visibility of each group
 

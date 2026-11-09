@@ -7,8 +7,8 @@ aliases: ["Products list", "Product list view", "Product table", "Product filter
 tags: [catalog, products, list, filters, table]
 plan_gates: ["products"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[products-products]]. See the hub for the other aspects (editor, variants matrix, bulk actions, etc.).
@@ -100,12 +100,12 @@ The **Import** button shows an **Import products** popup with 4 option cards:
 
 ### CSV import wizard — 3-step modal flow
 
-The CSV option opens the **Import with CSV file** side window with a **3-step progress bar** (STEP 1 *Upload file* / STEP 2 *CSV file settings* / STEP 3 *Mapping*) and a success screen. It feeds the same import pipeline as the CSV Import app ([[apps-csv-import]]).
+The CSV option opens the **Import with CSV file** side window: three steps and a success screen. It feeds the same import pipeline as the CSV Import app ([[apps-csv-import]]).
 
 | # | Step | What the merchant does |
 |---|---|---|
 | **1** | **Upload file** | Drag-and-drop or select a CSV; another file type shows *"Invalid file type, please upload a valid csv file."* A **"CSV Template"** button downloads a sample CSV to fill in offline. **Next** without a file shows a "Please upload a CSV file" error. |
-| **2** | **CSV file settings** (**General settings** + **Advanced settings** cards) | **General settings:** header-line toggle (`has_header_line`); *"The sign that splits the names of the categories"* (e.g. `>` makes `Apparel > Shirts` nested); *"Task ID number"* (`import_key`) — optional ID to chain imports into one task; fixed-discount picker with a **Generate discount code** link. **Advanced settings:** *Publish imported products* (`publish_as_active`), *Publish products as featured* (`publish_as_featured`), *Publish products as new* (`publish_as_new`), *All imported products require shipping* (`require_shipping`), *The quantity of each imported product must be tracked* (`quantity_tracking`), *Continue selling* (`continue_sell`). |
+| **2** | **CSV file settings** (**General settings** + **Advanced settings** cards) | **General settings:** header-line toggle (`has_header_line`); *"The sign that splits the names of the categories"* (e.g. `>` makes `Apparel > Shirts` nested); *"Task ID number"* (`import_key`) — optional; it chains nothing, since a later upload never matches an earlier task's products (re-uploading duplicates); fixed-discount picker with a **Generate discount code** link. **Advanced settings:** *Publish imported products* (`publish_as_active`), *Publish products as featured* (`publish_as_featured`), *Publish products as new* (`publish_as_new`), *All imported products require shipping* (`require_shipping`), *The quantity of each imported product must be tracked* (`quantity_tracking`), *Continue selling* (`continue_sell`). |
 | **3** | **Mapping** | For each product / variant field, pick the matching CSV column. Required: `product.name`, `product.id`, `variant.parent_id`. The button reads **Submit** — clicking it queues the import. If an earlier import is blocking this one, a recovery button appears beside **Back**; it clears the block and submits again. |
 | _(success)_ | **Import task created** | Success screen: *"The file was successfully uploaded and the products import task was added to the queue. If you wish, you could track the uploading in the queued jobs."* with a **Track importing progress** button → CSV Import task list (`apps.csv_import.settings`) in a new tab. |
 

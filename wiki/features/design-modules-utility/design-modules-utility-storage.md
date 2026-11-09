@@ -7,8 +7,8 @@ aliases: ["Module storage", "Module cache", "Module save pipeline", "Module rese
 tags: [design, modules, storefront-customisation, storage, cache]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Utility modules — Storage and caching
@@ -29,7 +29,7 @@ Sidebar → **Design** → **Modules** — the merchant's interaction surface. T
 
 - **Save** an editable module — stores the new values for the active site, then bumps the per-site cache key.
 - **Reset** an editable module — deletes the merchant's saved values, falling back to theme defaults; bumps the per-site cache key.
-- See changes on the next storefront request — no manual cache clear required.
+- See changes at once while signed in to the admin; guests within 20 minutes (no clear-cache button).
 
 The merchant CANNOT manage the underlying storage / cache directly — there is no admin "Clear module cache" button.
 
@@ -51,7 +51,7 @@ On open, the platform reads theme defaults, merges the overlay, then layers the 
 
 - Parsed theme settings are cached indefinitely per theme — only cleared by a platform deploy.
 - The merged module rows for the active site are cached for about an hour — cleared by the per-site cache-key bump on any Save / Reset.
-- Save and Reset both bump that cache key, so every subsequent read rebuilds. Changes show on the very next storefront request — there is no merchant-facing "Clear cache" button.
+- Save and Reset both bump that cache key, so every subsequent read rebuilds. Guests see the change within 20 minutes; there is no "Clear cache" button.
 
 ### Edit-form gating — `editable` + paid modules
 
@@ -92,7 +92,7 @@ Saved settings are keyed by instance name. Switching themes orphans the settings
 
 ### Cache invalidation is automatic
 
-Save and Reset both bump the per-site cache key, so new settings reach customers on the very next page load. No manual cache-clear is required and no admin button exists for it.
+Save and Reset bump the per-site cache key; guests get new settings within 20 minutes. No admin clear-cache button exists.
 
 ### Platform overlays are configuration, not data
 

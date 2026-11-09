@@ -5,8 +5,8 @@ route_path: /checkout
 themes_using: [all]
 tags: [storefront, checkout, javascript, js-hooks, events, ajax]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 
 > Part of [[checkout]]. See the hub for the other aspects (routing & middleware, steps & layout, submit & payment handoff, merchant customisation).
@@ -46,7 +46,7 @@ Hook classes / data attributes used (verified in `_global/templates/checkout/exp
 - `.js-checkout-payment-form` — the place-order form.
 - `.js-checkout-hash-reload` — marker meaning "reload this section on hash change".
 - `.js-checkout-total-formatted` — sub-total display in the mobile cart-toggle button.
-- `.js-body-reload` — set on `<body>` when a logged-in customer is present; triggers a full reload after some cart events (used to keep the summary fresh).
+- `.js-body-reload` — set on `<body>` when the cart already has a customer, and added after the customer step (or a shipping-address form carrying the e-mail) saves. It does **not** reload the page: when the cart changes in the cart side panel on the checkout and the panel closes, the step containers are re-fetched in place (without the class, only the order summary is).
 - `.js-payments` — payment-provider accordion wrapper.
 - `.js-accordion-payment-provider-{provider}` — per-provider body.
 - `.js-accordion-shipping-provider-{provider}` — per-shipping-provider body.
@@ -77,7 +77,11 @@ Custom `cc.*` events fired by checkout code:
 
 ## Customisations available to the merchant
 
-A merchant or theme developer can bind custom JS to any of the `cc.*` events above to extend checkout (e.g. fire a custom pixel on `cc.checkout.step`, or react to `cc.guest.sign.in`). The hook classes are stable contract points; the settings that toggle which hooks appear (e.g. `checkout_animation` for accordion slide) are on [[checkout-page-customisation]].
+A merchant or theme developer can bind custom JS to any of the `cc.*` events above to extend checkout (e.g. fire a custom pixel on `cc.checkout.step`, or react to `cc.guest.sign.in`). The settings that toggle which hooks appear (e.g. `checkout_animation` for accordion slide) are on [[checkout-page-customisation]].
+
+**Not a versioned interface.** The hooks, events and `cc-*` classes are what the checkout's own script and stylesheet use, not a published, versioned interface: nothing in the platform keeps them fixed across updates. No theme ships its own checkout templates, so a change to this shared markup reaches every store at once. Custom code that depends on them should be re-checked after checkout changes. The Terms of Use promise no notice before such changes and make the merchant responsible for code they add (§8.15, [[terms-of-use-changes-liability]]).
+
+**Custom code and in-place reloads.** Code pasted in [[design-custom-assets]] runs once, in the `<head>`, when the page loads (jQuery is already defined; the checkout script, which loads later, is not). It does not run again when the checkout swaps a step container, or when a step opens in a side panel (the pencil / edit links and the log-in link load the form in the background), so listeners bound directly to replaced elements are lost. Bind through the document (delegated jQuery handlers), or re-apply on `cc.ajax.success`, which fires on a container after it is re-fetched, and on the `cc.*` events above.
 
 ## Theme variations
 

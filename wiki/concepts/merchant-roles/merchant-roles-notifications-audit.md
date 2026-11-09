@@ -5,8 +5,8 @@ aliases: ["Admin lifecycle notifications", "new_admin_account notification", "ad
 tags: [access, notifications, audit, admin, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[merchant-roles]]. See the hub for the other aspects (owner, moderator, permissions tree, API access, force sign-out + 2FA, storefront contrast).
@@ -15,15 +15,15 @@ source_count: 1
 
 ## Definition
 
-The platform fires **four admin lifecycle email notifications** to the store email on staff create / edit / password-change / reset events, and records every admin lifecycle event in an **internal audit log** with no merchant-facing view. The merchant relies on the four emails for visibility; for richer history (who changed permission X on date Y), they contact CloudCart support.
+The platform sends **four admin lifecycle emails** on staff create / edit / password-change / reset events, each to **the staff member's own address**, not the store email. It keeps **no log of staff changes**: creating, editing, re-permissioning or deleting an account is recorded nowhere the merchant or support can read; the store's event log holds staff sign-ins only.
 
 The four notifications are governed by toggles on [[settings-admin-notifications]] and can be globally disabled or selectively suppressed:
 
 | Notification | Fires when | Toggle on [[settings-admin-notifications]] |
 |---|---|---|
 | `new_admin_account` | A Moderator is created via the Create modal on [[settings-staff]]. | yes |
-| `admin_account_changes` | A Moderator (or the Owner) has their profile edited (non-password fields). | yes |
-| `admin_account_password_change` | A password is updated via the Edit modal's Change password action. | yes |
+| `admin_account_changes` | Someone else changed this person's email, username, first or last name. | yes |
+| `admin_account_password_change` | Someone else set this person's password on the Edit modal. | yes |
 | `admin_account_password_reset` | A password reset is requested (initiated from the admin login page's Forgot password link). | yes |
 
 ## Scope
@@ -32,7 +32,7 @@ What this page covers:
 
 - The four notification types, what triggers each, and where the toggles live.
 - The Forgot password reset flow (initiated outside [[settings-staff]], from the admin login page).
-- The internal audit log — what it captures and why there's no merchant-facing view.
+- That no log of staff changes exists.
 - Why webhook events do NOT cover admin-account lifecycle.
 
 Not covered here:
@@ -45,33 +45,29 @@ Not covered here:
 ## Contrasts
 
 - **Email notification vs Webhook event** — admin-account events are notified by **email only**. There is NO webhook coverage for `new_admin_account`, `admin_account_changes`, etc. The webhook surface ([[settings-hooks]]) is limited to customer / order / product events. For external systems that need to react to admin changes, the merchant has no automated channel.
-- **Email notification vs Audit log** — the four emails are the **only merchant-facing record** of admin lifecycle changes. The internal audit log exists but is not surfaced. Email is push (one shot at event time); the audit log is the system of record (read-only by CloudCart support).
-- **Forgot password (from login page) vs Change password (from Edit modal)** — both end with a new password and fire `admin_account_password_change`. Forgot password additionally fires `admin_account_password_reset` (the "you requested" notification, separate from the "your password changed" confirmation).
+- **Email notification vs log** — the four emails are the **only record** of staff changes, and they go to the person changed, not the owner. No staff-change log stands behind them.
+- **Forgot password (from login page) vs Change password (from Edit modal)** — Forgot password sends `admin_account_password_reset` with a link and nothing once the new password is saved; Change password sends `admin_account_password_change` only when someone else's password is set.
 
 ## Where it applies
 
 ### The four notifications — when each fires
 
-**`new_admin_account`** — fires the moment the Owner clicks Save on the Create modal in [[settings-staff]] after passing the 3-gate flow (plan-limit, 2FA challenge, server hash). Recipient: the store email. Subject and body identify the new Moderator's username and email.
+**`new_admin_account`** — fires the moment the Owner clicks Save on the Create modal in [[settings-staff]] after passing the 3-gate flow (plan-limit, 2FA challenge, server hash). Recipient: the new Moderator's own address. Subject and body identify their username and email.
 
-**`admin_account_changes`** — fires whenever a Moderator or the Owner's profile is edited (non-password fields). Triggered by the Edit modal's Save action. Specifically covers: Profile section changes, Contacts section changes, permission grants / revokes, Avatar updates, 2FA configuration toggles.
+**`admin_account_changes`** — sent when someone saves another person's record and that person's email, username, first or last name changed, to that person's (new) address. Contacts, permissions, avatar and 2FA changes, and edits to your own record, send nothing.
 
-**`admin_account_password_change`** — fires whenever a password is updated. Two trigger paths:
+**`admin_account_password_change`** — sent when someone sets another person's password with Change password on [[settings-staff]]. Changing your own password, or finishing Forgot password, sends nothing.
 
-- The Edit modal's Change password action on [[settings-staff]].
-- The completion of a Forgot password flow (after the new password is saved).
-
-**`admin_account_password_reset`** — fires when the Forgot password flow is **initiated** from the admin login page (not from inside [[settings-staff]]). The merchant clicks Forgot password, gets a one-time code by email, enters it on a reset form, and sets a new password. The `_reset` notification fires at the **initiation** step; the `_change` notification fires at the **completion** step. Both fire separately.
+**`admin_account_password_reset`** — sent when Forgot password is used on the admin login page. It carries a link to set a new password, valid 60 minutes.
 
 ### Forgot password flow — initiated from the login page
 
 When an admin (Owner or Moderator) clicks "Forgot password" on the admin login screen:
 
 1. They enter their email.
-2. The platform emails a one-time code.
-3. The admin enters the code on a reset form.
-4. They set a new password.
-5. Both `admin_account_password_reset` and `admin_account_password_change` notifications fire (separately).
+2. The platform emails a link (the `admin_account_password_reset` email), valid 60 minutes.
+3. The link opens a form to set a new password.
+4. Saving it signs them in; no further email is sent.
 
 Moderators and Owners use the **same Forgot password flow** — there's no difference in the recovery mechanism. The flow is NOT entered from [[settings-staff]]; the Staff screen's Edit modal has a separate Change password action that fires `admin_account_password_change` only.
 
@@ -84,11 +80,9 @@ The merchant can:
 
 When suppressed, the notifications are dropped silently — there's no fallback channel.
 
-### Internal audit log — exists, not surfaced
+### No log of staff changes
 
-The platform records admin lifecycle events (create / edit / delete / password change / permission change) in an internal audit log. **There is no merchant-facing Audit log page in Settings to surface this** — the merchant's only direct visibility is the four email notifications.
-
-For richer history (who changed permission X on date Y), the merchant has to contact CloudCart support, who can query the internal log on their behalf.
+Nothing records who created, edited, re-permissioned or deleted a staff account: there is no log page, and the store's event log holds staff sign-ins only. The four emails above are the only trace, and only for the changes they cover.
 
 ### Why no webhook coverage
 
@@ -101,9 +95,9 @@ Admin-account events do NOT fire webhook events ([[settings-hooks]] is limited t
 ## Why this matters to the merchant
 
 - **The four emails are the audit trail.** Without them, every admin change is invisible. Operating with admin notifications globally disabled removes the merchant's only visibility into who's changing what on the Staff screen.
-- **The store email is the recipient.** If the store email is a shared inbox (e.g., `info@`), every admin reads the notifications. If it's the Owner's personal address, only they see them. Picking the right `site_email` on [[settings-general]] decides who gets visibility.
-- **Password resets fire two separate emails.** That's intentional — the `_reset` notification is the "you (or someone) requested a reset" alert; the `_change` notification confirms the new password was actually set. Investigating a suspicious reset means checking for both emails.
-- **No webhook coverage means external IAM tools can't auto-sync.** For merchants with compliance requirements (e.g., feeding admin lifecycle to a SOC), this is a gap — they rely on the emails (or contact support for the audit log).
+- **The person changed is the recipient.** The owner is not copied, so an owner learns of a change only when it was made to their own account.
+- **A password reset sends one email**, the link, to the person's own inbox.
+- **No webhook coverage means external IAM tools can't auto-sync.** For merchants with compliance requirements (e.g., feeding admin lifecycle to a SOC), this is a gap — they rely on the emails.
 
 ## Related
 
@@ -111,7 +105,7 @@ Admin-account events do NOT fire webhook events ([[settings-hooks]] is limited t
 - [[merchant-roles-moderator]] — Create / Edit / Delete flows that trigger the notifications.
 - [[merchant-roles-owner]] — Owner profile edits trigger `admin_account_changes` too.
 - [[settings-admin-notifications]] — toggles for the four admin lifecycle notifications.
-- [[settings-general]] — `site_email` is the recipient.
+- [[settings-general]] — the store email, which these emails do not use.
 - [[settings-staff]] — Edit modal's Change password action.
 - [[settings-hooks]] — webhook events (note: admin-account events have no webhook coverage).
 - [[admin-notification]] — admin-notification entity.

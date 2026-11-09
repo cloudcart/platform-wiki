@@ -5,8 +5,8 @@ aliases: ["Import history", "Import audit log", "No undo on imports", "Import ro
 tags: [ops, imports, audit, recovery, history, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[import-pipeline]]. See the hub for the other aspects (stages, concurrency lock, validation, upsert + provenance, plan gates + 2FA, XML Sync).
@@ -15,7 +15,7 @@ source_count: 1
 
 ## Definition
 
-Every import in CloudCart writes rows into the **shared import-history log** visible at [[settings-import-history]]. The history is **indefinitely retained** — there's no auto-purge after N days. Per-import aggregate counts (Created / Updated / No-action / Errors / Total) appear in the list; drilling into any import opens a per-record table with the action applied to each record and a "View detailed change log" modal showing the before/after field values.
+Every import in CloudCart writes rows into the **shared import-history log** visible at [[settings-import-history]]. How long it is kept is set on the logging database, not in the platform's code (support reports about 2 days, verify) — see [[settings-import-history-storage-and-retention]]. Per-import aggregate counts (Created / Updated / No-action / Errors / Total) appear in the list; drilling into any import opens a per-record table with the action applied to each record and a "View detailed change log" modal showing the before/after field values.
 
 There is **no built-in undo / rollback** for any import. Once products are created or customer records updated, the merchant has no one-click way to reverse the change. Recovery paths: use the **"Imported with" filter** ([[products-products]]) to find affected records and bulk-delete; restore from a [[backups-and-restore]] backup (loses unrelated changes); or run a **corrective upsert import** that overwrites the bad data.
 
@@ -24,7 +24,7 @@ There is **no built-in undo / rollback** for any import. Once products are creat
 Covered:
 
 - [[settings-import-history]] structure — aggregate counts + per-record drill-in + change-log modal.
-- Indefinite retention and its storage implications.
+- How long history is kept.
 - All-staff visibility (no per-staff filtering today).
 - The three recovery paths when no undo exists.
 - How "Imported with" + bulk delete works in practice.
@@ -40,7 +40,7 @@ Not covered here:
 
 - **Audit log vs queue view** — [[settings-queue-view]] is the LIVE in-flight tracker (Stage 4 of [[import-pipeline-stages]]). [[settings-import-history]] is the POST-completion audit. Different screens, different timing.
 - **Aggregate counts vs per-record drill-in** — the list view shows aggregates (Created / Updated / Errors / Total). Drilling in shows per-record actions with reasons.
-- **Indefinite retention vs typical event logs** — most event logs in CloudCart auto-purge. Import history does NOT. Years of imports accumulate.
+- **History vs the products themselves** — when history expires, the imported products and their "Imported with" stamp stay; only the log goes.
 - **"Imported with" filter vs backup restore** — the filter is fast, surgical, but only finds records the importer tagged with provenance. Backup restore is broad-strokes but loses any unrelated changes since the backup. Corrective import is the third option — runs another upsert with the right values.
 
 ## Where it applies
@@ -63,9 +63,9 @@ Drilling into the row opens the **details view**, which shows:
 - A "View detailed change log" modal per record showing the before/after field values applied by the import.
 - Per-record failure reason (for Error rows).
 
-### Retention — indefinite
+### Retention — short, set on the database
 
-Past imports accumulate in [[settings-import-history]] indefinitely — there's no auto-purge after N days. A merchant running daily imports for years has years of history. Storage scales linearly; the UI handles browse-size via pagination, but the underlying records persist forever unless CloudCart support cleans them up via direct DB access.
+No platform job deletes import history; the retention is set on the logging database itself (support reports about 2 days, verify). An empty history page is not lost data: the products and their "Imported with" stamp remain, so Path 1 recovery still works.
 
 The history view does **NOT auto-refresh** — the merchant manually reloads to see newly-completed imports.
 
@@ -121,4 +121,4 @@ A bad XML sync misreads `<price>` as cents instead of euros and multiplies every
 
 ## Open Questions
 
-- Is there any plan-tier or admin-only auto-purge of very old import history (e.g., >2 years)? Currently documented as indefinite — confirm against current platform retention policy.
+- The logging database's actual retention period for import history (not in the platform's code).

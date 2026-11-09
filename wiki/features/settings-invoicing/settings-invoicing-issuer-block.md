@@ -7,8 +7,8 @@ aliases: ["Invoice issuer", "Company info", "Issuer block", "Company VAT", "BULS
 tags: [settings, invoicing, issuer, company, vat, bulstat]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-invoicing]]. See the hub for the other aspects (activation modes, numbering, template editor, credit note, HTML templates, external systems).
@@ -21,12 +21,12 @@ The "issuer block" is the merchant's own company-identity data that prints at th
 
 ## Where to find it
 
-Sidebar → Settings → **Invoicing** → Invoice template tab → click the **company info** section in the preview to open the "Invoice company info settings" modal. On desktop the settings appear inline in the left side-panel; on mobile they open as a full-screen modal.
+Sidebar → Settings → **Invoicing** → Invoice template tab → click the **company info** section in the preview ("Invoice company info settings"; a full-screen modal on mobile). Saving needs the **Invoicing** staff permission (`settings.invoice`, [[settings-staff]]).
 
 ## What the merchant can do here
 
 - Edit every field of the issuer block.
-- Add arbitrary `{ key, value }` rows to print extra header lines (e.g., `"VAT №"` → `"BG123456789"`) — the `custom_header_text` JSON. The same row-builder appears on the credit-note tab feeding `credit_custom_header_text`. There is no count cap.
+- Add `{ key, value }` header rows (`custom_header_text`; no cap).
 - See validation errors scrolled-to via `errorKeysByPageEnum.company_info` if any required issuer field is missing.
 
 ## Settings & fields
@@ -42,8 +42,8 @@ Sidebar → Settings → **Invoicing** → Invoice template tab → click the **
 | City | `site_city` | required |
 | Street | `site_street` | required |
 | Postal code | `postal_code` | required |
-| Issuer name | `issuer_name` | optional — defaults to store owner's first/last name (or username fallback) |
-| Issuer code | `issuer_code` | optional — defaults to owner's admin ID padded to 7 digits |
+| Issuer name | `issuer_name` | **Footer** section; prints after *Съставил* on invoices. Default below |
+| Issuer code | `issuer_code` | **Footer** section; prints after *Подпис: шифър* on invoices. Default below |
 | Custom header rows | `custom_header_text` (JSON) + `header_rows` (computed `{key, value}` array) | optional, unbounded count |
 
 ## Business rules
@@ -68,14 +68,14 @@ The `checkout_validate_company_vat` setting on [[settings-cart]] gates **custome
 
 Practical guidance: merchants should double-check their own VAT number is in the correct format for their country (e.g., `BG123456789` with the leading country prefix) since a typo here will appear on every invoice.
 
-### Default issuer name / code derive from the store owner
+### Who prints under *Съставил*
 
-When `issuer_name` / `issuer_code` are empty, the platform auto-fills:
+The *Съставил* / *Подпис: шифър* block prints at the bottom of **Bulgarian-language** invoices and credit notes only; documents in other languages have none.
 
-- `issuer_name` from the store owner's first/last name (or username fallback)
-- `issuer_code` from the owner's admin user-ID padded to 7 digits (e.g., `0001234`)
-
-Same for credit-note issuer fields (`credit_issuer_name` / `credit_issuer_code` — see [[settings-invoicing-credit-note]]). Merchants who want a different name on their invoices should fill these fields explicitly.
+- **Invoice:** **Issuer name** and **Issuer code** from the **Footer** section of the Invoice template tab.
+- **Credit note:** its own pair, `credit_issuer_name` / `credit_issuer_code`; the invoice footer's values never reach it. The admin has **no field** for this pair (the Credit note tab shows none). It can be set through the Admin API's invoicing-settings update (`updateInvoicingSettings`).
+- **A value left empty** is filled from the admin who first renders a numbered document of the order in the admin panel (first and last name, else username; code = their admin ID padded to 7 digits, e.g. `0001234`), or from the store owner when it is produced elsewhere. That person is saved on the order and reused for its invoice and credit note.
+- **Saving the Invoicing page stores both pairs.** The page shows an empty name already filled with the signed-in admin's name and sends every value back, so a save writes that name into the invoice pair and the credit-note pair. A credit note can therefore show whoever last saved the page while it was empty.
 
 ### Issuer block defaults from store's onboarding invoicing data
 
@@ -83,17 +83,21 @@ When `company_name` is empty on this page, the Settings → Invoicing endpoint f
 
 ### Custom header rows are unbounded
 
-The merchant can add as many `{ key, value }` rows as they want via the row-builder. They serialise into `custom_header_text` JSON on save and print at the top of the invoice. The same module appears on the Credit note tab feeding `credit_custom_header_text` independently — see [[settings-invoicing-credit-note]].
+Any number of `{ key, value }` rows (e.g. `"VAT №"` → `"BG123456789"`) print at the top of the invoice (`custom_header_text`). The Credit note tab has its own (`credit_custom_header_text`, [[settings-invoicing-credit-note]]).
 
 ### The issuer block is read LIVE on every render — it is not snapshotted
 
 The company block printed on an invoice or credit note is read from these settings **each time the document is rendered**, not frozen when the number was issued. Editing the company name, VAT, address, or the footer issuer name here therefore changes how **already-issued, historical** invoices and credit notes look the next time anyone downloads or emails them.
 
-Merchants who change legal entity or move address should be aware that old documents will re-print with the new details. If a document must keep its original wording, the merchant needs to save a copy of the PDF before editing these fields.
+To keep a document's original wording, save its PDF before editing these fields.
+
+### The phone and address are also the store's contact details
+
+**Phone** (`site_phone`) and the address fields here are the store's single saved contact phone and address: the storefront contact page shows them (*company name, phone*) when its own text is empty ([[design-module-contact-information]]). The GDPR app's store-address step and the Aftercare app's data step write the same fields; the last save wins. Emails have no store-phone variable ([[email-template-variables]]).
 
 ### Errors deep-link to this section
 
-A validation error on any company-info field auto-navigates to the Invoice template tab and scrolls the company-info block into view — via `errorKeysByPageEnum.company_info`. The merchant never has to hunt for which tab is breaking.
+A validation error on any company-info field opens the Invoice template tab and scrolls to the company-info block (`errorKeysByPageEnum.company_info`).
 
 ## Related
 

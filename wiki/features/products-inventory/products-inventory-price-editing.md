@@ -7,8 +7,8 @@ aliases: ["Inventory price editing", "Change price modal", "Bulk price change", 
 tags: [products, inventory, price, bulk]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 > Part of [[products-inventory]]. See the hub for the other aspects (table, quantity editing, oversell toggle, side effects).
 
@@ -58,6 +58,10 @@ After every bulk price-save, the platform re-runs the default-Variant selection 
 ### Side effects on save
 
 A price save fires the same downstream chain as a quantity save — search re-index, storefront cache flush, `product.updated` webhook. See [[products-inventory-side-effects]] for the full list.
+
+### Discount prices are not recalculated
+
+Unlike a save from the product form, a price saved here does not rebuild the product's discount prices: a no-code Percent or Flat discount keeps the sale price worked out from the old price (one aimed at a smart collection is rebuilt when that collection re-evaluates), and a Fixed price is not switched off when the new price falls to or below it. Saving the product from its form, or re-saving the discount, brings them in line — see [[discounts-storefront-display]].
 
 ## Related
 

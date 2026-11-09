@@ -1,12 +1,12 @@
 ---
 type: concept
 nav_path: "Concept → Import pipeline → Upsert & provenance"
-aliases: ["Import upsert", "Import provenance tags", "Imported with filter", "app_import", "xml_import_id", "Per-record import tagging", "Import match by identifier"]
+aliases: ["Import upsert", "Import provenance tags", "Imported with filter", "app_import", "xml_import_id", "Per-record import tagging", "Import match by identifier", "CSV import update existing", "CSV import duplicates"]
 tags: [ops, imports, upsert, provenance, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[import-pipeline]]. See the hub for the other aspects (stages, concurrency lock, validation, plan gates + 2FA, history + recovery, XML Sync).
@@ -15,7 +15,7 @@ source_count: 1
 
 ## Definition
 
-Most importers in CloudCart operate in **upsert mode**: if a row's identifier matches an existing record, the existing record is **updated**; otherwise a **new** record is created. The match identifier varies by entity — `email` for customers, `sku` / `barcode` / `product.id` for products. Only mapped columns are touched on an update; unmapped fields keep their current values.
+Most importers in CloudCart operate in **upsert mode**: if a row's identifier matches an existing record, the existing record is **updated**; otherwise a **new** record is created. The match identifier varies by entity — `email` for customers, a chosen column (SKU, barcode or ID) for XML product imports. Only mapped columns are touched on an update; unmapped fields keep their current values. **Product CSV Import is the exception:** it never matches products already in the store, so every task creates new products (see [[apps-csv-import]]).
 
 Every record created or updated by an importer is also tagged with **provenance** — a marker pointing back to the source task. Products carry `app_import = 'csv-{taskId}-<source>'` (CSV imports) or `xml_import_id` + `xml_import_product_id` + `xml_import_name` (XML imports); other entities carry similar source hints. The provenance enables the **"Imported with" filter** on [[products-products]] — the merchant's primary cleanup tool when a botched import needs to be reversed.
 
@@ -33,12 +33,12 @@ Covered:
 Not covered here:
 
 - The wizard step where columns are mapped — see [[import-pipeline-stages]].
-- Per-field update policies on [[apps-xml-sync]] — see [[import-xml-sync-recurring]].
+- The per-field Update checkbox on [[apps-xml-sync]] — see [[import-xml-sync-recurring]].
 - How "no undo" interacts with provenance for cleanup — see [[import-history-and-recovery]].
 
 ## Contrasts
 
-- **Upsert vs create-only vs update-only** — most importers do upsert. There is NO "update only" or "create only" toggle on most importers — the upsert is the default behaviour. Merchants who want to ONLY add new (skip existing) typically filter the source data to exclude existing identifiers before upload.
+- **Upsert vs create-only vs update-only** — most importers do upsert, with NO "update only" or "create only" toggle. Product CSV Import has no mode selector either and always creates; re-importing existing products makes duplicates.
 - **Per-task mapping vs reusable preset** — the column-to-field mapping is stored on the task row itself for resume support, but there is NO "save this mapping for next month's import" affordance. Each new import starts from scratch. Workaround: keep the source spreadsheet with the SAME column order across imports.
 - **Products provenance vs customer provenance** — the "Imported with" filter is currently implemented on [[products-products]] only. Customers list does NOT have an equivalent one-click filter today (verify).
 
@@ -49,7 +49,7 @@ Provenance and upsert apply during **Stage 4 — Background processing** ([[impo
 ### Match identifiers per entity
 
 - **Customers** — email match (case-sensitive exact) updates the customer; otherwise creates new. Only mapped fields are touched; un-mapped fields keep their current values. So a partial CSV (just `email, note`) updates the note on matching customers and leaves everything else alone.
-- **Products** — match column is configurable (`sku`, `barcode`, `product.id`); same upsert pattern. [[apps-xml-sync]] also offers per-field update policies (always update / update if delta < N% / never update) — see [[import-xml-sync-recurring]].
+- **Products** — XML imports match by a configurable column (SKU, barcode or ID). [[apps-xml-sync]] only updates matched products, with a per-field on/off Update checkbox (no percentage-threshold option) — see [[import-xml-sync-recurring]]. Product CSV never matches existing products: the file's product ID only groups rows within one task.
 - **Other entities** — varies per importer; most match by a stable identifier (slug, external ID, etc.).
 
 ### Provenance fields per importer
@@ -81,14 +81,14 @@ The merchant's column-to-field mapping is stored on the task row itself, NOT as 
 
 ### Update vs create — most importers do both
 
-There is no "update only" or "create only" toggle on most importers — the upsert is the default behaviour. The merchant who wants to ONLY add new (skip existing) typically does it by filtering the source data to exclude existing identifiers before upload. Conversely, the merchant who wants to ONLY update existing typically maps just the fields they want to change and accepts that any new rows will be created (then deletes them via the "Imported with" filter).
+With no "update only" / "create only" toggle, the merchant who wants to ONLY add new (skip existing) filters the source data to exclude existing identifiers before upload; one who wants to ONLY update existing maps just the fields to change and deletes any newly created rows via the "Imported with" filter. None of this applies to **product CSV**, which has no update path: to change products already in the store, use [[apps-google-sheets]] or the products list bulk actions.
 
 ### Example — re-running with corrected data
 
 1. Merchant runs a 500-row product CSV import. 487 succeed, 13 fail with "category not found".
-2. Merchant fixes the source CSV — corrects the category slugs on the 13 failing rows.
-3. Merchant re-uploads the SAME 500-row CSV.
-4. Upsert kicks in: the 487 previously-imported products match by `sku` and are updated (with the same data, so effectively no-op). The 13 previously-failed rows now match the corrected categories and are created.
+2. Merchant fixes the category slugs on the 13 failing rows.
+3. Re-uploading the SAME 500-row CSV would NOT update anything: the new task matches nothing from the first one, so the 487 products would be created again as duplicates.
+4. Instead, the merchant imports a file holding only the 13 corrected rows. If the full file was already re-imported, filter the products list by the second task ("Imported with") and bulk-delete its duplicates.
 5. Both runs are visible in [[settings-import-history]] with their own task IDs and `app_import` provenance markers.
 
 ## Related

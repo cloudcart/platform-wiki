@@ -4,8 +4,8 @@ aliases: ["Capture source attribution", "subscribed_from", "subscriber.from_form
 tags: [marketing, subscribers, attribution, segments, forms, concepts]
 plan_gates: []
 created: 2026-06-30
-updated: 2026-06-30
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Capture-source attribution
@@ -27,8 +27,11 @@ The `subscribed_from` source is a fixed enum; the values (with their merchant-fa
 | `messenger` | Messenger | the Messenger channel |
 | `contacts_form` | Contacts form | the storefront contact form |
 | `system` | From system | platform-internal capture |
+| `subscribe_from_missing_product` | Subscribe to an in-stock product | a back-in-stock request |
+| `web_push` | Web push | a Web Push opt-in |
+| `API` | API | created through [[api-subscribers]] with no source given (no `form_id`) |
 
-(Programmatic creates via [[api-subscribers]] carry an API source with **no** `form_id`.)
+The "Subscribed from" filter and the `subscriber.from` segment condition offer only the 9 values from `customer_login` to `system`; form sign-ups are found with `subscriber.from_form`.
 
 ## Scope
 
@@ -65,4 +68,4 @@ Subscribers created via [[api-subscribers]] get the API source and **`form_id = 
 
 ## Open Questions
 
-- (verify) The complete `subscribed_from` enum (additional internal values beyond those listed) and the exact API source label.
+No outstanding questions.

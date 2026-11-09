@@ -7,8 +7,8 @@ aliases: ["GDPR Cookies", "Cookie consent", "Cookie bar", "Cookie wall", "Cookie
 tags: [apps, gdpr, compliance, cookies, consent, privacy]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-08-08
-source_count: 10
+updated: 2026-11-09
+source_count: 11
 ---
 # GDPR → Cookies
 
@@ -20,14 +20,15 @@ This page is the **hub** for the cookie-consent cluster. It is intentionally sli
 
 ## Sub-pages (in this cluster)
 
-This feature is split into 5 aspect pages, each covering one well-scoped slice:
+This feature is split into aspect pages, each covering one well-scoped slice:
 
-- [[apps-gdpr-cookies-bar-wall]] — the storefront presentation: cookie **bar** vs **wall** (mutually-exclusive dropdown), bar text, consent dialog text, the `#gdpr_popup` modal and the `#gdpr-trigger` / `#cookies-trigger` re-open hooks.
-- [[apps-gdpr-cookies-groups]] — the 5 standard cookie groups taxonomy (`system`, `performance`, `functional`, `targeting`, `consent_mode_for_traffic`), the per-group editor, the `default` pre-consent fallback flag, and why the `system` group can't be rejected.
+- [[apps-gdpr-cookies-bar-wall]] — the storefront presentation: cookie **bar** vs **wall** (the **Cookie Consent Mode** dropdown), the cookie policy page, the texts, the buttons and their Bulgarian labels, and how visitors re-open the settings (a menu link to `#cookie-settings`).
+- [[apps-gdpr-cookies-groups]] — the 5 standard cookie groups taxonomy (`system`, `performance`, `functional`, `targeting`, `consent_mode_for_traffic`), the per-group editor, the **Default state** that sets where a switch starts, and why the `system` group can't be rejected.
 - [[apps-gdpr-cookies-definitions]] — the per-cookie 3-field modal (name / description / technical cookie names), the auto-generated `mapping` slug + duplicate rejection, one-click delete, the `{cookies_table}` storefront placeholder, and the no-auto-scan rule.
 - [[apps-gdpr-cookies-consent-mode]] — Google Consent Mode v2 via the `consent_mode_for_traffic` group: default-off opt-in, the subscription gating (one-time purchases get a 402), and the bulk-activate command.
-- [[apps-gdpr-cookies-consent-state]] — the `cc-cookie-consent` browser cookie: its `group:yes|no` structure, the 365-day expiry, why it is NOT encrypted, the rejected-cookie cleanup endpoint, the 20-minute group cache, and why adding a cookie does NOT force re-consent.
-- [[apps-gdpr-cookies-behaviour-matrix]] — **every configuration × every visitor action → what actually happens**: why the bar keeps showing after a *partial* consent (by design), what the × really does, why Accept-all and Save-preferences are not symmetric, the four bar/wall combinations, empty groups vanishing from the prompt, and the *"the banner keeps coming back"* support playbook.
+- [[apps-gdpr-cookies-consent-state]] — the `cc-cookie-consent` browser cookie: its `group:yes|no` structure, the 180-day lifetime, why it is NOT encrypted, the cleanup of declined groups' cookies, the 20-minute group cache, and what asks a visitor again.
+- [[apps-gdpr-cookies-platform-cookies]] — the storefront's own cookies (`_ccs`, `XSRF-TOKEN`, `uuid`, `_ccases`, `ccchc`, `cc`, `cc-history` and others): purpose, lifetime, and why none waits for the prompt.
+- [[apps-gdpr-cookies-behaviour-matrix]] — **every configuration × every visitor action → what actually happens**: any answer dismisses the bar (since 06.11.2026), what the × really does, Accept vs Save settings vs Reject, the bar/wall combinations, and the *"the banner keeps coming back"* support playbook.
 
 ## Where to find it
 

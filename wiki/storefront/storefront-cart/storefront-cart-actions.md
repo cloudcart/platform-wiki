@@ -5,8 +5,8 @@ route_path: /cart/add
 themes_using: [all]
 tags: [storefront, cart, add-to-cart, ajax, javascript]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 > Part of [[storefront-cart]]. See the hub for the other aspects (the three render surfaces, merchant customisation + known issues).
@@ -45,7 +45,7 @@ After a mutation the customer sees the updated totals and line state appear in p
 
 ## Storefront behaviour
 
-- **Add to cart** — POST to `cart.add`. Server validates against `cart_max_products` (per-variant cap) and `cart_max_quantity` (per-cart cap); throws translated error messages when exceeded. On success the JSON response contains `events: ['cc.cart.product.updated']`, the formatted cart total to swap into `.js-checkout-total-formatted`, and triggers the cart drawer to open per `action_after_add_to_cart` (see [[storefront-cart-customisation]]).
+- **Add to cart** — POST to `cart.add`. Server validates against `cart_max_products` (per-variant cap) and `cart_max_quantity` (per-cart cap); throws translated error messages when exceeded. On success the JSON response contains `events: ['cc.cart.product.updated']`, the formatted cart total to swap into `.js-checkout-total-formatted`, and the storefront then acts per `action_after_add_to_cart` (see [[storefront-cart-customisation]]).
 - **Update quantity** — POST to `cart.update` (or `cart.update-product-quantity/{item_key}`). Re-computes totals server-side; response includes `reload: ['.js-checkout-total-formatted']` and the `cc.cart.product.updated` event. The form-submit-ajax pipeline finds every `[data-module="cart"]` and `[data-module="cart-compact"]` element and reloads them from their `data-ajax-box` URLs — so updating the drawer quantity also updates the full-page total and the header bubble in one round-trip.
 - **Bulk update** — POST to `cart.update-bulk` with `cart[variants][{key}] = qty`. Used when the customer changes several quantities and clicks "Update" once. Runs in a transaction so partial errors roll back.
 - **Upload a file** — `cart/option-upload`, then `cart/add-upload`, which accepts only a file this session uploaded. Refusal: en *"This file no longer exists"*, bg *"Този файл не съществува"*.
@@ -93,7 +93,7 @@ Mutations are gated/shaped by a few settings (full detail on [[storefront-cart-c
 ## Known issues / by-design vs bug
 
 - **"Clear cart" doesn't fire `cc.cart.product.updated`** — it fires `removed` and `deleted` instead. Listeners that only bind to `updated` will miss clear events. (Catalogued with the other event quirks on [[storefront-cart-customisation]].)
-- **`action_after_add_to_cart=none` still fires the cart-updated event and reloads the cart module** — the visual drawer just doesn't open. By design.
+- **`action_after_add_to_cart=stay_on_page` still fires the cart-updated event and reloads the cart module** — nothing opens (verify). By design.
 
 ## Related
 

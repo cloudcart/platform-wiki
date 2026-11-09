@@ -7,8 +7,8 @@ aliases: ["Recurring jobs", "Populate poller", "Queue intervals", "One-shot jobs
 tags: [settings, queue, recurring, scheduler, populate]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[settings-queue-view]]. See the hub for the other aspects (page UI, actions, visibility, running-detection, queue families, event subscribers).
@@ -80,7 +80,7 @@ The merchant-visible **Next run** timestamp is computed from `last completed_at 
 | `populate_*_tasks` | 1 min | varies | yes | The recurring-job poller itself |
 | `populate_tasks` (legacy) | 1 min | `system8` | yes | Legacy global populate (deprecated) |
 | `uninstall_un_paid_apps` | 12 h | `system7` | no | Disable apps on lapsed accounts |
-| `disable_un_paid_functionality` | 12 h | `system7` | no | Disable plan features on lapsed accounts |
+| `disable_un_paid_functionality` | 12 h | `cc-system7` | no | Per store: switch off settings the current plan no longer covers, incl. a used-up numeric allowance (abandoned-cart reminders off; GARAN label display capped) — see [[abandoned-cart-plan-quota]] |
 | `statistics_orders_fulfillment` | 24 h | `system7` | no | Aggregate order-fulfillment stats |
 | `statistics_orders_payments` | 24 h | `system7` | no | Aggregate order-payment stats |
 | `remove_global_import_records_failed` | 24 h | `import` | no | Cleanup failed import log records |

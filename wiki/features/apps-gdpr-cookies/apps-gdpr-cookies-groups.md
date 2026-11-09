@@ -7,8 +7,8 @@ aliases: ["Cookie groups", "Cookie group editor", "Cookie groups taxonomy", "sys
 tags: [apps, gdpr, compliance, cookies, consent, storefront]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # GDPR — Cookies: groups
 
@@ -25,9 +25,9 @@ Sidebar → Apps → GDPR → **Cookies tab** (`/admin/apps/gdpr/cookies`). Each
 ## What the merchant can do here
 
 - Turn a group **active** (offered to customers) or inactive.
-- Set the group's **default state** (assumed accept vs reject before the visitor decides).
+- Set the group's **default state** (whether its switch starts on or off in the dialog).
 - Edit the customer-facing **name** and **description** per group, per language.
-- Adjust default states per the compliance jurisdiction (GDPR-strict = all opt-in; CCPA = some opt-out acceptable).
+- Start the optional switches off, so the dialog asks for opt-in.
 
 What the merchant **cannot** do: disable the `system` group from showing, or set the `system` group's default to rejected — those cookies are technically essential.
 
@@ -37,13 +37,15 @@ What the merchant **cannot** do: disable the `system` group from showing, or set
 
 The platform ships **5** standard groups (not 4). Defaults shipped with EN, BG, RO, EL, HU translations in the seed data; the merchant can edit per-language wording.
 
-| Group key (`mapping`) | Default state | Customer-facing label | Notes |
-|---|---|---|---|
-| `system` | yes | Strictly Necessary Cookies | Always yes — cannot be rejected. Session, cart, login. |
-| `performance` | yes | Performance Cookies | Counts visits / traffic sources. Customer may reject. |
-| `functional` | yes | Functional Cookies | Videos, live chats, language preference. |
-| `targeting` | yes | Targeting Cookies | Advertising-partner cookies. |
-| `consent_mode_for_traffic` | **no** | Google Consent Mode | Separate group for Google Ads / Analytics / Floodlight Consent Mode v2 signals — explicit opt-in required. See [[apps-gdpr-cookies-consent-mode]]. |
+| Group key (`mapping`) | Default state | Admin box title | Visitor label (seed, EN / BG) | Notes |
+|---|---|---|---|---|
+| `system` | yes | Necessary cookies | Strictly Necessary Cookies / Строго необходими | Always yes — cannot be rejected. Session, cart, login. |
+| `performance` | yes | Efficiency | Performance Cookies / Ефективност | Counts visits / traffic sources. |
+| `functional` | yes | Functionality | Functional Cookies / Функционалност | Videos, live chats, language preference. |
+| `targeting` | yes | Targeting | Targeting Cookies / Таргетиране | Advertising-partner cookies. |
+| `consent_mode_for_traffic` | **no** | Google Consent Mode | Google Consent Mode / Режим на съгласие за трафик | Consent Mode v2 signals — explicit opt-in. See [[apps-gdpr-cookies-consent-mode]]. |
+
+The visitor labels are the seed's text, so they are what a store shows until the merchant renames a group. The admin's Bulgarian box titles are kept in the admin's translations, not in the code.
 
 ### Group editor (`AddOrEditGroup.vue`) — 4 fields, no per-cookie list inside
 
@@ -52,19 +54,19 @@ The per-group editor collects exactly four fields. The per-cookie list is manage
 | Field | Component | Conditional visibility |
 |---|---|---|
 | **Active** (`group.active`, 0/1) | ActiveSwitch | Hidden for `system` group (always active). |
-| **Default state** (`group.default`, 0/1) | ActiveSwitch | Only shown when `active = 1`. Drives the assumed-consent fallback when the visitor has no `cc-cookie-consent` cookie yet. |
+| **Default state** (`group.default`, 0/1) | ActiveSwitch | Only shown when `active = 1`. The position the group's switch starts in, in the dialog, before the visitor answers. |
 | **Name** (`group.name`, max 191) | InputComponent | The customer-facing label (e.g., "Performance Cookies"). |
 | **Description** (rich text via `TextEditor`) | TextEditor | The longer explanation rendered next to the toggle in the storefront's cookie modal. |
 
 ## Business rules
 
-### The `default` flag is the pre-consent fallback
+### Default state moves the switch, not the tracking
 
-When no `cc-cookie-consent` cookie is present, each group's `default` column drives the assumed consent state. For non-`system` groups the merchant can flip `default` between **yes** (assume consent) and **no** (assume rejection). The seed data sets all groups except `consent_mode_for_traffic` to `yes`; the merchant can override per group. How that fallback is stored and read is documented on [[apps-gdpr-cookies-consent-state]].
+**Default state** decides whether the group's switch starts on or off when a visitor first opens the dialog, so a visitor who presses **Save settings** without touching it stores that value. It does not decide what happens before an answer: until then the tracking apps follow fixed states (`targeting`, `performance`, `functional` accepted; Consent Mode refused) whatever this setting says. See [[apps-gdpr-cookies-consent-state]] and [[apps-gdpr-overview-script-gating]].
 
-### A switched-off group counts as its default
+### A switched-off group counts as accepted
 
-A group the merchant switched off is not offered, so a visitor's choice never names it. It counts as its default: accepted, except for the Google Consent Mode group, whose switching off turns Consent Mode off instead. The Storefront API lists such groups in `cookieConsent.inactiveGroups` ([[headless-analytics-consent]]).
+A group the merchant switched off is not offered, so a visitor's choice never names it. It counts as its fixed pre-answer state: accepted, except for the Google Consent Mode group, whose switching off turns Consent Mode off instead. The Storefront API lists such groups in `cookieConsent.inactiveGroups` ([[headless-analytics-consent]]).
 
 ### The `system` group is special
 

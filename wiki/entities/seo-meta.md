@@ -4,8 +4,8 @@ nav_path: "Entity → SEO Meta"
 aliases: ["SEO Meta", "Meta tags", "Meta information", "Meta title", "Meta description", "OG image", "Open Graph image", "Canonical URL", "Мета информация", "Мета заглавие", "Мета описание", "Мета тагове"]
 tags: [entity, seo, marketing, meta-tags, translations]
 created: 2026-05-24
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # SEO Meta
@@ -22,12 +22,12 @@ SEO Meta is distinct from a **301 Redirect** ([[seo-redirect]]): a redirect chan
 
 This entity is split into 6 aspect pages, each covering one well-scoped slice. The Assistant should drill into the aspect that matches the question, not read every page.
 
-- [[seo-meta-fields]] — the catalogue of meta fields (meta_title, meta_description, og_image, canonical_url, no_index_meta) and what each one renders in the storefront HTML.
+- [[seo-meta-fields]] — the catalogue of meta fields (meta_title, meta_description, og_image, canonical_url) and what each one renders in the storefront HTML.
 - [[seo-meta-fallback-chain]] — the 4-layer priority order (per-entity → section → language file → English) + auto-generation + blank-field semantics.
 - [[seo-meta-section-defaults]] — the [[marketing-seo-meta]] Vue page (5 exposed sections, 11+ sections without a screen, single global Save, no SERP preview / no length validation).
 - [[seo-meta-per-entity]] — per-entity meta storage on Product / Category / Vendor / CMS Page / Blog Article (column on the entity row, edited inside the parent editor).
 - [[seo-meta-multilang-storage]] — per-language + per-theme storage as Translation rows, the `is_translated` flag, translation cache invalidation on save.
-- [[seo-meta-canonical-noindex]] — the `canonical_url` and `no_index_meta` fields on CMS Pages, no-inheritance rule, OG-image-dimension non-validation, permission and plan gates.
+- [[seo-meta-canonical-noindex]] — the `canonical_url` field on CMS Pages, the absence of any per-page noindex, OG-image-dimension non-validation, permission and plan gates.
 
 ## Aliases
 
@@ -47,7 +47,6 @@ The headline attributes — see [[seo-meta-fields]] for the full per-field table
 | **Meta description** (`meta_description`) | Textarea | Per-entity editor + [[marketing-seo-meta]] per-section card |
 | **OG image** (`og_image`) | Image uploader | Per-entity editor |
 | **Canonical URL** (`canonical_url`) | Text input | CMS Page editor only |
-| **No-index meta** (`no_index_meta`) | Toggle | CMS Page editor only |
 | **Locale** (`locale`) | Auto-set to `site('language')` at save | Translation row (per-section meta) |
 | **Theme** (`theme`) | Auto-set to active theme at save | Translation row (per-section meta) |
 
@@ -66,7 +65,7 @@ Drill into [[seo-meta-fields]] for the full catalogue (including per-section car
 - [[product]] — per-product meta editor (meta_title, meta_description, og_image) — see [[seo-meta-per-entity]].
 - [[category]] — per-category meta editor — see [[seo-meta-per-entity]].
 - [[vendor]] — per-vendor meta editor — see [[seo-meta-per-entity]].
-- [[marketing-landing-pages]] — per-CMS-page meta editor (meta_title, meta_description, og_image, canonical_url, no_index_meta).
+- [[marketing-landing-pages]] — per-CMS-page meta editor (meta_title, meta_description, og_image, canonical_url).
 - [[blog-article]] — per-blog-article meta editor.
 - [[apps-seo-spinner]] — AI content variation generator that can rewrite meta titles / descriptions for products in bulk.
 - [[settings-translations]] — manage storefront language strings; the section meta values saved on [[marketing-seo-meta]] are stored against the active storefront language — see [[seo-meta-multilang-storage]].

@@ -7,11 +7,13 @@ aliases: ["SMS MsgHub length", "SMS MsgHub billing", "MsgHub multi-part SMS", "M
 tags: [marketing, channels, sms, msghub, billing, length]
 plan_gates: ["campaign.channel.sms_msghub_message"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-channels-sms-msghub]]. See the hub for the other aspects (overview, send pipeline, settings, DLR webhook).
+
+> **Retired.** The current platform code no longer loads the MsgHub channel, so SMS campaigns go through NTH ([[marketing-channels-sms-nth]]). This page describes how MsgHub worked; verify on production before relying on it.
 
 # SMS MsgHub — Message length & billing
 

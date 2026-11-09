@@ -7,8 +7,8 @@ aliases: ["Receipt surfaces", "Where is the receipt", "View receipt link", "Orde
 tags: [orders, receipt, surfaces, history, notifications]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 > Part of [[orders-receipt]]. See the hub for the other aspects (eligibility, numbering, rendering).
 
@@ -33,11 +33,11 @@ The history entry (and therefore the link) only appears when an Invoicing provid
 
 ### Customer also receives it automatically
 
-Per the `paid` / `completed` status-change notification template ([[settings-statuses]]), customers may receive the receipt PDF as an **attachment** to their status-change email. The merchant does NOT trigger this — it is automatic when the order reaches the configured trigger status AND the merchant's email template for that status includes the receipt attachment.
+While an invoicing provider is active, three customer emails carry the receipt PDF (*order-receipt.pdf*) as an **attachment** whenever the order already qualifies for one: the **new order** confirmation, the **order status change** email and the **order shipped** email. The invoice PDF rides along the same way. There is no per-template switch and no payment-method filter: an order paid by card or by cash on delivery is treated alike. The merchant does not trigger it; whether each email is sent at all is set on [[settings-statuses]] and the store's notification settings.
 
 ### No "Send receipt to customer" action surface
 
-The merchant has NO admin-side button to email the receipt on demand. Receipt emailing happens ONLY as part of the standard customer-notification flow on the `paid` / `completed` status change (above). The N18 Audit app's translation key the platform code (*"Generate and send receipt"*) is currently UNUSED in the admin UI — a legacy string from a feature that never shipped a merchant-facing button.
+The merchant has NO admin-side button to email the receipt on demand. Receipt emailing happens ONLY as part of the customer emails above. The N18 Audit app's translation key the platform code (*"Generate and send receipt"*) is currently UNUSED in the admin UI — a legacy string from a feature that never shipped a merchant-facing button.
 
 ## Settings & fields
 
@@ -46,7 +46,7 @@ The merchant has NO admin-side button to email the receipt on demand. Receipt em
 | **`I`** (default) | Inline — PDF opens in a new tab. |
 | **`D`** | Download — PDF triggers a Save File dialog. |
 
-There is no per-order setting that controls whether the receipt link appears — it is driven entirely by app installation + order state. The customer-attachment behaviour is governed by the relevant status template on [[settings-statuses]], not by any field on the receipt itself.
+There is no per-order setting that controls whether the receipt link appears — it is driven entirely by app installation + order state. The customer attachment follows the rule above, not any field on the receipt itself.
 
 ## Business rules
 

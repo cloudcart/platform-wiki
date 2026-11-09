@@ -7,8 +7,8 @@ aliases: ["Datalayer", "Data Layer", "GTM data layer", "Tracking data layer"]
 tags: [apps, others, tracking, tag-manager, advanced]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-05-28
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # Data Layer
 
@@ -39,7 +39,7 @@ Manager exposes:
 
 ### Companion to GTM
 
-Data Layer is most useful when paired with [[apps-google-tags]]. Without GTM, the data layer emits but nothing consumes it (browser console only).
+Data Layer is most useful when paired with [[apps-google-tags]]. Without GTM it is still read by the storefront script of [[apps-google-analytics]] and [[apps-google-dynamic]], which builds their events from it.
 
 ### Permission
 
@@ -127,7 +127,7 @@ For these merchant pages, GTM tags that depend on rich product data won't get it
 
 ### App has NO settings page
 
-Like [[apps-google-connect]], the Data Layer app's Vue Index uses `:supportConfig="false"` and `:installOnly="true"` — the app is install-only with no settings tab and no configuration fields. There are NO toggles for which events fire, which page types to include, or which fields to enrich. Behaviour is entirely defined by the platform's storefront data-layer view + dynamic-content endpoint; the merchant cannot tune it via UI. Install → events emit; uninstall → events stop. That's the entire merchant-facing control surface.
+Like [[apps-google-connect]], the Data Layer app's Vue Index uses `:supportConfig="false"` and `:installOnly="true"` — the app is install-only with no settings tab and no configuration fields. There are NO toggles for which events fire, which page types to include, or which fields to enrich. The app is installed on every new store, and the storefront emits `cc_page_data` and loads the customer script on every page whether or not it is installed: no setting switches them off.
 
 ### Single route, no children
 

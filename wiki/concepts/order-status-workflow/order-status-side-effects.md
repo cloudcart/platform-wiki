@@ -5,8 +5,8 @@ aliases: ["Order status side effects", "Status change cascade", "What happens wh
 tags: [orders, statuses, side-effects, webhooks, notifications, stock, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[order-status-workflow]]. See the hub for the other aspects (taxonomy, custom statuses, transitions, auto-transitions, negative semantics, action gates).
@@ -42,7 +42,7 @@ The cascade runs on every successful status change — admin click, bulk action,
 
 1. **Stock movement.** Whether stock moves at all is decided by the rule in *Stock — the actual rule* below.
 
-2. **Invoice number + receipt number issued** — unconditionally on every status change, provided an invoicing provider is active on [[settings-invoicing]]. This is why an invoice number can appear on an order the merchant never explicitly invoiced.
+2. **Invoice / receipt number issued** — checked on every status change; each is issued once, when the order first is paid, completed, fulfilled or digital. Invoice: needs invoicing on ([[settings-invoicing]]); receipt: needs the N18 Audit app.
 
 3. **Customer lifetime-spend recomputation queued.**
 

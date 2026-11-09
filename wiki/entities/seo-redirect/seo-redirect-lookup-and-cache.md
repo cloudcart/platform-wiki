@@ -4,8 +4,8 @@ nav_path: "Entity → SEO 301 Redirect → Lookup and cache"
 aliases: ["301 redirect lookup", "Redirect middleware", "Wildcard redirects", "has_301_redirects", "redirects301 cache", "Path-prefix optimisation", "Indexable routes"]
 tags: [entity, seo, marketing, redirects, performance, cache]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[seo-redirect]]. See the hub for the other aspects (types, marketing passthrough, CSV import, auto-tracking, validation and UI).
@@ -16,7 +16,7 @@ source_count: 1
 
 When a customer or bot requests a URL on the storefront, the redirect middleware decides — fast — whether any [[seo-redirect|301 rule]] matches. The mechanics matter because they explain (a) why a brand-new rule appears to work immediately, (b) why a rule with a custom URL prefix may feel slower than one with a CloudCart-conventional prefix, and (c) why some redirects keep firing for hours after a delete from external caches.
 
-The lookup runs only on a fixed set of "indexable" storefront routes and short-circuits entirely when the merchant has zero rules.
+The lookup runs before the page renders on a fixed set of "indexable" storefront routes, runs again when a storefront request ends in a 404, and short-circuits entirely when the merchant has zero rules.
 
 ## Aliases
 
@@ -34,7 +34,7 @@ The lookup runs only on a fixed set of "indexable" storefront routes and short-c
 | **Trailing-slash tolerance** | The lookup tries the URL both with and without a trailing slash. | Avoids the merchant having to write two rules for `/path` and `/path/`. |
 | **Path-prefix optimisation (7 conventional prefixes)** | When the requested URL's first segment is one of `product`, `category`, `vendor`, `blog`, `article`, `page`, `selection`, the lookup runs a prefix-scoped query (`old_url LIKE '/product/%'`) instead of scanning the whole table. | Stick to conventional prefixes for best performance — custom prefixes trigger a wider scan. |
 | **24-hour `redirects301` cache** | Each requested URI's lookup result is memoized for 24 hours under the `redirects301` cache tag. Saving / editing / deleting any rule flushes the entire tag. | Internal changes apply on the next request. External CDN / browser caches are out of platform control. |
-| **Indexable-route gate** | The middleware only runs on a fixed list of storefront routes (Home, Selection, Showcase, Vendors, Vendor view, Tag, Category view, Category list, Blog list, Blog view, Blog article view, Page, Page preview, Bundles list, Bundles list category, Product view, Contacts). | Admin panel, cart, checkout, account, etc. are NOT redirect-eligible — the merchant cannot redirect away from the cart page using this mechanism. |
+| **Indexable-route gate** | The middleware runs on a fixed list of storefront routes (Home, Selection, Showcase, Product list, Vendors, Vendor view, Tag, Category view, Category list, Blog list, Blog view, Blog article view, Page, Page preview, Bundles list, Bundles list category, Product view, Contacts), plus a path that matches no storefront page (on its 404). | Admin panel, cart, checkout, account, etc. are NOT redirect-eligible — the merchant cannot redirect away from the cart page using this mechanism. |
 | **AJAX / non-storefront skip** | The middleware skips AJAX requests and non-storefront requests entirely. | Theme-internal calls aren't intercepted. |
 
 ## Relationships
@@ -45,7 +45,7 @@ The lookup runs only on a fixed set of "indexable" storefront routes and short-c
 
 ## Lifecycle
 
-For each indexable storefront request:
+For each indexable storefront request, before the page itself renders (and again for a path that ends in a 404):
 
 1. **Gate check** — if `has_301_redirects = false`, return immediately (no DB lookup).
 2. **Cache lookup** — check `redirects301` for the requested URI. Hit → return the cached redirect target (or "no match").
@@ -71,7 +71,11 @@ The admin help text and placeholders do not explain that `*` substitutes the SQL
 
 ### Middleware does NOT run on cart / checkout / account
 
-The "indexable" route list excludes the cart, checkout, account, login, register, wishlist, and search pages. A merchant who tries to redirect `/cart` to `/special-cart` via a 301 rule will find the rule has no effect — those routes bypass the middleware entirely. (Whole-domain forwarding via [[apps-domain-redirect]] DOES affect every route, including those.)
+The "indexable" route list excludes the cart, checkout, account, login, register, wishlist, and search pages. A merchant who tries to redirect `/cart` to `/special-cart` via a 301 rule will find the rule has no effect — those routes bypass the middleware entirely. ([[apps-domain-redirect]] skips cart, checkout and account pages as well.)
+
+### A matching rule overrides a live page
+
+Because the lookup runs before the page renders, a rule whose source matches a live, working page on an indexable route (the home page, `/blog`, a live category or product) returns the 301 and the page is never shown. It is not a 404-only fallback. A second pass on a storefront 404 catches rules for paths that match no page at all. A rule on a live non-indexable page (cart, checkout, account, search) never fires. Full precedence: [[seo-301-redirects-middleware]].
 
 ### Always 301 — no 302 option
 

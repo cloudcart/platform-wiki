@@ -4,8 +4,8 @@ nav_path: "Entity → Cart → Recovery markers"
 aliases: ["Cart recovery markers", "Recovery channel", "Restore-link token", "Cart source", "Recovered order attribution", "Guest cart recovery", "Send restore link quota", "Възстановяване на количка"]
 tags: [entity, orders, cart, recovery, marketing, consent]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 > Part of [[cart]]. See the hub for the other aspects (data model, lifecycle, stock & pricing, merge).
@@ -39,14 +39,12 @@ This page covers the Cart entity **from the recovery angle** — the per-cart fi
 
 A guest cart whose customer typed an email at the checkout email step (without registering) IS recoverable — provided the email belongs to a [[subscriber|Subscriber]] with Email-channel marketing consent. The platform identifies the cart by email and sends the restore-link email. See [[abandoned-cart-recovery]] for the seven eligibility checks.
 
-### The recovery email respects the two-layer consent
+### Consent is checked for guest carts only
 
-For the automated recovery email to actually send, BOTH gates must pass:
+- **Registered customer's cart** — no consent check: the reminder goes to the account's email whatever the customer's marketing flag.
+- **Guest cart** — the matched [[subscriber|Subscriber]] needs an Email-channel address with `marketing` consent, not unsubscribed or bounced, and verified unless the Email channel sends to unverified subscribers.
 
-1. The cart's owning customer has `marketing = yes` at customer level.
-2. The matched [[subscriber|Subscriber]] (by email) has Email-channel `marketing` consent.
-
-Either gate failing suppresses the send. See [[notification-delivery]] and [[subscriber-vs-customer]].
+See [[abandoned-cart-eligibility]] and [[subscriber-vs-customer]].
 
 ### Recovered orders are auditable
 

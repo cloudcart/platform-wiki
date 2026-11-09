@@ -7,8 +7,8 @@ aliases: ["Product option order handling", "Option values on order line", "Requi
 tags: [apps, products, options, orders, customisation]
 plan_gates: ["product_options"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[products-options-overview]]. See the hub for the other aspects (types, pricing, assignment).
@@ -43,7 +43,7 @@ For non-file option types, the value (text, selected value, etc.) is stored inde
 
 ### File uploads — special handling + irreversible cascade
 
-When the customer uploads via a file-type option, the file is stored as a regular cart-item upload (allowed mime types jpg / jpeg / png / bmp / webp). The merchant downloads it from the order details for fulfilment.
+When the customer uploads via a file-type option, the file is stored as a regular cart-item upload (pdf, doc, jpeg, jpg, png, gif, tiff, zip or rar, up to 25 MB, one file per option). The merchant downloads it from the order details for fulfilment.
 
 **Deleting the file-type option in the admin ALSO deletes every file upload from past orders associated with that option** — the cascade is intentional (the file is meaningless without the option context) but **irreversible**. Merchants should keep file-type options around until every order that used them is fulfilled.
 

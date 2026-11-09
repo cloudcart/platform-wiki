@@ -5,8 +5,8 @@ route_path: /account/orders, /account/order-view/{order_id}
 themes_using: [all]
 tags: [storefront, customer, account, orders, invoices]
 created: 2026-06-08
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Customer orders & invoices
@@ -52,28 +52,23 @@ Detail view (`cc-order-details`):
 
 - Meta grid: order id, order date, order status, shipment status (with expedition date when fulfilled), shipping address + delivery date, billing address (falls back to shipping when absent), tracking provider + number + delivery date, payment method(s), ticket validity + barcode SVG (custom integration).
 - Totals breakdown with `group=shipping` and `group=total` rows specially classed.
-- Invoice actions (when invoicing is on): "Download invoice" + "Print invoice" links pointing at `invoice.download.hash` / `invoice.display.hash` — both use the hash variant so they survive being shared.
-- Per-line-item card: image (150×150), name, SKU, barcode, parameters, options (with file-option download links via `site.download.public` or `site.download.private.hash`), quantity × unit price, weight, digital-file downloads, and any per-line discount / discount-code / modifier rows.
+- Invoice actions (when invoicing is on): "Download invoice" + "Print invoice" via `invoice.download.hash` / `invoice.display.hash`, so they survive being shared.
+- Per-line card: image, name, SKU, barcode, parameters, options (a file option links to the upload), quantity × price, weight, the product's attached files (`site.download.public` if published, else `site.download.private.hash` with the order hash), per-line discount / code / modifier rows.
 - For membership / digital-page products ([[apps-membership]]): if the order is `paid` or `completed`, lists "access to" links to the private pages with expiry; otherwise prompts for payment.
-- Big "Re-order" button at the bottom (`_button add-cart-product`) — also wired to the same `addToCart` JS. Hidden and refused for [[wallet-gift-instrument-checkout|top-up and gift card orders]].
+- "Re-order" button at the bottom (`_button add-cart-product`), wired to the same `addToCart` JS. Hidden and refused for [[wallet-gift-instrument-checkout|top-up and gift card orders]].
 
 ## Storefront behaviour
 
 - Re-order: finds the order from its link. It keeps only order products with a `variant_id` (skips bundle parents / freebies / line-only items) and merges them into the cart by `variant_id`: if the variant is already there, quantity is summed; otherwise added. On success the JS triggers `cc.ajax.reload` on `._cart-compact` so the header drawer reflects the new contents, then ends the spinner. Toastr error if the response carries `status` + `msg`.
 - "View details" with `js-load-order` lazy-loads the detail markup into the row so the customer doesn't navigate away.
 - Invoice download/display goes through a separate invoicing controller ([[settings-invoicing]]) which produces a PDF via the configured invoicing app.
-- Status display: the storefront only mirrors the order — there is no "return / refund request" form here. Status changes (refunds, partial fulfilment) flow through the admin and appear on the customer's next reload. (verify)
+- Status display: the storefront only mirrors the order — it has no return / refund form of its own (with Aftercare Pro, the account page links to the withdrawal). Status changes (refunds, partial fulfilment) flow through the admin and appear on the customer's next reload. (verify)
 - Tracking: when no carrier-specific URL exists but a tracking number does, the template falls back to `{$TRACK17}{$order->fulfillment->shipping_tracking_number}` — an aftership/17track-style universal tracker URL injected via a Smarty variable. (verify where `$TRACK17` is registered)
 
 ## JavaScript behaviour
 
 - Inline `<script>` block in the list template:
-  - Defines `msg_1 = sf.wishlist.added_products.one`, `msg_2 = sf.wishlist.added_products.multi` (likely leftover from wishlist add-to-cart; both are loaded but the re-order flow doesn't use them — possible historical baggage).
-  - `addToCart(increment_hash)`:
-    - Triggers `loading.start` on `.add-cart-product`
-    - AJAX GET to `site.account.order.reorder` with the hash substituted
-    - On success: `setTimeout( => $('._cart-compact').trigger('cc.ajax.reload'), 50)` and `loading.end`
-    - On error with `json.status` + `json.msg`: `toastr.error(json.msg)`
+  - `addToCart(increment_hash)`: the re-order call described under Storefront behaviour (GET `site.account.order.reorder`).
   - `$(document).ready` initialises Bootstrap tooltips on `[data-toggle="tooltip"]`.
 - The detail template has its own tiny `<script>` that re-initialises tooltips inside the panel.
 - Inline-expand uses generic table-toggle conventions: `js-load-order`, `js-load-order-remove`, `js-load-order-content` — wired up in shared site JS. (verify exact file)
@@ -95,7 +90,7 @@ Detail view (`cc-order-details`):
 - **By design**: re-order skips items without a `variant_id` (most simple products have one; bundle children / freebies do not). Customers occasionally complain that "one item is missing" — usually a bundle.
 - **By design**: variants that are now archived / out-of-stock are still added to the cart; downstream cart validation handles availability messaging.
 - **By design**: no filter / search inside the orders list — pagination only.
-- **By design**: no in-page returns / refund request form. Returns are handled out-of-band (email / **messenger** / shipper portal). Status changes show up after they're entered admin-side.
+- **By design**: no **Cancel order** action for the customer, paid or unpaid. Leaving an online payment page by its cancel link cancels a still-open payment, and with it the order ([[payment-status-vs-order-status]]); an unpaid cash-on-delivery or bank-transfer order is cancelled by the merchant ([[order-status-action-gates]]). Returns: with [[apps-aftercare]] the customer files a withdrawal ([[storefront-withdrawal]]), offered only once the order is paid, completed, shipped or digital; otherwise out-of-band.
 - **Bug-like**: the inline list-template script defines `msg_1` / `msg_2` from wishlist translations but never uses them. Cosmetic only.
 
 ## Related

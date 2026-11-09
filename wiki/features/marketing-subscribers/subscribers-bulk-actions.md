@@ -7,8 +7,8 @@ aliases: ["Subscribers bulk actions", "Bulk-tag subscribers", "Bulk-accept marke
 tags: [marketing, subscribers, bulk, actions]
 plan_gates: ["subscribers"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-subscribers]]. See the hub for related aspects (list view, detail modal, channels, import, settings, lifecycle).
@@ -43,7 +43,7 @@ The table's bulk-action menu (visible once 1+ rows are checked) exposes 3 explic
 | **Set tags** | `fa-tag` | Opens the Set-tags modal — a small (`size=md`) modal with one tag-select control *"Set tags"* (tags mode, autocompletes against `/admin/api/core/customers/tags`, allows creating new tags on the fly). Saves via `POST /admin/api/core/marketing/subscribers/tagging` with comma-joined tag string. Validation: `tags: required|string|min:2`. |
 | **Accept marketing** | `fa-envelope-open-text` | Bulk-flips `marketing = 1` on selected ids. Optimistic UI: the cached rows are immediately updated; on error, reverted. Toast on success: *"Accept marketing changed successfully."* |
 | **Do not accept marketing** | `fa-envelope` (solid) | Bulk-flips `marketing = 0`. Same optimistic behaviour. |
-| (default) **Delete** | trash | Calls `DELETE /admin/api/core/marketing/subscribers` with checked ids; refetches the page. |
+| (default) **Delete** | trash | Confirm *"Are you are sure you want to delete? Caution: This action cannot be undone."* → deletes the checked subscribers at once (not queued), toast *"Deleted successfully"*, list refetched. |
 
 ### Per-row actions
 
@@ -71,7 +71,7 @@ The reverse asymmetry on customer-side marketing flips applies here too: a bulk 
 
 ### Bulk delete cascades the full cleanup
 
-When the merchant bulk-deletes, the platform cascades per the subscriber-delete contract — see [[subscribers-lifecycle]] for the full join-cleanup catalogue. Each deleted subscriber fires its own `subscriber.deleted` webhook ([[settings-hooks]]). Hard-delete cascades produce N `remove_channel` events (one per channel row removed).
+When the merchant bulk-deletes, the platform cascades per the subscriber-delete contract — see [[subscribers-lifecycle]] for the full join-cleanup catalogue. Nothing blocks it: a linked Customer or given consent does not stop the delete, and it cannot be undone. The same person comes back as a **new** subscriber if they later log in, order, register, edit their account or subscribe again. The header checkbox selects only the rows on the current page. (The Admin GraphQL `subscribersBulkDelete`, used by integrations, is the queued variant: it returns a bulk job and deletes in the background.) Each deleted subscriber fires its own `subscriber.deleted` webhook ([[settings-hooks]]). Hard-delete cascades produce N `remove_channel` events (one per channel row removed).
 
 ### Permission required
 

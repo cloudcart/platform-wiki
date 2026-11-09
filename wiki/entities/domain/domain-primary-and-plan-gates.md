@@ -3,8 +3,8 @@ type: entity
 aliases: ["Primary domain", "Set as primary", "Set as primary verification", "Hard redirect on primary change", "External vs CloudCart-purchased", "External domain quota", "cname plan feature", "custom_hostname plan feature", "Add domain quota", "IDN support", "Punycode storage"]
 tags: [settings, apps, domains, ssl, plan-gates, entity]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 > Part of [[domain]]. See the hub for the other aspects (attributes, relationships, lifecycle, SSL, DNS / Cloudflare).
@@ -48,7 +48,7 @@ All three gates must pass before the primary marker moves.
 Domains carry one of two `source` values that drive entirely different billing behaviour:
 
 - **External** (`source = external`): the merchant brought the Domain from another registrar (GoDaddy, Namecheap, etc.). They change the nameservers to point at CloudCart's Cloudflare nameservers (or add a CNAME for Custom Hostname mode). **CloudCart does NOT manage renewal or pay for these** — the merchant continues to pay their original registrar. The renewal warning chip on [[settings-domains]] does not appear for external Domains.
-- **CloudCart-purchased** (`source = cloudcart`): bought through the in-admin Buy a Domain flow via the integrated reseller. **CloudCart pays the registrar on the merchant's behalf** at registration; renewal is billed through the merchant's plan subscription. WHOIS Privacy is automatically enabled (the public WHOIS lookup shows the registrar's privacy proxy, not the merchant's real address). Renewal warnings appear 30 days before expiry. Renewal price may differ from the initial purchase price (reflects current registrar pricing).
+- **CloudCart-purchased** (`source = cloudcart`): bought through the in-admin Buy a Domain flow via the integrated reseller. **CloudCart pays the registrar on the merchant's behalf** at registration; the registration is renewed only when the merchant clicks **Renew** (charged to the plan's card). WHOIS Privacy is automatically enabled (the public WHOIS lookup shows the registrar's privacy proxy, not the merchant's real address). A daily admin alert warns from one month before to one month after expiry ([[settings-domains-add-flow]]). Renewal price may differ from the initial purchase price (reflects current registrar pricing).
 
 ### Plan-gated external-domain quota
 

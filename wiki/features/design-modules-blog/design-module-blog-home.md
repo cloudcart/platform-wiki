@@ -7,8 +7,8 @@ aliases: ["Blog Home module", "blogHome", "blogHome module", "Recent articles ho
 tags: [design, modules, blog, homepage]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Storefront Modules — Blog homepage row (`blogHome`, `recentArticlesHome`)
@@ -102,7 +102,7 @@ Identical to the parent module type:
 | **Reset module** | Reverts to theme defaults | *"Are you sure you want to reset this module?"* | *"Module successfully reset"* |
 | **Cancel** | Closes panel | None | — |
 
-After Save or Reset the storefront cache is bumped, so the row reflects the new settings on the next storefront request.
+After Save or Reset the module cache is bumped, so pages rendered afterwards reflect the new settings; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Why a second instance exists
 

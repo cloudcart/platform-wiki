@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Landing Pages"
+nav_path: "Design → Static pages"
 route_name: admin.pages.list
-route_path: /admin/marketing/pages
+route_path: /admin/design/pages
 aliases: ["Landing pages", "Static pages", "Pages", "Landing Pages", "Page CMS", "About Us", "Contact page", "FAQ page", "Целеви страници", "Статични страници", "Страници"]
 tags: [marketing, content, pages, cms, seo]
 plan_gates: ["static_pages", "landing_page", "faq_page", "storefront_builder"]
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # Landing Pages
@@ -23,28 +23,24 @@ Because the screen covers several independent concerns — the list view, the ty
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Pages** (may appear as "Landing pages" in the Marketing dropdown depending on store).
+Sidebar → **Design** → **Static pages** (under the **Pages** heading). The breadcrumb reads *Design → Static pages*.
 
-The route is `/admin/marketing/pages`. The breadcrumb reads "Landing pages" (label key: `page.header.pages`).
-
-Sub-routes:
+The address is `/admin/design/pages`. The old `/admin/marketing/pages` is retired: it opens the admin's 404 page, and the old add / edit addresses open no screen either. Only the page builder kept its `/admin/marketing/pages/builder…` addresses.
 
 | Action | Route name | Path |
 |--------|------------|------|
-| List | `admin.pages.list` | `/admin/marketing/pages` |
-| Add | `admin.pages.add` | `/admin/marketing/pages/add/{type}` |
-| Edit | `admin.pages.edit` | `/admin/marketing/pages/edit/{page_id}` |
-| Toggle active | `admin.pages.status` | `/admin/marketing/pages/status/{page_id}/{status?}` |
-| Assign system page | `admin.pages.assign` | `/admin/marketing/pages/assign/{page_id?}` |
-| Copy | `admin.pages.copy` | `/admin/marketing/pages/copy` |
+| List | `admin.pages.list` | `/admin/design/pages` |
+| Add | `admin.pages.add` | `/admin/design/pages/add/{type}` (`regular`, `faq`, `landing`) |
+| Edit | `admin.pages.edit` | `/admin/design/pages/edit/{page_id}` (Dynamic pages open in the builder) |
 | Page Builder | `admin.pages.builder` | `/admin/marketing/pages/builder/{page_id?}` |
+| Builder system page | `admin.pages.builder.system_page` | `/admin/marketing/pages/builder/system_page/{key}` (`home`, `thank_you`, `error.404`) |
 
 ## What the merchant can do here
 
 Top-level actions on the screen:
 
-- Browse the table of all pages, filter / search / inline-toggle Active, inline-assign system slot, bulk-act on selection — see [[landing-pages-list-view]].
-- Click **+ Add new page** to open the **Choose page type** modal — four cards (`regular` / `faq` / `landing` / `builder`); see [[landing-pages-types]].
+- Browse the table of all pages, filter / search / inline-toggle **Published**, inline-assign a system page, bulk-act on selection — see [[landing-pages-list-view]].
+- Click **Add page** to open the **Choose page type** modal — see [[landing-pages-types]].
 - Open the Add / Edit form for a page — fields, validation rules, URL-handle handling, SEO and Open Graph, Private toggle — see [[landing-pages-editor]].
 - Assign a page to a **system slot** (`home` / `thank_you` / `error.404`) — instantly, no save needed — see [[landing-pages-system-slots]].
 - Edit FAQ-type pages via the **shifting-rows Q&A editor** — see [[landing-pages-faq-editor]].
@@ -53,12 +49,13 @@ Top-level actions on the screen:
 
 ## Sub-pages (in this cluster)
 
-- [[landing-pages-list-view]] — the list table; columns; cascading filter dropdown; bulk actions (Activate / Deactivate / Delete / Duplicate); the "(N)" counter on **+ Add new page**.
+- [[landing-pages-list-view]] — the list table; columns; filters; bulk actions (Publish / Unpublish / Duplicate / Delete); the **System page** dropdown and its labels.
 - [[landing-pages-types]] — the four page types (`regular`, `faq`, `landing`, `builder`); the **Choose page type** modal; the builder system-page picker.
 - [[landing-pages-editor]] — Add / Edit form fields; validation messages; URL-handle normalisation; Open Graph image; SEO fields; Private toggle; defensive fallback for unknown types.
 - [[landing-pages-system-slots]] — `home` / `thank_you` / `error.404` assignment; exclusive-per-slot transaction; cache-flush cascade (`error404`, `private-shop:redirect_page`); builder system pages.
 - [[landing-pages-faq-editor]] — shifting-rows Q&A module; per-row add / remove / move; full-replacement save model; at-least-one-row rule.
 - [[landing-pages-builder-rules]] — builder pages auto-activate on save; 500-version `PageHistory`; per-system-slot module restrictions (`blog.list` / `blog.view` only); per-plan module restrictions.
+- [[landing-pages-builder-rows]] — rows and blocks on the canvas; the row settings panel (spacing, full width, background, **Покажи в** device visibility) with Bulgarian labels; phone behaviour.
 - [[landing-pages-plan-gates]] — `static_pages` (numeric cap, feature-pack extendable), `landing_page`, `faq_page`, `storefront_builder` (access gates); the "(N)" counter mechanism; upsell redirection.
 
 ## Settings & fields
@@ -72,8 +69,8 @@ Cross-cutting rules summarised — the full rule rationale lives on the aspect p
 - **Page versus blog article — when to use which.** About Us / Privacy / Terms → regular `Page`. Recurring marketing content with categories, tags, comments → [[marketing-blog-articles]]. Q&A help centre → `faq` page ([[landing-pages-faq-editor]]). Drag-and-drop custom layout → `builder` page ([[landing-pages-builder-rules]]). Externally-built HTML → `landing` page. Pages are **stand-alone** — there is no concept of "page categories" or "page tags".
 - **URL handle uniqueness spans ALL types** — see [[landing-pages-editor]]. The merchant can't have `/page/about-us` as both a regular page and a builder page.
 - **System-page assignment is unique per slot** — assigning a new page to `home` automatically unassigns the previous one, in a single DB transaction; see [[landing-pages-system-slots]].
-- **System-page changes flush two storefront caches** — `error404` and `private-shop:redirect_page` (via the platform code); the inline Active toggle on the list ALSO flushes the 404 cache. See [[landing-pages-system-slots]].
-- **Bulk Copy duplicates with a `--{unix-timestamp}` suffix** on both `name` and `url_handle`. System-page assignments are dropped on the copy. See [[landing-pages-list-view]].
+- **System-page changes flush two storefront caches** — `error404` and `private-shop:redirect_page`. See [[landing-pages-system-slots]].
+- **Bulk Copy duplicates with a `-{unix-timestamp}` suffix** on both `name` and `url_handle`. System-page assignments are dropped on the copy. See [[landing-pages-list-view]].
 - **Builder pages auto-activate on save** and keep the last 500 saved snapshots in `PageHistory`. Regular / faq / landing pages do not. See [[landing-pages-builder-rules]].
 - **Builder module-restriction validation covers ONLY `blog.list` / `blog.view` system slots** — there are NO required modules for `home`, `thank_you`, or `error.404`. See [[landing-pages-system-slots]] + [[landing-pages-builder-rules]].
 - **Name uniqueness is case-insensitive**, URL-handle uniqueness is exact-match. See [[landing-pages-editor]].

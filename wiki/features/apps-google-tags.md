@@ -7,8 +7,8 @@ aliases: ["Google Tags", "Google Tag Manager", "GTM", "Tag Manager", "Гугъл
 tags: [apps, google, tag-manager, tracking]
 plan_gates: ["google_tags"]
 created: 2026-05-22
-updated: 2026-05-27
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # Google Tag Manager (GTM)
 
@@ -41,15 +41,9 @@ The integration injects the standard GTM snippet (head + body initialization) on
 
 ## Business rules
 
-### Tag firing on data layer
+### What the data layer carries
 
-CloudCart pushes ecommerce events to the GTM data layer using the GA4 ecommerce vocabulary. GTM tags then consume those events to fire whichever pixels / scripts the merchant has configured.
-
-The data layer pushes happen at:
-- `view_item` (product page).
-- `add_to_cart`, `remove_from_cart`, `view_cart`.
-- `begin_checkout`, `add_shipping_info`, `add_payment_info`.
-- `purchase` (order confirmation page).
+Every storefront page pushes one `cc_page_data` object: the page type and its context (the product, the listed products, the cart, the checkout, or on the thank-you page the order with its `js_events` once-per-order flag). The storefront pushes no `{event: …, ecommerce: …}` object, so a GTM tag waiting for a GA4-style `purchase` or `add_to_cart` event with an `ecommerce` block never fires. GA4-named events go to Google only through [[apps-google-analytics]] and [[apps-google-dynamic]]; see [[apps-google-analytics-purchase-event]].
 
 ### One container per store
 
@@ -57,7 +51,11 @@ Typically one GTM container per CloudCart store. Multi-store merchants use one c
 
 ### Cookie consent integration
 
-Like [[apps-google-analytics]], GTM tags should respect [[apps-gdpr-overview]] consent state. The merchant configures consent triggers in GTM's UI.
+With [[apps-gdpr-overview]] active, the container itself loads only once the Performance cookie group counts as accepted: "yes" until the visitor answers, so only a refusal keeps GTM off. The Google Consent Mode group does not delay the container; the tags inside it follow whatever consent settings the merchant gives them in GTM.
+
+### No OpenAI / ChatGPT pixel
+
+CloudCart has no built-in OpenAI or ChatGPT pixel. A merchant who needs one adds it as their own tag in their GTM container.
 
 ### Permission
 
@@ -105,7 +103,7 @@ Per the platform code's `$only` allowlist, the ONLY saveable setting is `code` �
 
 ### Standard data-layer push: `cc_page_data` blob
 
-When [[apps-datalayer]] is installed, the storefront emits ONE primary push on each page load: `dataLayer.push({cc_page_data: cc_page_data})`. The `cc_page_data` object varies by route (product / category / cart / checkout / checkout-return / etc.) and contains the relevant context (product details, line items, totals, customer state). For order completion (`checkout.return`), the cc-analytics module additionally fires the GA4 `purchase` event via `CCE.event('purchase', ...)`. There is no separate per-customer push for `user_id` from this app — that's part of `cc_customer_data` written by the Datalayer app's dynamic-content view.
+Each storefront page emits ONE primary push on load: `dataLayer.push({cc_page_data: cc_page_data})`. The object varies by route (product / category / cart / checkout / checkout-return / etc.) and carries the relevant context (product details, line items, totals, customer state). On the thank-you page no further purchase push follows: CloudCart's own analytics records the order separately, and that is not a data-layer event. Customer details come in `cc_customer_data`, loaded by a second script.
 
 ### Preview mode works because injection is plain HTML
 
@@ -127,9 +125,9 @@ If [[apps-gdpr-overview]] is installed with the "Google Consent Mode" cookie gro
 
 The choice is up to the merchant inside GTM — CloudCart only emits the upstream signals.
 
-### GTM data layer pushes happen via the Datalayer app
+### The data layer does not depend on an app
 
-The standard ecommerce events that GTM tags listen on (`view_item`, `add_to_cart`, `purchase`, etc.) are emitted by [[apps-datalayer]] (separate app). Without the Datalayer app installed, GTM still loads but the data layer will only contain whatever default pushes GTM itself emits (page view) — none of the rich product / cart / order context.
+The `cc_page_data` push and the customer script are part of every storefront page. [[apps-datalayer]] is installed on new stores by default, and its install state does not switch them off. A GTM-only setup still gets no GA4 events: the merchant builds tags and variables on `cc_page_data`.
 
 ### Two tabs: Overview + Settings (no auth state)
 

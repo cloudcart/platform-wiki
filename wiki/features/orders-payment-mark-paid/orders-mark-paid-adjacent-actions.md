@@ -7,8 +7,8 @@ aliases: ["Sync payment", "Payment lease", "Leasing request", "Adjacent payment 
 tags: [orders, payment, manual-payment, sync, lease, bnpl]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[orders-payment-mark-paid]]. See the hub for the other aspects (form & visibility, post-paid pipeline, status-flip rules, API position).
@@ -41,10 +41,12 @@ These are action buttons, not configurable settings. The relevant attributes are
 
 If the payment is **Pending** but NOT offline-type (e.g., a Pending card payment via Borica, DSK Bank, Btepos, or any gateway whose `sync` method is implemented), the platform shows a different primary button: **Sync payment** (`order.action.payment_sync`, label translated). Clicking it asks the gateway to refresh the payment's current status. Confirmation text: *"Sync payment?"* (`order.payment.confirm.sync`). This is a no-modal action — a pure AJAX call with a confirm dialog.
 
-Sync is *only* surfaced when:
-1. Payment status is `pending`, `requested`, OR `cancelled`.
-2. Payment is NOT offline-type.
-3. The gateway supports the `sync` method (verified set: DSK Bank, BoricaWay4, Btepos, CloudCart Pay, Fibank, Ibank, Icard, CIB Bank, Everypay, Paypal, Settle, TbiBank, PlatiPosle, BNP, DSK BNPL, Monri).
+Sync is *only* surfaced when the payment is NOT offline-type, the gateway supports the `sync` method (among them DSK Bank, BoricaWay4, Btepos, CloudCart Pay, Fibank, myPOS, Stripe, Revolut, Ibank, Icard, CIB Bank, Everypay, Paypal, Settle, TbiBank, PlatiPosle, BNP, DSK BNPL, Monri), and the payment status is one of:
+1. `pending` or `requested` — as the primary button, and in the cog menu;
+2. `cancelled` — in the cog menu only;
+3. `completed` — in the cog menu, next to **Refund payment**.
+
+A `failed`, `timeouted`, `refunded` or `authorized` payment never shows Sync.
 
 Sync does NOT mark the payment paid — it queries the gateway and updates CloudCart's local state to whatever the gateway reports. If the gateway says "still pending", the local status stays pending. This is the key contrast: **Mark as paid manually overrides; Sync queries the gateway.**
 

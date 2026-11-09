@@ -7,8 +7,8 @@ aliases: ["Products", "Product list", "Product editor", "Catalog", "Продук
 tags: [products, catalog, editor, core]
 plan_gates: ["products"]
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 14
+updated: 2026-11-09
+source_count: 15
 ---
 # Products
 
@@ -31,14 +31,15 @@ The page title reads "Products" and the address is `/admin/products`. On the Edi
 
 ## Sub-pages (in this cluster)
 
-This feature is split into 7 aspect pages. The Assistant should drill into the aspect that matches the question, not read every page.
+Aspect pages (read the one that matches the question):
 
 - [[products-list-view]] — list mode: header counter, search and filter bar, list columns, per-row inline actions, Import / Add product entry points.
-- [[products-editor]] — single-product editor (two-column layout): Details / Media / Product type settings / Categories / Metafields / Brand / Suppliers / SEO / Linked / Extend functionality + the Product Statuses / Vendors / Tags / Smart Collections / Sort number / Applied discounts aside + the save flow.
+- [[products-editor]] — single-product editor: Details / Media / Product type settings / Categories / Metafields / Brand / Suppliers / SEO / Linked / Extend functionality, the aside cards and the save flow.
 - [[products-variants-matrix]] — setting up variants, the **Edit Variant options** window, the **Edit Variant** side panel, the Inventory card on the editor, per-variant bulk actions, variant rename / merge cascades.
 - [[products-bulk-actions]] — the list's **Tools** menu: bulk action catalogue, the bulk-action sub-popup mechanics, no-category guards on Publish, bulk duplicate.
 - [[products-ai-content]] — ShopperPen by CloudIO side panel: description, short description and meta description generation, token cost, stored results with Keep / Copy text, RankMaster AI and VisionSense AI.
 - [[products-change-log-link]] — how the Change log modal is launched from this screen; see [[products-change-log]] for the modal's contents.
+- [[products-editor-video]] — the product's YouTube video: accepted links, "Url is not valid", gallery place.
 - [[products-known-issues]] — by-design quirks and known-bugs catalogue specific to the Products list / editor.
 
 ## What the merchant can do here

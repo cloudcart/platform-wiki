@@ -7,8 +7,8 @@ aliases: ["Fibank refund", "Fibank status mapping", "Fibank capture", "Fibank no
 tags: [paymentproviders, payment-providers, fibank, card-gateway, bulgaria, refund]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Fibank — Refunds & capture
 
@@ -39,7 +39,7 @@ Sidebar → **Payment Providers** → **Fibank**. Route: `/admin/payment-provide
 
 ### Refund support
 
-Full refund is supported — the platform calls Fibank's refund-transaction endpoint with the original `TRANSACTION_ID`. On success the platform stores Fibank's returned `REFUND_TRANS_ID` on the payment's `provider_data.refund` field for audit and flips the status to `Refunded`. Partial refunds are protocol-supported but **no amount input is exposed** in the admin UI today — refunds use the full payment amount.
+Full refund is supported — the platform calls Fibank's refund-transaction endpoint with the original `TRANSACTION_ID`. On success the platform stores Fibank's returned `REFUND_TRANS_ID` on the payment's `provider_data.refund` field for audit and flips the status to `Refunded`. Partial refunds are protocol-supported but **no amount input is exposed** in the admin UI today — refunds use the full payment amount. An order return follows the same rule: a **full** return can refund to the card, while a **partial** return cannot use the card refund for Fibank, so that money goes back by another of the return's refund methods, such as bank transfer (see [[orders-payment-refund-partial-refunds]]).
 
 ### Status code mapping
 
@@ -53,8 +53,9 @@ The Fibank `RESULT` field maps to the platform's [[payment-status]] as follows:
 | `TIMEOUT` | `timeouted` (the customer didn't complete payment in Fibank's session window) |
 | `FAILED`, `REVERSED`, `AUTOREVERSED`, `DECLINED` | `Canceled` |
 | (anything else) | `Requested` |
+| (answer without a `RESULT`) | `failed` |
 
-This mapping is applied both on the return callback and on the periodic sync — see [[fibank-payment-lifecycle]].
+This mapping is applied both on the return callback and on the periodic sync — see [[fibank-payment-lifecycle]]. A declined card therefore ends as `Canceled`, not `failed`; for the order the two are the same, since either leaves it `cancelled` ([[payment-status-vs-order-status]]).
 
 ### No Authorize + Capture flow
 

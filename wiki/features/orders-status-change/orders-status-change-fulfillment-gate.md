@@ -7,8 +7,8 @@ aliases: ["Fulfillment status gate", "Fulfilled / Not fulfilled dropdown", "Exte
 tags: [orders, status, fulfillment, shipping, payment-authorization]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[orders-status-change]]. See the hub for the other aspects (pill, transition rules, side effects, notification, bulk, API).
@@ -56,15 +56,15 @@ If the order has a held payment authorization (e.g., Stripe two-phase capture) A
 
 This is part of the standard negative-status side-effect chain — see [[orders-status-change-side-effects]] for the full chain. The release happens synchronously as part of the status change; if the gateway call fails, the status change ABORTS and the merchant sees a gateway error.
 
-### Mark Completed gate (full fulfillment required)
+### Mark Completed gate (paid OR fulfilled)
 
-Marking `Completed` requires `status_fulfillment = fulfilled` (in addition to `paid`). See [[orders-status-change-transition-rules]] for the gate. So the typical "happy path" sequence is:
+Changing the status to `Completed` is refused only when the order is **neither** `paid` **nor** fulfilled — either one is enough ([[orders-status-change-transition-rules]]). The separate one-click **Mark as completed** link on the order page is shown only when the order is `paid` **and** fulfilled ([[orders-details-header]]); the status menu and the bulk action apply the either-one rule. Typical sequence:
 
 1. Customer pays → order goes to `Paid` (stock decrements, digital auto-fulfillment if applicable).
 2. Merchant generates waybill / hands off physical goods → order's `status_fulfillment` becomes `fulfilled`.
 3. Merchant clicks **Mark as completed** (from the pill OR the 3-dot dropdown OR the bulk action) → order goes to `Completed`.
 
-If step 2 hasn't happened, step 3 is blocked with the *"Only paid and/or fulfilled orders can be marked as Completed"* error.
+An order that is neither paid nor fulfilled is refused with the *"Only paid and/or fulfilled orders can be marked as Completed"* error. A `paid` order that is fulfilled may also complete on its own when *Automatic completion of the order* is on ([[settings-cart]]).
 
 ## Settings & fields
 
@@ -88,7 +88,7 @@ For explicit fulfillment management, JSON-API v2 exposes the `order-fulfillment`
 
 - [[orders-status-change]] — hub.
 - [[orders-status-change-pill]] — the dropdown that surfaces the fulfillment-statuses + the block.
-- [[orders-status-change-transition-rules]] — Completed requires Paid + Fulfilled.
+- [[orders-status-change-transition-rules]] — Completed requires Paid or Fulfilled.
 - [[orders-status-change-side-effects]] — full negative-status side-effect chain.
 - [[orders-status-change-api]] — API honours the same fulfillment-gate rules.
 - [[orders-shipping-waybill]] — waybill flow that owns external-shipping fulfillment.

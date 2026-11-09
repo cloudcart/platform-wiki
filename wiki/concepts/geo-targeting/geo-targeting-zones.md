@@ -5,8 +5,8 @@ aliases: ["Geo Zones", "Geo zone operations", "Zone rules", "Zone operation type
 tags: [shipping, tax, geo, zones, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[geo-targeting]]. See the hub for the other aspects (polygons, distances, post-codes, IP detection, feature resolution, address resolution).
@@ -29,7 +29,7 @@ Zones are managed at [[settings-geo-zones]].
 Covered here:
 
 - The 11 zone-rule operation types and their inputs.
-- The OR-semantics inside a single zone (and the same OR-semantics across multiple zones referenced by one feature).
+- The OR-semantics inside a single zone (each consuming feature references one zone).
 - When to use which operation.
 - The "AND-of-locations" workaround (no AND inside a zone).
 
@@ -90,7 +90,7 @@ Within a single zone, rules are OR-combined. There's no AND. So "Bulgaria AND So
 
 - Use a single rule of operation 5 (city) which combines country + region + city as ONE atomic rule.
 - OR use a polygon that geographically constrains the area — see [[geo-targeting-polygons]].
-- OR split into two zones and let the consuming feature reference both (works only for shipping / fees / discounts that allow multi-zone reference).
+- A consuming feature takes only one zone, so two zones cannot be combined on one shipping method, tax or discount; create a second method instead.
 
 ## Example — three EU markets with a shared shipping carrier
 

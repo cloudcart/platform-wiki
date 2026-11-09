@@ -7,8 +7,8 @@ aliases: ["Segment subscriber list", "Subscriber table in segment", "Filter subs
 tags: [marketing, segments, subscribers, list, filters]
 plan_gates: ["segments"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 > Part of [[marketing-segments-subscribers]]. See the hub for the other aspects (add, remove, the detail/log modals, and the shared data source).
 
@@ -40,7 +40,7 @@ The table fills the body of `/admin/marketing/segments/:id/subscribers`, reached
 
 - **Cannot distinguish manual vs rule-matched** subscribers from the table — both appear identically. The distinction lives in the underlying data (`manual = 1` vs `manual = 0`) but is not surfaced as a column or filter. See [[segments-subscribers-add]] for what the flag means.
 - **Cannot edit** a subscriber's profile inline — clicking the name opens a read-only modal (see [[segments-subscribers-modals]]). To edit, the merchant goes through [[marketing-subscribers]].
-- **Cannot export** the list from this page — for an export, go back to [[marketing-segments]] and use the per-row "Generate CSV file" action.
+- **Cannot export** the list: neither this page nor [[marketing-segments]] has an export action (no "Generate CSV file" exists).
 - **Cannot edit the segment's conditions** here — for that, open the [[marketing-segments-editor|segment editor modal]] from the parent list.
 
 ## Settings & fields

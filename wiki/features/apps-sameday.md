@@ -3,12 +3,12 @@ type: feature
 nav_path: "Apps → Sameday"
 route_name: apps.sameday.overview
 route_path: /admin/shipping/sameday, /admin/shipping/sameday/settings, /admin/shipping/sameday/shipments, /admin/shipping/sameday/shipments-return
-aliases: ["Sameday", "Sameday Courier", "Sameday Romania", "Sameday EasyBox"]
+aliases: ["Sameday", "Sameday Courier", "Sameday Romania", "Sameday EasyBox", "Sameday First Mile", "Ще оставя пратката в автомат", "Sameday price sync"]
 tags: [apps, shipping, courier, romania, bulgaria, locker, omniship]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # Sameday (Romanian / Bulgarian courier)
 
@@ -48,7 +48,7 @@ Shipments and Shipments-return share one screen; bulk-print offers A4/A6 format 
 - **Password** (`password`) — masked; required.
 - **Country** (`country`) — select with TWO options: `Bulgaria (bg)` | `Romania (ro)`.
 
-Username + password OBTAIN a bearer token from Sameday on first sign-in; the token is cached with an expiry and refreshed automatically — the merchant never manages it. A "Connect" button shows until validated; invalid credentials surface inline "Invalid credentials" on all three fields. The country picker drives the API endpoint, the service-tier list, the locker network (RO has the largest EasyBox network), and the quote currency (RON for RO, BGN for BG).
+The sign-in token is obtained, cached and refreshed automatically. A "Connect" button shows until validated; invalid credentials show "Invalid credentials" on all three fields. The country picker drives the API endpoint, the service list, the locker network and the account's currency (see Business rules).
 
 ### Services / rate cards
 The standard Services tags box is conditionally HIDDEN for Sameday — service tiers are managed per-channel inside the calculator instead. Each channel (address / office / locker) has its own rate card opened via the pencil. A Sameday-specific extra, **Type of services** (`allowed_methods_{channel}`), is a multi-tag select against `/admin/api/sameday/services?type={channel}` that picks which service tiers (e.g., NextDay / SameDay / 2H Express) offer that channel. Free-shipping service follow-ups (city / intercity) are available.
@@ -81,29 +81,28 @@ Defaults out of the box: sender pays; address channel on; Sameday-calculator (re
 
 - **EasyBox is Sameday's locker network.** When enabled, customers pick a specific locker at checkout, as ONE of multiple Sameday options. A locker takes up to 20 kg in compartments of 10 / 20 / 39 × 44.5 × 47 cm and is offered only when the cart fits: [[shipping-provider-mech-locker-fit]].
 - **PUDO points use the "to office" channel.** A location id under 500000 is an easybox locker, 500000 and above a PUDO point. Services at checkout and in the waybill: address uses `allowed_methods_address`, easybox `allowed_methods_locker`, PUDO the PUDO services in `allowed_methods_office`, falling back to the locker list until one is configured. The "to office" **Type of services** picker lists PUDO delivery services only.
-- **Ship from a locker.** The waybill modal offers *"I'll leave the parcel in a locker"* / *"Ще оставя пратката в автомат"* for every delivery type.
+- **Ship from a locker (First Mile).** The waybill modal offers *"I'll leave the parcel in a locker"* / *"Ще оставя пратката в автомат"* for every delivery type. Switching it on shows **Select locker** / **Изберете автомат**, a search of Sameday's points, and a point is then required (*"When First Mile is enabled, please choose a pickup point."*). The waybill names that point as the drop-off and adds Sameday's PDO service option (its commercial terms: verify with Sameday). It is chosen per waybill; the settings have no such switch.
 - **"Open before paying" requires sender-pays.** Per the help text: *"The option Open before paying can only be used if the payer of the shipment is the SENDER."* On receiver-pays COD it is silently disabled regardless of the toggle.
-- **COD supported per country**, synced via [[orders-sync-cod]]. The platform caps COD at 10000 BGN per order **only when the store currency is the literal `BGN`** (legacy; or the merchant's lower COD-max). For any other currency — including `EUR` (the new Bulgarian norm) and RON — there is no platform-side cap; Sameday's server-side limits apply.
-- **Currency follows the recipient address.** Quotes and waybill amounts (subtotal, COD, item prices) convert from store currency to the destination-country currency: RO → RON, BG → BGN. The merchant doesn't pick it. When the customer switches payment method (e.g. COD → online), shipping recalculates and Sameday's COD fee disappears.
-- **Cross-border RO↔BG** is handled under contract — the platform calls Sameday's quote API with the destination country; if covered, a quote returns, otherwise the merchant uses another courier.
+- **COD supported per country**, synced via [[orders-sync-cod]]. The platform caps COD at 10000 BGN per order **only when the store currency is `BGN`** (or at the merchant's lower COD maximum). With EUR or RON there is no platform-side cap; Sameday's own limits apply.
+- **Currency.** For a recipient in Romania, the cash-on-delivery and insured amounts are converted to RON; otherwise they go in the order's currency. The waybill's cost comes back without a currency and is read in the Sameday account's currency (RON for Romania, EUR for Bulgaria), then converted to the store's currency. When the customer switches payment method (e.g. COD → online), shipping recalculates and Sameday's COD fee disappears.
+- **Waybill price sync.** On an order that is not paid or completed, generating the waybill asks *"Do you want to sync the prices?"* / *"Искаш ли да синхронизираш цените?"* (in the Admin API the field is **Обнови сумата на поръчката според товарителницата**). Yes makes the waybill's cost, after the method's own pricing rules, the order's shipping price and recomputes the totals; No changes nothing. A paid order changes only when its recalculation lock (**Забрани преизчисляване на цената за доставка**, the lock in the order totals, not a waybill control) is off ([[order-pipeline-recalculation]]). No order-history entry is written for it. **Уведоми клиента** is in the order's customer card, not the waybill form.
+- **Services and cross-border.** The service list is what Sameday's API returns for the account; names like *"Crossborder HD 24H"* are Sameday's, and cross-border use depends on the merchant's Sameday contract (no quote when not covered).
 - **Live service.** Quotes and waybills go to Sameday's production service for the country chosen (Bulgaria, Romania or Hungary).
 
 ## Per-channel delivery pricing
 
-Sameday delivers to **address**, to **office** and to **locker** — each of its **3** delivery channels (to **address**, to **office** and to **locker**) is a separate rate card with its own enable toggle (`to_address` / `to_office` / `to_locker`) and a **Delivery price calculation** type. When the merchant picks a type, the rate card reveals these fields:
+Each of the **3** channels (address, office, locker) is a separate rate card with its own toggle (`to_address` / `to_office` / `to_locker`) and a **Delivery price calculation** type:
 
-- `calculator` — the real-time Sameday quote; **no extra field** of its own.
-- `calculator_fixed` — the Sameday quote **plus a fixed fee** you enter in the **Parcel processing Fee** field (`fixed_price_<channel>`).
-- `free` — the Sameday quote, but **free above a threshold** you set in **Minimum Order Value for Free Delivery** (`free_shipping_total_<channel>`); below it the customer pays the quote. It also adds **Free Delivery Service within the City** and **Intercity** selects that pick which Sameday service fulfils the free leg.
-- `fixed_price` — a **Fixed value by price** rate table: rows keyed by **cart subtotal** (`from` / `to` / `amount`); the courier quote is ignored.
-- `fixed_weight` — a **Fixed value by weight** rate table: rows keyed by **total weight**.
-- `price_and_weight` — a combined table keyed by **both cart subtotal and weight**.
+- `calculator` — the real-time Sameday quote.
+- `calculator_fixed` — the quote **plus** the **Parcel processing Fee**.
+- `free` — the quote, but **free at or above** the **Minimum Order Value for Free Delivery**; adds **Free Delivery Service within the City** and **Intercity** selects.
+- `fixed_price` / `fixed_weight` / `price_and_weight` — **Fixed value** tables by cart subtotal, total weight, or both; the quote is ignored.
 
-The calculator-based types also expose an optional **Fallback price** rate table, used only when the live quote can't return a price; the `fixed_*` types need no fallback (their table **is** the price). **Every** type also adds a **per-category** sub-table ("Set different pricing conditions for products in category/ies") for charging chosen categories differently. Full field mechanics + rate-row semantics: [[shipping-calc-rate-card-fields]] and [[shipping-calc-rate-models]].
+Calculator types also have an optional **Fallback price** table; every type adds a **per-category** sub-table. Full mechanics: [[shipping-calc-rate-card-fields]] and [[shipping-calc-rate-models]].
 
 ## Related
 
-- [[shipping-calc-rate-models]] — rate-table semantics: when a method uses a from/to rate table (по тегло / по цена), an **empty upper bound (`до` / `to`) means no upper limit — the bracket runs to infinity** (both bounds inclusive). A blank top row is intended, not invalid, and never hides the method at checkout.
+- [[shipping-calc-rate-models]] — rate-table semantics (an empty upper bound means no upper limit).
 - [[apps]] — App Store.
 - [[apps-cargus]] — sister Romanian courier (often installed alongside; address-only).
 - [[apps-boxnow]] — sister locker provider (locker-only; Sameday EasyBox is one option among many).

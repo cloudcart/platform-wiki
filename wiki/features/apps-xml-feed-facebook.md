@@ -7,8 +7,8 @@ aliases: ["Facebook feed", "Meta catalog feed", "Facebook product catalog", "Fac
 tags: [apps, exports, xml, feed, facebook, meta, catalog, capi]
 plan_gates: []
 created: 2026-06-11
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > One of the predefined sub-feeds of [[apps-xml-feed]] (the XML Feed app). See that hub for the shared activation / settings / status / public-URL mechanics. For the storefront Facebook **Pixel** specifically, see [[apps-facebook-pixel]].
@@ -25,7 +25,7 @@ Sidebar → Apps → **XML Feed** → **FaceBook** (`/admin/apps/xml_feed/facebo
 
 ## What the merchant can do here
 
-- Activate / deactivate the Facebook catalog feed and copy its public URL.
+- Start / stop the catalog feed and copy its public URL on the Status tab — see [[apps-xml-feed-status-tab]] (configured filter, product count, plan cap, link).
 - Set the **Facebook Pixel ID** and enable **Extended ViewContent**.
 - Enable the **Conversions API (CAPI)** with an **Access token** (and a test event code).
 - Scope which products are included (shared sub-feed controls).
@@ -48,7 +48,7 @@ Product filter (category / vendor / product / tag / selection / all), in-stock-o
 
 ### What the Facebook feed includes
 
-Title, link, description, price, image, and the **`g:google_product_category`** element (with the `variants.listing` plan feature, one `<item>` per combination of the options shown in listings, with an item-group id).
+Title, link, description, price, image, and the **`g:google_product_category`** element. Prices carry the store's own currency; the sub-feed has no currency field. Rows: one `<item>` per product when CloudCart defines this feed as main-only (verify); otherwise, with the `variants.listing` plan feature, one per combination of the options shown in listings, with an item-group id.
 
 ## Business rules
 
@@ -59,7 +59,7 @@ Like the [[apps-xml-feed-google|Google]] feed, the Meta catalog reads each **cat
 Three distinct things share this screen: the **catalog feed** (product data for ads), the **Pixel** (browser-side events), and **CAPI** (server-side events, paid). See [[apps-facebook-pixel]] for the standalone Pixel app.
 
 ### Why a product might be missing
-Hidden product, the included-product filter, plan gating, or the feed not yet regenerated (~every 4 hours). See [[apps-xml-feed]].
+Hidden product, the included-product filter, plan gating, a plan cap on this sub-feed, a stopped task, or the feed not yet regenerated (every 2 hours). What Meta does with the catalog afterwards (review, ad approval) is decided in Meta Commerce Manager, not by CloudCart. See [[apps-xml-feed]].
 
 ### Plan gating
 Per-consumer (app key `app.xml_feed.facebook`); CAPI is separately paid — see [[plan-gates]].
@@ -74,4 +74,3 @@ Per-consumer (app key `app.xml_feed.facebook`); CAPI is separately paid — see 
 ## Open questions
 
 - Whether the Pixel set here and [[apps-facebook-pixel]] are the same configuration or independent (verify).
-- Exact public feed URL pattern shown on the Status tab (verify).

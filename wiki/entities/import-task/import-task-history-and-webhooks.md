@@ -4,8 +4,8 @@ nav_path: "Entity → Import Task → History and webhooks"
 aliases: ["Import history retention", "Import task retention", "Per-record webhook fan-out", "No import.completed webhook", "Shared import history", "Import audit trail"]
 tags: [entity, settings, ops, imports, retention, webhooks]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 > Part of [[import-task]]. See the hub for the other aspects (attributes, lifecycle, types + queues, processing model, provenance + recovery).
@@ -14,28 +14,25 @@ source_count: 0
 
 ## Identity
 
-What happens to the Import Task **after** completion — the **indefinite retention** rule (no TTL, no auto-cleanup, no DELETE endpoint), the **shared site-wide audit trail** (every staff member sees every Task; no per-creator filter), and the **webhook fan-out behaviour** — which has two important properties merchants must understand: (a) there are **NO Task-level webhook events** (`import.completed` / `import.failed` do not exist), and (b) **per-record webhooks DO fire** on every row processed, creating chatty fan-outs on large imports.
+What happens to the Import Task **after** completion — how long the history is kept (set on the logging database, not by the platform; no delete in the UI), the **shared site-wide audit trail** (every staff member sees every Task; no per-creator filter), and the **webhook fan-out behaviour** — which has two important properties merchants must understand: (a) there are **NO Task-level webhook events** (`import.completed` / `import.failed` do not exist), and (b) **per-record webhooks DO fire** on every row processed, creating chatty fan-outs on large imports.
 
 ## Aliases
 
-- **Import history retention** — the indefinite-keep rule.
+- **Import history retention** — how long the history log is kept.
 - **Shared import history** — Site-scoped, every staff sees every Task.
 - **Per-record webhook fan-out** — `product.updated` / `customer.created` / etc. fire on every row.
 - **Audit trail** — the merchant-facing term for [[settings-import-history]] + change-log modal.
 
 ## Key Attributes
 
-### Indefinite retention — Tasks accumulate forever
+### Retention — set on the logging database
 
-There is **NO auto-cleanup, NO scheduled retention, NO DELETE endpoint** exposed on the import-history surface. Past Import Tasks and their per-record detail rows accumulate forever — a merchant running daily imports for years has years of history.
-
-[[settings-import-history]]'s pagination handles browse-time size; the underlying records persist forever unless support intervention clears them via direct DB access. The merchant cannot trigger a cleanup from the admin UI.
+No platform job deletes Import Task history, and the admin offers no delete. How long the logging database keeps the Tasks and their per-record rows is set on the database itself, not in the platform's code; support reports about 2 days (verify). See [[settings-import-history-storage-and-retention]].
 
 Practical implications:
 
-- **Disk usage grows unbounded.** For high-volume merchants running daily XML syncs, the import-history table grows fast. Support occasionally cleans the oldest rows when storage thresholds are hit.
-- **The "Imported with" filter (see [[import-task-provenance-and-recovery]]) keeps working forever.** Months / years after an import, the merchant can still find the affected records.
-- **The change-log modal stays accurate.** Per-record before/after detail persists indefinitely.
+- **An empty history is not lost data.** The imported products stay, and so does their "Imported with" stamp, so the filter (see [[import-task-provenance-and-recovery]]) still finds them after the log has gone.
+- **The change-log modal works only while the history row exists.** Once it expires, the per-record before/after detail is gone.
 
 ### All staff see one shared history
 

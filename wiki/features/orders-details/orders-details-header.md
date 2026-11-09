@@ -7,8 +7,8 @@ aliases: ["Order header", "Order details header", "Order breadcrumb", "Order too
 tags: [orders, order-details, header, toolbar, status-pill, draft, returns]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[orders-details]]. See the hub for the other aspects (products, addresses, payment, shipping, history, actions, known issues).
@@ -51,7 +51,7 @@ The toolbar's contents are state-conditional and app-conditional. **A draft orde
 
 | Menu item | When visible | What it does |
 |---|---|---|
-| **Cancel order** | Only when `order.status == pending` AND `quantity_enough` (stock is sufficient) | Confirmation *"Are you sure?"* dialog → status transitions to `cancelled`. Restocks lines per [[inventory-restock]]. |
+| **Cancel order** | Menu item: `pending` + `quantity_enough` only (pill: see below) | Confirmation *"Are you sure?"* dialog → status transitions to `cancelled`. Restocks lines per [[inventory-restock]]. |
 | **Archive / Unarchive** | Only for `completed` / `cancelled` orders | Toggles the archived flag. Archived orders are filtered out of default views unless **Archived = Yes**. |
 | **Mark as completed** | Only when `order.status == 'paid'` AND `status_fulfillment == 'fulfilled'` | Promotes status to `completed`. Fires the Completed status's customer notification email if the per-status email toggle is ON in [[settings-statuses]]. |
 
@@ -124,7 +124,7 @@ The status badge's CSS class depends on combined state:
 
 ### Cancel-order conditions
 
-The **Cancel order** action is hidden unless the order is `pending` AND stock is sufficient (`quantity_enough`). For other statuses, cleanup paths are Refund ([[orders-payment-refund]]) for paid orders, Archive for completed / cancelled, or a return with its credit note ([[orders-details-returns]]) for refund accounting.
+The one-click **Cancel order** menu item shows only for a `pending` order with enough stock (`quantity_enough`). It is a shortcut, not the rule: the status pill cancels any order except `paid` / `completed` ([[order-status-action-gates]]). Paid orders: Refund ([[orders-payment-refund]]) or a return ([[orders-details-returns]]).
 
 ### When "Issue return" is shown
 

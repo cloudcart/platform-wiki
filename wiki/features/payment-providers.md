@@ -7,8 +7,8 @@ aliases: ["Payment providers directory", "Payment methods catalogue", "Плат�
 tags: [payment-providers, directory, hub]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # Payment Providers
 
@@ -35,6 +35,7 @@ This is a directory — it has no settings of its own. All payment configuration
 ## Business rules
 
 - The Payments link is visible to a staff member only if their role grants `settings` or `settings.payment_providers` permission.
+- **The merchant contracts each provider directly.** CloudCart is not a party to that contract and is not liable for the payment service (Terms of Use §7.2). Using a third party's service may mean extra fees to that provider (§14.4). CloudCart Pay has its own agreement ([[cloudcart-pay-merchant-terms]]). See [[terms-of-use-third-parties-data]].
 
 ## Programmatic access
 

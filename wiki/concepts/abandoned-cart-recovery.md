@@ -7,8 +7,8 @@ aliases: ["Abandoned cart recovery", "Cart recovery", "Cart recovery flow", "Aba
 tags: [orders, cart, abandoned, recovery, marketing, concepts]
 plan_gates: ["abandoned_notification"]
 created: 2026-05-23
-updated: 2026-11-03
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 # Abandoned cart recovery
@@ -57,7 +57,7 @@ What it does NOT cover:
 ## Contrasts
 
 - **Recovery vs abandoned cart** — an abandoned cart is just a Cart whose `updated_at` crossed the threshold; recovery is the platform's attempt to bring the customer back. Carts can be abandoned without ever being recovered.
-- **Automated reminder vs manual Send restore link** — the auto-sweep fires once per cart (filters `date_sent IS NULL`); the manual bulk action permits re-sends. See [[abandoned-cart-bulk-send]].
+- **Automated reminder vs manual Send restore link** — the auto-sweep and the manual bulk action both pick only carts with no `date_sent`; only the single-cart Send can re-send. See [[abandoned-cart-bulk-send]].
 - **Email vs Messenger channel** — see [[abandoned-cart-channels]].
 - **Recovered order vs normal order** — identical workflow; only the `abandoned = 1` + `restore_source` flags differ. See [[abandoned-cart-attribution]].
 - **Recovery vs retargeting** — recovery is CloudCart's first-party mechanism via email / Messenger; retargeting (Facebook / Google Ads) is third-party advertising and doesn't use the restore-link infrastructure.

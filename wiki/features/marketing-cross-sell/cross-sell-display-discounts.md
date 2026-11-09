@@ -7,8 +7,8 @@ aliases: ["Cross-Sell display type", "Cross-Sell popup vs add to cart", "Cross-S
 tags: [marketing, cross-sell, display, discounts, actions]
 plan_gates: ["cross_sells"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-cross-sell]]. See the hub for the other aspects (offer form, trigger events, filters & limits, view tracking, engine comparison).
@@ -29,7 +29,7 @@ Open a Cross-Sell offer → the **Action conditions** box (`cross_sell.label.act
 
 - **Display type** dropdown (`cross_sell[display_type]`) — **Display popup** vs **Add matched to cart**.
 - **Products limit** dropdown (`cross_sell[products_limit]`) — values 1 through 10 (hard-capped — see [[cross-sell-filters-limits]]).
-- **Display popup** dropdown (`cross_sell[meta][display_popup]`) — Yes / No.
+- **Display popup** dropdown (`cross_sell[meta][display_popup]`) — Yes / No. It matters only with **Add matched to cart**: Yes shows a closable popup of the products just added; No adds them silently, unless the offer has a follow-up ("yes") offer, whose popup then opens. A **Display popup** display type always shows its popup, whatever this says. Per event: [[cross-sell-trigger-events]].
 - **Offered products list** (`cross_sell[actions]`) — a dynamic group builder identical in shape to the targets list. The merchant picks specific products / categories / vendors / smart-collections to OFFER when the trigger fires.
 
 ### Box 6 — Discounts
@@ -69,7 +69,11 @@ The merchant does NOT manually toggle `free_shipping` / `free_products` — they
 
 ### Real catalog discount, not virtual
 
-An attached discount uses the existing `ProductToDiscount` relationship — so the discount is a **real catalog discount**, not a virtual one applied only inside the popup. (verify whether the discount persists on the line item after the popup is dismissed.)
+The discount belongs to the **cart line added through the offer**, not to the popup. It is worked out again on every cart read and shows as a line discount named after the offer's title. So:
+
+- Closing the popup without choosing adds nothing and gives no discount; the same product added another way gets none either.
+- A line added through the offer keeps its discount after the popup closes, while the cart still holds the product that triggered the offer. Remove that product and the discount drops. Offers targeting the whole cart, post-purchase offers and auto-add offers at checkout skip this check.
+- The discount does not re-check the offer's status or dates; it ends only if the offer is deleted.
 
 ### Auto-add bypasses customer choice
 
@@ -94,4 +98,4 @@ A `display_type = add_to_cart` Cross-Sell offer drops the product straight into 
 
 ## Open questions
 
-- Does an attached Cross-Sell discount persist on the cart line after the popup is dismissed, or only while the offer remains active? `(verify)`
+None.

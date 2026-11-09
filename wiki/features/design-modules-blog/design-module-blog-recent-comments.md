@@ -7,8 +7,8 @@ aliases: ["Recent comments module", "Last comments module", "recentComments", "r
 tags: [design, modules, blog, comments]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Storefront Modules — Recent comments (`recentComments`)
@@ -33,7 +33,7 @@ If the active theme doesn't ship a `recentComments` instance, the card does not 
 
 - **Set the count** of comments to show (2-10).
 - **Disable** the module — when off, the block is hidden regardless of comments present.
-- **Save** to persist; storefront cache regenerates on the next request.
+- **Save** to persist; pages rendered afterwards use it (guests within 20 minutes).
 - **Reset** to revert to the theme's shipped default (5).
 - **Cancel** to close without saving.
 
@@ -100,7 +100,7 @@ Avatars are pulled live from Gravatar via the commenter's email. If the commente
 
 ### Cache invalidation
 
-Save / Reset bump the per-site modules cache key. New approved comments surface immediately on the next storefront request — the comment list is queried live, not cached at the module level.
+Save / Reset bump the per-site modules cache key. New approved comments appear on any page rendered after approval — the list is queried live, not cached at the module level — while guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Plan gating
 

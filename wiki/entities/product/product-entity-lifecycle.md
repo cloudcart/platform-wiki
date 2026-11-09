@@ -5,8 +5,8 @@ aliases: ["Product lifecycle", "Product states", "Product draft", "Product hidde
 tags: [entity, catalog, products, lifecycle]
 plan_gates: ["products"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[product]]. See the hub for the other aspects (attributes, business rules, relationships, side effects and API).
@@ -21,7 +21,7 @@ The set of merchant-controlled states a [[product|Product]] moves through from c
 
 - **Product lifecycle** / **Product states** — the named states (Draft, Scheduled, Visible, Hidden, Expired, Out of stock, Soft-deleted, Hard-deleted).
 - **Publish window** — the `publish_date` + `active_to` pair that defines visibility timing.
-- **Temporary delete** — the 10-day soft-delete window before hard-purge.
+- **Temporary product** — an auto-created product, purged 10 days after it was created.
 
 ## Key Attributes
 
@@ -45,7 +45,7 @@ The driving fields are documented in [[product-entity-attributes]]. The state of
 4. **Hidden** — `active = yes`, `is_hidden = 1`. Listed nowhere on the storefront but reachable via direct URL. Useful for private promotion campaigns where the merchant emails a direct link. See [[product-entity-business-rules]] for the Hidden vs Draft distinction.
 5. **Expired** — `active_to` has passed. Excluded from storefront listings exactly like Draft. The merchant can extend by editing `active_to` to a future date.
 6. **Out of stock** — `tracking = yes`, `continue_selling = no`, all variant `quantity = 0`. The product still appears on the storefront with the out-of-stock label + button, but cannot be added to cart. The merchant can override with a custom [[product-status|Status]] (e.g., "Notify me when back in stock"). See [[inventory-oversell]] for clamping at 0 (Variant `quantity` never goes negative).
-7. **Soft-deleted** — `deleted_at` set. Removed from all listings AND admin views. Held for a temporary delete window (10 days) before hard-purge.
+7. **Deleted, awaiting removal** — `deleted_at` set and inactive. Removed from all listings AND admin views until the queued delete task removes it permanently.
 8. **Hard-deleted** — Permanently removed. Triggers cascade cleanup — see [[product-entity-side-effects-and-api]].
 
 ## Publish window: `publish_date` + `active_to`
@@ -67,17 +67,11 @@ The storefront product-detail page is hardened against direct-URL traffic outsid
 
 ## URL-handle changes generate 301 redirects
 
-When the merchant edits `url_handle`, the previous handle is recorded as a redirect entry (see [[seo-redirect]]). The storefront serves a permanent redirect from the old URL to the new one — search engines and bookmarked links continue to work without manual reconfiguration.
+When the merchant edits `url_handle`, the previous handle is kept for **30 days** in a hidden history (not as an entry on the 301 Redirects screen); within that window the old URL 301-redirects to the new one ([[seo-301-redirects-auto-tracking]]). For longer, add a rule ([[seo-redirect]]).
 
-## Soft-delete window: 10 days
+## Deleting a product
 
-When the merchant deletes a product, the platform soft-deletes it (`deleted_at` set) and holds the record for a **10-day** temporary-delete window before hard-purge. During this window:
-
-- The product is invisible to merchant and customer.
-- Its DB record (and history) still exists.
-- The tooltip during the soft-delete window reads: *"Temporary product. Created on `<date>`. This product is auto deleted on `<delete_date>`."* — that is the **only** warning.
-
-After the 10-day window expires and the hard-purge runs, the product simply disappears from the soft-deleted list with **no follow-up notification**.
+Deleting from the admin (one product or many) immediately makes the product inactive and marks it deleted, which hides it everywhere; a queued background task then removes it permanently, with its images. A single delete through the Admin GraphQL API removes it at once. There is no trash, retention window or restore screen (the confirmation says the action cannot be undone); the only way back is a backup restore ([[settings-backups-partial-restore]]), which brings the record back but not its images. The **10-day** auto-delete applies only to *temporary* products, the auto-created ones the list marks with a clock icon and the tooltip *"Temporary product. Created on `<date>`. This product is auto deleted on `<delete_date>`."*
 
 ## Hard-delete cascade
 

@@ -7,8 +7,8 @@ aliases: ["Allowed file extensions", "File type whitelist", "Upload extensions",
 tags: [settings, files, mime, extensions, validation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[settings-files]]. See the hub for the other aspects (tabs, upload flow, storage quota, delete protection, image playground, storage backend).
@@ -71,7 +71,7 @@ Merchants whose customers upload iPhone HEIC photos via storefront forms will se
 
 ### Per-file size cap — 1024 MB
 
-The cap is configured by `upload.files_max_size`. This is a **hardcoded server-side limit, not plan-based**. The same cap applies on the Files tab and on customer uploads through storefront file-upload [[product-option|Product options]]. There is no way to raise this from the admin UI.
+The cap is configured by `upload.files_max_size`. This is a **hardcoded server-side limit, not plan-based**. It applies to the Files tab, not to file-upload [[product-option|Product options]] (see below). There is no way to raise this from the admin UI.
 
 Pre-upload client validation rejects oversize files before sending bytes — see [[settings-files-upload-flow]]. The inline error strip identifies which files exceeded the cap.
 
@@ -101,9 +101,9 @@ A determined merchant can still drag-and-drop a disallowed file or paste a `File
 
 If a merchant uploads two files with the same name, the second gets a `-<uniqid>` suffix to keep the URL path unique. See [[settings-files-upload-flow]] for the mechanics. The extension and folder-routing rule still applies to the renamed file — the suffix is inserted before the extension.
 
-### File-upload [[product-option|Product options]] inherit these limits
+### File-upload [[product-option|Product options]] have their own, shorter list
 
-Customer-facing file-upload Options (e.g., "Upload your custom design") use the same platform-wide caps from this page. There is **no per-Option override** for size or MIME — the Option editor lets the merchant accept-or-deny a file-upload field but not configure stricter limits per field.
+A customer's upload through a File option is NOT checked against this page's list. It accepts only pdf, doc, jpeg, jpg, png, gif, tiff, zip and rar, up to 25 MB, one file per option; anything else (docx, CAD files such as dxf, dwg or step, HEIC) is refused when adding to cart. The list is platform-wide, with no per-option setting — see [[products-options-types]].
 
 ## Related
 

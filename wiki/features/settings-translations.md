@@ -7,8 +7,8 @@ aliases: ["Translations", "System labels", "Storefront translations", "Custom la
 tags: [settings, translations, i18n, labels]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 10
+updated: 2026-11-09
+source_count: 11
 ---
 # Translations
 
@@ -67,7 +67,7 @@ The screen's most important cross-cutting rules — each is expanded in the rele
 
 - **Overrides survive the master toggle.** Flipping system labels OFF stops applying overrides but does **not** delete them; flipping back ON restores the merchant's accumulated work. See [[settings-translations-toggle]].
 - **Two reset levels are not symmetric.** Per-row / bulk reset deletes only the selected override rows; "Reset all to default" truncates **every** override for the current site (across all languages of the current theme). See [[settings-translations-reset]].
-- **Storefront only.** This page customises customer-facing labels. Admin-panel labels use a separate, non-merchant-accessible system. See [[settings-translations-permissions]].
+- **Storefront only.** This page customises storefront labels (the platform's and the active theme's). Admin-panel labels use a separate, non-merchant-accessible system, and customer emails are not edited here: their wording, subjects and captions belong to the templates on [[marketing-omnichannel-mails-list]], and the captions inside `{$product_list}` are fixed ([[omnichannel-mails-order-confirmation]]). See [[settings-translations-permissions]].
 - **Overrides are scoped to `(locale, theme)`.** Switching the storefront language in [[settings-general]] or switching themes loads a different override pool. To translate one key into multiple languages × themes, the merchant must repeat the override per combination. See [[settings-translations-scoping]].
 - **Saves are synchronous and chatty.** Every save regenerates the storefront data asset and (on resets) rebuilds the translation table inline — saves are slower than a typical "save and continue" UX, and 100 successive edits trigger 100 cache flushes. See [[settings-translations-side-effects]].
 - **Permission is gated by `store.translations`.** Moderators need either broad **Settings** or the specific **Translations** grant from [[settings-staff]]. Owners always pass. See [[settings-translations-permissions]].

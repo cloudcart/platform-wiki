@@ -7,8 +7,8 @@ aliases: ["Abandoned cart recovery", "Abandoned cart email", "abandoned_restore_
 tags: [marketing, omnichannel, email, notifications, abandoned-cart, recovery]
 plan_gates: ["abandoned_orders"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-omnichannel-mails-list]]. See the hub for related aspects (mail labels, editor modal, toggles & gating, variables, customisation limits).
@@ -68,11 +68,11 @@ The dispatched mail attaches `utm_campaign=abandoned_restore_link` to `{$link}` 
 
 The job destroys itself (`EXECUTE_DESTROY`) at start if **any** are true:
 
-- The merchant's plan does NOT include `abandoned_orders` (the platform code returns false at the gate).
+- The merchant's plan does NOT include `abandoned_orders`.
 - `abandoned_remainder` setting is NOT `yes`.
 - No abandoned carts exist to send.
 
-Mid-batch, if the plan-allowance for abandoned sends is depleted, the platform code throws a plan-restriction error and the job stops processing further carts for that run. The remaining carts are picked up on the next scheduled run if allowance is restored.
+Mid-batch, if the plan-year allowance (`abandoned_notification`) is used up, the job stops processing further carts for that run. Within 12 hours the platform switches `abandoned_remainder` OFF and posts an Important alert in [[notifications]]; the remaining carts go out only after the allowance is restored AND the merchant turns the reminder back on.
 
 ### Eligibility — who actually receives the mail
 
@@ -92,7 +92,7 @@ Through the platform's Elastic Email transport, `abandoned_restore_link` goes ou
 
 ### Plan-billing accounting
 
-Every e-mail sent by the job increments `plan.count.email.abandoned_notification`, a tally per plan year on every billing period ([[abandoned-cart-plan-quota]]). When the store hits the allowance ceiling, the job stops for that run. The merchant then either waits for the next plan year or extends the allowance at [[plan-features]].
+Every e-mail sent by the job increments `plan.count.email.abandoned_notification`, a tally per plan year on every billing period ([[abandoned-cart-plan-quota]]). When the store hits the allowance ceiling, the job stops and the reminder is later switched off. The merchant either waits for the next plan year or extends the allowance at [[plan-features]], then turns the reminder back on.
 
 ### `date_sent` is set after one send — no spam
 

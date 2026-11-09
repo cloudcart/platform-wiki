@@ -5,8 +5,8 @@ route_path: /checkout/return/{status}/{payment_hash}
 themes_using: [all]
 tags: [storefront, checkout, payment, return, email, analytics, conversion-tracking]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 > Part of [[checkout-return]]. See the hub for the other aspects (load flow & routing, status-driven display).
@@ -31,7 +31,7 @@ The email cascade runs only inside an idempotency guard — emails fire **only i
 4. If status !== `cancel` AND order status !== `pending`: fire the `OrderStatusChangeReturn(order, 'pending')` event (wrapped in try/catch — failure is silently swallowed).
 5. With `retry(5, ..., 100)` set `email_sent = 'yes'` (5 attempts, 100 ms backoff).
 
-After the email block, the **analytics tracking flag** is set: `google_analitycs_tracking = 'track'` in the order's meta, so the rendered page knows to fire the `Purchase` pixel. The meta key is spelled `google_analitycs_tracking` — the typo (missing the second `c`) is in the data model and is the real stored key.
+After the email block, a `google_analitycs_tracking = 'track'` meta is written on the order (the typo is the real stored key). Nothing on the page reads it. The once-per-order guard for the Google events is a different flag, `js_events`, set when the page-data block is first built for the order.
 
 ## What the customer sees
 
@@ -41,13 +41,13 @@ Conversion-tracking elements rendered at the bottom of the page:
 
 - **Yotpo conversion tracking** — the Yotpo manager's `conversionTracking($order)` injects the Yotpo pixel.
 - **AdScout xml-feed app** — when installed, runs `window.AdScout.clearStorage(...)` to reset the customer's bumpcart attribution data on the success page.
-- **Analytics pixels** — the `Purchase` event fires for Facebook / Google Analytics / Pinterest / TikTok / etc., reading the order from the request registry key `checkout.order_payment`.
+- **Analytics pixels** — the purchase events of Facebook, Google Analytics, Google Ads and TikTok. The Google ones are built from the page-data block (`cc_page_data`) that carries the order.
 
 ## Storefront behaviour
 
 - **Email cascade is idempotent** — emails fire only inside the `if (email_sent == 'no')` block, so running this page a second time doesn't re-send (the digital-files-link branch inside the template still renders the link, but no new email goes out).
-- **GA tracking flag** — `google_analitycs_tracking` meta is set the first time the page renders for a non-cancel status. The pixel reads this meta to know whether to fire, so a merchant can clear it to force re-tracking if needed.
-- **Pixel double-fire** — refreshing the page does not re-charge or re-email, but the analytics pixel may double-fire if the merchant's pixel config doesn't dedupe (most do).
+- **Google events once per order** — the first render flags the order; a refresh sends no second GA4 or Google Ads purchase, even if the first render sent none (consent, blocker). See [[apps-google-analytics-purchase-event]].
+- **Other pixels on refresh** — whether they fire again depends on the app (verify per provider).
 - **Customers who never return** may receive the order email only via the webhook path (some providers fire their own email path); if the webhook never arrives, no email fires until manual reconciliation — see [[checkout-return-load-flow]] for the webhook race.
 
 ## JavaScript behaviour
@@ -56,7 +56,7 @@ The conversion-tracking JS is server-rendered and runs on page load:
 
 - **Yotpo pixel injection** — server-rendered `<script>` tag.
 - **AdScout reset** — `$(document).ready(function { window.AdScout.clearStorage(window.AdScout.storageDB, true); })` — fires only when the `app.xml_feed.ad_scout` app is installed.
-- **Analytics `Purchase` pixels** — server-rendered per-provider snippets (Facebook, GA, Pinterest, TikTok) that read the order from the registry and fire on load.
+- **Analytics purchase events** — the Google events come from the shared Google tracking script reading `cc_page_data`; Facebook and TikTok from their own apps.
 
 The email cascade itself is purely server-side — no client JS participates.
 
@@ -76,7 +76,7 @@ The email cascade and conversion-tracking blocks are theme-independent — they 
 - **The page is the email-trigger, not the checkout-submit handler** — checkout submit creates the order in `pending` status and hands off to the gateway; emails only fire when (a) the customer returns and lands here, or (b) the webhook arrives and fires its own email path. Customers who never return (closed the tab, lost connection) may get the email only via webhook; if the webhook never arrives, no email fires until manual reconciliation.
 - **Meta key typo** — `google_analitycs_tracking` (missing the second `c`) is the actual stored meta key. Don't "fix" this without a migration — it would orphan all historical orders' tracking flags.
 - **`email_sent` retry loop** — the platform code swallows update failures. If all 5 retries fail, the order will re-send emails next time the page is loaded.
-- **`Purchase` pixel dedup across webhook + return** — whether the pixel is fully deduplicated when both the webhook and the return URL fire is unverified (verify).
+- **No analytics event on the webhook path** — the payment provider's confirmation sends no GA4 or Google Ads event, so there is nothing to deduplicate, and a buyer who never reaches this page is never reported to Google.
 
 ## Related
 
@@ -90,5 +90,4 @@ The email cascade and conversion-tracking blocks are theme-independent — they 
 
 ## Open questions
 
-- Whether the `Purchase` analytics pixel is fully deduplicated when both the webhook and the return URL fire. (verify via [[notification-delivery]] and the analytics manager)
 - The exact set of providers in the credit-group that suppress the `sendCreateNewOrderPaymentError` email. (verify per provider)

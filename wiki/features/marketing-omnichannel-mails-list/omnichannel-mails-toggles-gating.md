@@ -7,8 +7,8 @@ aliases: ["customer_email_notifications", "Send notifications to customers", "Pe
 tags: [marketing, omnichannel, email, notifications, gating, toggles]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-omnichannel-mails-list]]. See the hub for related aspects (mail labels, editor modal, variables, abandoned-cart, customisation limits).
@@ -17,18 +17,18 @@ source_count: 3
 
 ## Purpose
 
-Two layers of on/off control gate every customer-mail send. This page documents the **global "Send notifications to customers" toggle**, the **per-mail Active flag**, the three **forced-on** labels (security/auth critical), and the exact send-gate point in the pipeline.
+Two layers of on/off control gate every customer-mail send. This page documents the **global "Send notifications to customers" toggle**, the **per-mail Active flag**, the **locked** (forced-on) mails, and the exact send-gate point in the pipeline.
 
 ## Where to find it
 
 The global toggle sits in the page header at `/admin/marketing/omnichannel/mails/list`, labelled **"Send notifications to customers"** (BG **"Изпращай известия до клиенти"**).
 
-The per-mail Active flag is **NOT** surfaced as a column on the modern Vue list — it's a legacy-admin field that survives on the `Mail` model.
+The per-mail Active flag is the **Active** switch column of the same list; on a locked mail the switch is disabled and stays on.
 
 ## What the merchant can do here
 
 - Toggle the global switch ON/OFF in the page header (single click).
-- The list page does **not** expose the per-mail Active flag — to flip a specific event off without disabling everything, a developer or CloudCart staff must edit it in legacy admin (verify).
+- Switch one mail off or on with its **Active** switch (not on locked mails).
 
 ## Settings & fields
 
@@ -36,7 +36,7 @@ The per-mail Active flag is **NOT** surfaced as a column on the modern Vue list 
 
 | Field | Setting key | Default | Effect when OFF |
 |-------|-------------|---------|-----------------|
-| **Send notifications to customers** | `customer_email_notifications` | `yes` | Stops the platform from sending **any** customer email notification, including security-critical ones |
+| **Send notifications to customers** | `customer_email_notifications` | `yes` | Meant to stop customer email notifications; in the code it applies only where a send asks for it (see *Business rules*) |
 
 Persisted via `POST /admin/api/core/marketing/customer-mails-settings` with body `{customer_email_notifications: true/false}`. The backend translates the boolean to the string `'yes'` / `'no'` in the central platform settings table (one row per `(site_id, parameter)`). Other workers / queues pick up the new value on their next setting fetch.
 
@@ -48,7 +48,7 @@ Persisted via `POST /admin/api/core/marketing/customer-mails-settings` with body
 
 ### Forced-on labels (cannot be disabled via per-mail Active)
 
-The labels `two_factor_action`, `email_confirmation`, and `alert_notification` are forced-on regardless of the per-mail Active flag. In the legacy admin notifications page they appear with `checked="checked" disabled="disabled"`. These are security / auth-critical:
+A mail is **locked** when its on/off cannot be changed: it always sends, whatever its Active flag and the global switch say. On the customer list the Aftercare acknowledgement of receipt is locked. The three labels below are merchant-alert mails, locked on [[settings-admin-notifications]]. The customer **two-factor code** email (`cc2fa_email`, used by the withdrawal form) is not locked: switched off, it sends nothing. Which other customer mails are locked is stored per store (verify).
 
 | Label | Why forced-on |
 |---|---|
@@ -56,7 +56,7 @@ The labels `two_factor_action`, `email_confirmation`, and `alert_notification` a
 | `two_factor_action` | 2FA action notifications |
 | `alert_notification` | Critical platform alerts |
 
-**The global toggle still suppresses these three labels.** Turning OFF the global switch is a complete kill switch — even forced-on security mail is blocked. Merchants should NEVER leave the global switch OFF in production: they will silently block their own customers from verifying email and completing 2FA flows.
+Locked mails ignore the global switch as well.
 
 ## Business rules
 
@@ -64,10 +64,10 @@ The labels `two_factor_action`, `email_confirmation`, and `alert_notification` a
 
 Every transactional mail dispatch checks **both**:
 
-1. Global `customer_email_notifications == 'yes'` (store-wide).
-2. Per-mail the platform code (per-label), **except** for the three forced-on labels which bypass step 2.
+1. Global `customer_email_notifications == 'yes'` (store-wide) — but only for a send that asks for this check.
+2. Per-mail the platform code (per-label), **except** for locked mails, which bypass both checks.
 
-Both checks happen inside `sendNotification` of the customer-notification helper — every label flows through this single helper, gated by an internal `check_notifications_enabled` flag (default `true`). There is no production code path that sets this flag to `false`, so the global switch really does block every customer-mail send including password reset (verify).
+Both checks sit in the customer-notification helper. In the code the global check is off unless a send turns it on: the two-factor code email and the Aftercare emails do not, so the switch does not stop them, and no other customer email was found turning it on; only the wallet-expiry reminder reads the switch itself. What the switch stops in practice is therefore narrower than its label (verify on a store).
 
 ### The toggle is independent of campaigns
 
@@ -89,7 +89,7 @@ The intended use of the global toggle: temporary silence during data migration, 
 
 - **Don't toggle OFF in production.** Customers think their order failed; password resets break.
 - **Use the per-mail Active flag (legacy admin) for surgical silence** — e.g., disable `customer_newsletter_subscribe` confirmation if the merchant doesn't want subscribe confirmations.
-- **The forced-on labels exist for a reason** — never try to suppress 2FA / email-confirmation; that would brick account flows.
+- **Keep the two-factor code email on** — the withdrawal form and the checkout login code depend on it.
 
 ## Related
 

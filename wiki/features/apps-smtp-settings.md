@@ -7,8 +7,8 @@ aliases: ["SMTP Settings", "Custom mail server config"]
 tags: [apps, administration, smtp, email, settings]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-27
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # SMTP → Settings
 
@@ -34,7 +34,7 @@ The SMTP app exposes five fields and nothing more:
 | **Password** (`password`) | Account password / app-specific password. Required when active. |
 | **Encryption** (`encryption`) | Select: `NONE` / `SSL` / `TLS/STARTTLS`. Default `none`. |
 
-There is NO **From address**, **From name**, or **Reply-to** field on this page — the From/Reply-to headers come from the merchant's email-configuration in [[settings-emails]] / per-template settings, not the SMTP credentials.
+There is NO **From address**, **From name**, or **Reply-to** field on this page. Through this server a customer notification goes From the store's email with the store's name ([[settings-general-store-details]]), and Reply-To the same address. Campaign mails never use this server (see [[apps-smtp]]).
 
 There is NO **Test email** button — the connection is validated automatically on save by opening a live SMTP session against the server (see Validation below).
 
@@ -69,7 +69,7 @@ The configured check requires all five fields (`host`, `port`, `username`, `pass
 
 ### Deliverability requires DNS
 
-For best deliverability, the merchant configures at their domain provider:
+For best deliverability, the merchant adds these wherever the domain's DNS is hosted (**Manage DNS** when it uses CloudCart's nameservers):
 - **SPF** record authorising the SMTP server.
 - **DKIM** signature from the SMTP provider.
 - **DMARC** policy.

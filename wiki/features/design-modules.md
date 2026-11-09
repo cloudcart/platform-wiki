@@ -7,8 +7,8 @@ aliases: ["Widgets", "Storefront widgets", "Widget editor", "Уиджети", "W
 tags: [design, widgets]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-11-04
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 # Storefront Modules
@@ -49,7 +49,7 @@ This hub does not own merchant actions directly — every action is documented o
 - See modules organised into **7 top-level tabs** and **11 sidebar groups** — see [[design-modules-cross-tabs-groups]].
 - Open any editable module card to see its **edit side panel** and adjust settings — fields per module TYPE live on the per-category hubs.
 - Click **Save widget** / **Reset widget** / **Cancel** — full pipeline in [[design-modules-cross-save-reset]].
-- Get instant storefront pickup of the new settings on the next request — see [[design-modules-cross-cache-invalidation]].
+- See new settings at once in the admin's browser, guests within 20 minutes — [[design-modules-cross-cache-invalidation]].
 
 The merchant CANNOT:
 

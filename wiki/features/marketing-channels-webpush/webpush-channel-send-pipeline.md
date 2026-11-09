@@ -7,8 +7,8 @@ aliases: ["Web Push send pipeline", "Web push notification campaign step", "web_
 tags: [marketing, channels, web-push, send-pipeline, validation, merge-tags, plan-gate]
 plan_gates: ["campaign.channel.web_push"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-channels-webpush]]. See the hub for the other aspects (storefront prompt, subscription flow, VAPID config, DLR webhook, system messages, browser support).
@@ -120,13 +120,13 @@ Web Push exposes only `link_clicked` / `link_not_clicked` campaign-step conditio
 | Push service response | CloudCart log status |
 |---|---|
 | (success) | `SENT` |
-| (subscription expired — `isSubscriptionExpired = true`) | `NOT_SENT` (with `expired` reason) — also flips the subscriber's WebPush channel to `bounced = 1` |
+| (subscription expired) | stays `NOT_SENT` with no reason on the row — also marks the subscriber's WebPush channel **unsubscribed** |
 | `PENDING` | (null — keep current status, await DLR webhook) |
-| (anything else / empty) | `NOT_SENT` |
+| (any other failure) | stays `NOT_SENT`; the push service's text is the reason, in the step log only (nothing reaches the server error log) |
 
-### Expired subscription → permanently bounced
+### Expired subscription → unsubscribed
 
-When the push service reports the subscription expired (the customer revoked permission, cleared site data, or uninstalled the browser), the per-recipient return value is the literal string `'expired'`. The downstream listener interprets this as a permanent failure and updates the subscriber's WebPush channel to `bounced = 1` so future campaigns skip it. The log row records `STATUS_NOT_SENT` with the expired marker. See [[webpush-channel-dlr-webhook]] for the downstream listener.
+When the push service reports the subscription expired (the customer revoked permission, cleared site data, or uninstalled the browser), the per-recipient result is *expired*: the subscriber's WebPush channel is marked **unsubscribed**, so future campaigns skip it. The log row stays `NOT_SENT` with no reason; *expired* appears only in the campaign's statistics step log. See [[webpush-channel-dlr-webhook]].
 
 ### Demo / test sends
 

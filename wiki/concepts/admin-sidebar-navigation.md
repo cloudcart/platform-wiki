@@ -5,8 +5,8 @@ aliases: ["Admin sidebar", "Sidebar navigation", "Left navigation", "Main menu",
 tags: [admin, navigation, sidebar, ui, structure]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Admin sidebar navigation (structure + rendering)
@@ -66,11 +66,11 @@ This is what the merchant sees on clicking "Дизайн". **"Модули"** si
 | **Добавяне на CSS/JS** | **Custom CSS/JS** | `template.custom_css_js` | `admin.custom.assets` | [[design-custom-assets]] |
 | **Страници** | **Static Pages** *(section header)* | `sidebar.pages` | (section header) | — |
 | **Начална** | **Homepage** | `sidebar.homepage` | `marketing/pages/builder/system_page/home` | [[marketing-landing-pages]] |
-| **Целеви страници** | **Landing Pages** | `sidebar.static_pages` | `admin.pages.list` | [[marketing-landing-pages]] |
+| **Целеви страници** | **Static pages** | `sidebar.static_pages` | `admin.pages.list` → `/admin/design/pages` | [[marketing-landing-pages]] |
 | **Успешна поръчка** | **Thank You Page** | `sidebar.thank_you_page` | `marketing/pages/builder/system_page/thank_you` | [[marketing-landing-pages]] |
 | **Грешка 404** | **Error 404** | `sidebar.error_404` | `marketing/pages/builder/system_page/error.404` | [[marketing-landing-pages]] |
-| **Често Задавани Въпроси** | **FAQ** | `sidebar.faq` | `marketing/pages/add/faq` | [[marketing-landing-pages]] |
-| **Външна страница** | (no fixed EN) | `page.help.landing_page` | `marketing/pages/add/landing` | [[marketing-landing-pages]] |
+| **Често Задавани Въпроси** | **FAQ** | `sidebar.faq` | `/admin/design/pages/add/faq` | [[marketing-landing-pages]] |
+| **Външна страница** | (no fixed EN) | `page.help.landing_page` | `/admin/design/pages/add/landing` | [[marketing-landing-pages]] |
 | **Настройки** | **Settings** *(section header)* | `sidebar.settings` | (section header) | — |
 | **Модули** | **Widgets** ← *not "Modules" in EN* | `sidebar.widgets` *(legacy key)* | `admin.storefront.widgets` → `/admin/storefront/widgets` | [[design-modules]] |
 

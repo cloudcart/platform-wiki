@@ -4,8 +4,8 @@ nav_path: "Concept → JSON-API v2"
 aliases: ["JSON-API v2", "JSON API v2", "REST API", "Public API", "/api/v2", "Programmatic access", "External API"]
 tags: [api, json-api, rest, integrations, programmatic, concepts]
 created: 2026-05-27
-updated: 2026-11-03
-source_count: 12
+updated: 2026-11-09
+source_count: 13
 ---
 
 # JSON-API v2 (programmatic access to store data)
@@ -28,7 +28,7 @@ The concept is split into 9 aspect pages. Drill into the aspect that matches the
 - [[json-api-filtering-sorting]] — `filter[]` (no generic comparisons), per-resource `sort` allow-list, `fields[]`, `include=`, custom `append[]`.
 - [[json-api-endpoints]] — the 47-resource catalogue + 1 helper; method matrix; 16 read-only resources; custom routes; app-gated and registered-but-not-callable resources.
 - [[json-api-status-codes]] — 200 / 201 / 204 / 400 / 401 / 402 / 404 / 405 / 406 / 415 / 422 / 429 / 500 / 503; error envelope; framework quirks (app-gated 404 wrapped as 422; 403 unreachable).
-- [[json-api-webhooks-integration]] — API writes fire the SAME webhooks as admin UI writes (model-layer dispatch); idempotency requirements.
+- [[json-api-webhooks-integration]] — API writes fire the same webhooks as admin writes, except `product.created` / `product.updated`.
 - [[json-api-audit-log]] — per-resource matrix: orders (`namespace = "api2"`), products/variants (`initiator = "api"`), customers (`addApi`), everything else uncaptured.
 - [[json-api-cors-soft-delete]] — open CORS with OPTIONS-preflight-401 quirk; soft-deletes return 404 (not 410 Gone); no public restore.
 - [[json-api-atomic-operations]] — JSON:API Atomic Operations extension is **NOT** supported; alternatives: sequential calls, admin GraphQL `productsBulkCreate`, [[apps-csv-import]].
@@ -40,7 +40,7 @@ Six high-impact consequences (each links to its aspect):
 - **One key, full access.** No per-key scopes — merchants limit blast radius via key-per-integration discipline. See [[json-api-auth]].
 - **Tenant is from `Host`, not a header.** Wrong domain → 404; right domain + wrong/inactive key → 401. See [[json-api-auth]].
 - **Orders cannot be created or deleted via API.** Orders go through storefront checkout or [[orders-add]]. The API can read, modify status, and trigger fulfillment side-effects. See [[json-api-endpoints]].
-- **API writes fire the same webhooks as admin writes.** Subscribers can't distinguish origin from the payload alone. See [[json-api-webhooks-integration]] + [[json-api-audit-log]].
+- **API writes fire admin webhooks, except product create/update**, which fire only from admin-panel saves. See [[json-api-webhooks-integration]].
 - **Audit-log capture is partial.** Only orders, products, variants, customers record the actor. Everything else records only timestamps. See [[json-api-audit-log]].
 - **No bulk-write surface.** Bulk catalog imports go through admin GraphQL `productsBulkCreate` OR [[apps-csv-import]]. See [[json-api-atomic-operations]].
 
@@ -65,13 +65,13 @@ Out of scope (lives elsewhere):
 | Audit trail | `namespace = "api2"` on orders; per-attribute change-log on products/variants; other resources untracked | Records PAT holder or admin user; full per-mutation audit | Customer-scoped |
 | Bulk writes | Not supported | `productsBulkCreate` + bulk operations | Customer-cart mutations only |
 | Rate limit | Per-store cap — [[platform-rate-limits]] | 300 requests a minute per store address — [[admin-graphql-api]] | Separate storefront throttle |
-| Webhook side-effects | Same as admin UI (model-layer dispatch) | Same | Same (customer-context) |
+| Webhook side-effects | As admin, minus product create/update | Same | Same (customer-context) |
 
 The admin GraphQL endpoint is the **only** path to operations JSON-API v2 deliberately does not expose: `productsBulkCreate` and bulk-operation query / cancel (see [[json-api-atomic-operations]]); analytics reports via `analyticsMetadata` + `analyticsReport` (see [[analytics-pipeline]]); cart-rule mutations (see [[apps-cart-rules]]); and mutation-heavy admin surfaces (segment / campaign / blog / settings edits).
 
 ## Where it applies
 
-JSON-API v2 spans every external-integration touch-point of the store: ERP product / inventory sync, marketing automation (campaign / subscriber sync), order export to fulfillment apps, customer-record sync to CRMs, and webhook-driven event integration. Authentication runs at the routing layer before any controller (see [[json-api-auth]]); webhooks fire from the model layer for every write (see [[json-api-webhooks-integration]]); and the CORS preflight quirk affects every browser-side integration that uses non-simple requests (see [[json-api-cors-soft-delete]]).
+JSON-API v2 spans every external-integration touch-point of the store: ERP product / inventory sync, marketing automation (campaign / subscriber sync), order export to fulfillment apps, customer-record sync to CRMs, and webhook-driven event integration. Authentication runs at the routing layer before any controller (see [[json-api-auth]]); webhooks fire from the model layer, product create/update excepted (see [[json-api-webhooks-integration]]); and the CORS preflight quirk affects every browser-side integration that uses non-simple requests (see [[json-api-cors-soft-delete]]).
 
 Common merchant-facing diagnostic questions (each links to the aspect with the answer):
 
@@ -91,7 +91,7 @@ Common merchant-facing diagnostic questions (each links to the aspect with the a
 
 - [[settings-api-keys]] — admin UI to create / deactivate API keys.
 - [[platform-rate-limits]] — per-plan rate-limit values + pack-purchase mechanism.
-- [[settings-hooks]] — webhooks fired by API writes.
+- [[settings-hooks]] — webhook subscriptions.
 - [[settings-pat-tokens]] — PAT auth for admin GraphQL (API-key lifecycle).
 - [[admin-graphql-api]] — the admin GraphQL API: sign-in, staff permissions, request limit, refusals.
 - [[notification-delivery]] — webhook delivery, retries, failure handling.

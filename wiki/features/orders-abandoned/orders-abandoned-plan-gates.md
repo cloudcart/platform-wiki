@@ -7,8 +7,8 @@ aliases: ["Abandoned plan gates", "Abandoned plan features", "abandoned_orders g
 tags: [orders, abandoned, plan-gates, cart-recovery]
 plan_gates: ["abandoned_orders", "abandoned_orders_info", "abandoned_notification", "test_mail"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[orders-abandoned]]. See the hub for the other aspects (list view, detail view, eligibility, restore link, auto-recovery, cart lifecycle).
@@ -44,7 +44,7 @@ Nothing on this page directly — observing gate effects:
 |---|---|---|
 | `abandoned_orders` | Access gate (URL `abandoned`) | The `/admin/abandoned` route. Registered under `restrict.access` in the platform code. When the merchant's plan lacks this feature, the platform's plan middleware blocks the page entirely and redirects to [[plan-features]] for upsell. The sidebar entry is hidden. The platform's abandoned-cart controller ALSO defensively re-runs the plan check via `planMessage('abandoned_orders')` before rendering the list, so a direct URL hit produces the same redirect. |
 | `abandoned_orders_info` | Boolean (dashboard counter only) | Controls the abandoned-orders count badge on the admin dashboard (in [[orders]] dashboard tile). When disabled, the dashboard's abandoned tile is null / hidden — does NOT affect this list page directly. |
-| `abandoned_notification` | Numeric (sends per plan year; counted in `plan.count.email.abandoned_notification`) | The single-cart **Send** action and the scheduled 3-minute auto-job check the remaining allowance BEFORE dispatching the email. When the cap is exhausted, the merchant sees a plan-upgrade prompt with the feature name and current usage count instead of the email being sent. |
+| `abandoned_notification` | Numeric (sends per plan year; counted in `plan.count.email.abandoned_notification`) | The single-cart **Send** action and the scheduled 3-minute auto-job check the remaining allowance BEFORE dispatching the email. When the cap is exhausted, the single-cart Send shows a plan-upgrade prompt with the feature name and current usage count; the auto-job stops sending, and the reminder is later switched off (see below). |
 | `test_mail` | Boolean (per-cart Send button + global mail suppression) | On [[orders-abandoned-detail-view]], the per-cart Send button is REPLACED with a disabled button styled in purple with a tooltip explaining the plan limit and listing the eligible plans (`order.send_abonded_order_error` + the platform code). The `test_mail` plan feature ALSO acts as a **global mail-suppression gate** at the email-send layer: when disabled, ALL customer-facing emails to addresses other than the store's `site_email` are silently dropped. So even if the merchant somehow triggered the abandoned-cart email via the API on a `test_mail = no` plan, the customer would NOT receive it. |
 
 ## Business rules
@@ -57,7 +57,13 @@ The counter at the top of [[orders-abandoned-list-view]] (*"Total sent messages:
 
 The allowance is **yearly on every billing period**, monthly plans included. The year runs from the plan purchase date (bought 15 March: 15 March to 15 March). A store with no plan subscription (free, trial) counts by calendar year.
 
-The count restarts from zero once a later plan year starts. A plan renewal alone does not reset it. Buying a different plan keeps the same year and the same count, and the new plan's `abandoned_notification` cap applies to the count so far: for a store at the cap, an upgrade unblocks sends only when the new cap exceeds the count. Full rules: [[abandoned-cart-plan-quota]].
+The count restarts from zero once a later plan year starts; no scheduled job resets it, the count is matched to the current plan year whenever it is read or a send is counted. A plan renewal alone does not reset it. Buying a different plan keeps the same year and the same count, and the new plan's `abandoned_notification` cap applies to the count so far: for a store at the cap, an upgrade unblocks sends only when the new cap exceeds the count. Full rules: [[abandoned-cart-plan-quota]].
+
+The limit is the plan's `abandoned_notification` value plus any paid feature packs for it.
+
+### At the cap the reminder is switched off
+
+A platform plan check runs every 12 hours. When the allowance is used up and **Abandoned cart reminder** is ON, it switches the reminder OFF ([[settings-cart-abandoned-reminder]]) and posts an Important alert in [[notifications]]. Nothing turns it back on: after a new plan year or a feature pack, the merchant must switch it on again. Details: [[abandoned-cart-plan-quota]].
 
 ### Numeric vs access — different upsell paths
 
@@ -84,6 +90,7 @@ This disabled-page template exists in the codebase but the controller's plan mid
 - Per-cart Send from [[orders-abandoned-detail-view]] → increments by 1 on success (resends count too, since the per-cart endpoint skips the `date_sent` check).
 - Scheduled auto-job from [[orders-abandoned-auto-recovery]] → increments by 1 per cart sent per cycle.
 - The Admin GraphQL `sendRestoreEmail` mutation → increments by 1 on success.
+- Bulk **Send restore link** from the list → does **not** increment and does not check the allowance.
 
 A cart dropped without sending (no e-mail, no products, already ordered) does not count.
 

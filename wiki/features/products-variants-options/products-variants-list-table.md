@@ -7,8 +7,8 @@ aliases: ["Variants list", "Variant parameters list", "Variants table", "Спи�
 tags: [products, variants, list]
 plan_gates: ["multi_variants"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Variants — list table
@@ -28,7 +28,7 @@ Sidebar → Products → **Variants**. Breadcrumb: "Products → Variants". Rout
 - See all variant parameters in a paginated table — Name, Values count (linked), Products count (linked), Active toggle, Sort priority, per-row Delete.
 - **Drag-and-drop rows** to reorder — but **only after clicking the "Enable Drag and drop sorting" button** first (until it is on, rows are static and dragging does nothing — not a bug; same mechanism as [[products-variants-values]]). Controls the order in which variant pickers appear on the product editor and the storefront product page.
 - Sort by name, values count, products count, or sort priority.
-- **Toggle Active** per row — disables the parameter (stops appearing on product editors and the storefront).
+- **Toggle Active** per row — sets the parameter's `visible` flag (it hides very little, see below).
 - Click **+ Add variant** to open the 2-step creation wizard — see [[products-variants-wizard]].
 - Click a parameter row's name to open the single-screen Edit modal — same fields as wizard Step 1, no Step 2.
 - Click the Values count on a row to drill into the per-parameter Values sub-page (see [[products-variants-values]]).
@@ -47,7 +47,7 @@ Sidebar → Products → **Variants**. Breadcrumb: "Products → Variants". Rout
 | **Name** | The parameter name. Sortable. Click opens Edit modal. |
 | **Values** (`options_count`) | Sortable. Click opens the per-parameter Values sub-page. |
 | **Products** (`products_count`) | Sortable. Click opens [[products-products]] filtered by products using this parameter. |
-| **Active** (`visible`) | Toggle. When OFF, the parameter is hidden everywhere — editor + storefront picker + filter. |
+| **Active** (`visible`) | Toggle. The product editor's parameter picker still lists an inactive parameter; on the storefront only the filter reads the flag (see below). |
 | **Sort priority** (`sort`) | Sortable + draggable. Controls the order on the product editor's variants section and on the storefront variant pickers. |
 | **(actions)** | Per-row Delete button. |
 
@@ -62,11 +62,11 @@ The Sort priority column controls TWO surfaces:
 
 Merchants typically order them by importance/dependency (Colour before Size, because the customer needs to pick colour first to see size availability per colour).
 
-### Active toggle disables completely (does NOT detach)
+### Active toggle does NOT detach or hide the parameter
 
-Setting a parameter to Active = OFF hides it everywhere — the product editor doesn't show it, the storefront pickers don't show it. Products that already use this parameter **keep** their variant assignments stored; customers just can't see / pick the variant any more (so they effectively see a "broken" product without variant options unless the merchant edits the products to remove the dependency).
+Setting a parameter to Active = OFF does not remove it from products: they **keep** their variants and values. In code the flag is read only when the storefront filter loads one variant filter on demand; the editor's parameter picker ignores it, and no other reader was found (verify the product-page variant picker). An admin order's **Add product** still lists the variants with their values whatever this switch says ([[orders-details-products]]).
 
-The safer alternative when a parameter becomes stale: detach it from products via [[products-products]] bulk actions first, then deactivate or delete the parameter.
+To retire a parameter for good, detach it from each product in the product editor (no bulk action exists), then delete it — see [[products-variants-data-model]].
 
 ### Sort priority auto-assigns on create
 

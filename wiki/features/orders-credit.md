@@ -7,8 +7,8 @@ aliases: ["Credit note", "Credit memo", "Refund document", "Order credit note", 
 tags: [orders, credit-note, refund, pdf, invoicing, smarty]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 # Credit note (per order)
 
@@ -16,11 +16,13 @@ source_count: 7
 
 The **credit note generation, download, and customer-send flow** for a single order. A credit note is the tax-document counterpart to an invoice — issued when an order is refunded or cancelled, it formally documents the merchant's reversal of charges for accounting and tax compliance. Required by tax law in most jurisdictions whenever a sale is reversed.
 
-The merchant works with credit notes entirely from the **View credit note** dropdown on [[orders-details]] — there is no separate screen. The dropdown exposes up to three actions: **Create**, **Download**, and **Send to customer**. This hub gives the overview; each aspect below covers one slice in depth.
+The merchant issues a whole-order credit note from the **View credit note** dropdown on [[orders-details]]. Every credit note of the store, whole-order and return-issued, is also listed under **Orders → Credit notes** (`/admin/orders/credit-notes`). That item shows only while invoicing is on, and the list opens filtered to the last month (the filter can be cleared). The dropdown exposes up to three actions: **Create**, **Download**, and **Send to customer**. This hub gives the overview; each aspect below covers one slice in depth.
 
 ## Where to find it
 
 From [[orders-details]] → action toolbar → **View credit note** button (icon `fa-file-alt`). Clicking it toggles a small hover-style dropdown (`.credit-note-dropdown`) anchored below the button: white background, 1 px grey border, 5 px radius, min-width 185 px. The button + dropdown appear only when the order is eligible (provider-gated) or a credit note already exists — see [[orders-credit-eligibility]].
+
+A moderator needs the **Orders** box and the **Credit notes** list row to open the list; see [[settings-staff-permissions-tree]].
 
 ## What the merchant can do here
 

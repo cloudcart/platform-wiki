@@ -7,8 +7,8 @@ aliases: ["Geo zone save", "Geo zone form save", "Geo zone validation", "Geo zon
 tags: [settings, geo, zones, save, validation, form]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[settings-geo-zones]]. See the hub for the other aspects (operations, post-codes, Maps, polygon/distance, matching, deletion-cascade).
@@ -23,7 +23,7 @@ Saving a Geo Zone is fully synchronous — no queue, no webhook, no admin notifi
 - The system auto-backfills missing region data via a **Geonames API lookup** for city / neighborhood operations — and if Geonames fails, the rule silently saves but **never matches** at runtime.
 - The `name` field is store-scoped, max 191 chars, and **not per-language translatable**.
 - The `values` array is required — a zone with zero rules cannot be saved.
-- The geo-zone lookup cache invalidates on save.
+- No zone cache: the next computation reads the saved rules.
 
 This aspect documents the exact save mechanics and validation rules so support can answer "why didn't my changes apply" questions.
 
@@ -100,7 +100,7 @@ A geo zone is store-scoped with a single `name` value — **no per-language fiel
 
 CRUD on Geo Zones is **fully synchronous**: no background jobs queued, no admin notifications produced. On save:
 
-- The geo-zone lookup cache is invalidated, so the next shipping / tax / discount computation sees the updated zones immediately — changes take effect on the very next cart / checkout request.
+- With no zone cache, the next shipping / tax / discount computation sees the updated zones — the very next cart / checkout request.
 - **No webhook event fires** for geo-zone changes (`geo_zone.created` / `geo_zone.updated` are **not** part of the [[settings-hooks]] event catalogue).
 - An optional Geonames network call happens only when saving operations 5/6/7/8 without a region.
 

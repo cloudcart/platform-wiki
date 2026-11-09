@@ -7,8 +7,8 @@ aliases: ["CloudCart Pay fees", "CloudCart Pay pricing", "CloudCart Pay commissi
 tags: [paymentproviders, payment-providers, cloudcart-pay, pricing, fees]
 plan_gates: []
 created: 2026-10-06
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[payment-providers-cloudcart-pay]]. See the hub for the other aspects.
@@ -39,7 +39,7 @@ From **1 January 2027** the standard prices apply. They are set out in the **Fee
 There are no settings for pricing. The standard fee on a transaction is a **percentage of the amount plus a fixed amount**, and depends on three things:
 
 - **the merchant's country** — where the business is registered;
-- **the card** — consumer Visa and Mastercard cards issued in the European Economic Area (EEA) are cheaper; "all other cards" covers everything else;
+- **the card** — consumer Visa and Mastercard cards issued in the European Economic Area (EEA) are cheaper, and cards issued in Bulgaria are EEA cards; "all other cards" covers everything else;
 - **the currency** of the payment, which sets the fixed part.
 
 **Standard fees from 1 January 2027**, for a payment in the merchant's own currency:
@@ -93,3 +93,4 @@ It shows while the offer runs (until 31 December 2026, 23:59 Sofia time), the st
 ## Open questions
 
 - Whether the Transactions tab shows the fee as 0 during the promotion, or shows no fee line at all.
+- Whether the Fee Schedule has any charge besides the transaction fee: a monthly or activation fee, a payout or refund fee, a fixed chargeback fee, or a separate Apple Pay / Google Pay rate. None is reproduced here, which does not mean there is none.

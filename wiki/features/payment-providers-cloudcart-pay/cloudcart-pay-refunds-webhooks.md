@@ -3,12 +3,12 @@ type: feature
 nav_path: "Settings → Payment methods → CloudCart Pay → Refunds & payment updates"
 route_name: apps.cloudcart_pay.overview
 route_path: /admin/payment-providers/cloudcart_pay
-aliases: ["CloudCart Pay refunds", "CloudCart Pay partial refund", "CloudCart Pay webhooks", "CloudCart Pay status mapping", "CloudCart Pay order stuck in requested", "CloudCart Pay refunded status", "Връщане на пари CloudCart Pay", "Частично възстановяване CloudCart Pay"]
+aliases: ["CloudCart Pay refunds", "CloudCart Pay partial refund", "CloudCart Pay webhooks", "CloudCart Pay status mapping", "CloudCart Pay order stuck in requested", "CloudCart Pay refunded status", "Връщане на пари CloudCart Pay", "Частично възстановяване CloudCart Pay", "When will my customer get the money back", "Кога клиентът ще получи парите"]
 tags: [paymentproviders, payment-providers, cloudcart-pay, refunds, webhooks]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[payment-providers-cloudcart-pay]]. See the hub for the other aspects (account model, activation gate, checkout flow, express checkout, Apple Pay domain, saved card) and the six tabs.
@@ -41,6 +41,10 @@ None. The refund amount comes from the return, or is the whole payment for the *
 ### Full refund
 
 **Refund payment** on the order refunds the whole payment through CloudCart Pay. When the refund succeeds, the payment's status becomes **Refunded** (see [[payment-status]]). A refusal is shown as *"CloudCart Pay refund error: <reason>"*.
+
+### No "refund in progress" status
+
+The admin has no in-between refund state. The payment turns **Refunded** as soon as CloudCart Pay answers that the refund succeeded. If it answers with any other state, a full refund leaves the payment's status unchanged without a message (verify), and a partial refund fails with the *"partial refund failed"* error below. When the money reaches the shopper's card is up to the card issuer; CloudCart receives no notice of it, and no refund notification exists (see below).
 
 ### Partial refund
 
@@ -95,3 +99,4 @@ CloudCart compiles daily CloudCart Pay statistics per store for its own team. Th
 
 - Whether support can force a status refresh of a single CloudCart Pay payment from the order page (no such action was found for CloudCart Pay).
 - How a refund made outside CloudCart (for example by CloudCart Pay's own team) reaches the order, since no refund notification exists. On the Transactions tab it shows within about a day ([[cloudcart-pay-transactions-live-read]]).
+- How long a refund takes to reach the shopper's card, whether it is taken from the next payout or a reserve, and whether the transaction fee is returned: none of this is in the code (CloudCart Pay's terms and the card issuer decide).

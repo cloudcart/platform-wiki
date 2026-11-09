@@ -7,8 +7,8 @@ aliases: ["Variant values", "Variant options", "Per-parameter values", "Стой
 tags: [products, variants, values, options, merge, sorting]
 plan_gates: ["multi_variants"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Variants — values sub-page
@@ -21,7 +21,7 @@ The per-parameter sub-page reached by clicking the Values count on a parameter r
 
 ## Where to find it
 
-Sidebar → Products → **Variants** → click the **Values** count on a parameter row.
+Sidebar → Products → **Variants** → click the **Values** count on a parameter row. The address is `/admin/products/variants/options/<parameter id>`.
 
 The breadcrumb appends the parameter name (e.g., "Products → Variants → Colour").
 
@@ -44,10 +44,18 @@ Single-screen modal driven by the parent parameter's type:
 | Parameter type | Fields shown |
 |---|---|
 | Select / Radio / 2D / Numeric alpha | Name only (max 150 chars; `numeric_alpha` rejects values not matching `<digits><letters>` pattern e.g. `36A`). |
-| Image sample | Name + Image upload (jpg / jpeg / png / bmp / webp; checked against the store's storage quota at upload). |
+| Image sample | Name + **Image** upload (click or drop; see *Value image* below). |
 | Color sample | Name + Color hex picker (default `#FFFFFF`, validated against `#[a-f0-9]{3,6}`). |
 
 The same modal is used for Edit. Full per-type validation rules: see [[products-variants-types]]. Consolidating values is a separate operation — see [[products-variants-merge]].
+
+### Value image (Image sample parameters)
+
+- **Formats**: jpg, jpeg, jpe, gif, png, svg, webp — the hint under the field says the same. Another format is refused with *"Image extension is not allowed."* / *"This file type is not allowed."*
+- **Size**: up to 30 MB. The browser first shrinks a picture whose longer side exceeds 5760 px (not SVG or GIF).
+- **Storage**: about twice the file's size must be free, otherwise *"You have reached your storage limit"*.
+- **No width or height fields**: the storefront picker shows the image as a 150 × 150 px thumbnail, resized automatically with its proportions kept; an SVG is served as uploaded.
+- When a new value's image is refused, the value itself may already be saved without it (verify); reopen it and upload again.
 
 ## Business rules
 

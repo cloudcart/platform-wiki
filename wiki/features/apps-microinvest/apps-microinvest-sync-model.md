@@ -7,8 +7,8 @@ aliases: ["Microinvest sync direction", "Microinvest conflict resolution", "Micr
 tags: [apps, erp, microinvest, sync, inventory]
 plan_gates: []
 created: 2026-06-25
-updated: 2026-06-25
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[apps-microinvest]]. See the hub for the other aspects (settings, product matching, reset import, sync debug).
@@ -35,7 +35,7 @@ No fields of its own — the levers are `Action`, `Updates`, and `disable_missin
 
 ### Direction of sync and conflict resolution
 
-Common pattern: Microinvest is master for stock + invoicing; CloudCart is master for orders + customers. For products imported through Microinvest (flagged `app_import = 'microinvest-<id>'`, see [[apps-microinvest-product-matching]]), direction is set by **Action**: `import` overwrites CloudCart on each sync (the fields chosen in **Updates**, plus price and stock), `export` pushes CloudCart data to Microinvest with no overwrite back. When `action = import`, Microinvest wins for the chosen fields only.
+Common pattern: Microinvest is master for stock + invoicing; CloudCart is master for orders + customers. For products imported through Microinvest (flagged `app_import = 'microinvest-<id>'`, see [[apps-microinvest-product-matching]]), direction is set by **Action**: `import` overwrites CloudCart on each sync (the fields chosen in **Updates**, plus price and stock), `export` pushes CloudCart data to Microinvest with no overwrite back. When `action = import`, Microinvest wins for the chosen fields plus price and stock.
 
 ### Sync is on-demand, not polled
 

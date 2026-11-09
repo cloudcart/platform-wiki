@@ -8,8 +8,8 @@ aliases: ["Checkout to-office", "Checkout to-locker", "Pickup point picker store
 tags: [storefront, checkout, shipping, office, locker, pickup-points, google-maps]
 plan_gates: []
 created: 2026-06-12
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[checkout]]. See [[checkout-step-shipping]] for the channel picker and the sibling [[checkout-step-shipping-address]] for the to-address channel.
@@ -79,7 +79,6 @@ When `hasGoogleMapKey` returns true AND `checkout_hide_office_map` / `checkout_h
 - A "localize me" affordance lets the customer use their browser geolocation to recentre the map (`cc-form-field-geolocate`).
 - A **nearby list** below the map (`js-nearby-{officeType}s-list`) shows the closest offices/lockers with addresses and distance. Clicking a list row selects that point in the `<select>`.
 - Markers on the map are clickable — clicking sets the `<select>` value.
-- The `data-{officeType}-groups` filter chip area (`js-{officeType}s-filter-by-provider`) lets the customer narrow by carrier when multiple carriers are active.
 
 ## Without Google Maps — fallback
 
@@ -92,33 +91,16 @@ When NO Maps key OR the merchant has set `checkout_hide_office_map = yes` (or `_
 
 This is the **most important fallback** for support tickets — when a customer says *"I don't see a list of offices"*, the answer is usually that the store has no Google Maps API key on [[settings-cart]] OR the merchant disabled the map. The typeahead still works; the customer just needs to start typing.
 
-### How the customer searches without the map — typeahead behaviour
+### One list for every carrier — what each row shows
 
-The `<select>` is enhanced by select2 (`data-show-input=true` opens an input box inside the dropdown). On every keystroke the dropdown fires an AJAX request to:
+The office tab (**Доставка до офис на куриер** / *Pickup from an office of the shipping provider*) and the locker tab (**Доставка до автомат на куриер**) each hold the points of **every** active carrier in one list. There is no tab per carrier and no setting that splits the office or locker channel by carrier.
 
-- **`GET /checkout/offices?query=<text>`** for office mode (route `checkout.offices`, controller the request handler).
-- **`GET /checkout/lockers?query=<text>`** for locker mode (route `checkout.lockers`).
+- **Each row** shows the point's name and address, plus the **carrier's logo** (and the distance when the map is on). The carrier's name is not written as text; the chosen value shows the name and address only.
+- **Filter chips per carrier** (logo + the carrier's short name, `js-{officeType}s-filter-by-provider`) sit between the `<select>` and the map, only when the map is on and the points come from two or more carriers. No setting moves them, and no theme overrides this template.
+- **Search.** The list loads from `/checkout/offices/0` (offices) or `/checkout/offices/1` (lockers). Typing filters by name, address or the carrier's short name, so typing *econt* narrows the list to Econt's points; from two characters the search also asks the carriers for matches beyond the loaded points.
+- **Which carriers.** Only carriers with that channel (office or locker) switched on. When cash on delivery is the only payment method, only carriers that support it; a category's shipping restriction drops the carriers it does not allow; points outside a carrier's **Ships to** zone are dropped ([[shipping-provider-checkout-filters]]).
 
-The controller iterates EVERY active shipping manager that supports the chosen channel (the platform code / `SUPPORT_LOCKER`), calls `$manager->findOffices($query)` on each, **merges all carriers' results into one sorted list**, and returns JSON:
-
-```
-[
-  {
-    "key": "1234",
-    "provider": "econt",
-    "id": "econt-1234",
-    "name": "Sofia Mladost 1 (Mladost 1, bl. 12)",
-    "image": "https://.../econt-150x150.png?...",
-    "country_id": ..., "country_iso": "BG", "country_name": "Bulgaria",
-    "city_id": ..., "city_name": "Sofia"
-  },
-  ...
-]
-```
-
-So a single typed string like `"Mladost"` returns every Econt + Speedy + BoxNow location that matches across ALL active carriers — the customer doesn't need to pick a carrier first.
-
-The chosen option's `id` (e.g. `"econt-1234"`) is the form value submitted under `checkout[shipping][address][office][id]`.
+The chosen option's `id` (e.g. `"econt-1234"`) is submitted as `checkout[shipping][address][office][id]`.
 
 ### Fit filter
 
@@ -135,31 +117,30 @@ Pickup points the cart does not fit are **filtered out** before the list returns
 
 ## Business rules
 
-- **The `<select>` typeahead works without a Maps key.** This is the "must-document" fallback — the support team's first answer to *"my customers don't see the office list"* is: confirm the typeahead works; if it does, the missing piece is the Google Maps key on [[settings-cart]] (not a broken integration).
-- **Carriers' results are merged in one list.** The customer doesn't pre-select a carrier; the AJAX endpoint queries every active carrier and merges their findOffices results.
-- **Office and locker share the SAME template** parameterised by `$officeType`. Anything documented above applies to BOTH; the per-channel difference is only the endpoint (`checkout.offices` vs `checkout.lockers`) and the displayed label.
+- **The `<select>` typeahead works without a Maps key.** A missing map or nearby list usually means no Google Maps key on [[settings-cart]], not a broken integration.
+- **Office and locker share the SAME template** parameterised by `$officeType`. Anything documented above applies to BOTH; the per-channel difference is only the list loaded (`/checkout/offices/0` vs `/checkout/offices/1`) and the displayed label.
 - **No "marketplace" mode here.** Marketplace = merchant's own stores (see [[checkout-step-shipping]] §marketplace + [[apps-stores]]). This template is for carrier-owned pickup points only.
 - **Pickup point persists on the cart and travels through to the waybill.** The `office[id]` value is stored on the cart's shipping address and surfaces at order generation — see [[orders-shipping-waybill]].
 
 ## Storefront behaviour
 
-See [[checkout-flow-storefront-backend-bridge]] for the DOM → endpoint → cart-attribute → reload-fragment full map. This section's specific form/click handlers + reload arrays are documented inline in the sections above.
+Full DOM → endpoint → reload map: [[checkout-flow-storefront-backend-bridge]].
 
 ## JavaScript behaviour
 
-The container uses the universal checkout JS hooks — `.js-form-submit-ajax-new` (intercepts form submit, processes JSON response), `.js-checkout-hash-reload` (URL hash → auto-reload on page entry), `cc.checkout.step` event. Full catalogue: [[checkout-page-javascript]].
+Universal checkout JS hooks (`.js-form-submit-ajax-new`, `.js-checkout-hash-reload`, `cc.checkout.step`): [[checkout-page-javascript]].
 
 ## Customisations available to the merchant
 
-Merchant-controlled settings affecting this section are listed under "Settings & fields" above. Full theme-wide customisation catalogue: [[checkout-page-customisation]].
+See "Settings & fields" above and [[checkout-page-customisation]].
 
 ## Theme variations
 
-The template is shared from the theme templates — every theme inherits the same DOM. Themes can override individual sub-templates for per-theme tweaks, but the structure documented here applies to the default `flair` theme and every variant unless explicitly overridden.
+Shared by every theme from the theme templates; a theme may override a sub-template.
 
 ## Known issues / by-design vs bug
 
-None recorded for this section. Any merchant-facing surprises specific to this step are noted inline in the sections above (Business rules / Open questions).
+None recorded.
 
 ## Related
 
@@ -174,4 +155,4 @@ None recorded for this section. Any merchant-facing surprises specific to this s
 
 ## Open questions
 
-None — Maps-vs-no-Maps rendering branches, typeahead endpoint behaviour, fit filter, and carrier merging all verified against `_office_locker.tpl` + the platform code on 2026-06-12.
+None. The list, rows, chips and search were re-checked against the code on 2026-11-09.

@@ -5,8 +5,8 @@ route_path: /checkout
 themes_using: [all]
 tags: [storefront, checkout, accordion, address, shipping, payment, summary]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 
 > Part of [[checkout]]. See the hub for the other aspects (routing & middleware, submit & payment handoff, JavaScript hooks, merchant customisation).
@@ -30,7 +30,7 @@ The steps sequence is built server-side (see [[checkout-page-routing]]). Each st
 The checkout is a **single-column page** of stacked accordion steps on the left + a fixed **sidebar** on the right (slide-over on mobile). Page-level regions:
 
 - **Mobile header** — store logo + cart-details toggle button.
-- **Free-shipping progress bar** — "X left to free shipping" hint when applicable, measured against the closest free-shipping threshold; suppressed when the Bumper Offer app's goal is free-shipping.
+- **Free-shipping progress bar** — the "X left to free shipping" hint (`sf.widget.cart.totals.nfy.%s_left_to_free_shipping`). It comes **only** from free-shipping discounts with an "orders over" amount ([[marketing-discounts-shipping]]), never from a courier's own *Minimum Order Value for Free Delivery*. The amount is the nearest such threshold minus the cart total before shipping (subtotal minus discounts, plus taxes counted before shipping). Only the checkout renders it: in the summary and, on mobile, under the cart button. There is no on/off setting; it is hidden only when the Bumper Offer app's goal is free shipping.
 - **Payment-cancelled flash** — error banner when the customer just returned from a cancelled payment gateway (`payment_canceled` session message).
 - **Steps stack** (`js-checkout-container`) — accordion sections, one active at a time.
 - **Sidebar** (`js-checkout-sidebar`) — order summary + discount-code + totals + messages, plus optional custom text widgets.

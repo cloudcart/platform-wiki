@@ -7,8 +7,8 @@ aliases: ["Variants matrix", "Manage variants", "Edit Variant options", "Product
 tags: [catalog, products, variants, inventory, matrix, modal]
 plan_gates: ["multi_variants"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[products-products]]. See the hub for the other aspects (list view, editor, bulk actions, known issues).
@@ -30,7 +30,7 @@ The Variants matrix is the per-SKU editing surface inside the [[products-editor|
 
 The card opens with a two-choice toggle:
 
-- **Simple Product** — **Pricing**: **Price**, and **On Sale** with **Discount** (amount or percent) + **Sale price**. Going back to it from a product with variants asks *"Set Product to Simple"*: *"This will remove the variants from you product and set it as a simple product."*
+- **Simple Product** — **Pricing**: **Price**, and **On Sale** with **Discount** (amount or percent) + **Sale price**, saved as a fixed price into the auto-created **Default Fixed Discount**, which must be active to apply ([[discounts-products-business-rules]]). Going back from a product with variants asks *"Set Product to Simple"*.
 - **Product with variants** — rows of **Variant name** + **Variant values**. Pick from the list or type a new name to create one; **Add value** adds a row, up to 3. **Save** turns them into the **Product variants** summary with a pen icon to edit, and **Manage variants** opens the window below.
 
 With the Grocery store app, the **Pricing** block on physical products also has **Add unit price** (marked **Extended**), which adds the price type (**Price per measurement unit** / **Price per package**), measurement unit, **Minimum order qty** and **Visualization**.
@@ -39,13 +39,13 @@ With the Grocery store app, the **Pricing** block on physical products also has 
 
 - Free-text **Search** field — filters the matrix by value / SKU / barcode / price.
 - **Filter tag chips** — every unique value appears as a clickable chip; clicking adds it as a filter; chips combine.
-- **Modify columns** — show / hide columns (**Price** and **Discount** always stay).
+- **Modify columns** — show, hide and drag columns. **Variant**, **Price** and **Discount** are locked (greyed checkbox); **SKU**, **Barcode**, **Min. Order qty**, **Quantity** and **Weight** can be hidden. The choice is kept in this browser only and applies to every product, not per store or per admin. The newer editor at `/admin/ccdomain/products/edit/<id>` locks only Variant and Price.
 
 ### Per-row editable columns
 
 - **Variant** (the header shows the parameter names, e.g. *Color / Size*) — variant value (read-only) + thumbnail (click opens the variant image modal); clicking the name opens the **Edit Variant** side panel.
 - **Price** — currency input.
-- **Discount** — amount or percent; the sale price is worked out from it. A discount above the price shows *"Sale price must be greater than or equal to 0"* and clears the discount.
+- **Discount** — amount or percent; the editor turns it into a sale price, saved as the variant's price on the store's default Fixed discount ([[variants-pricing]]). Left empty, the variant has no such price and sells at **Price** unless another discount applies. A discount above the price shows *"Sale price must be greater than or equal to 0"* and clears the discount.
 - **SKU** / **Barcode** — text.
 - **Min. Order qty** — numeric.
 - **Quantity** — numeric. Column header carries a **Track-inventory** toggle; when OFF the column is disabled.
@@ -92,7 +92,7 @@ The **Inventory** card closes the **Product type settings** card, and also the d
 
 ### Variant value rename: future only; Merge also rewrites order history
 
-Renaming a variant value (e.g. Color "Red" → "Crimson") on the per-parameter Values page ([[products-variants-options]]) updates every referencing variant's displayed text (`v1` / `v2` / `v3` columns); the matrix shows it on next load. **Past orders that bought the variant do NOT update** — their order-line keeps the name recorded at purchase. The **Merge values** action differs: it rewrites BOTH future variants AND past order records (historical order-lines are reassigned to the survivor value). **Merge is irreversible.**
+Renaming a variant value on the Values page ([[products-variants-options]]) updates the text on every variant using it; **past orders keep the name recorded at purchase**. **Merge values** also rewrites past order lines and is **irreversible**.
 
 ### Variant parameter rename cascades to all products
 
@@ -100,11 +100,11 @@ Renaming a variant parameter (e.g. "Color" → "Colour") on the Variants list pa
 
 ### "Show as separate product in listing" toggle is throttled to 24 h
 
-Toggling *"Show each variant as a separate product in the listing"* ON/OFF on an existing parameter (paid plan), or changing *"Include the variant name in the product title"*, sets the parameter's `next_update` to now + 24 hours and blocks re-toggling these two settings until then — a guard while the storefront listing rebuilds. Renames and other parameter changes are NOT throttled; only these two listing-mode toggles are.
+Changing *"Show each variant as a separate product in the listing"* (paid plan) or *"Include the variant name in the product title"* on a parameter blocks both for 24 hours while the listing rebuilds; other parameter changes are not throttled. See [[products-variants-listing-toggle]].
 
 ### Variant quantity vs product quantity
 
-For a product with variants, the **Qty** column on [[products-list-view]] shows the **sum across variants**; editing quantity on the parent (without selecting a variant) is disabled — the merchant sets it per variant, and tracking applies per-variant. For products WITHOUT variants, quantity is set on the product via the Inventory card; tracking drives stock decrement at checkout (per [[settings-cart]] → `order_status_for_quantity_decrease`).
+For a product with variants, the **Qty** column on [[products-list-view]] shows the **sum across variants**, and quantity is set per variant. Without variants it is set on the Inventory card. When stock comes off is set on [[settings-cart]] (`order_status_for_quantity_decrease`).
 
 ### Variant deletion edge case
 

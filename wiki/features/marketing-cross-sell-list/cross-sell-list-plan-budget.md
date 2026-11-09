@@ -7,8 +7,8 @@ aliases: ["Cross-Sell plan budget", "Cross-Sell slot limit", "Cross-Sell master 
 tags: [marketing, cross-sell, list, plans, model]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[marketing-cross-sell-list]]. See the hub for the other aspects (grid & metrics, actions, validation).
@@ -54,7 +54,7 @@ There is no "duplicate offer" action. To make a similar offer the merchant creat
 
 ### Plan-tier slot count is a real gate, enforced at save time
 
-`cross_sells` is a per-plan feature counter — each plan tier (free / starter / pro / unicorn) caps the **TOTAL** number of Cross-Sell records. Each offer counts as one slot (legacy multi-step chains also counted every descendant record, so an old 3-step chain consumed 3 slots). The "(N remaining)" label shows the current allowance; when 0, the server rejects new Cross-Sell creates with a plan-limit error. See [[plans]].
+`cross_sells` is a per-plan feature counter — each plan tier (free / starter / pro / unicorn) caps the **TOTAL** number of Cross-Sell records. Each offer counts as one slot (legacy multi-step chains also counted every descendant record, so an old 3-step chain consumed 3 slots). The "(N remaining)" label shows the current allowance (verify). When it is used up, or the plan's `cross_sells` is 0, saving a **new** offer is refused, but the admin shows only a generic **"Unexpected error. Please try again later"** (HTTP 400, not 402): the save endpoint catches the plan refusal and replaces it. The real reason, *"Maximum number for your current plan is reached! Upgrade to add more."* („Максималният брой за настоящия абонаментен план е достигнат. Повишете плана, за да добавите още.“), is written only to the store's server-side error log, and no upgrade link appears. Editing an existing offer is not affected. UpSell saves behave the same against `upsells`. The per-plan values are in the billing catalogue, not the wiki. See [[plans]].
 
 ### Products limit max 10 — capped in validation
 

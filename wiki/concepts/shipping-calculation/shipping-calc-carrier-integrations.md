@@ -5,8 +5,8 @@ aliases: ["Carrier shipping integrations", "Live carrier quote", "getQuotes API"
 tags: [shipping, carriers, integrations, omniship, multi-currency, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[shipping-calculation]]. See the hub for the other aspects (rate models, geo gating, the checkout cascade, COD surcharge, discounts + Cart Rules, persistence).
@@ -15,11 +15,11 @@ source_count: 1
 
 ## Definition
 
-**Carrier integrations** are shipping methods with `type = integration` whose quote comes from a **live API call to the carrier's `getQuotes` endpoint** at checkout-time — Econt, Speedy, BoxNow, Cargus, Sameday, Fan Courier, DHL, DHL Express, GLS, DPD, and so on. The merchant cannot edit per-row prices the way they can on a custom method ([[shipping-calc-rate-models]]); the carrier owns the price and the platform passes it through unchanged.
+**Carrier integrations** are shipping methods with `type = integration` whose quote comes from a **live API call to the carrier's `getQuotes` endpoint** at checkout-time — Econt, Speedy, Cargus, Sameday, Fan Courier, DHL, DHL Express, GLS, DPD, and so on. The merchant cannot edit per-row prices the way they can on a custom method ([[shipping-calc-rate-models]]); the carrier owns the price and the platform passes it through unchanged.
 
 The integration is installed + configured via the carrier's dedicated app screen ([[apps-econt]], [[apps-dpdbulgaria-speedy|Speedy]], [[apps-boxnow]], [[apps-cargus]], [[apps-sameday]], [[apps-dhl]], [[apps-dhlexpress]], etc.) — credentials, sender data, default-service options, pallet rules. Once installed AND configured, the carrier appears as a shipping method on [[settings-shipping]] alongside custom methods, where the merchant toggles it active / inactive, sets its `target` geo scope ([[shipping-calc-geo-gating]]), its allowed-payment-method allow-list, and its customer-group restrictions — the price arithmetic is delegated to the carrier.
 
-An **installed-but-misconfigured** carrier integration (missing or invalid credentials) does NOT show at checkout — the carrier's API rejects the quote request and the platform silently skips that method, with no log entry; the carrier just disappears.
+An **installed-but-misconfigured** carrier integration (missing or invalid credentials) does NOT show at checkout: the carrier rejects the quote and the method silently disappears, unless the courier applies a **fallback price** ([[shipping-calc-rate-card-fields]]).
 
 ## Scope
 
@@ -45,9 +45,9 @@ Not covered here:
 
 When a carrier-integration method survives the [[shipping-calc-geo-gating|geo gate]], the platform calls the carrier's `getQuotes` API with:
 
-- The **receiver address** — country / city / post-code / street, with carrier-specific address resolution (Speedy to its site IDs, Econt to its city/office catalogue, BoxNow to the nearest active locker).
+- The **receiver address** — country / city / post-code / street, with carrier-specific address resolution (Speedy to its site IDs, Econt to its city/office catalogue).
 - The **package dimensions + weight** — derived from products (sum of `weight × quantity`) and the merchant's configured boxes on [[settings-boxes]] (smallest box that fits).
-- **Service options** the customer has selected — `address` / `office` / `locker` for Speedy and Econt; locker-only for BoxNow.
+- **Service options** the customer has selected — `address` / `office` / `locker` for Speedy and Econt.
 - **COD amount**, if the customer's payment method is COD ([[shipping-calc-cod-surcharge]]).
 - **Insurance amount**, when configured per-method or per-order.
 
@@ -55,12 +55,11 @@ The carrier responds with one or more service options, each with its own price. 
 
 ### Multi-currency FX conversion
 
-For multi-currency stores, the platform converts COD / insurance / subtotal into the carrier's billing currency before the API call, using the latest Fixer.io-synced FX rate from the platform's internal rate table (see [[multi-currency]]):
+The platform converts COD / insurance / subtotal into the carrier's currency before the call, at the latest synced exchange rate ([[multi-currency]]):
 
-- **Speedy** bills in **BGN** for BG operations, **RON** for RO operations.
+- **Speedy** uses the receiver country's currency, by default **EUR** (DPD Romania: **RON**).
 - **Cargus** bills in **RON**.
 - **Econt** bills in **BGN** for BG, **RON** for RO.
-- **BoxNow** bills in the country's local currency (BGN / RON / EUR depending on operation).
 
 ### Country-default carrier-recommendation filter
 
@@ -82,8 +81,8 @@ The [[settings-shipping]] "Browse integrations" modal filters its list by the st
 
 **BoxNow** (BG / RO / GR / CY / HR)
 
-- **Locker-only**. "To address" is HIDDEN at checkout; only "To locker" is offered.
-- The platform looks up the **nearest active locker** to the customer's address using BoxNow's locker catalogue.
+- **Locker-only**; the customer picks the locker.
+- **No live quote.** BoxNow is never asked for a price: the merchant's fixed table is the price, in the store currency ([[apps-boxnow]]).
 
 **Cargus** (RO)
 
@@ -93,10 +92,10 @@ The [[settings-shipping]] "Browse integrations" modal filters its list by the st
 
 ### Failure modes
 
-- **Invalid credentials** — the carrier rejects the quote request. The platform silently skips the method; the customer doesn't see it at checkout.
+- **Invalid credentials or no priced service** — no live price, so the method is skipped (or priced from the fallback table where the courier applies one).
 - **COD cap exceeded** — for BG carriers above 10,000 BGN, COD options are dropped; the customer must pay online.
 - **Weight cap exceeded** — Econt's office-delivery 1,000 kg cap forces address-delivery only.
-- **No locker in range** (BoxNow) — the method is silently dropped if no active locker covers the customer's address.
+- **No matching table row** (BoxNow, and any courier on a fixed table) — no price, so the method is not offered.
 
 ## Related
 

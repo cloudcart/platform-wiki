@@ -7,8 +7,8 @@ aliases: ["myPOS", "MyPOS", "Mypos", "myPOS Europe", "myPOS Virtual Checkout", "
 tags: [paymentproviders, payment-providers, mypos, card-gateway, bulgaria, cross-border, popular]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # myPOS
 
@@ -33,7 +33,7 @@ This feature is split into 4 aspect pages:
 - [[mypos-setup-config-pack]] — the screen location, full settings layout, and the base64 **Configuration Pack** onboarding (Store ID / Wallet / Key Index / RSA key); the bundled pre-populated test pack; IPC `1.4` version + key-rotation; the four-card UI mechanics; no plan gate.
 - [[mypos-payment-lifecycle]] — purchase → Virtual Checkout redirect → mandatory 3DS → return + IPN webhook (`<storefront_domain>/payment/webhook/<payment_id>`); status mapping (`IPCPurchaseNotify` → `Completed`); card networks; multi-currency; OrderID format; address handling.
 - [[mypos-save-card]] — CardToken save-card flow (`CARD_TOKEN_REQUEST_PAY_AND_STORE` → `IAPurchase`); the per-environment `test_save_card` / `save_card` switches (myPOS is the only gateway with separate per-environment switches).
-- [[mypos-refund-sync]] — full refund via myPOS's `Refund` API (`Trnref`); auto-capture-only (no two-phase capture); periodic `GetPaymentStatus` reconciliation for stranded Pending payments.
+- [[mypos-refund-sync]] — full refund via myPOS's `Refund` API (`Trnref`); auto-capture-only (no two-phase capture); `GetPaymentStatus` reconciliation on the merchant's **Sync payment** click (no periodic check).
 
 ## What the merchant can do here
 
@@ -43,7 +43,7 @@ The hub itself is navigation only — every concrete action lives on an aspect p
 - **Switch Test / Live and paste the Configuration Pack** — see [[mypos-setup-config-pack]].
 - **Configure storefront labels, amount range, discount** — see [[mypos-setup-config-pack]].
 - **Enable Save customer card (per environment)** — see [[mypos-save-card]].
-- **Refund a payment, or wait for automatic reconciliation of a stranded Pending payment** — see [[mypos-refund-sync]].
+- **Refund a payment, or sync a stranded one with Sync payment** — see [[mypos-refund-sync]].
 
 ## Settings & fields
 
@@ -62,7 +62,7 @@ The cross-cutting rules that apply to the integration as a whole — each spelle
 - **Per-environment save-card switches** — `test_save_card` and `save_card` are independent flags; myPOS is the only CloudCart card gateway with this split. See [[mypos-save-card]].
 - **Auto-capture only** — single-message capture; no pre-authorize / delayed-capture surface, which is why the settings page has no Authorization row. See [[mypos-refund-sync]].
 - **Full refunds only** — refunds use the full payment amount (partial refunds are protocol-supported but not exposed in the admin UI). See [[mypos-refund-sync]].
-- **Self-healing Pending payments** — a periodic `GetPaymentStatus` sync settles any payment whose IPN didn't arrive, within a few minutes. See [[mypos-refund-sync]].
+- **No automatic status check** — a payment whose IPN didn't arrive stays Requested until the merchant clicks **Sync payment**; it is never timed out. See [[mypos-refund-sync]].
 
 ## Scope
 
@@ -71,7 +71,7 @@ Covered (across the 4 sub-pages):
 - Screen location, settings layout, and the Configuration Pack onboarding mechanism.
 - Payment lifecycle: purchase, 3DS, redirect, return + IPN, signature verification, status mapping, OrderID + address handling.
 - Save Customer Card (CardToken) tokenisation with per-environment switches.
-- Full refund and the periodic sync reconciliation loop; auto-capture-only.
+- Full refund and the on-request Sync reconciliation; auto-capture-only.
 
 Not covered here:
 

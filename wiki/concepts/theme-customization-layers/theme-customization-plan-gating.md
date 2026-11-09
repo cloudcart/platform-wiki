@@ -5,8 +5,8 @@ aliases: ["Theme customization plan gating", "Theme Editor plan gate", "Custom C
 tags: [design, theme, customization, plans, permissions, concepts]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[theme-customization-layers]]. See the hub for the other aspects (themes, editor, custom assets, cascade, overlay).
@@ -50,7 +50,7 @@ The gates apply across these surfaces:
 
 - [[design-themes]] — paid themes go through the theme purchase flow.
 - [[design-theme-editor]] — `store.builder` permission required to reach `/admin/builder`.
-- [[design-custom-assets]] — `store.builder` permission required to reach `/admin/storefront/custom-assets`.
+- [[design-custom-assets]] — `store.builder` permission required to reach `/admin/design/custom-assets`.
 - [[plan-features]] — the `storefront_builder` feature gates the page-builder type on Landing pages, NOT the Theme Editor.
 - [[marketing-landing-pages]] — where `storefront_builder` actually bites.
 
@@ -83,7 +83,7 @@ The `unpaid_template` flag on the merchant's site tracks an installed-but-unpaid
 `storefront_builder`, despite the name, gates the **page-builder type on Landing pages** — the dynamic-page composition surface on [[marketing-landing-pages]]. It does NOT gate:
 
 - The Theme Editor (`/admin/builder`).
-- Custom CSS/JS (`/admin/storefront/custom-assets`).
+- Custom CSS/JS (`/admin/design/custom-assets`).
 - Theme installation.
 
 A merchant with `storefront_builder` disabled can still reach the Theme Editor and Custom CSS/JS — they just cannot create Landing pages of the page-builder type.
@@ -112,7 +112,7 @@ The merchant on any plan can install any paid theme by going through the theme c
 
 ### Example: Custom CSS/JS works on every plan tier
 
-1. A merchant on the cheapest paid plan opens `/admin/storefront/custom-assets`.
+1. A merchant on the cheapest paid plan opens `/admin/design/custom-assets`.
 2. The screen loads, the CodeMirror editor is editable, Save works.
 3. There is no upsell prompt; no plan-feature gate is checked. Same on every higher plan.
 

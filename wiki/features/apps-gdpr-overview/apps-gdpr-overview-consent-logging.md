@@ -7,8 +7,8 @@ aliases: ["GDPR consent capture", "GDPR acceptance log", "policies_popup", "GDPR
 tags: [apps, gdpr, compliance, privacy, consent, audit]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # GDPR — Consent capture & acceptance logging
 
@@ -70,7 +70,7 @@ GDPR audit requires retention of WHO accepted WHICH policy version WHEN. Entries
 
 ### Install flow runs a seeder (single install view, not a multi-step wizard)
 
-When the merchant opens any GDPR sub-page on a store where the app is not yet installed, the platform short-circuits the response and shows a single install view (the platform code) with the country list — there is no multi-step wizard with progress steps. The merchant submits the install action, after which all sub-pages become accessible. The install action runs the seeder, which creates the 4 default policies + 5 default cookie groups + default cookie providers (CloudCart Platform, CloudCart Analytics, Google Analytics, AddThis, Facebook Ads, etc.). The cookie groups are documented on [[apps-gdpr-overview-consent-ux]].
+When the merchant opens any GDPR sub-page on a store where the app is not yet installed, the platform short-circuits the response and shows a single install view (the platform code) with the country list — there is no multi-step wizard with progress steps. The merchant submits the install action, after which all sub-pages become accessible. The first install runs the seeder, which creates the 4 default policies + 5 default cookie groups + default cookie providers (CloudCart Platform, CloudCart Analytics, Google Analytics, AddThis, Facebook Ads, etc.); a later reinstall seeds nothing ([[apps-gdpr-settings]]). The cookie groups are documented on [[apps-gdpr-overview-consent-ux]].
 
 ## Related
 

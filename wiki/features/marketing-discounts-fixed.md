@@ -7,8 +7,8 @@ aliases: ["Fixed discount products", "Fixed-price products", "Per-product price 
 tags: [marketing, discounts, fixed, per-product-price]
 plan_gates: ["discount_fixed", "total_discounts"]
 created: 2026-05-23
-updated: 2026-11-04
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # Fixed-discount products (per-product price override)
@@ -71,6 +71,7 @@ Summary (drill into the aspect page for the verified detail):
 - **Plan gating** — `discount_fixed` quota counted at the **discount level**, not the product level (unlimited products per discount). See [[fixed-discount-plan-gates]].
 - **Auto-deactivation on catalog price drop** — catalog ≤ fixed → row deactivates automatically. See [[fixed-discount-row-writes]].
 - **No cross-discount uniqueness** — two Fixed discounts CAN both target the same variant; storefront picks the cheapest. Editing the product's prices on either removes it from the other. See [[fixed-discount-validation-rules]].
+- **Bulk fixed prices** — the modal has no percent input and takes one product at a time. For many products: a CSV import with the `variant.discount_price` column, into the Fixed discount picked at *"Choose the fixed discount you want to be applied if the products has discount price"* (only prices below the regular price are written); the Google Sheets Discount column ([[apps-google-sheets-columns-filters]]); the JSON-API ([[fixed-discount-api-access]]); or the Admin GraphQL bulk action that sets one sale price on every variant priced above it, in the default Fixed discount. For "X% off every variant" a [[marketing-discounts-percent|Percent discount]] fits.
 
 ## Related
 

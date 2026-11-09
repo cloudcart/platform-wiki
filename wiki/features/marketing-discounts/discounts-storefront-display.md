@@ -7,8 +7,8 @@ aliases: ["Discount storefront display", "From/Now pricing", "Discount badge", "
 tags: [marketing, discounts, promotions, storefront, ui, listing-engine]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Discount storefront display
@@ -17,11 +17,11 @@ source_count: 3
 
 ## Purpose
 
-This aspect covers **what the customer sees** when a discount is active — strikethrough "was / now" pricing, per-product badge / label, countdown timer, popup celebration effect (confetti / fireworks / school_pride) — plus the **per-product attachment regeneration** pipeline (the listing-engine job that rebuilds `product_to_discount` rows so the storefront renders badges fast).
+**What the customer sees** when a discount is active (was / now pricing, badge, timers, popup effect) and the per-variant price rows behind it.
 
 ## Where to find it
 
-**Sidebar → Marketing → Discounts → Edit form.** Three blocks: **Color settings** (background + text colour), **Discount's amount in label** (a radio with **two** choices — As percent / As fixed amount), and **Date range** (timer switches `timer_list` + `timer_details`). The Color + amount-in-label blocks and the timer switches appear only on the **Global** (Flat / Percent / Free shipping) and **Fixed** forms — not on the code, container, quantity, or countdown forms. For the Countdown celebration effect, see [[marketing-discounts-countdown]].
+**Sidebar → Marketing → Discounts → Edit form.** Three blocks: **Color settings** (background + text colour), **Discount's amount in label** (a radio with **two** choices — As percent / As fixed amount), and **Date range** (timer switches `timer_list` + `timer_details`). These appear only on the **Global** (Flat / Percent / Free shipping) and **Fixed** forms. For the Countdown celebration effect, see [[marketing-discounts-countdown]].
 
 ## What the merchant can do here
 
@@ -48,13 +48,13 @@ This aspect covers **what the customer sees** when a discount is active — stri
 
 When a no-code Flat or Percent discount or a Fixed discount is **created, edited, or has its target list changed**, the platform regenerates its per-variant rows. These rows are what the storefront reads to render "From X / Now Y" pricing on category and product detail pages. The list switch, bulk status and list delete start no rebuild.
 
-The rows are written during the save. The listing engine and smart collections are refreshed afterwards, so listings can take a moment to catch up.
+The rows are written during the save; listings and smart collections refresh afterwards.
 
-Triggers: new discount save → matching products get rows; target list edited → rows recomputed against the new set; **catalog product price changed** (independent of any discount edit) → per-variant Fixed-discount rows auto-recalculate `save = catalog − fixed`; if catalog price drops at or below the fixed price, the row is **deactivated** (no fake "discount").
+Triggers: a discount saved → rows for its matching products; target list edited → rows recomputed. A product saved from its form, the JSON-API, Google Sheets or an import rebuilds its own no-code Flat / Percent rows from the new price and re-checks its Fixed rows (`save = catalog − fixed`; a catalog price at or below the fixed price **deactivates** the row). A price changed on the **Inventory** screen or by an Admin GraphQL bulk price change rebuilds nothing, except a discount aimed at a smart collection, rebuilt whenever that collection re-evaluates.
 
 ### Storefront cache invalidation
 
-Saving a discount also flushes storefront caches: product-detail page cache (per affected product), category-page fragment cache, variant-picker fragment cache. The cache is flushed BEFORE the listing-engine regenerates rows, so the storefront briefly reads from the database while new rows are being built — usually milliseconds; on high-traffic stores it can be noticeable.
+Saving a discount flushes the product-page, category-fragment and variant-picker caches of the affected products before the listing refresh, so the storefront briefly reads from the database.
 
 ### Strikethrough rules
 
@@ -62,11 +62,24 @@ By default the storefront renders ~~10.00 EUR~~ **8.50 EUR** when a discount is 
 
 The **Discount price options** box (show MSRP as the "was" price, hide the discounted price) is not available on standard stores.
 
+### After a price change that rebuilt nothing
+
+Until the product is saved again through one of the paths above, or the discount is saved (rebuilding all its rows), a no-code Percent or Flat discount shows mixed values:
+
+- **Now** price, on the product page and listings: the stored row, worked out from the old price.
+- **Was** (struck-through) price: the current price.
+- **You save** (*Спестяваш*): current price minus the stored row on the product page; listings show the saving stored with the row.
+- The cart takes the percent off the current price, so the charge is right.
+
+### Badge percent and where it shows
+
+With **As percent**, a Percent discount's badge shows its own percentage, whatever the prices. For a Fixed or Flat discount the percent is worked out from the prices: per variant on the product page; on listings once per product, from the default variant's price row against that variant's price. Every theme shows the badge on the product page's main image; some also on product cards. Category, collection, vendor and search result pages share the same card, so search results show the same struck-through price and badge.
+
 ### Countdown timer + popup effect
 
 The `timer_list` (product listings) and `timer_details` (product detail pages) switches are on the Global and Fixed forms and show that discount's end-date timer; both **auto-disable** when `date_end` is empty. A Countdown discount has no such switches: its timer runs at **checkout**, via the countdown popup, and the merchant cannot disable it.
 
-When the countdown popup first shows at checkout, a celebration animation fires per `countdown_popup_effect`: `confetti` (two-sided burst, 350 particles, 50° spread), `fireworks` (six positions, 550 ms intervals), or `school_pride` (1 000 red particles, 5 × 100 ms iterations). The merchant previews via the in-page Preview button on the Countdown edit form. See [[marketing-discounts-countdown]].
+When the countdown popup first shows at checkout, the `countdown_popup_effect` animation fires (`confetti`, `fireworks` or `school_pride`); preview it on the Countdown edit form. See [[marketing-discounts-countdown]].
 
 ### Label / Banner — visual only
 
@@ -74,7 +87,7 @@ The Label / Banner type is purely a product-card decoration. It is NOT a price r
 
 ### Smart-collection refresh on discount save
 
-Saving a discount that targets specific products / categories also refreshes any [[products-smart-collections]] matching the affected products — an "On sale" smart collection automatically includes newly-discounted products. Part of the same async pipeline as the per-product attachment regen; contributes to the "Latest update" badge delay.
+Saving a discount also refreshes [[products-smart-collections]] that use it or the **Sale** rule, in the background. A discount starting on a later date joins a Sale collection at the nightly check — see [[smart-collection-entity-discount-link]].
 
 ## Related
 

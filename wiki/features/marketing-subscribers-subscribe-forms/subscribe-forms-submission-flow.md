@@ -7,8 +7,8 @@ aliases: ["Subscribe form submit", "Form submission flow", "Subscriber creation 
 tags: [marketing, subscribers, forms, submission, validation, segments, webhooks, storefront]
 plan_gates: ["subscriber_forms"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-subscribers-subscribe-forms]]. See the hub for the other aspects (list view, builder, templates, layout, triggers, fields, GDPR consent, known issues).
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-When a visitor submits a subscribe form, the platform validates, matches the visitor against an existing subscriber (or creates a new one), applies tags + custom fields, runs the verify-action cascade, and triggers segment re-evaluation. This page documents the end-to-end submit pipeline plus the public-endpoint security posture.
+When a visitor submits a subscribe form, the platform validates, matches or creates the subscriber, applies tags + custom fields, runs the verify-action cascade, and re-evaluates segments. This page covers the submit pipeline and the endpoint's security posture.
 
 ## Where to find it
 
@@ -27,7 +27,7 @@ Route: `POST /subscribers/forms/{id}` (route name `subscribers.subscriptions.for
 
 ## What the merchant can do here
 
-This is a programmatic flow with no admin UI. The merchant's surfaces:
+There is no admin UI. A submission sends the merchant **no email and no bell alert**; the merchant's surfaces:
 
 - Watch the `views` and `submitted` counters move on [[subscribe-forms-list]].
 - Inspect captured subscribers on [[marketing-subscribers]].

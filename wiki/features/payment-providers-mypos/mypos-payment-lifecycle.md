@@ -7,8 +7,8 @@ aliases: ["myPOS Virtual Checkout", "myPOS 3DS", "myPOS IPN", "myPOS webhook", "
 tags: [paymentproviders, payment-providers, mypos, lifecycle, 3ds, ipn, status-codes]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[payment-providers-mypos]]. See the hub for related aspects (setup & config pack, save card, refund & sync).
@@ -26,7 +26,7 @@ This aspect is invisible to the merchant — it's the runtime behaviour behind e
 ## What the merchant can do here
 
 - **Inspect a payment's lifecycle** on the order details page — the myPOS response and mapped status are stored on the payment row.
-- **Re-sync a stranded Pending payment** — see [[mypos-refund-sync]] for the periodic reconciliation mechanism.
+- **Re-sync a stranded payment** with **Sync payment** — see [[mypos-refund-sync]]; myPOS has no automatic periodic check.
 - **Confirm no portal-side URL setup is needed** — both return and notify URLs are sent dynamically on every transaction (see below).
 
 ## Settings & fields
@@ -78,6 +78,7 @@ myPOS's `IPCmethod` and `PaymentStatus` map to the platform's [[payment-status]]
 | Sync `PaymentStatus = 2` | `Pending` |
 | Sync any other status | `Canceled` |
 | Webhook or return any other method | `Canceled` |
+| Saved-card charge not successful (any myPOS status code) | `failed` (see [[mypos-save-card]]) |
 
 ### Order ID format
 

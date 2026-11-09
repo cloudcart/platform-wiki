@@ -7,8 +7,8 @@ aliases: ["CloudCart Pay", "CC Pay", "CloudCart Connect", "Cloudcart Pay Connect
 tags: [paymentproviders, payment-providers, cloudcart-pay]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # CloudCart Pay
 
@@ -22,7 +22,7 @@ source_count: 3
 
 A new account is approved from a few hours to 2 business days after it is submitted; a complicated company structure can take longer (see [[ccpay-onboarding-review-alerts]]).
 
-This page is the **hub** for CloudCart Pay: the screen the merchant lands on, its six tabs, and the aspect pages for each part of the lifecycle.
+This page is the **hub**: the landing screen, its six tabs and the aspect pages.
 
 ## Where to find it
 
@@ -55,13 +55,14 @@ The fields live on the tabs. The overview itself has only the controls every pay
 
 | Control | What it does | Default | Notes |
 |---|---|---|---|
-| **Install** | Adds CloudCart Pay to the store's payment methods. | Not installed | Can be undone with **Uninstall**. |
+| **Install** | Adds CloudCart Pay to the store's payment methods at once, switched off. | Not installed | Undone with **Uninstall**. See *Installing* below. |
 | **Active** switch (header) | Turns the method on or off at checkout. | Off | Refused until the connected account can take card payments; the reason is shown as a validation message. See [[cloudcart-pay-activation-gate]]. |
 | **Test / live badge** (header) | Shows whether the store charges in the test or the live environment. | — | Read-only. The environment is set by CloudCart for the whole platform, not per store. |
 | **Logo, title, description, min/max amount, discount** | Standard payment-method fields. | Provider defaults | Edited on the [[payment-providers-cloudcart-pay-settings|Settings tab]]. |
 
 ## Business rules
 
+- **Installing.** Until CloudCart Pay is installed, every CloudCart Pay address shows only an install screen with **Install**: the overview, and the Settings address that the **+ Add payment method** card opens ([[settings-payment-providers-add-modal]]). **Install** installs it at once; the tabs then appear. Saving settings never installs it, and closing the modal or leaving the page installs nothing.
 - **Activation is checked by the server.** The method cannot be switched on until a connected account exists and its card payments are active. A broken configuration switches it off on its own, and **Disconnect** switches it off too. See [[cloudcart-pay-activation-gate]].
 - **Approval time.** From a few hours to 2 business days after submission; longer when the company's structure is complicated (operator statement). While waiting, uploaded documents show as "waiting for review" — see [[ccpay-onboarding-review-alerts]].
 - **Checkout.** Inline card fields are the default; a popup and a separate payment page are the alternatives. Payments are captured at once. See [[cloudcart-pay-checkout-flow]].

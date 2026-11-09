@@ -5,8 +5,8 @@ aliases: ["Theme customization Layer 3", "Custom CSS/JS", "Custom assets", "Raw 
 tags: [design, theme, customization, css, javascript, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[theme-customization-layers]]. See the hub for the other aspects (themes, editor, cascade, plan gating, overlay).
@@ -15,7 +15,7 @@ source_count: 3
 
 ## Definition
 
-**Layer 3 — Custom CSS/JS** is the raw-code escape hatch at `/admin/storefront/custom-assets`. The merchant pastes arbitrary HTML / CSS / JavaScript into a CodeMirror editor (`htmlmixed` mode — HTML, `<style>` blocks, and `<script>` blocks are all syntax-highlighted together). Whatever the merchant pastes is injected verbatim into the `<head>` of EVERY storefront page.
+**Layer 3 — Custom CSS/JS** is the raw-code escape hatch at `/admin/design/custom-assets`. The merchant pastes arbitrary HTML / CSS / JavaScript into a CodeMirror editor (`htmlmixed` mode — HTML, `<style>` blocks, and `<script>` blocks are all syntax-highlighted together). Whatever the merchant pastes is injected verbatim into the `<head>` of EVERY storefront page.
 
 The code is stored as one row keyed by `parameter='custom-css-js'`, `type='custom'`, `template=<active-theme>`. So this layer is also per-theme — switching themes hides the previous theme's Custom CSS/JS and shows the new theme's (empty by default if first-time on that theme).
 
@@ -28,7 +28,7 @@ Covered:
 - What Layer 3 is, where it's edited, and where it's stored.
 - The verbatim-injection mechanic in the storefront `<head>`.
 - The global-scope rule (no per-page targeting natively).
-- Cache behaviour on Save (no explicit invalidation).
+- Cache behaviour on Save (cached pages keep the old code up to 20 minutes).
 - The merchant-fully-trusted contract (no validation, no preview, no rollback).
 - The "no reset endpoint" pattern (clear-and-save an empty string).
 
@@ -44,11 +44,11 @@ Not covered here:
 - **Layer 3 vs. Layer 2** — Layer 2 edits TOKEN VALUES the theme author declared; Layer 3 is arbitrary code, no token system. Use Layer 2 first; reach for Layer 3 only when the property isn't exposed as a variable.
 - **Verbatim injection vs. sanitised input** — the merchant's code is rendered into the `<head>` without escaping or filtering. CloudCart does not validate that the code is well-formed or that it won't break the page.
 - **Global scope vs. per-page scope** — Custom CSS/JS appears in the `<head>` of EVERY storefront page. To target a specific page-type, the merchant writes a client-side path guard.
-- **Save behaviour** — Layer 2 Save bumps `stylesheet_version` (cache-busts the stylesheet URL). Layer 3 Save does NOT bump any cache key — the storefront's per-request read picks up the new content automatically.
+- **Save behaviour** — Layer 2 Save bumps `stylesheet_version` (cache-busts the stylesheet URL). Layer 3 Save renews only the internal cache stamp; pages rendered after it carry the new code, while cached pages keep the old one until they expire.
 
 ## Where it applies
 
-- [[design-custom-assets]] — `/admin/storefront/custom-assets`, the single-textarea screen.
+- [[design-custom-assets]] — `/admin/design/custom-assets`, the single-textarea screen.
 - The CodeMirror editor uses `htmlmixed` mode (HTML / `<style>` / `<script>` highlighted together).
 - The single `custom_assets` field is stored as one row per active theme (`parameter='custom-css-js'`).
 - The storefront's `<head>` partial reads and injects this on every page render.
@@ -72,11 +72,9 @@ if (location.pathname === '/cart') {
 }
 ```
 
-### Save behaviour — no explicit cache invalidation
+### Save behaviour — cached pages keep the old code
 
-Save does NOT explicitly invalidate any cache. The storefront picks up new code on the next page render because the head-injection partial re-reads from storage on each request.
-
-There is no CDN purge step. If the merchant has Cloudflare or a CDN with longer-than-default caching applied to the storefront HTML, visitors may continue seeing the old code until their cache expires. For Custom CSS/JS that ships inside the HTML response, the page-cache TTL is the relevant variable; the merchant has to wait for it or purge externally.
+Save does not clear the platform's full-page cache. Pages rendered after the save carry the new code, and the admin and signed-in customers always get such pages. Guests get it when their cached copy expires (within 20 minutes), crawlers within 1–2 days; cart, checkout and account pages are never cached. See [[storefront-arch-caching-invalidation]].
 
 ### No reset endpoint — clear-and-save the empty string
 
@@ -96,9 +94,9 @@ Two staff editing the same Custom CSS/JS textarea simultaneously will lose one o
 
 Whatever the merchant pastes appears in the `<head>` of EVERY storefront page. To run code only on certain pages, the merchant writes a client-side path guard (`if (location.pathname === '/cart') { ... }`).
 
-### Rule: Save does not invalidate any cache
+### Rule: Save does not clear cached pages
 
-The storefront picks up the new content on the next request via the head-injection partial's per-request read. External CDN caches (Cloudflare, etc.) may continue to serve old HTML until their own TTL expires.
+Guests may see the old code for up to 20 minutes after a save, crawlers for 1–2 days. To check a change at once, view the store while signed in to the admin.
 
 ### Rule: No reset endpoint
 

@@ -7,8 +7,8 @@ aliases: ["Multichannel selling", "Marketplace selling", "Sell on marketplaces",
 tags: [multichannel, marketplace, channels, feeds, migration, apps, integrations, concepts, hub]
 plan_gates: []
 created: 2026-06-11
-updated: 2026-06-11
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # Multichannel & marketplace selling
 
@@ -18,7 +18,8 @@ source_count: 1
 
 ## Scope
 
-- **Marketplaces (orders flow back into CloudCart):** [[apps-olx]] (OLX), [[apps-emag-sync]] (eMAG), [[apps-etsy]] (Etsy), [[apps-tiktok-shop]] (TikTok Shop) — list products on the marketplace and pull the resulting orders back.
+- **Marketplaces (orders flow back into CloudCart):** [[apps-olx]] (OLX), [[apps-tiktok-shop]] (TikTok Shop) — list products on the marketplace and pull the resulting orders back.
+- **eMAG** ([[apps-emag-sync]]) is a one-way product feed: no eMAG orders come back and eMAG sales do not lower CloudCart stock. **Etsy** ([[apps-etsy]]) is not available.
 - **Shopping feeds & ads (advertise only, no order sync):** [[apps-google-shopping]], [[apps-google-dynamic]] (dynamic remarketing), [[apps-tiktok-ads]] — send a product feed so the channel can advertise; the customer still buys on the CloudCart storefront.
 - **Generic product feeds:** [[apps-xml-feed-generator]] (build an XML feed to point anywhere), [[apps-xml-sync]] (recurring supplier feed sync).
 - **Platform migration (one-time import INTO CloudCart):** [[apps-woocommerce]], [[apps-magento]], [[apps-shopify]], plus [[apps-json-import]].
@@ -26,7 +27,7 @@ source_count: 1
 
 ## Contrasts
 
-- **Marketplace vs feed/ads.** A marketplace ([[apps-olx]], [[apps-emag-sync]], [[apps-tiktok-shop]]) *sells* the product on the external site and pulls orders BACK. A feed/ads app ([[apps-google-shopping]], [[apps-tiktok-ads]]) only *advertises* — no order flows back from the ad platform.
+- **Marketplace vs feed/ads.** A marketplace ([[apps-olx]], [[apps-tiktok-shop]]) *sells* the product on the external site and pulls orders BACK; eMAG, though a marketplace, gets only a feed. A feed/ads app ([[apps-google-shopping]], [[apps-tiktok-ads]]) only *advertises* — no order flows back from the ad platform.
 - **Channel vs migration.** OLX / eMAG / TikTok Shop are *ongoing* channels; the WooCommerce / Magento / Shopify importers are *one-time* migrations into CloudCart (you leave the old platform behind).
 - **Generic feed vs marketplace API.** [[apps-xml-feed-generator]] produces a generic feed file; a marketplace app speaks that marketplace's own API and round-trips orders.
 

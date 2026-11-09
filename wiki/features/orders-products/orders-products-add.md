@@ -7,8 +7,8 @@ aliases: ["Add product to order", "Order add line item", "Order line add", "Prod
 tags: [orders, products, line-items, add, picker]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[orders-products]]. See the hub for the other aspects (edit, delete, line discount, fulfillment popover, stock effects, side effects).
@@ -63,7 +63,7 @@ The platform reads the variant's **current** catalog price at the moment of save
 
 ### Bulk add — not supported
 
-The picker adds ONE product per save. There is no multi-select. For bulk order construction, the merchant uses [[orders-add]] (manual order) with repeats or the JSON-API v2 (see [[api-orders]]). (verify)
+The picker adds one product per save; there is no multi-select.
 
 ## Business rules
 
@@ -74,6 +74,10 @@ The `+ Add product` button is hidden when the order is in `completed`, `paid + f
 ### Stock validation — variant must have enough
 
 When the variant has `tracking = yes` AND `continue_selling = no` AND the requested quantity exceeds available stock, the platform throws *"Not enough quantity for `<quantity>`"* and the line is NOT added. No auto-cap. When `continue_selling = yes`, oversell is allowed — see [[orders-products-stock-effects]].
+
+### Saving re-quotes shipping; a courier error cancels the add
+
+On an order with a shipping method the save asks for a fresh shipping price. If that fails, the popup shows the reason (for example the courier's *"Request cannot be modified after it has been sent!"*) and nothing is added. See [[orders-products-courier-requote]].
 
 ### Last product cannot be removed → adding is mandatory before delete
 
@@ -89,7 +93,7 @@ When the order has products AND all existing products are digital (no physical l
 
 ### Customer notification fires on ADD only
 
-The platform emails the customer (per the order's `notify_customer` setting) ONLY for product ADD events. Edit and remove do NOT notify. For removal / price-change comms, the merchant uses [[orders-notify-customer]] manually.
+The customer is emailed (per the order's `notify_customer` setting) only for an added product, never for an edit or removal; for those, use [[orders-notify-customer]].
 
 ### History entry — `order_product_added`
 
@@ -117,4 +121,3 @@ When the product has variants and the store is on a plan WITHOUT the `multi_vari
 ## Open questions
 
 - Confirm `multi_variants` plan-feature gate on variant selectors (verify).
-- Confirm bulk-add via JSON-API v2 is supported via `api-orders` includes (verify).

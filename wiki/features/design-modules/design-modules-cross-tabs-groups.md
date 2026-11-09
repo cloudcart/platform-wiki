@@ -3,12 +3,12 @@ type: feature
 nav_path: "Design → Modules → Cross-cutting → Tabs and groups"
 route_name: admin.storefront.widgets
 route_path: /admin/storefront/widgets
-aliases: ["Module tabs", "Module categories", "Module groups", "Module sidebar groups", "Module tab keys", "Module group keys", "store tab", "user tab", "blog tab", "contact tab", "extra tab", "layout tab", "custom tab"]
+aliases: ["Други", "Горна част", "Текстови полета", "Покажи всички", "Module tabs", "Module categories", "Module groups", "Module sidebar groups", "Module tab keys", "Module group keys", "store tab", "user tab", "blog tab", "contact tab", "extra tab", "layout tab", "custom tab"]
 tags: [design, modules, taxonomy, navigation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 # Storefront Modules — Tabs and groups
@@ -27,7 +27,7 @@ Sidebar → **Design** → **Modules**. The tabs run across the top. The groups 
 
 - Click any of the up-to-7 tabs to switch the visible module set.
 - Click any group name in the sidebar to filter the right-hand list to that group.
-- Click **Show all** in the sidebar to clear the group filter.
+- Click **Show all** (**Покажи всички**) in the sidebar to clear the group filter.
 - See only the tabs / groups that actually contain modules — empty tabs / groups don't render.
 
 The merchant CANNOT:
@@ -40,35 +40,35 @@ The merchant CANNOT:
 
 ### The 7 tab keys (platform-defined, verbatim)
 
-| Tab key | Tab label (translation) | Underlying module types |
+| Tab key | Tab label (EN / BG) | Underlying module types |
 |---------|--------------------------|-------------------------|
-| `store` | **Products** | Product filters, product showcases, related products, last viewed, bundles, product details, ratings, discounts. See [[design-modules-products]]. |
-| `user` | **User** | Newsletter signup (Mailchimp), customer account block. See [[design-modules-engagement]]. |
-| `blog` | **Blogs, articles and comments** | Blog list, recent articles, recent comments. See [[design-modules-blog]]. |
-| `contact` | **Contacts** | Contact information, Google Map. See [[design-modules-engagement]]. |
-| `extra` | **Others** | Background images, slider (carousel), text carousel, banners, text blocks, Yotpo reviews, social icons row, search, promo bar, navigation links. See [[design-modules-content]] / [[design-modules-navigation]]. |
-| `layout` | **Layout** | Header configuration, footer configuration, buttons settings, grid settings. See [[design-modules-layout]]. |
-| `custom` | **Custom** | Theme-specific extras (only populated if the theme registers custom modules). |
+| `store` | **Products** / **Продукти** | Product filters, product showcases, related products, last viewed, bundles, product details, ratings, discounts. See [[design-modules-products]]. |
+| `user` | **User** / **Потребител** | Newsletter signup (Mailchimp), customer account block. See [[design-modules-engagement]]. |
+| `blog` | **Blogs, articles and comments** / **Блог, статии и коментари** | Blog list, recent articles, recent comments. See [[design-modules-blog]]. |
+| `contact` | **Contacts** / **Контакти** | Contact information, Google Map. See [[design-modules-engagement]]. |
+| `extra` | **Others** / **Други** | Background images, slider (carousel), text carousel, banners, text blocks, Yotpo reviews, social icons row, search, promo bar, navigation links. See [[design-modules-content]] / [[design-modules-navigation]]. |
+| `layout` | **Layout** / **Оформление** | Header configuration, footer configuration, buttons settings, grid settings. See [[design-modules-layout]]. |
+| `custom` | **Custom** / **Персонални** | Theme-specific extras (only populated if the theme registers custom modules). |
 
-The seven tab labels themselves come from these translation strings: *"Products"* / *"User"* / *"Blogs, articles and comments"* / *"Contacts"* / *"Others"* / *"Layout"* / *"Custom"*.
+The Modules screen is rendered by the server, so these labels come from the platform's language files and match what a Bulgarian admin shows.
 
 ### The 11 sidebar group keys (platform-defined, verbatim)
 
-Each module can advertise a `group` in its theme config. The 11 group labels are:
+Each module can advertise a `group` in its theme config. There are exactly these 11 groups; no other sub-tab (for example a "Files" one) exists on this screen. The store's files live under [[settings-files]].
 
-| Group key | Group label |
+| Group key | Group label (EN / BG) |
 |-----------|-------------|
-| `top_bar` | **Top bar** |
-| `header` | **Header** |
-| `menu` | **Menu** |
-| `slider` | **Slider** |
-| `banners` | **Images** |
-| `text_fields` | **Text fields** |
-| `products` | **Products** |
-| `categories` | **Categories** |
-| `brands` | **Vendors** |
-| `testimonials` | **Testimonials** |
-| `footer` | **Footer** |
+| `top_bar` | **Top bar** / **Горна част** |
+| `header` | **Header** / **Горно меню** |
+| `menu` | **Menu** / **Меню** |
+| `slider` | **Slider** / **Слайдер** |
+| `banners` | **Images** / **Изображения** |
+| `text_fields` | **Text fields** / **Текстови полета** |
+| `products` | **Products** / **Продукти** |
+| `categories` | **Categories** / **Категории** |
+| `brands` | **Vendors** / **Производители** |
+| `testimonials` | **Testimonials** / **Отзиви** |
+| `footer` | **Footer** / **Долно меню** |
 
 ## Business rules
 
@@ -90,7 +90,7 @@ The `custom` tab only appears if the active theme registers at least one custom 
 
 ### Translation keys are global
 
-The seven tab labels and 11 group labels are translated at runtime via the global translation layer — they're not per-theme strings. A merchant on a Bulgarian-language admin sees the Bulgarian translations of these same keys. (verify Bulgarian strings)
+The seven tab labels and 11 group labels are translated at runtime from the platform's language files — they're not per-theme strings. The Bulgarian labels in the tables above are those strings.
 
 ## Related
 
@@ -106,5 +106,4 @@ The seven tab labels and 11 group labels are translated at runtime via the globa
 
 ## Open questions
 
-- 📡 **Bulgarian tab and group labels.** Exact translated strings to be confirmed. (verify)
 - ⏸️ **Multi-group instances.** Whether a single instance can advertise multiple groups is unclear — the prevailing pattern is one group per instance. (verify)

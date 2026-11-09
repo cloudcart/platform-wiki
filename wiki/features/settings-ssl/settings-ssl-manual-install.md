@@ -3,12 +3,12 @@ type: feature
 nav_path: "Settings → Domains → SSL → Manual install"
 route_name: domains.settings
 route_path: /admin/settings/domains
-aliases: ["Manual SSL install", "External SSL", "Paste SSL certificate", "CSR generation", "Upload SSL"]
+aliases: ["Manual SSL install", "External SSL", "Paste SSL certificate", "CSR generation", "Upload SSL", "Replace SSL certificate", "Renew external SSL", "Own private key"]
 tags: [settings, ssl, certificate, csr, manual]
 plan_gates: ["ssl_certificate"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[settings-ssl]]. See the hub for the other aspects (automatic install, auto-renewal, expiry fallback, edge propagation, troubleshooting).
@@ -17,15 +17,13 @@ source_count: 4
 
 ## Purpose
 
-The **Manual install** tab of the SSL Modal is for merchants who already have (or want to buy) an SSL certificate from an **external CA** — Comodo, DigiCert, GoDaddy SSL, Sectigo, etc. The flow is two-step: (1) fill in Domain details so the platform can generate a CSR + private key on the server, (2) take the CSR to the external CA, receive the signed cert + chain, paste them back into this modal.
-
-Use this tab when the merchant prefers a paid commercial cert (extended-validation badges, organisation-validated branding) or specifically must NOT use Let's Encrypt — otherwise [[settings-ssl-automatic-install]] is simpler.
+The **Manual install** tab of the SSL Modal is for a certificate from an **external CA** (Comodo, DigiCert, GoDaddy SSL, Sectigo, etc.). Either the platform generates a CSR + private key that the merchant takes to the CA, or the merchant pastes the key (and CSR) of a certificate they already obtained elsewhere; then they paste the signed certificate + chain. [[settings-ssl-automatic-install]] is simpler when a paid certificate is not required.
 
 ## Where to find it
 
 Sidebar → Settings → **Domains** → SSL action on a domain row → **Manual install** tab.
 
-The tab is only available when no certificate is already installed on the domain. If a Let's Encrypt cert exists, the merchant must remove it before starting the Manual install flow.
+The install tabs work only on a domain with **no certificate**: an installed one (Let's Encrypt or external) shows its details with only **Remove**, so replacing means removing first (see Business rules).
 
 ## What the merchant can do here
 
@@ -35,9 +33,7 @@ Fill in the **Domain details** form (see field table below; most fields pre-fill
 
 ### Step 2 — Copy the CSR and submit it to the external CA
 
-After Manual install is clicked, a slide-down panel appears below the form with a read-only **CSR textarea** + **Copy CSR** button, a **Show private key** disclosure (expands a read-only PEM textarea), and a **My certificate is ready** action that expands the final install step.
-
-The merchant takes the CSR to their external SSL issuer, completes the CA's domain-control verification, and receives the signed certificate (`.crt`) and a CA-Bundle (`.ca` or chain file).
+After **Manual install** a panel shows the **CSR** box with **Copy CSR**, a **Show private key** disclosure with the **Private key** box (both boxes editable), and **My certificate is ready**. The merchant takes the CSR to the CA, completes its domain-control check, and receives the certificate (`.crt`) and CA-Bundle.
 
 ### Step 3 — Paste the cert + chain and install
 
@@ -45,13 +41,11 @@ Paste the `.crt` content (end-entity cert, PEM) into the **Certificate** textare
 
 ### Regenerate the CSR (before install)
 
-After CSR generation but BEFORE install, the **Manual install** button is replaced with a white **Regenerate** button (redo icon). Clicking it opens an *"Are you sure?"* confirm warning that the previous certificate will be lost.
+After generation, **Manual install** becomes **Regenerate** (confirm: the previous certificate request will be lost). It builds a new CSR from the private key in the box, so a CSR already sent to the CA stops matching unless the key was kept.
 
-This is destructive — if the CSR has already been sent to the external CA, the cert the CA returns will not match the new private key.
+### A certificate bought elsewhere (own key)
 
-### Remove an existing Let's Encrypt cert first (if any)
-
-If a Let's Encrypt cert (`free=1`) is installed and the merchant wants to switch to manual, they must click **Remove** on the Manage-mode view first. The platform shows no warning in this direction (only in Manual → Automatic).
+Click **Manual install** once, paste the merchant's own private key into **Private key**, then either paste the CSR that was sent to the CA or click **Regenerate** to build one from that key. **My certificate is ready** → paste certificate + chain → **Install**.
 
 ## Settings & fields
 
@@ -64,24 +58,21 @@ If a Let's Encrypt cert (`free=1`) is installed and the merchant wants to switch
 | **Email address** | Contact email in the CSR. | Store email from [[settings-general]] |
 | **Country** | Country code (searchable dropdown). | Country from [[settings-general]] |
 | **Locality** | City. | City from [[settings-general]] |
-| **State/District Name** | State/region. | (blank) |
-| **CSR** | Read-only after generation. **Copy CSR** button. | (generated server-side) |
-| **Private key** | Hidden behind **Show private key** disclosure. | (generated server-side) |
+| **State/District Name** | State/region; required at **Install** (*"State required"*). | (blank) |
+| **CSR** | Editable; **Copy CSR** button. | (generated server-side) |
+| **Private key** | Editable, behind **Show private key**. | (generated server-side) |
 | **Certificate** textarea | Merchant pastes the `.crt` PEM content. | (input) |
 | **Paste your Chained Certificate here** textarea | Merchant pastes the CA-Bundle. | (input) |
 
 ### Buttons
 
-- **Manual install** — primary; generates the CSR + private key. Visible BEFORE generation.
-- **Regenerate** — white, redo icon; replaces Manual install AFTER generation but BEFORE install. Destructive — see above.
-- **Install** — primary; commits the pasted cert + chain. Visible only after **My certificate is ready** is expanded.
-- **Remove** — danger styled; appears when a `free=0` cert needs to be cleared first.
+**Manual install** (generate) → **Regenerate** (after generation) → **Install** (after **My certificate is ready**); **Remove** on an installed certificate.
 
 ## Business rules
 
 ### CSR + private key generated server-side
 
-The CSR form defaults to the merchant's [[settings-general]] values (Organization, Email, Country, Locality), all editable per-cert if the merchant wants different legal-entity details. The platform generates the private key + CSR pair from the filled-in Domain details. The private key is stored server-side AND exposed via the **Show private key** disclosure so the merchant can save it for portability.
+The form defaults to the [[settings-general]] values, editable per certificate. The key is stored server-side and shown under **Show private key** so the merchant can keep it.
 
 ### Strict cryptographic validation on Install
 
@@ -89,9 +80,13 @@ The Install endpoint performs strict matched-set validation: the **CSR**, the **
 
 Practical implication: paste the **end-entity cert** (not the chain) into the **Certificate** field and the **chain alone** into the **Chained Certificate** field. A common error is pasting both into one field; this returns one of the validation errors above.
 
-### Pasting parses three new tracking fields
+### Replacing an installed certificate
 
-When the cert is committed, the platform parses it and stores `validTo` on the cert record (used by [[settings-ssl-auto-renewal]] for the expiry display, even though manual certs don't auto-renew). The pasted CSR, private key, and chain are also stored verbatim. The platform flags `pending=1` and `gcloud_pending=1` to signal the cert needs propagating to the edge — see [[settings-ssl-edge-propagation]].
+The admin has no replace button: **Remove**, then a new Manual install. In between the domain has no certificate, so the store serves it over plain http and redirects https visitors to http ([[settings-domains-ssl]]); on the primary domain the admin reloads. Have the new certificate, chain and key ready first. Through the Admin GraphQL API the install updates the existing certificate in place (certificate, chain, CSR and private key, checked to match), with no gap; on a Let's Encrypt certificate it stays marked as one, so the renewal sweep would later replace it.
+
+The installed certificate covers the names the CA put in it; Install only checks that its name, without a leading `*.` or `www.`, matches the domain. `example.com` and `www.example.com` are one domain here and the other form is redirected, so request a certificate naming both (verify).
+
+After install the expiry date is read from the certificate and the edge push starts ([[settings-ssl-edge-propagation]]).
 
 ### After install, the cert is marked `free=0`
 
@@ -99,7 +94,7 @@ The Manual install endpoint sets `free=0` on the cert record — this is the pla
 
 ### OU (Organizational Unit) not exposed in the form
 
-The Manual-install form does NOT expose an OU (`organizationalUnitName`) input, so the OU stays blank on certs generated here. Merchants migrating a cert that included an OU should know re-issuing here drops it. Rarely matters; compliance audits may flag the difference. `(verify)`
+The form has no OU input, so a CSR generated here has none. The Admin GraphQL CSR generation accepts an optional `unit`.
 
 ### Manual certs do not auto-renew
 
@@ -114,4 +109,4 @@ External certs do NOT participate in the daily Let's Encrypt sweep ([[settings-s
 
 ## Open questions
 
-- Is there any admin / support path to set the OU (`organizationalUnitName`) on a generated CSR without code changes? `(verify)`
+- What the edge serves on the domain between **Remove** and a new install.

@@ -7,8 +7,8 @@ aliases: ["Billing history", "Transaction history", "Payment history", "Billing 
 tags: [accountdetails, details, billing, transactions, invoices]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # Billing
 
@@ -48,6 +48,7 @@ This feature is split into 4 aspect pages. The Assistant should drill into the a
 ## What the merchant cannot do here
 
 - **Void / refund a transaction** — not exposed in the UI; requires CloudCart support. See [[details-billing-statuses]].
+- **Edit the invoice details** (company, VAT, invoice email) — this screen has no such block; they are on **Merchant profile** (`/admin/merchant`). See [[billing-invoicing]].
 - **Edit / re-attempt a failed charge directly** — the platform auto-retries on its own schedule; to force a fresh attempt the merchant replaces the card on [[billing-cards]]. See [[details-billing-retry-schedule]].
 - **See pre-flight rejections** — only charges actually attempted by the gateway create a row. See [[details-billing-retry-schedule]].
 - **Download a PDF for an unpaid / voided / failed transaction** — the Download button is hidden unless `approved == 1`. See [[details-billing-invoice-download]].

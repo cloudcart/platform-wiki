@@ -4,8 +4,8 @@ nav_path: "Entity → SEO Meta → Fallback chain"
 aliases: ["SEO meta fallback", "Meta priority order", "Per-entity vs section meta", "Meta auto-generation", "Blank meta behaviour"]
 tags: [entity, seo, marketing, meta-tags, fallback]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[seo-meta]]. See the hub for the other aspects (fields, section defaults, per-entity storage, multi-language storage, canonical / no-index).
@@ -33,7 +33,7 @@ The 4 layers, in priority order:
 
 | Layer | Source | Wins when | Storage |
 |-------|--------|-----------|---------|
-| **1 — Per-entity override** | The entity's own `meta_title` / `meta_description` / `og_image` column (or `canonical_url` / `no_index_meta` on CMS Pages) | Non-blank value present on the [[product]] / [[category]] / [[vendor]] / [[marketing-landing-pages|CMS Page]] / [[blog-article]] row for the current language | Column on the entity row — see [[seo-meta-per-entity]] |
+| **1 — Per-entity override** | The entity's own `meta_title` / `meta_description` / `og_image` column (or `canonical_url` on CMS Pages) | Non-blank value present on the [[product]] / [[category]] / [[vendor]] / [[marketing-landing-pages|CMS Page]] / [[blog-article]] row for the current language | Column on the entity row — see [[seo-meta-per-entity]] |
 | **2 — Section default** | Translation row from [[marketing-seo-meta]] (`seo.home.title` / `seo.contacts.title` / `seo.products.title` / `seo.vendors.title` / `seo.blog.title` etc.) for the current locale | No per-entity override; the page is one of the 5 sections | `Translation` model row — see [[seo-meta-multilang-storage]] |
 | **3 — Language file base default** | CloudCart-shipped default string for the current language (e.g., `lang/<lang>/sf.php` → `seo.<section>.title`) | No per-entity AND no per-section override | Static file shipped with the platform |
 | **4 — English fallback** | The English-language baseline string (`lang/en/sf.php`) | All higher layers blank AND the current language has no base default | Static file shipped with the platform |

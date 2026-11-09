@@ -7,8 +7,8 @@ aliases: ["Background image module", "extra.backgroundImage", "homeTextBackgroun
 tags: [design, modules, content, background, image]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Background image module (`extra.backgroundImage`)
@@ -95,7 +95,7 @@ A freshly-spawned background-image instance starts empty (`src=''`) — the them
 
 ### Cache invalidation on save / reset
 
-Both **Save** and **Reset** regenerate the per-site cache key. The new image shows up on the very next storefront request.
+Both **Save** and **Reset** regenerate the per-site cache key; pages rendered afterwards show the new image, while guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ## Theme-specific notes
 

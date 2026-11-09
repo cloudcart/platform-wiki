@@ -5,8 +5,8 @@ route_path: /checkout/return/{status}/{payment_hash}
 themes_using: [all]
 tags: [storefront, checkout, payment, return, cart-cleanup, draft-order]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 > Part of [[checkout-return]]. See the hub for the other aspects (status-driven display, emails & conversion tracking).
@@ -28,13 +28,14 @@ The server-side mechanics of the page customers land on after returning from an 
 
 Distinct gateway-facing endpoints (not the customer-facing page):
 
-- **`/payment/return/{paymentId}`** — `site.payment.return` — the server-side return-from-gateway endpoint that verifies the gateway response and forwards the customer here. This is the route gateway URLs are configured with.
+- **`/payment/return/{paymentId}`** — `site.payment.return` — the store-domain return, sent with each payment by providers that take a per-payment URL (myPOS, PayPal, Mollie, ePay, …). It verifies the gateway response and forwards the customer here.
+- **`<payments domain>/return/provider/{provider}`** — `payments.return` — the fixed, per-provider return used by bank gateways (Fibank, Borica Way4, DSK Bank, …); Fibank and Borica Way4 show it on their settings page for the bank's terminal setup. It also ends here.
 - **`/payment/webhook/{paymentId}`** — `site.payment.webhook` — the server-to-server confirmation endpoint. Webhooks may arrive **before or after** the browser returns; final state depends on whichever fires first plus reconciliation.
 - **`/payment/cancel/{paymentId}`** — `site.payment.cancel` — for some providers, an explicit cancel-URL.
 
 ## How it loads
 
-1. The customer's browser returns from the gateway to a callback URL the platform constructed at order-creation time.
+1. The customer's browser returns from the gateway to one of the two return endpoints above.
 2. The per-provider return-handler processes the gateway response and redirects to `/checkout/return/{status}/{payment_hash}`.
 3. **Crawler guard** — if the request is from a crawler, abort with 404 + `X-Robots-Tag: noindex`. Order pages must not be indexed.
 4. Look up the order-payment by hash; if not found → 404 with `sf.global.err.order_no_longer_exists`.
@@ -78,7 +79,6 @@ The return template is **rarely overridden** per theme — most themes inherit i
 ## Known issues / by-design vs bug
 
 - **Webhook vs return-URL race** — for some providers (Stripe, PayPal) the webhook can arrive **before** the browser returns; the order may already be `completed` when this page loads. The load flow still runs correctly because it reads the current order-payment status.
-- **Cart-deletion is broad** — deletes ALL carts owned by this user, even on other devices. Some customers report "my other-device cart disappeared" — by design.
 - **Cancel branch redirects, doesn't render the cancel template** — non-draft cancels bounce back to `/checkout` (with a `payment_canceled` flash); the `cancelled` template branch is mostly dead code (verify) — see [[checkout-return-status-display]].
 - **Crawler 404** — by design.
 

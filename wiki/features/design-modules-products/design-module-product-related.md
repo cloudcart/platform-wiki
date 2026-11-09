@@ -7,8 +7,8 @@ aliases: ["Related products module", "productsRelated module", "product.related"
 tags: [design, modules, products, related]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Product module — Related / Top / Match-with (`product.related`)
@@ -27,6 +27,8 @@ Edit-panel URL: `/admin/storefront/widgets/{instance-name}` (e.g., `/admin/store
 
 Renders below the product detail card on the product page; the theme decides the exact slot position.
 
+Bulgarian admin: cards **Свързани продукти** (`productsRelated`), **Топ продукти** (`productsRelated2`), **Съчетай с** (`productsCombine`), which a theme may rename; fields **Име на секцията**, **Брой продукти**, **Продукти на ред**, **Вид** (*Филтрирай по категория* / *по производител* / *по таг*), **Подреди по** (*Подреди по ID*, *Подреди по име*, *По брой съвпадения*, *Случаен принцип*, *Цена*) and **Посока на подредба**.
+
 ## What the merchant can do here
 
 - Title the row (e.g., "You may also like", "Complete the look").
@@ -40,7 +42,7 @@ Renders below the product detail card on the product page; the theme decides the
 - Cannot show fewer than 2 products or more than 10 (`int:2,10`).
 - Cannot pick more than 5 products per row (`int:1,5`).
 - Cannot mix strategies — `type` is single-valued. Need a hybrid? Use two instances.
-- Cannot use the `match` sort with `type=category` or `type=vendor` — it only ranks tags.
+- Cannot make `match` filter by tags: with category or brand matching it only ranks the same candidates by shared tags.
 - Cannot pick a `selection` (Smart Collection) source — that lives on [[design-module-product-showcase]].
 
 ## Settings & fields
@@ -57,13 +59,7 @@ Renders below the product detail card on the product page; the theme decides the
 
 ### Validation strings
 
-| Scenario | Message |
-|----------|---------|
-| Save success | *"Module successfully edited"* |
-| Reset success | *"Module successfully reset"* |
-| `products` out of 2-10 | Field-level integer-range error |
-| `per_row` out of 1-5 | Field-level integer-range error |
-| `type` not in enum | Field-level enum error |
+Shared Save / Reset messages ([[design-modules-products]]); out-of-range numbers and unknown values get field-level errors.
 
 ## All themes vs theme-specific
 
@@ -76,11 +72,23 @@ Renders below the product detail card on the product page; the theme decides the
 
 ### Strategy dispatch
 
-`type=category` matches by the product's category tree (child-by-path); `type=vendor` matches by `vendor_id`; `type=tag` joins on shared tag IDs. The current product is excluded automatically.
+- **Category** — products in the product's **main category or any of its subcategories**, at every depth.
+- **Brand** — products of the same brand.
+- **Tag** — products sharing at least one tag; the product's hidden tags are used when it has no visible ones.
 
-### `match` ordering is tag-only
+A product with no main category, no brand, or no tags at all gets no row for that type. The current product is excluded.
 
-`order_by=match` is meaningful only when `type=tag` — it ranks candidate products by how many tags they share with the current product (highest first). If the product has no tags, the runtime falls back to its `hidden_tags` set; if that's empty too, the row is empty.
+### Which products can appear
+
+The row follows the listing rules: inactive, draft, out-of-window and hidden products never appear; sold-out products are left out when the store hides them, and geo zones apply, on the indexed engine ([[product-visibility]], [[design-module-product-filters]]).
+
+### Sort `id`
+
+`id` is the date added: **descending (the default) = newest first**.
+
+### `match` ordering
+
+`order_by=match` ranks candidates by how many tags (or hidden tags) they share with the current product, highest first, then newest first. There is no minimum: products sharing no tag can still fill the remaining places. A product with no tags, or a store on the basic database engine, gets the newest-first order instead ([[apps-listing-engine]]; verify the store's engine).
 
 ### `rand` mid-flips direction
 
@@ -89,10 +97,6 @@ Renders below the product detail card on the product page; the theme decides the
 ### Reset propagates across ALL instances of the type
 
 `product.related` uses a SHARED `Configuration` group across all its instances. Resetting `productsRelated` ALSO clears the saved settings on `productsRelated2`, `productsCombine`, and every other `product.related` instance — surprising to merchants expecting per-card behaviour. Editing one instance saves only that instance, but Reset is store-wide for the TYPE.
-
-### Cache invalidation on save / reset
-
-Save and Reset bump the per-site cache key — visible on the next storefront request.
 
 ### Empty row hides itself
 
@@ -128,5 +132,4 @@ The runtime maps `order_by` to a listing-driver sort key. `match` sets a `match_
 
 ## Open questions
 
-- 📡 **Tag-match scoring weight.** The match score is the count of overlapping tags. Whether weighted tags or partial-match thresholds are applied needs verification.
 - 📡 **`price` sort field on legacy themes.** Some older theme forms may not expose the `price` option in the dropdown — verify per-theme.

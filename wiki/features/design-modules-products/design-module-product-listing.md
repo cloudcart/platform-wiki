@@ -7,8 +7,8 @@ aliases: ["Product listing module", "productsListing module", "product.listing",
 tags: [design, modules, products, listing]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Product module — Product listing (`productsListing`)
@@ -85,7 +85,7 @@ Same constraint as on `filters` — the default must be a customer-pickable opti
 
 ### Cache invalidation on save / reset
 
-Save and Reset bump the per-site cache key, so storefront changes are visible on the next request.
+Save and Reset bump the per-site cache key, so pages rendered afterwards show the change; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Reset re-publishes the shared `Configuration`
 

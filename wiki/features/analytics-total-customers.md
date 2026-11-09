@@ -7,8 +7,8 @@ aliases: ["Total Customers", "New vs Returning customers", "Unique customers", "
 tags: [analytics, ccanalytics, orders, total-customers, returning-customers, new-customers]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-05-27
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # Total Customers
 
@@ -91,9 +91,9 @@ The decision is fixed **when each order is placed**, not recomputed at view time
 
 Each customer is counted once per period: a customer with 5 orders contributes only 1 to the count. If a customer would qualify as both "new" and "returning" within one period (their first-ever order and a later repeat purchase both fall inside it), the **whole-period total** counts them only as **returning**, never in both buckets. The **per-bucket chart series** does not apply this guard, so per-bucket new/returning numbers may not sum exactly to the header totals in that edge case.
 
-### Anonymous orders are excluded
+### Orders without a Customer record are excluded
 
-Orders without a logged-in customer (guest checkouts where no customer record was created) are **silently dropped** from this box. A store with heavy guest checkout will see Total Customers significantly under Total Orders ([[analytics-total-orders]]). Because the data is pre-built by a background ingestion job, a guest order that later has a customer attached only appears here AFTER the next ingestion run.
+Orders linked to no Customer record are **silently dropped** from this box. Storefront guest checkouts are not among them: each is linked to the guest's Customer record (Guests group) and counted. Because the data is pre-built by a background ingestion job, an order that later gets a customer attached only appears here AFTER the next ingestion run.
 
 ### Order-status filter
 

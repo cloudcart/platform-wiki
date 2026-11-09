@@ -4,8 +4,8 @@ nav_path: "Entity → Geo Zone → Relationships"
 aliases: ["Geo Zone relationships", "Zone consumers", "Zone inputs", "What references a Geo Zone", "Polygon and distance as inputs"]
 tags: [entity, geo, zones, relationships, settings]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 # Geo Zone — Relationships
@@ -14,7 +14,7 @@ source_count: 0
 
 ## Identity
 
-A geo zone is a **shared primitive** — many features REFERENCE it (shipping methods, tax rules, payment providers, discounts, Cart Rules, customer groups) and TWO entities feed INTO it ([[geo-polygon|polygons]] and [[geo-distance|distances]] are inputs to specific operation types). This page catalogues both directions: what reads a zone and what a zone reads.
+A geo zone is a **shared primitive** — many features REFERENCE it (shipping methods, tax rules, discounts, Code PRO codes) and TWO entities feed INTO it ([[geo-polygon|polygons]] and [[geo-distance|distances]] are inputs to specific operation types). This page catalogues both directions: what reads a zone and what a zone reads.
 
 The zone is NOT a tax rule, NOT a shipping method, NOT a country list. It is the merchant's labelled grouping that those entities point at. Conversely, polygons and distances are NOT consumed directly by shipping / tax / discounts — they exist solely to enrich zones.
 
@@ -44,11 +44,10 @@ The zone is NOT a tax rule, NOT a shipping method, NOT a country list. It is the
 | Consumer | Where | Notes |
 |----------|-------|-------|
 | **[[shipping-provider\|Shipping methods]]** | [[settings-shipping]] | Each shipping method scopes to ONE zone (or "rest of world"). Same method across multiple zones requires multiple method copies today. |
-| **Tax rules** | [[settings-taxes]] | Each tax rule scopes to ONE zone (or "rest of world"). **Tax matching uses ONLY country rules in the zone** — region / city / polygon / distance / post-code rules are IGNORED by the tax engine. See [[geo-zone-matching-rules]] + [[tax-computation]]. |
-| **[[payment-provider\|Payment providers]]** | [[settings-payment-providers]] | Providers can have country / region scoping that uses zones for availability and fee stacking. |
-| **[[discount\|Discounts]]** | [[marketing-discounts]] | Discounts can restrict to specific zones via "Regions" or via [[customer-group]] region restriction. |
-| **Cart Rules** | [[apps-cart-rules]] | Cart Rules can target by geo for arbitrary logic (e.g., *"force a specific shipping method for Sofia customers"*). |
-| **[[customer-group\|Customer Groups]]** | [[customers-custom-groups]] | Groups can be region-restricted for wholesale / VIP pricing per location. |
+| **Tax rules** | [[settings-taxes]] | Each tax rule scopes to ONE zone (or "rest of world"). **VAT matching uses ONLY the zone's "country" rules (operation 1)**; fees use the full zone check. See [[geo-zone-matching-rules]] + [[tax-computation]]. |
+| **[[payment-provider\|Payment providers]]** | [[settings-payment-providers]] | **Not a consumer.** A payment method takes no zone, and checkout never hides one by zone. A fee in [[settings-taxes]] can be tied to both a payment method and a zone. |
+| **[[discount\|Discounts]]** | [[marketing-discounts]] | Discounts and Code PRO codes can restrict to one zone via "Regions". |
+| **Cart Rules / [[customer-group\|Customer Groups]]** | [[apps-cart-rules]] / [[customers-custom-groups]] | **Not consumers.** Neither takes a zone, and Cart Rules have no geo condition. |
 | **[[cart]]** | At checkout | The cart resolves the customer's current zone for display in cart line items. |
 | **[[order]]** | At submit | The order snapshots the matched zones for VAT, shipping method, and fees that fired. |
 
@@ -63,24 +62,22 @@ The zone is NOT a tax rule, NOT a shipping method, NOT a country list. It is the
 
 One polygon or one distance can back many zones. Typical patterns:
 
-- **Shared delivery polygon** — the merchant draws "City of Plovdiv extended area" once and references it from three zones: one for shipping (free delivery), one for cash-on-delivery availability, one for a 10 % discount Cart Rule.
+- **Shared delivery polygon** — the merchant draws "City of Plovdiv extended area" once and references it from three zones: one for shipping (free delivery), one for cash-on-delivery availability, one for a 10 % discount.
 - **Shared distance** — *"30 km from the warehouse"* defined once, referenced by both a same-day-delivery zone and a free-shipping zone.
 
 When the merchant edits the polygon's shape or the distance's radius, **every** zone referencing it updates immediately — no need to re-save each zone (see [[geo-zone-lifecycle]]).
 
-### FK-protected deletion of inputs
+### Deleting inputs is not blocked
 
-Deleting a polygon or distance that's referenced by a geo zone is **FK-blocked or cascade-warned**. The merchant must unbind from zones first. The exact behaviour (hard block with error message vs cascade warning with proceed option) is one of the open questions on [[geo-polygon]] / [[geo-distance]].
+Deleting a polygon or distance **silently deletes every zone rule that uses it** — no block, no warning. See [[settings-geo-zones-deletion-cascade]].
 
 ## Where it appears
 
 - [[settings-geo-zones]] — the zone management screen shows the zone definition.
 - [[settings-shipping]] — shipping method form has a zone picker.
 - [[settings-taxes]] — tax rule form has a zone picker.
-- [[settings-payment-providers]] — payment provider settings can include a zone scope.
+- [[settings-payment-providers]] — payment methods take no zone (see the table above).
 - [[marketing-discounts]] — discount form's "Regions" rules reference zones.
-- [[apps-cart-rules]] — Cart Rule conditions can reference zones.
-- [[customers-custom-groups]] — customer-group restrictions can reference zones.
 - [[checkout-flow]] — where consumers query the zone match.
 - [[orders-details]] — order's snapshotted zone determines analytics + re-quote.
 
@@ -90,12 +87,11 @@ Deleting a polygon or distance that's referenced by a geo zone is **FK-blocked o
 - [[geo-zone-fields]] — the rule-level inputs that hold the polygon / distance references.
 - [[geo-zone-operations]] — operation 9 (polygon) and operation 10 (distance) — the two operations that consume inputs.
 - [[geo-zone-matching-rules]] — how consumers resolve the customer against the zone at runtime.
-- [[geo-zone-lifecycle]] — FK-protected delete (both for the zone itself and its polygon / distance inputs).
+- [[geo-zone-lifecycle]] — deleting a zone clears its consumers' zone links.
 - [[geo-polygon]] — input entity for operation 9.
 - [[geo-distance]] — input entity for operation 10.
 - [[shipping-provider]] — primary consumer.
-- [[payment-provider]] — secondary consumer.
-- [[customer-group]] — region-restricted groups.
+- [[payment-provider]] — not a zone consumer.
 - [[discount]] — region-restricted discounts.
 
 ## Open Questions

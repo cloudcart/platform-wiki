@@ -8,8 +8,8 @@ aliases: ["Redirects API", "301 Redirects API", "JSON-API v2 redirects", "API 30
 tags: [api, json-api-v2, content, seo]
 plan_gates: []
 created: 2026-05-26
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # Redirects (JSON-API v2)
 
@@ -19,7 +19,7 @@ Programmatic CRUD on the merchant's **301 (permanent) URL redirect rules** — t
 
 Integrators use this endpoint to **bulk-import redirect rules from a migration spreadsheet**, **auto-create rules** when an external CMS publishes new content with restructured URLs, **read the current redirect table** for audit / sitemap diff, and **delete obsolete rules**. Each rule pairs an `old_url` (the path to match — supports `*` wildcards) with a destination (free-form URL, external URL, or a picker-selected entity — Product / Category / Vendor / Page / Blog / Article / Section).
 
-Every rule on this endpoint is **always 301** — the platform does not expose 302 (temporary) redirects through the API. A 301 Redirect here operates at the **URL / path layer** within the merchant's storefront host (DNS-level whole-domain forwarding is a separate concern handled by [[apps-domain-redirect]]).
+Every rule on this endpoint is **always 301** — the platform does not expose 302 (temporary) redirects through the API. A 301 Redirect here operates at the **URL / path layer** within the merchant's storefront host (routing between the merchant's own stores is the separate [[apps-domain-redirect]] app; there is no native whole-domain forward to an external domain).
 
 ## Sub-pages (in this cluster)
 

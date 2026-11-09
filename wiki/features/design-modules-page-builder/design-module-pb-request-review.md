@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Dynamic Pages → Page-builder modules → Request review"
+nav_path: "Design → Static pages → Dynamic page → Page-builder modules → Request review"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["Request review module", "Leave a review form", "Review submission form", "Модул заяви отзив"]
 tags: [design, modules, page-builder, product-review, marketing, reviews]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Request review block (`request_review`)

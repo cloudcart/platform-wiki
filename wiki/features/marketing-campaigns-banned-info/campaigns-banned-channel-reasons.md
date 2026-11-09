@@ -7,8 +7,8 @@ aliases: ["Channel banned reasons", "Channel suspension reasons", "Why is my cha
 tags: [marketing, campaigns, banned, channels, suspension, reputation]
 plan_gates: ["campaigns"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Campaign banned info — channel reasons
 
@@ -24,35 +24,36 @@ These reasons surface in the banned-info side-panel or tooltip (see [[campaigns-
 
 ## What the merchant can do here
 
-Nothing on the banned-info surface itself (read-only). To clear a channel reason the merchant configures / re-activates the channel on [[marketing-channels]], buys more credits when plan-capped, or waits out a reputation suspension.
+Nothing on the banned-info surface itself (read-only). To clear a channel reason the merchant buys more credits when plan-capped, or waits out a reputation suspension (see [[marketing-channels]]).
 
 ## Settings & fields
 
 ### Computed banned reasons per channel
 
-A channel's `banned_reason` is computed dynamically from its current state. The most common reasons (verified from [[marketing-channels]]):
+A channel's `banned_reason` comes from exactly two sources: the plan cap being exhausted (takes priority), otherwise a reputation suspension.
 
 | Reason | Trigger |
 |--------|---------|
-| Not installed | Channel hasn't been installed yet (`installed=0`). |
-| Not configured | Channel installed but `settings` incomplete (e.g. Email without verified domain, Viber without sender). |
-| Not active | Channel installed + configured but `active=0` (merchant turned it off). |
 | Suspended (spam) | `suspended_by.spam` set — spam complaint score crossed `SUSPENDED_SPAM = 0.5`. |
 | Suspended (bounce) | `suspended_by.bounced` set — bounce score crossed `SUSPENDED_BOUNCED = 5`. |
 | Suspended (open) | `suspended_by.open` set — open rate fell below `SUSPENDED_OPEN = 5`. |
 | Suspended (cc_denied) | `suspended_by.cc_denied` set — CloudCart staff manually suspended with a reason. |
-| Plan-cap reached | Channel's send count this billing cycle hit the plan cap. |
+| Plan-cap reached | The channel's cumulative send count reached the plan cap (Remaining ≤ 0). |
+
+**Not installed, not configured and not active are NOT banned reasons.** Campaign steps on such a channel are dropped silently, with no alert and no log row.
 
 The matching alert text shown to the merchant:
 
-| Failure category | Alert text |
-|-----------------|-----------|
-| Channel suspended (spam) | *"Your spam score is:value which is higher than our maximum of:number"* |
-| Channel suspended (bounce) | *"Your bounced score is:value which is higher than our maximum of:number"* |
-| Channel suspended (open rate) | *"Your open rate is:value which is lower than our minimum of:number"* |
-| Channel manually suspended | *"This channel was suspended by a CloudCart employee with a reason: :value"* |
-| Channel used by campaign got suspended | *"Your campaign channel:channel was suspended with a reason"* |
-| Channel feature-limit reached | *"You do not have enough credits for:name"* (with a Buy more credits CTA) |
+| Failure category | Alert text (EN) | BG |
+|-----------------|-----------|----|
+| Suspended (spam) | *"Your spam score is:value which is higher than our maximum of:number"* | „Вашият Spam rate е:value, което е повече от нашия максимално допустим от:number“ |
+| Suspended (bounce) | *"Your bounced score is:value which is higher than our maximum of:number"* | „Вашият Bounced rate е:value, което е повече от нашия максимално допустим от:number“ |
+| Suspended (open rate) | *"Your open rate is:value which is lower than our minimum of:number"* | „Вашият Open rate e:value, което е по-малко от нашият минимум от:number“ |
+| Manually suspended | *"This channel was suspended by a CloudCart employee with a reason: :value"* | „Този канал е спрян от служител на CloudCart с основание: :value“ |
+| Campaign's channel suspended | *"Your campaign channel:channel was suspended with a reason"* | |
+| Feature limit reached | *"You have reached:feature limit. Your limit is:limit."* plus a buy-credits link | „Достигнахте ограничение на:feature. Вашият лимит е:limit.“ |
+
+*"You do not have enough credits for:name"* is not a banned reason: it is the error when saving a campaign whose channel's remaining allowance is below the number of segment members who have that channel.
 
 ## Business rules
 
@@ -90,7 +91,7 @@ The reason resolver checks plan-cap remaining FIRST. If `plan_remaining <= 0` AN
 
 ### Plan-cap reason includes purchase CTA HTML
 
-The plan-cap reason includes an HTML `<a>` link to the plan-feature credits-purchase page (`/admin/plan/feature/<feature_key>`). The `nofilter` rendering in the banned-info side-panel preserves this link, so the merchant can click straight to upgrade. For channels supporting self-credentials (use the merchant's own provider credentials instead of CloudCart's pool), an additional hint message appends.
+The plan-cap reason includes a link to the credits-purchase page (`/admin/plan/feature/<feature_key>`), which the banned-info side-panel keeps clickable. For channels supporting self-credentials, a hint message is appended.
 
 ### Multi-reason channels combine into one message
 
@@ -98,7 +99,7 @@ When a channel has multiple reputation issues at once (e.g. high spam AND low op
 
 ## How it works
 
-When the banned-list walk reaches a channel (see [[campaigns-banned-aggregation]]), it asks the channel for its current `banned_reason`. The channel first checks plan-cap remaining; if exhausted it returns the feature-limit reason. Otherwise it evaluates reputation: manual deny short-circuits everything; otherwise, with at least 500 sends and a reputation score below 99, it compares spam / bounce / open rates against the class constants (or the per-merchant `manual_allowed_suspended` overrides if active and unexpired) and returns the matching combined message. A healthy channel returns an empty reason and contributes nothing.
+When the banned-list walk reaches a channel (see [[campaigns-banned-aggregation]]), it asks for its `banned_reason`. Plan cap first: if exhausted, the feature-limit reason. Otherwise reputation: manual deny short-circuits; else, with at least 500 sends and a reputation score below 99, spam / bounce / open rates are compared against the class constants (or unexpired `manual_allowed_suspended` overrides). A healthy channel returns an empty reason.
 
 ## Related
 

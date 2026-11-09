@@ -3,8 +3,8 @@ type: concept
 aliases: ["Transactional email inventory", "Customer-facing email types", "SendCustomerNotification labels", "Email template catalogue", "Notification mail labels"]
 tags: [notifications, email, templates, concepts]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[notification-delivery]]. See the hub for the other aspects (event spine, retry semantics, admin alerts, customer suppression).
@@ -22,8 +22,7 @@ This page is the **taxonomy** — the list of what exists and how it is gated. T
 What this covers:
 
 - The full list of ~30 transactional email labels, grouped by purpose.
-- The three labels that bypass the per-mail Active toggle.
-- The global `customer_email_notifications` master switch and how it gates the bypass labels.
+- The per-mail Active switch, the locked mails and the global `customer_email_notifications` switch.
 
 What it does NOT cover:
 
@@ -35,7 +34,7 @@ What it does NOT cover:
 ## Contrasts
 
 - **Transactional email vs. marketing campaign email**: transactional emails are one-per-event, no segmentation; campaign emails are broadcast to a chosen audience. Different systems, different queues.
-- **Per-template Active toggle vs. global master switch**: most labels can be turned off individually; three labels ignore the individual toggle but are still subject to the global `customer_email_notifications` switch.
+- **Per-template Active switch vs. global master switch**: each label can be turned off individually unless it is locked; the global switch reaches fewer sends than its name suggests.
 - **Customer-facing transactional email vs. admin alert email**: the labels here go to the *customer*; `alert_notification` (an admin escalation) goes to the *merchant* — see [[notification-delivery-admin-alerts]].
 
 ## Where it applies
@@ -55,29 +54,31 @@ What it does NOT cover:
 
 **Digital fulfilment** — `send_order_files_download_link` (download access for digital products), `send_order_page_access` (private-page access on purchase).
 
-**Marketing-flavoured transactional** — `abandoned_restore_link` (abandoned-cart recovery), `rate_orders_products` (post-purchase review request), `customer_newsletter_subscribe` / `customer_newsletter_unsubscribe`.
+**Marketing-flavoured transactional** — `abandoned_restore_link` (abandoned-cart recovery), `rate_orders_products` (post-purchase review request, defined but never sent), `customer_newsletter_subscribe` / `customer_newsletter_unsubscribe`.
 
 **Stock / catalogue** — `product_out_of_stock` (favourited product went OOS), `product_quantity_low`.
 
-**Other** — `contact` (contact-form submission echoed back), `product_review_added`.
+**Other** — `contact` (contact-form submission echoed back). (`product_review_added` is an admin alert of the Product Reviews app, not a customer email.)
 
-## Gating: the master switch and the three bypass labels
+## Gating: the Active switch, locked mails and the master switch
 
-Most labels carry a per-mail **Active** toggle on [[marketing-omnichannel-mails-list]] — turn one off and that email stops sending.
+Every label has its own **Active** switch on [[marketing-omnichannel-mails-list]] — turn one off and that email stops.
 
-Three labels **bypass** the per-mail Active toggle, because they are operationally critical:
+A **locked** mail (its switch disabled, forced on) always sends, ignoring its Active switch and the global switch; the Aftercare acknowledgement is one. `two_factor_action`, `email_confirmation` and `alert_notification` are locked on the merchant-alert side ([[notification-delivery-admin-alerts]]). The customer two-factor code email (`cc2fa_email`) is **not** locked: switched off, the withdrawal form and the checkout login code get no code.
 
-- `email_confirmation` (verify your email)
-- `two_factor_action` / `cc2fa_email` (two-factor code)
-- `alert_notification` (admin escalation — see [[notification-delivery-admin-alerts]])
-
-Even these three are STILL gated by the global `customer_email_notifications` master switch. So:
-
-- Turning off an individual non-critical template → that one email stops.
-- The three critical labels ignore the individual toggle → they keep sending.
-- Flipping the global `customer_email_notifications` switch off → even the critical labels stop.
+The global `customer_email_notifications` switch applies only to a send that asks for it; the two-factor code email does not — see [[omnichannel-mails-toggles-gating]] (verify for other labels).
 
 See [[marketing-omnichannel-mails-list]] for the full table of allowed variables per label, and [[notification-delivery-suppression]] for the separate per-order `notify_customer` flag that suppresses status-change emails for one specific order.
+
+## Unsubscribe links in notifications
+
+No notification template carries an unsubscribe link. `{$unsubscribe_url}` is a campaign variable: the notification templates neither offer nor fill it in, so typed into one it stays as literal text. A link such as "Unsubscribe" or "Manage notifications" at the foot of a notification comes from Elastic Email, the service behind CloudCart's shared sending account, which adds its own unsubscribe link to mail sent as promotional; its exact wording is Elastic Email's (verify).
+
+- **Since 06.10.2026** only the abandoned-cart reminder (`abandoned_restore_link`) and bulk e-mails to customers go out as promotional; every other notification is sent as transactional, without that link, and still reaches people who unsubscribed through it.
+- **Before that date** no mail was marked transactional, so any notification, and a campaign's **Send example email**, could carry the link.
+- A store sending through its own [[apps-smtp|SMTP app]] gets no such link.
+
+The page a campaign's own unsubscribe link opens is described on [[storefront-notifications]].
 
 ## Related
 
@@ -88,6 +89,7 @@ See [[marketing-omnichannel-mails-list]] for the full table of allowed variables
 - [[notification-delivery-admin-alerts]] — the `alert_notification` label (merchant-facing).
 - [[settings-statuses]] — status transitions firing `order_status_change`.
 - [[subscriber-vs-customer]] — newsletter subscribe / unsubscribe labels.
+- [[storefront-notifications]] — the subscription page behind a campaign's unsubscribe link.
 
 ## Open Questions
 

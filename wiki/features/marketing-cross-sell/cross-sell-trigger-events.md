@@ -7,8 +7,8 @@ aliases: ["Cross-Sell trigger events", "Cross-Sell events", "Cross-Sell targets"
 tags: [marketing, cross-sell, events, targets, conditions]
 plan_gates: ["cross_sells"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-cross-sell]]. See the hub for the other aspects (offer form, display modes & discounts, filters & limits, view tracking, engine comparison).
@@ -40,6 +40,20 @@ The **Event** dropdown (`cross_sell[event]`) offers one of these, per the platfo
 
 Events group by context: the five **cart-flow events** (`add_to_cart`, `cart`, `checkout`, `checkout_select_payment`, `checkout_select_shipping`) and the single **order event** (`return_page`).
 
+### How each event shows on the storefront
+
+When several active offers match, one is picked at random. **Display type** ([[cross-sell-display-discounts]]) decides what happens:
+
+| Event | When it fires | Popup | Add matched to cart |
+|---|---|---|---|
+| `add_to_cart` | Add to cart, or a quantity change in the cart | Popup (the cart side panel is suppressed) | Products added; a popup only if **Display popup** = Yes |
+| `cart` | Cart page load | Popup | Products added; popup only if Display popup = Yes |
+| `checkout` | Checkout page load, at most once an hour per offer and visitor | Popup | Products added; popup only if Display popup = Yes |
+| `checkout_select_shipping` / `checkout_select_payment` | The customer picks a shipping / payment method (only the methods named in the conditions, if any) | Popup | Ignored: these events show popups only |
+| `return_page` | Thank-you page after a payment that was not cancelled | Popup | Products added; popup only if Display popup = Yes |
+
+The app setting **Display single popup in checkout** limits the three checkout events' popups to one. Nothing shows during a wallet top-up or gift-card checkout.
+
 ### Build target conditions
 
 The **Conditions list** (`cross_sell[targets]`) is a dynamic group-of-conditions builder (the same UI as cart-rule conditions). Each group is an AND-bound list; multiple groups are OR-bound. Per row: a type select, the matched item, and a comparison operator. The **+ Add group of conditions** link adds another OR group.
@@ -66,6 +80,7 @@ For cart-flow events, the row type select also exposes `cart` / `shipping` / `pa
 - **Event selection is constrained by the parent node.** When the parent is a Cross-Sell with `display_type = add_to_cart`, the event is hard-coded to `product_details` (hidden field). When the offer is a child of an UpSell parent with `action = no`, only the `add_to_cart` event is offered. See [[marketing-up-sell-diagram]].
 - **`product_details` is internal-only.** It is reachable via the parent-constraint above but not from the open Event dropdown (commented out of `ALL_EVENTS`).
 - **`return_page` is the post-purchase upsell** — it is the only `order`-context event; the other five are cart-flow events that fire before the order is placed.
+- **"The cart contains X" is the `cart` (or `checkout`) event** with X as the target; `add_to_cart` reacts to the product just added. A target matches when a matching product is **in the cart at all**: one line or several, 1 unit or 10, it counts the same. There is no quantity threshold; for "buy 2" use [[apps-cart-rules|Cart Rules]].
 
 ## Related
 

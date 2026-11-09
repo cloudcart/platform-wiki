@@ -7,8 +7,8 @@ aliases: ["TikTok Pixel Settings", "TikTok tracking pixel config", "TikTok Dynam
 tags: [apps, social, tiktok, pixel, capi, feed, tracking, settings]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # TikTok Dynamic Ads → Settings
 
@@ -87,7 +87,7 @@ An optional Test Event Code field forwards events tagged for the TikTok Events M
 
 ### Consent enforcement — Targeting cookie group
 
-Both the browser-pixel and server-side paths check whether the visitor accepted the `targeting` cookie group. If the customer hasn't accepted the Targeting cookie category, neither path sends any data. A Nitrogen storefront's server-side reports follow the same gates ([[headless-analytics-consent]]). The merchant doesn't configure granular per-event consent — it's a single all-or-nothing gate tied to the Targeting consent group.
+Both the browser-pixel and server-side paths check the visitor's `targeting` answer: before any answer it counts as accepted; after a refusal neither path sends any data. A Nitrogen storefront's server-side reports follow the same gates ([[headless-analytics-consent]]). The merchant doesn't configure granular per-event consent — it's a single all-or-nothing gate tied to the Targeting consent group.
 
 ### Standard events only — no custom event editor
 

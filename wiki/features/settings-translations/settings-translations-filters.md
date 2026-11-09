@@ -7,8 +7,8 @@ aliases: ["Translations filters", "Modified filter", "Section filter", "meta.sec
 tags: [settings, translations, i18n, filters]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[settings-translations]]. See the hub for related aspects (toggle, table, reset, scoping, side-effects, permissions).
@@ -45,7 +45,7 @@ Backed by the row's `is_translated` flag (see [[settings-translations-table]] fo
 
 | Filter key | Type | Options |
 |-----------|------|---------|
-| **Section** (`section`) | Multi-select with operator | Operator: *"Includes"* (`in`) / *"Does not include"* (`not_in`). Options: dynamic list from `meta.sections` (cart, checkout, order, product, email, validation, global, etc.). |
+| **Section** (`section`) | Multi-select with operator | Operator: *"Includes"* (`in`) / *"Does not include"* (`not_in`). Options: dynamic list from `meta.sections` (cart, checkout, order, product, validation, global, a theme's name, etc.). |
 
 The dropdown options are populated dynamically from the server's `meta.sections` array — as new translation domains ship, new sections appear automatically.
 
@@ -58,7 +58,7 @@ The Section dropdown reads sections from the platform's translation table. The d
 - **Real namespaces** (e.g., theme names) are used as-is.
 - **Wildcard-namespace keys** (`*::...`) are sub-grouped by their **first dot-separated label segment**. So `*::cart.add_to_cart` reports section `cart`; `*::checkout.empty_cart` reports section `checkout`; `*::order.title` reports section `order`.
 
-The dropdown options therefore include both real namespaces (theme names, the global `*` for built-in strings) and the leading segments of `*::` labels. Typical sections that show up in practice: `cart`, `checkout`, `order`, `product`, `category`, `customer`, `email`, `validation`, `global`. The exact list depends on which translation domains the platform has shipped — no manual section management.
+The dropdown options therefore include both real namespaces (theme names, the global `*` for built-in strings) and the leading segments of `*::` labels. Typical sections: `global` (shared labels, including the storefront's brand caption `global.label.vendor`), `account`, `checkout`, `cart`, `order`, `product`, `widget`, `validation`, plus the active theme's name when the theme ships its own labels (keys named `<theme>::lang.<key>`; see [[settings-translations-scoping]]). The current platform files carry no `email` section; customer emails are edited on [[marketing-omnichannel-mails-list]]. The exact list comes from the store's own label table.
 
 ### Section filter supports both inclusion and exclusion
 

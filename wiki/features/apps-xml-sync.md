@@ -7,14 +7,14 @@ aliases: ["XML Sync", "Xml Sync", "Recurring supplier feed sync", "Product feed 
 tags: [apps, imports, xml, products, recurring, sync, plan-gated]
 plan_gates: ["xml_sync_limit"]
 created: 2026-05-22
-updated: 2026-08-06
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 # XML Sync (recurring supplier feed sync)
 
 ## Purpose
 
-**XML Sync** integration — automatically **re-imports** product data from a supplier's XML feed on a recurring schedule. The merchant configures the feed URL + mapping ONCE, and the platform pulls fresh data on a cadence; differences from the catalog are detected and the platform updates / creates / deactivates products accordingly.
+**XML Sync** integration — automatically **re-imports** product data from a supplier's XML feed on a recurring schedule. The merchant configures the feed URL + mapping ONCE, and the platform pulls fresh data on a cadence; matched variants are updated (price, quantity, status, per-store stock) and, if opted in, missing products are deactivated. It never creates products.
 
 Different from [[apps-xml-import]] (one-time fire-and-forget) — XML Sync maintains **ongoing parity** with the supplier feed. It REUSES the XML Import pipeline architecture (parse → parse_single → insert on the shared `import1` queue) but adds recurring behaviour and a dedicated active-state model that tracks which tasks are currently in their re-sync window.
 
@@ -60,7 +60,7 @@ This feature's mechanics are split into 5 aspect pages, each covering one well-s
 ### Workflow
 
 1. **Create sync task** — point at the XML URL and set up mapping (same 3-step wizard as XML Import). See [[apps-xml-sync-fetch-transport]] for what URLs / auth are accepted.
-2. **Configure update policy** — pick, per field, which fields a re-sync overwrites (price always; description maybe). See [[apps-xml-sync-update-policy]].
+2. **Configure update policy** — tick, per field, which fields a re-sync overwrites (e.g. Quantity only). See [[apps-xml-sync-update-policy]].
 3. **Configure discontinued handling** — Deactivate vs Keep for products missing from the feed. See [[apps-xml-sync-discontinued]].
 4. **Active monitoring** — see each run's results on [[apps-xml-sync-status]].
 
@@ -71,6 +71,7 @@ This feature's mechanics are split into 5 aspect pages, each covering one well-s
 - Use FTP / header-based auth / gzip feeds — see [[apps-xml-sync-fetch-transport]].
 - Delete missing products (only Deactivate / Keep) — see [[apps-xml-sync-discontinued]].
 - Roll back a run — there is no undo.
+- Create products — only existing variants are matched and updated; use [[apps-xml-import]] to add products.
 
 ## Settings & fields
 
@@ -81,7 +82,7 @@ App key: `xml_sync`. Plan-feature keys: `xml_sync_limit` (max concurrent tasks) 
 Each aspect documents its own rules. The cluster-level invariants:
 
 - **Recurring pipeline parallel to XML Import** — same parse → parse_single → insert structure on the shared `import1` queue, plus recurring scheduling. See [[apps-xml-sync-job-pipeline]].
-- **Per-field update policy** — the merchant chooses which fields a re-sync overwrites; "stock-only mode" keeps descriptions merchant-curated. See [[apps-xml-sync-update-policy]].
+- **Per-field update policy** — the merchant chooses which fields a re-sync overwrites; names, descriptions and images are never touched (no such fields). See [[apps-xml-sync-update-policy]].
 - **Discontinued = deactivate (opt-in) or keep (default), never delete** — scoped across feeds via `imports` / `imports_active`. See [[apps-xml-sync-discontinued]].
 - **URL-only transport, no header auth, no gzip** — see [[apps-xml-sync-fetch-transport]].
 - **Async storefront lag** — the storefront catches up via the search index after each run; "sync ran but site unchanged" is queue lag, not a bug. See [[apps-xml-sync-side-effects]].

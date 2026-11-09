@@ -5,8 +5,8 @@ aliases: ["Checkout DOM-to-endpoint map", "Checkout AJAX pipeline", "Checkout re
 tags: [concepts, checkout, storefront, backend, ajax, reload, cart-attributes]
 plan_gates: []
 created: 2026-06-12
-updated: 2026-06-12
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[checkout-flow]]. This is the **bridge page** — every storefront submit on `/checkout` maps to a controller method that writes a cart attribute and returns a `reload` array. The Assistant uses this page to answer *"what does X-submit do on the server?"* and *"which fragments refresh when?"*
@@ -40,9 +40,9 @@ Not covered here:
 
 ## Contrasts
 
-- **Storefront state vs cart entity.** The storefront does NOT hold derived state in JS — the cart row in the DB IS the source of truth. Every reload re-renders from the cart. No optimistic UI, no client-side merge conflicts. The per-step pages document what the customer sees; the cart attribute documents what's authoritative.
-- **Full-page reload vs scoped fragment reload.** CloudCart's checkout never full-page-reloads — every navigation is a scoped fragment reload via the `reload` array. Compare to a Vue SPA: there's no router on the storefront; the "current step" lives on the cart's `step` attribute, not the URL.
-- **Per-sub-section sidebar routes vs one big summary route.** The sidebar's 4 sub-sections each have their own `data-ajax-box` URL, so step submits can declare granular reload arrays. Reading **only** `checkout.summary` would re-fetch all 4 every time, churning the DOM unnecessarily.
+- **Storefront state vs cart entity.** The storefront does NOT hold derived state in JS — the cart row in the DB IS the source of truth. Every reload re-renders from the cart. No optimistic UI, no client-side merge conflicts.
+- **Full-page reload vs scoped fragment reload.** Step submits refresh only the containers the `reload` array names. The page loads in full only on a `redirect`: a payment hand-off, or a shipping re-quote after a payment-method change that cannot price the chosen service, which sends the customer back to `/checkout` at the address step. The current step lives on the cart's `step` attribute, not the URL.
+- **Per-sub-section sidebar routes vs one big summary route.** The sidebar's 4 sub-sections each have their own `data-ajax-box` URL, so step submits can declare granular reload arrays.
 - **Discount-code submit vs all other step submits.** Apply / remove discount is the ONLY submit that resets the step machine BACKWARDS (to `shippingAddress`). Every other submit advances forward.
 
 ## The fixed JSON shape

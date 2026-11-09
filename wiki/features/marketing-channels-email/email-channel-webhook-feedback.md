@@ -7,8 +7,8 @@ aliases: ["Email delivery webhook", "Elastic Email feedback loop", "AbuseReport 
 tags: [marketing, channels, email, webhook, elastic-email, deliverability, bounce, abuse, unsubscribe]
 plan_gates: ["campaign.channel.email"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-channels-email]]. See the hub for the other aspects (setup wizard, DNS records, Elastic Email sub-account, send pipeline, suspend thresholds, settings pane).
@@ -21,7 +21,7 @@ After DNS verification ([[email-channel-dns-records]]) succeeds, CloudCart auto-
 
 ## Where to find it
 
-- The webhook URL itself is `https://{site}/messages/elastic-email-campaign/{site_id}` (HTTPS-only). The merchant does not configure it — registration is automatic after the four DNS checks pass.
+- The webhook URL itself is `https://{site}/messages/elastic-email-campaign/{site_id}` (HTTPS-only). The merchant does not configure it — it is registered automatically, and only when all four DNS checks pass.
 - Inbound events surface in the per-campaign **Logs** panel of the Email channel card and on the campaign log itself.
 - Subscriber-side side-effects appear on [[marketing-subscribers]] — `verified` / `unsubscribed` / `bounced` flags flip as events arrive.
 
@@ -29,7 +29,7 @@ After DNS verification ([[email-channel-dns-records]]) succeeds, CloudCart auto-
 
 - View per-message delivery history with full content preview (iframe) in the channel's **Logs** panel.
 - See the status of each send: SENT, SEEN, CLICKED, UNSUBSCRIBED, ERROR → HARD_BOUNCED, BOUNCED, ABUSE_REPORT, PENDING.
-- Manually trigger a status refresh — the Message-status lookup uses Elastic Email's `messageid` to refresh the log status on demand.
+- Nothing to refresh by hand — rows a webhook event never resolved are re-checked automatically every hour (see Business rules).
 
 ## Settings & fields
 
@@ -77,9 +77,19 @@ The webhook handler dispatches `CampaignEmailWebHookProcess` to the queue. Inbou
 
 - **Sent / Opened / Clicked** → update the log row's status to SENT / SEEN / CLICKED. **Sent arriving when log already shows CLICKED or SEEN is discarded** — engagement is never downgraded by a late Sent event.
 - **Unsubscribed** → marks the subscriber's Email channel `unsubscribed = 1`; the campaign-step listener fires `triggerRemove` to halt further sends for that subscriber in any in-flight campaign.
-- **Error / hard-bounce** → marks status HARD_BOUNCED or BOUNCED on the log (per the category map above); the subscriber's Email channel can be marked `bounced = 1` depending on the error type.
+- **Error / hard-bounce** → marks status HARD_BOUNCED or BOUNCED on the log (per the category map above); the subscriber flags follow the rules below.
 - **AbuseReport** → status ABUSE_REPORT; campaign listener cascades: marks subscriber Email channel `bounced = 1`, marks them as rejecting marketing, removes them from the campaign with `key = 'abuse'`. Also counts toward the `SUSPENDED_SPAM` threshold (see [[email-channel-suspend-thresholds]]).
 - **WaitingToRetry** → status PENDING, retried by Elastic Email.
+
+### Subscriber flags set by each status
+
+- **ERROR, HARD_BOUNCED and ABUSE_REPORT** always set `bounced`; a soft **BOUNCED** never does.
+- **UNSUBSCRIBED, ERROR, HARD_BOUNCED and ABUSE_REPORT** also set marketing off and `unsubscribed` — but only while the campaign is active.
+- **SEEN and CLICKED** set `verified` (below).
+
+### Events are ignored on an expired plan or in maintenance
+
+Webhook events that arrive while the store's plan is expired or the store is in maintenance are ignored.
 
 ### Engagement retroactively verifies the subscriber
 
@@ -91,11 +101,11 @@ Webhook calls without a `messageid` parameter, or with `channel = testchannel` (
 
 ### The webhook URL is signed only by HTTPS — no secret
 
-The webhook endpoint relies on HTTPS + the random `site_id` in the URL for authenticity. There is no shared secret. Receivers must therefore treat the URL itself as a soft secret.
+The webhook endpoint relies on HTTPS alone. The `site_id` in the URL is the store's numeric id, not a random value, and there is no shared secret.
 
-### Manual status refresh uses `messageid` lookup
+### Hourly status check for unresolved rows
 
-A status refresh from the **Logs** panel calls Elastic Email's message-status lookup using the stored `messageid`. This handles the rare case where a webhook event was lost — the merchant can refresh and pull the current status straight from Elastic Email.
+There is no manual refresh. An automatic **hourly** background check looks up unresolved rows in Elastic Email by the stored `messageid`, covering webhook events that were lost. A failed lookup (e.g. a dead store key) sets the row to **Error** with *"Empty status message"* — that is not a real bounce.
 
 ## Related
 

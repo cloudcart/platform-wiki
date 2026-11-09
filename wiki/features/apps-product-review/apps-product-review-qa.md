@@ -7,8 +7,8 @@ aliases: ["Questions and Answers", "Q&A", "Product questions", "CreateQuestionRe
 tags: [apps, others, reviews, qa, questions]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 > Part of [[apps-product-review]]. See the hub for the other aspects (settings, moderation, submission, internals).
@@ -55,7 +55,8 @@ The Q&A feature is opt-in via the `question` toggle. When ON:
 
 - Customers see a Questions tab on product pages.
 - They can ask new questions; other customers / admins can answer.
-- Questions optionally require approval (`question_approved`).
+- Questions optionally require approval (`question_approved`); with it off they appear at once. Answers given on the storefront always appear at once, without moderation.
+- Questions and answers are shown in the page but not output as structured data (no FAQPage / QAPage), see [[seo-structured-data]].
 
 ### Plan-cap applies to Q&A too
 

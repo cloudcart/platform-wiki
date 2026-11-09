@@ -7,8 +7,8 @@ aliases: ["Deprecated apps", "Old apps", "Retired apps", "Apps deprecated"]
 tags: [apps, deprecated]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-27
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Apps → Deprecated
 
@@ -43,6 +43,8 @@ Route name: `apps.deprecated`. The view renders the standard `AppOverview` compo
 | [[apps-drop-shipping]] | [[apps-suppliers]] + [[apps-xml-sync]] + [[apps-frisbo]] |
 | [[apps-rapido]] | Regional active courier integrations (per market) |
 | [[apps-berry]] | Regional active courier integrations (per market) |
+| [[apps-etsy]] | None: the integration is switched off in the platform and `/admin/apps/etsy` returns to the Apps catalogue |
+| Speedy (old app, v1) | [[apps-dpdbulgaria-speedy]] ("Speedy v2", same login) — the old app shows nothing at checkout and switches itself off ([[apps-dpdbulgaria-speedy-credentials]]) |
 
 ### What the merchant CANNOT do here
 - Install a deprecated app (install controls disabled).
@@ -89,7 +91,9 @@ The deprecated-app view renders a centred panel:
 The "Contact us" button is present in the code but commented out — there is currently NO direct CTA on this page. The merchant is expected to use the global support module or the cards in the Similar Apps swiper.
 
 ### Catalog visibility
-Deprecated apps are surfaced through the dedicated `/admin/apps/deprecated/:name` route, not the main App Store catalog. The standard App Store filters its results to active apps only, so merchants generally reach deprecated entries through old direct links, search results, or by navigating from their existing app data when a previously-installed app has been retired.
+Deprecated apps are surfaced through the dedicated `/admin/apps/deprecated/:name` route, not the main App Store catalog. The catalogue and its search list only apps marked visible and not deprecated in the apps database, so merchants reach deprecated entries through old direct links or their existing app data.
+
+**Plan feature lists are a separate list.** A plan's features can still name an app the catalogue no longer offers (Etsy, for example). Such an app is not installable just because the plan names it; whether an app is offered is decided by the catalogue record (verify per app, as the records are not in code).
 
 ### Data retention
 Deprecated apps preserve their historical data — orders, settings, logs are all readable. The merchant's view becomes effectively **read-only**: nothing can be changed, no new install can be performed, no reinstall is possible without support. The merchant can extract historical data from order records or analytics, but should NOT rely on these apps for live operations.

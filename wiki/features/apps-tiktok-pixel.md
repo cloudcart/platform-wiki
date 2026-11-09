@@ -7,8 +7,8 @@ aliases: ["TikTok Dynamic Ads", "TikTok Pixel", "TikTok tracking pixel", "TikTok
 tags: [apps, social, tiktok, tracking, pixel, capi, feed, dynamic-ads, analytics]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-06-23
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # TikTok Dynamic Ads (Pixel + CAPI + Catalog feed)
 
@@ -86,7 +86,7 @@ CloudCart supports TikTok's server-side **Events API** in addition to the browse
 
 ### Cookie consent gates both browser pixel and CAPI
 
-Both the browser pixel and the server-side event firing check whether the visitor has accepted the `targeting` cookie group. If the customer rejects the Targeting / Marketing cookie group, neither path sends data to TikTok. So GDPR/consent compliance is enforced before any event leaves the store.
+Both the browser pixel and the server-side event firing check the visitor's `targeting` answer. Before any answer it counts as accepted; after a refusal neither path sends data to TikTok. So GDPR/consent compliance is enforced before any event leaves the store.
 
 ### Test events route — TikTok Test Event Code field
 

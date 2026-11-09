@@ -5,8 +5,8 @@ aliases: ["Theme customization Layer 2", "Theme Editor", "Theme Editor variables
 tags: [design, theme, customization, css, scss, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[theme-customization-layers]]. See the hub for the other aspects (themes, custom assets, cascade, plan gating, overlay).
@@ -69,7 +69,7 @@ A Save in the Theme Editor:
 5. Stamps the merchant's `stylesheet_version` setting with the current UNIX timestamp — this is the cache-buster appended to the storefront's `<link rel="stylesheet">` URL.
 6. Builds a single Google Fonts URL of the form `https://fonts.googleapis.com/css?family=Family1:weight|Family2:weight|...` and stores it in the `google_fonts_url` setting. The storefront injects this into every page's `<head>`.
 
-After Save, the storefront serves the new CSS on the next page render: the cache-busting `stylesheet_version` query string forces browsers and CDNs to fetch the fresh file from S3.
+After Save, every page rendered afterwards links the new CSS: the cache-busting `stylesheet_version` query string forces browsers and CDNs to fetch the fresh file. The link sits in the page HTML, so guests served a cached page get it within 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Reset — atomic wipe of the active theme's variables
 
@@ -105,7 +105,7 @@ The Editor edits VALUES for tokens the theme author declared. It cannot add new 
 
 1. Theme Editor → Colours tab → finds the "Promo Bar" group → changes the background colour from blue to red.
 2. Save runs: variable rows for the active theme are replaced; `theme.css` recompiles with the new value; S3 upload completes; `stylesheet_version` stamps a fresh timestamp; `google_fonts_url` is rebuilt.
-3. Storefront updates within the next page render after the cache-buster updates.
+3. Pages rendered after the save use it; guests within 20 minutes.
 
 ## Related
 

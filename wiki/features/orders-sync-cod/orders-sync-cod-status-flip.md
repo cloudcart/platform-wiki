@@ -7,8 +7,8 @@ aliases: ["COD sync status flip", "COD sync marks completed", "COD sync amount o
 tags: [orders, cod, sync, order-status, payment]
 plan_gates: ["shipping_payment_sync"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # COD sync — status flip
 
@@ -50,7 +50,7 @@ The courier's amount **overrides** the original order total. If the courier repo
 
 ### No `paid` intermediate state for synced COD orders
 
-Merchants relying on the `paid` → `completed` lifecycle won't see `paid` as an intermediate state for COD orders that sync successfully — the platform jumps straight to `completed`. This is by design and distinct from a merchant manually clicking Mark as paid (which sets `completed` on the payment but is a different path — see [[orders-sync-cod-manual]]).
+Merchants relying on the `paid` → `completed` lifecycle won't see `paid` as an intermediate state for COD orders that sync successfully — the platform jumps straight to `completed`, although the courier's switch reads **Automatically set order status to paid** / *"Автоматично маркиране като платена на поръчката"*. This is by design and distinct from a merchant manually clicking Mark as paid (which sets `completed` on the payment but is a different path — see [[orders-sync-cod-manual]]).
 
 ### The flip fires the full downstream pipeline
 

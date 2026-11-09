@@ -7,8 +7,8 @@ aliases: ["MicroBG prerequisites", "MicroBG required settings", "MicroBG service
 tags: [apps, erp, bulgaria, prerequisites, settings-cart, currency, vat]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[apps-microbg]]. See the hub for the other aspects (architecture split, registration, sync mechanics, partner matching, troubleshooting).
@@ -34,9 +34,9 @@ This aspect is a configuration checklist — there's no single UI action. The me
 
 ### What the merchant CANNOT do here
 
-- Run MicroBG sync in currencies **other than BGN** or with VAT rules not set to country **Bulgaria**. Micro.bg's data model expects BGN amounts and the standard BG VAT rate. Stores configured for other countries shouldn't enable the app.
+- Rely on CloudCart to check currency, VAT or plan tier: its code checks only the `microbg_subscription` feature. The currency and BG VAT expectations are Micro.bg's own; whether Micro.bg accepts EUR stores after Bulgaria's 2026 euro switch is Micro.bg's to confirm.
 - Skip the **2-user Micro.bg license** requirement. Single-user Micro.bg plans don't enable the API connection.
-- Use the integration on a CloudCart plan below STARTUP. The `microbg_subscription` feature pack isn't available on the bottom tier.
+- Use the integration without the `microbg_subscription` add-on; which plans offer it is set in the plan catalogue (verify).
 
 ## Settings & fields
 
@@ -78,8 +78,8 @@ These are **enforced by Micro.bg**, not by CloudCart — the merchant who clicks
 | Requirement | Why |
 |---|---|
 | **Micro.bg license for at least 2 users** | Single-user Micro.bg plans don't enable the API connection. |
-| **CloudCart plan above STARTUP** | The bottom-tier plan doesn't include the `microbg_subscription` feature pack. |
-| **Storefront currency = BGN** | Micro.bg's data model is BGN-based; mixed-currency carts won't round-trip cleanly. |
+| **The `microbg_subscription` add-on** | The only check in CloudCart's code; which plans offer it is in the plan catalogue (verify). |
+| **A store currency Micro.bg accepts** | Micro.bg's own rule (historically BGN); CloudCart does not check it. |
 | **VAT rules set for country Bulgaria** | Micro.bg expects the standard BG VAT rate. |
 
 ### Why the EIK setting matters specifically

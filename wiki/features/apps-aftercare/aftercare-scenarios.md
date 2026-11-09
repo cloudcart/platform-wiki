@@ -7,8 +7,8 @@ aliases: ["Aftercare scenarios", "Aftercare cases", "withdrawal scenarios", "wit
 tags: [apps, aftercare, orders, returns, withdrawal, scenarios]
 plan_gates: []
 created: 2026-07-31
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[apps-aftercare]]. See the hub for the other aspects (compliance, admin inbox, settings, free-vs-Pro, order-return sync, storefront flow).
@@ -35,21 +35,22 @@ No settings — this page catalogues behaviour. The settings are on [[aftercare-
 
 ### Prerequisites — when a withdrawal can be raised
 
-- The order must be in an **`allow_return`** state — the **same core gate** as issuing a return: **invoiced (or ready to invoice)**, not already fully returned, and not in a reversed / [[order-status-workflow|negative]] status. An order that is not yet committed cannot be withdrawn.
+- **The guest form** (`/withdrawal`) needs only an active app and an order whose email and number match what the customer typed. It does **not** check the order's status, payment or invoice: any matched order with lines not yet withdrawn or returned reaches the item picker, and the merchant decides in the inbox.
+- **`allow_return`** — the core return gate (invoiced or ready to invoice, not fully returned, not in a reversed / [[order-status-workflow|negative]] status) — gates only the Pro extras: the in-account countdown and one-click shortcut, and the automatic core return, which is skipped for an order that fails it.
 - The right to withdraw exists from contract conclusion (even **before delivery**); the 14-day **countdown** only starts on delivery (see [[aftercare-compliance]]).
 
 ### The standard customer sequence
 
 1. **Open** the withdrawal form (floating button / menu link → `/withdrawal`, or the in-account shortcut on Pro).
 2. **Identify** — enter order number + email (+ name).
-3. **Verify** — a **time-limited code** is emailed; the customer enters it. **Max 5 attempts**, a **60-second cooldown** between resends, and **max 3 resends** per session (all held in session, never persisted; the neutral "code sent" reply prevents order/email enumeration — see [[storefront-withdrawal]]).
-4. **Pick items** — only still-withdrawable lines (already-withdrawn lines are hidden; measured / bundle / options lines are all-or-nothing; the picker is bundle-aware).
-5. **(Pro) Choose the refund method** — a screen offering `bank` (IBAN / BIC) or, when the paying gateway supports it, `card`.
-6. **Confirm** — this creates the request (`pending`), freezes the per-line refund totals, stores the terms snapshot, emails the **acknowledgement**, and alerts the merchant. The customer lands on a **done** screen and can **track** it by its hash.
+3. **Verify** — a code valid **10 minutes** is emailed; the customer enters it. **Max 5 attempts**, a **60-second cooldown** between resends, and **max 3 resends** per session (all held in session, never persisted; the neutral "code sent" reply prevents order/email enumeration — see [[storefront-withdrawal]]).
+4. **Pick items (Pro)** — still-withdrawable lines only (already-withdrawn lines show as such and can't be ticked; measured / bundle / options lines are all-or-nothing; the picker is bundle-aware). The free tier has **no picker**: the request covers the whole order, and the customer may describe the items in an optional note.
+5. **(Pro) Choose the refund method** — on the same screen: `bank` (IBAN / BIC) or, when the paying gateway supports it, `card`.
+6. **Confirm** — this creates the request (`pending`), freezes the per-line refund totals of a partial request, stores the terms snapshot, emails the **acknowledgement**, and alerts the merchant. The customer lands on a **done** screen and can **track** it by its hash.
 
-### Case 1 — Partial withdrawal, free tier
+### Case 1 — Free tier: the whole order, items in a note
 
-Customer withdraws 2 of 5 lines → a `pending` request with the two frozen lines and `resolution_type = withdrawal`, `refund_method = bank`. The merchant reviews it in the inbox, refunds the customer **manually** (bank transfer from the IBAN captured), moves the status to `returned` (or `cancelled` to decline), optionally emailing a note. On the free tier the merchant handles restock and the credit note through the normal order flow; the app does not do it automatically.
+The customer cannot pick lines → a `pending` request with no frozen lines (read as the whole order), `resolution_type = withdrawal`, no refund method, and the customer's optional note naming the items. The merchant reviews it in the inbox, arranges the refund with the customer **manually** (no IBAN is collected), moves the status to `returned` (or `cancelled` to decline), optionally emailing a note. Restock and the credit note go through the normal order flow; the app does not do them. A **partial** withdrawal (2 of 5 lines, frozen per line, `refund_method = bank` with the IBAN captured) needs Pro.
 
 ### Case 2 — Whole-order withdrawal before shipping
 
@@ -68,7 +69,7 @@ On confirmation the app mirrors the withdrawal into a **PENDING core order-retur
 ### Case 5 — Window edge cases
 
 - **Before delivery:** the withdrawal can still be raised; there is simply no countdown yet.
-- **After the window:** the in-account live-countdown CTA (Pro) disappears (`expired`), but the standalone `/withdrawal` flow gates on `allow_return`, not on the window — so a late request can still reach the inbox and the merchant decides.
+- **After the window:** the in-account live-countdown CTA (Pro) disappears (`expired`), but the standalone `/withdrawal` flow checks neither the window nor `allow_return` — so a late request can still reach the inbox and the merchant decides.
 
 ### Case 6 — Resubmission & prior returns
 

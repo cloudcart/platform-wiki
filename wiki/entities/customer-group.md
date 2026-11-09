@@ -5,15 +5,15 @@ aliases: ["Customer Group", "Custom Group", "Loyalty Group", "Customer Tier", "P
 tags: [entity, customers, groups, loyalty, pricing, plan-gated]
 plan_gates: ["customer_groups"]
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 
 # Customer Group
 
 ## Identity
 
-A **Customer Group** is a labeled bucket of [[customer|Customers]] used to differentiate how those customers experience the store — what they see, what they pay, and how they're allowed to check out. The merchant defines groups on [[customers-custom-groups]] (e.g., *"VIP"*, *"Wholesale"*, *"Loyalty Gold"*, *"B2B"*, *"Newsletter only"*) and assigns each customer to exactly one group. Once assigned, the group drives three classes of behavior: **pricing** (discounts can target specific groups, so the merchant can give *"15% off for VIP customers"*); **checkout restrictions** (a [[apps-cart-rules|Cart Rule]] with a customer-group condition can show / hide payment and shipping methods per group, so wholesale customers see invoice-on-delivery while retail customers see only card payments); and **segmentation** (the merchant builds segments of group-X members to target with marketing).
+A **Customer Group** is a labeled bucket of [[customer|Customers]] used to differentiate how those customers experience the store — what they see, what they pay, and how they're allowed to check out. The merchant defines groups on [[customers-custom-groups]] (e.g., *"VIP"*, *"Wholesale"*, *"Loyalty Gold"*, *"B2B"*, *"Newsletter only"*) and assigns each customer to exactly one group. Once assigned, the group drives three classes of behavior: **pricing** (discounts can target specific groups, so the merchant can give *"15% off for VIP customers"*); **Cart Rule discounts** (a [[apps-cart-rules|Cart Rule]] with a customer-group condition applies only to those groups; nothing shows or hides payment or shipping methods per group); and **segmentation** (the merchant builds segments of group-X members to target with marketing).
 
 Every customer belongs to **exactly one group** at any moment, including guests — the platform reserves a special "**Guests**" group ID into which every guest checkout falls. Newly registered customers default to a system "**Default**" group (a different ID from the guest group). Merchants then move customers between groups manually (per-customer edit on [[customers-details]]) or in bulk (bulk-action on [[customers]]).
 
@@ -34,7 +34,7 @@ This entity is deliberately thin — the only stored fields are `id` and `name`.
 - **Name** — required, max 100 chars, case-insensitive unique per store; *"Default"* is a reserved name.
 - **Customers count** — auto-computed; drives the **Has customers: Yes / No** filter.
 - **System / Guest flag** — platform-controlled; the Default + Guests groups cannot be deleted or standard-edited.
-- **Pricing / Payment / Shipping modifiers** — not stored on the group; achieved indirectly via [[discount|Discounts]] (which carry a `customer_groups` filter) and [[apps-cart-rules|Cart Rules]] (a customer-group condition that gates payment / shipping methods). Payment providers and shipping methods do NOT themselves carry a customer-group field.
+- **Pricing modifiers** — not stored on the group; achieved via [[discount|Discounts]] (a `customer_groups` filter) and [[apps-cart-rules|Cart Rules]] (a customer-group condition). Payment and shipping methods cannot be gated per group.
 
 ## Sub-pages (in this cluster)
 
@@ -52,7 +52,7 @@ This entity is split into 6 aspect pages, each covering one well-scoped slice. T
 - [[customers-custom-groups]] — the group list + Add / Edit modal + bulk delete. The home for group taxonomy maintenance.
 - [[customer]] — every customer carries a `group_id`. The customer's detail page surfaces the assigned group and lets the merchant change it.
 - [[customers]] — the customer list filters by group (column + filter dropdown); the bulk **Set group** action is here.
-- [[apps-cart-rules]] — a Cart Rule with a customer-group condition shows / hides payment and shipping methods (and applies fees / gifts) per group at checkout — this is how payment / shipping are group-gated, NOT a field on the provider itself.
+- [[apps-cart-rules]] — a Cart Rule with a customer-group condition applies its discount only to the selected groups. It does not show or hide payment or shipping methods.
 - [[marketing-discounts]] (and its variants: [[marketing-discounts-fixed]], [[marketing-discounts-percent]], etc.) — discounts include a customer-group filter to target specific groups.
 - [[marketing-segments]] — segment-builder conditions include *Customer group = X*.
 - [[reports-customers]] — analytics filter by group for cohort comparison.
@@ -64,13 +64,13 @@ This entity is split into 6 aspect pages, each covering one well-scoped slice. T
 
 - [[customer]] — every customer has exactly one group; this is the primary relationship.
 - [[discount]] — discounts target groups via `customer_group_ids`.
-- [[cart-rule]] — a customer-group condition on a Cart Rule shows / hides payment + shipping methods per group (the actual group→checkout gating mechanism).
+- [[cart-rule]] — a customer-group condition limits a Cart Rule's discount to the selected groups.
 - [[segment]] — segments can be built around group membership.
 - [[customers-custom-fields]] — sibling customer-metadata mechanism (free-form per-customer fields) — independent of group membership.
 
 ### Cross-cutting concepts
 
-- [[customer-group-targeting]] — the concept that ties together everything a group can drive (pricing via discounts, payment/shipping gating via Cart Rules, segmentation).
+- [[customer-group-targeting]] — the concept that ties together everything a group can drive (pricing via discounts and Cart Rules, segmentation).
 - [[plan-gates]] — the `customer_groups` count cap.
 - [[notification-delivery]] — group membership influences which campaigns reach which subscribers when the campaign's segment is group-defined.
 - [[checkout-flow]] — group membership at checkout time determines which payment / shipping options are presented.

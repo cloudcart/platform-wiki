@@ -7,8 +7,8 @@ aliases: ["Customer export sync vs async", "Export threshold", "Queued customer 
 tags: [customers, export, async, queue, threshold]
 plan_gates: ["customer_export"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[customers-export]]. See the hub for the other aspects (trigger & 2FA, filter scope, CSV schema, plan & permissions).
@@ -21,7 +21,7 @@ This aspect covers **what happens after the 2FA code is accepted**: whether the 
 
 ## Where to find it
 
-There is no UI for this choice — the platform picks the path automatically based on the matching customer count. Queued (large) exports complete on the **Queue jobs** page ([[settings-queue-view]]).
+There is no UI for this choice — the platform picks the path automatically based on the matching customer count. The queued job does not appear on the **Queue jobs** page; its result arrives as described below.
 
 ## What the merchant can do here
 
@@ -33,7 +33,7 @@ There is no UI for this choice — the platform picks the path automatically bas
 ### Large dataset → background job
 
 - Over the threshold, the export is enqueued as a background **CustomerExport** job (with a default chunk size of **10 000** rows per batch).
-- The merchant receives a `queue` response (no inline download). The file becomes available through the [[settings-queue-view]] page or via the standard background-jobs notification mechanism.
+- The merchant gets a `queue` response and the toast *"The export is being processed. You will receive an email with the download link."* When the job finishes, the file appears in **Settings → Files** ([[settings-files]], archive folder), an email with the download link goes to the store's email address ([[settings-admin-notifications]]), and an admin notification says the download is ready, linking to the file and to Files.
 
 ### What the merchant CANNOT do here
 
@@ -65,7 +65,7 @@ When the count exceeds the limit:
 { "status": "success", "type": "queue", "filename": null, "data": [] }
 ```
 
-The merchant's browser handles the response: `csv` triggers an immediate download; `queue` shows a toast / message about the job being scheduled and the file becoming available through the queue.
+The merchant's browser handles the response: `csv` triggers an immediate download; `queue` shows the toast above.
 
 ## Business rules
 
@@ -80,9 +80,10 @@ When the export exceeds the synchronous limit, the platform:
 1. Re-runs the snapshot SQL with a `COUNT(*)` to get the true total.
 2. Splits the result into pages of `chunk` rows each (default 10 000).
 3. Dispatches one delivery job per page, naming each file `customers-YYYY-MM-DD-HH-MM-part_N.csv`.
-4. Each delivery job re-queries its page slice, streams rows to a temp CSV (250 rows per query chunk), prepends the UTF-8 BOM (see [[customers-export-csv-schema]]), and uploads the file to the merchant's file manager.
+4. Each delivery job re-queries its page slice, streams rows to a CSV (250 rows per query chunk) and prepends the UTF-8 BOM (see [[customers-export-csv-schema]]).
+5. When all parts are done they are packed into **one ZIP** `customers-YYYY-MM-DD-HH-MM-SS.zip`, saved in the File manager, and the separate part files are removed; then the email and the admin notification go out.
 
-So a 60 000-customer export delivers **six** part files (`part_1.csv` through `part_6.csv`), NOT one consolidated CSV. The merchant has to concatenate them downstream if they want a single file. This is a real merchant-facing limitation worth knowing.
+So a 60 000-customer export is one ZIP holding **six** CSVs (`part_1` … `part_6`); to get a single sheet the merchant combines them. There is no overall row cap and no time limit on the job.
 
 ### SQL snapshot consistency
 
@@ -91,7 +92,7 @@ The background path snapshots the filtered SQL query once, so all part files are
 ## Related
 
 - [[customers-export]] — hub.
-- [[settings-queue-view]] — where queued large exports complete and become downloadable.
+- [[settings-files]] — where the finished ZIP is stored.
 - [[background-queue-inventory]] — catalogue of all background processes; covers when a customer export switches from synchronous to queued and how to track it.
 - [[orders-export-sync-vs-async]] — the equivalent sync-vs-async behaviour for orders export.
 

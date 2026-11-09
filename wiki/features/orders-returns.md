@@ -7,8 +7,8 @@ aliases: ["Order return", "Order returns", "Issue return", "Return goods", "Full
 tags: [orders, returns, refund, credit-note, restock, compliance]
 plan_gates: []
 created: 2026-07-24
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 # Order returns (Issue return)
@@ -23,7 +23,9 @@ Returns are created three ways: the merchant clicks **Issue return** on an order
 
 ## Where to find it
 
-Returns are worked **on the order** — open an order from [[orders-details]] and use its **Returns** panel / **Issue return** action. The API lives under `/api/.../returns` (`admin.core.orders.returns`, permission `orders.returns`); it is a **core** feature, not app-gated.
+Returns are issued **on the order** — open an order from [[orders-details]] and use its **Returns** panel / **Issue return** action. Every return of the store is also listed under **Orders → Returns** (`/admin/orders/returns`), and each opens on its own page (`/admin/orders/returns/<id>`). It is a **core** feature, not app-gated.
+
+A moderator needs both the **Orders** box and the **Returns** row in [[settings-staff-permissions-tree]]. With only one of them the menu item can show, but the screen answers with the admin's 403 page.
 
 ## Sub-pages (in this cluster)
 

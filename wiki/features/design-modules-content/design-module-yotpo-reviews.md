@@ -7,8 +7,8 @@ aliases: ["Yotpo reviews module", "Yotpo module", "extra.yotpoReviews", "yotpoRe
 tags: [design, modules, content, yotpo, reviews, app-dependent]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Yotpo reviews module (`extra.yotpoReviews`)
@@ -102,7 +102,7 @@ When the module asks for its default settings, the platform reads the Yotpo app'
 
 ### Cache invalidation on save / reset
 
-Both **Save** and **Reset** regenerate the per-site cache key. The new setting is visible on the next storefront request.
+Both **Save** and **Reset** regenerate the per-site cache key; pages rendered afterwards use the new setting, while guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Reviews data lives in Yotpo's cloud
 

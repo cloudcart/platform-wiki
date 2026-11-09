@@ -5,8 +5,8 @@ aliases: ["Page Builder block mechanics", "Dynamic page composition", "Static pa
 tags: [design, modules, page-builder, concepts]
 plan_gates: ["storefront_builder"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[widget-vs-page-builder-block]]. See the hub for the other aspects (module mechanics, shared template library, theme-switch behaviour, system pages + restrictions).
@@ -25,8 +25,8 @@ Covered:
 
 - The drag-drop composition surface — rows + flex layout + per-block settings panel.
 - Per-page storage — content JSON keyed by page ID.
-- Version history — every save creates a `PageHistory` row; **500 most-recent snapshots retained per page**, older are auto-deleted on save. (verify)
-- `autoSave` endpoint behaviour — fires on every drag / drop / edit, returns the history list panel + a fresh preview URL per snapshot. (verify)
+- Version history — every auto-save and every publish adds a version; the **500 newest are kept per page**.
+- `autoSave` behaviour — a draft version per change, the history list and a preview link per version.
 - Cross-theme survival of blocks (covered in detail under [[widget-vs-pb-theme-switch-behavior]]).
 - The palette catalogue — what blocks the merchant sees in the side palette (driven by the theme's page-builder block library).
 
@@ -42,7 +42,7 @@ Not covered:
 
 - **Block vs. module — placement**: block placement is decided by the merchant (drag-drop). Module placement is decided by the theme. See [[widget-vs-pb-module-mechanics]].
 - **Block vs. module — scope**: a block renders only on the one Dynamic page it was dragged onto. A module renders on every page with its slot.
-- **Block vs. module — version history**: blocks have version history (up to 500 snapshots per page); modules do NOT.
+- **Block vs. module — version history**: blocks have drafts and version history (up to 500 per page); modules do NOT. A module save in Design → Modules, switching one off included, is live at once (guests: up to 20 minutes of page cache), with no draft and no undo ([[design-modules-cross-save-reset]]).
 - **Block vs. module — theme dependency at runtime**: a block's data is theme-independent (lives in the page JSON); rendering may degrade if the new theme doesn't ship the block type. See [[widget-vs-pb-theme-switch-behavior]].
 - **Dynamic page vs. other page types**: Page Builder works only on Dynamic pages. Static / FAQ / External pages on [[marketing-landing-pages]] use TinyMCE or raw HTML, never the block palette.
 
@@ -73,9 +73,7 @@ Block content is stored inside the Page's content JSON — separately from the g
 
 ## Version history — 500-snapshot cap per page
 
-Every save of a Dynamic page creates a `PageHistory` row with the full content snapshot. The platform retains the **500 most-recent snapshots per page**; older versions beyond the 500 newest are auto-deleted on save. (verify)
-
-The cap applies uniformly across both the legacy page editor and the modern Page Builder UI. The merchant rolls back to any of the most recent 500 saves via the Page Builder's history panel.
+Every auto-save adds a draft version (**Запазено**, *Autosaved*) and every **Публикувай** (*Publish changes*) adds a published one (**Публикувано**); the storefront shows only the last published version. The **500 newest versions per page** are kept; older ones are deleted on each auto-save or publish. Other page types keep no history. The builder lists the latest 50; restoring is opening one and publishing it ([[landing-pages-builder-rules]]).
 
 ## `autoSave` — snapshot per change + preview URL
 
@@ -83,7 +81,7 @@ The Page Builder calls an `autoSave` endpoint for **every change** the merchant 
 
 - Creates a fresh `PageHistory` row capturing the new state.
 - Returns the rendered history list panel for the side UI.
-- Returns a **fresh preview URL** pointing at THAT specific snapshot's ID. The merchant can open the URL to view the snapshot live on the storefront — including before the merchant clicks the final "Save" / "Publish". (verify)
+- Returns a **fresh preview link** to THAT version: it shows the draft on the storefront's layout before it is published; shoppers keep seeing the published version.
 
 The 500-version cap is enforced inside `autoSave` too — every save deletes the rows beyond the most-recent 500.
 
@@ -95,7 +93,7 @@ For the full catalogue of block types and which form templates serve them, see [
 
 ## Example: banner on one Static Page
 
-1. Merchant creates a Dynamic page on **Marketing → Pages** → opens the Page Builder.
+1. Merchant creates a Dynamic page on **Design → Static pages** → opens the Page Builder.
 2. Drags a row → drags a `banner` block onto the row.
 3. Configures the banner with custom images + links in the settings panel.
 4. `autoSave` fires; the history sidebar updates with a new snapshot; the preview URL refreshes.
@@ -111,5 +109,4 @@ For the full catalogue of block types and which form templates serve them, see [
 
 ## Open Questions
 
-- Exact `PageHistory` retention behaviour at the 500th snapshot — confirmed cap but the precise delete order is unconfirmed. (verify)
 - Whether `autoSave` debounces rapid edits or really creates one row per keystroke. (verify)

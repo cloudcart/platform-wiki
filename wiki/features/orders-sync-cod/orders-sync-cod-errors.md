@@ -7,8 +7,8 @@ aliases: ["COD sync errors", "COD sync error categorisation", "COD sync error bu
 tags: [orders, cod, sync, errors, courier-integration]
 plan_gates: ["shipping_payment_sync"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # COD sync — errors
 
@@ -52,9 +52,9 @@ The job sorts each courier error message fragment into one of four buckets:
 - `temporarily unavailable`
 - `failed to load external entity`
 
-### Quota-burn protection — counter jumped to 15
+### Permanent errors — counter jumped to 15
 
-When an exception's message contains `is not authorized to access`, `There is not enough quantity for`, or `Няма достатъчно количество за`, the order's `sync_payment` counter is jumped straight to **15** — effectively banning the order from future sync attempts. This protects the merchant's quota from being burned on permanent configuration problems. See [[orders-sync-cod-eligibility]] for the 15-attempt cap mechanics and [[orders-sync-cod-quota]] for why quota matters.
+When an exception's message contains `is not authorized to access`, `There is not enough quantity for`, or `Няма достатъчно количество за`, the order's `sync_payment` counter is jumped straight to **15** — effectively banning the order from future sync attempts. This stops pointless polling on permanent configuration problems; failed attempts never use quota, which counts only orders marked paid. See [[orders-sync-cod-eligibility]] for the 15-attempt cap and [[orders-sync-cod-quota]] for the quota.
 
 ## Business rules
 
@@ -68,7 +68,7 @@ When an exception's message contains `is not authorized to access`, `There is no
 - [[orders-sync-cod]] — hub.
 - [[orders-sync-cod-log-view]] — where the verbatim error string is shown.
 - [[orders-sync-cod-eligibility]] — the 15-attempt cap that error categorisation feeds.
-- [[orders-sync-cod-quota]] — why protecting the attempt counter protects quota.
+- [[orders-sync-cod-quota]] — what counts against the quota.
 - [[apps]] / [[shipping]] — where courier credentials are fixed when auth errors appear.
 
 ## Open questions

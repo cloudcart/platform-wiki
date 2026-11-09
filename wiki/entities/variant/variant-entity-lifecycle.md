@@ -4,8 +4,8 @@ nav_path: "Entity → Variant → Lifecycle"
 aliases: ["Variant lifecycle", "Variant states", "Variant creation", "Variant deletion", "Variant hide / show", "No per-Variant active flag"]
 tags: [entity, catalog, variants, lifecycle]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[variant]]. See the hub for the other aspects (attributes, relationships, business rules, side effects and API).
@@ -45,11 +45,20 @@ The six states a Variant can occupy:
 
 ## How a Variant gets deleted
 
-- **Parameter Option removal** — when the merchant deletes a Parameter Option, every Variant referencing that option ID is hard-deleted. The Variant's child tables (`ImageVariant`, external-meta-data rows) are removed first via the model's `deleting` hook — see [[variant-entity-business-rules]].
+- **Removed in the product editor** — removing a parameter row or a value, or switching to **Simple Product**, deletes the Variants that no longer exist on save. The Variant's images and external-meta-data rows go first — see [[variant-entity-business-rules]]. Deleting a Parameter or Option on the Variants screen is refused while any Variant uses it ([[products-variants-data-model]]).
 - **Product cascade-delete** — when the parent Product is hard-deleted, every Variant under it goes too.
 - **Direct delete via JSON-API v2** — possible; same cascade behaviour as Parameter Option removal.
 
 In all cases, **historical order line items survive**: the order's `variant_id` foreign key is set to NULL via `ON DELETE SET NULL`, and the order retains the snapshotted SKU + label text so the order remains readable. See [[variant-entity-business-rules]].
+
+## Switching between Simple Product and Product with variants
+
+The toggle is in the editor's **Product type settings** card ([[products-variants-matrix]]):
+
+- **To Simple Product**: when the first Variant carries values, *"Set Product to Simple"* asks first. Accepting keeps only the first Variant with its **price, SKU, barcode and quantity**, drops its values and the product's parameters, and clears its unit text; the other Variants are deleted on save.
+- **To Product with variants**: the existing Variant keeps price, SKU and quantity; its minimum order quantity is reset to 1.
+
+**Repairing a simple product whose single Variant still carries values** (e.g. created through an integration): open it in the editor and click **Simple Product** even though it is already selected. The confirmation appears; accept and save. A plain save keeps the stray values (verify). Whether **Duplicate** copies them, and how the storefront page behaves meanwhile, is not confirmed (verify).
 
 ## No per-Variant `active` flag — the hide workarounds
 

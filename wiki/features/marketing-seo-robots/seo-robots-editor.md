@@ -7,8 +7,8 @@ aliases: ["Robots.txt editor", "Robots.txt card", "Robots.txt textarea", "Robots
 tags: [marketing, seo, robots, editor, permissions]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[marketing-seo-robots]]. See the hub for the other aspects (the served file, the trial-store block).
@@ -19,7 +19,7 @@ source_count: 4
 
 The editor card is the merchant-facing half of the robots.txt feature: a single textarea where the merchant types the body of `/robots.txt`, plus a deliberate friction layer — a confirmation modal — between clicking Save and the change actually being persisted. The friction exists because a single bad line (`Disallow: /`) can drop the entire catalog out of Google within days. This page documents the UI, the save flow, and the permission gate. What the storefront ultimately serves (the appended safety block, the platform default) is a separate concern — see [[seo-robots-served-file]].
 
-The card edits **only the merchant-supplied portion** of the file. It never shows, and the merchant can never edit, the fixed Disallow / `Crawl-Delay: 3` block the storefront appends to every response.
+The card edits **only the merchant-supplied portion** of the file. It never shows, and the merchant can never edit, the fixed block the storefront appends to every response; but until the merchant saves their own text it is pre-filled with the platform default, which already contains the same Disallow / `Crawl-Delay: 3` lines.
 
 ## Where to find it
 

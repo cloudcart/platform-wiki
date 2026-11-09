@@ -7,8 +7,8 @@ aliases: ["N18 Audit Settings", "Naredba N-18 settings", "NAP fiscal config"]
 tags: [apps, administration, n18-audit, fiscal, compliance, bulgaria, settings]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-28
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # N18 Audit → Settings
 
@@ -24,27 +24,19 @@ Sidebar → Apps → N18 Audit → **Settings tab**. Route: `/admin/apps/n18_aud
 
 ## What the merchant can do here
 
-### Fiscal device credentials
+The **Settings** tab has two boxes (English labels as in the admin's code; the Bulgarian ones come from the admin's translations and are not quoted here):
 
-| Field | Notes |
+| Box / field | What it does |
 |---|---|
-| **NAP fiscal device ID** | The merchant's registered fiscal device identifier (legal requirement). |
-| **Operator credentials** | Authentication for NAP API. |
-| **Tax representative ID** | When the merchant has a tax representative (счетоводител), their ID. |
-
-### Reporting configuration
-
-| Setting | Notes |
-|---|---|
-| **Real-time NAP reporting** | Toggle: report each sale to NAP immediately (recommended). |
-| **Batch fallback** | When real-time fails, queue for batch retry. |
-| **Receipt QR code** | Include NAP-verifiable QR on customer receipts (Bulgarian legal requirement after specific dates). |
-| **Language** | Receipt language (BG / EN). |
+| **N18 audit settings** → **Internet address of the store according to what you submitted to the NRA** | The `domain_name` of the file. Defaults to the store's primary address. |
+| **N18 audit settings** → **UIN** | The NAP-issued e-shop number (`e_shop_n`). Required. |
+| **N18 audit settings** → **How to return the amount** | **By bank** / **By credit/debit card** / **Cash** / **Other**: the `r_paym` written on every reversal. |
+| **Terminal ID** | One field per active payment provider whose NAP type (`n18_type`) is 2 or 4, labelled with the provider's name. A type-2 provider whose own settings hold a terminal ID shows it pre-filled and locked. The value feeds `pos_n` and `proc_id` (see below). |
 
 ### What the merchant CANNOT do here
-- Bypass NAP reporting (legal requirement for Bulgarian e-commerce).
-- Edit historical NAP reports — immutable audit per Bulgarian tax law.
-- Use without N-18 compliance setup (fiscal device registration with NAP).
+- Choose a payment provider's NAP payment type: `n18_type` is set by CloudCart on each provider and is not editable.
+- Submit the file to NAP, or report in real time: the app only builds monthly XML files.
+- Get the file in another format: it is XML only (Windows-1251), with no PDF or table view.
 
 ## Settings & fields
 
@@ -52,24 +44,24 @@ Per [[apps-n18-audit]]: app key is `n18_audit`.
 
 ## Business rules
 
-### Bulgarian legal mandatory
+### Who can open the files
 
-For Bulgarian-operating merchants selling B2C goods/services online, N-18 compliance is required by law. Without this app active (or equivalent), the merchant is non-compliant.
+Anyone with the admin's **apps** permission can open the app, its settings and its file list, so an accountant can be given a staff account with that permission ([[settings-staff]]); otherwise the merchant downloads the XML and passes it on.
 
-### Real-time reporting recommended
+### Through the Admin GraphQL API
 
-NAP requires reporting within minutes of sale. Real-time is the safest setting; batch fallback exists for network resilience.
+An agent can list, download, create and delete audit files (`n18AuditFiles`, `n18AuditFileDownload`, `createN18AuditFile`, `deleteN18AuditFile`). The settings cannot be read there: the shared app-settings query answers *"Administration app not found: n18_audit"*. The UIN, the return method and the Terminal ID values are seen only on this tab.
 
-### Combined with FGO
+### No fiscal-device settings
 
-Most merchants run [[apps-fgo]] + N18 Audit together:
-- FGO handles formal invoice numbering.
-- N18 Audit handles NAP real-time fiscal reporting.
+There are no fiscal-device, operator or real-time reporting fields. Each sale's document number comes from the store's invoicing — see [[apps-n18-audit]].
 
-Both required for full compliance.
+### Where `pos_n`, `trans_n` and `proc_id` come from
 
-### Permission
-Standard apps permission scope.
+- **`pos_n`** (every sale except a wallet-only one): the terminal ID the gateway returned with the payment, if any, otherwise the provider's **Terminal ID** box.
+- **`trans_n`**: CloudCart's own payment number, not the gateway's transaction ID.
+- **`proc_id`**: an older separate type-4 value when one is stored, otherwise the same **Terminal ID** box, so a type-4 provider normally gets the same value in `pos_n` and `proc_id`. That is how the code works, not a fault of one store.
+- Which `n18_type` each provider has (myPOS, CloudCart Pay, Stripe, Borica Way4, Paypercut, …) is held on CloudCart's provider records, not in the code (verify with CloudCart).
 
 ## Related
 
@@ -91,10 +83,8 @@ ONLY `uin` is required (and only when `active = 1`). Everything else is optional
 - `uin` — NAP-assigned unique e-shop number (required).
 - `domain` — defaults to the store's primary host URL. Placeholder hints `https://example.com`.
 - `return_pay_type` — dropdown: how to return the amount (1 = By bank / 2 = By credit/debit card / 3 = Cash / 4 = Other). Selected value goes into the refund entries of the generated XML.
-- `payment_two` / `payment_four` / `payment` — mapping of CloudCart payment providers to NAP payment-service-provider identifier types (based on each payment provider's `n18_type` value of 2 or 4). The Settings form auto-builds a *Terminal ID* box: one input per active payment provider whose `n18_type` is 2 or 4. If a provider already has a `terminalId` saved, the field is pre-filled and disabled.
-- `terminalId` — POS terminal IDs (for type-2 providers, populated from the provider config and not editable here).
-
-There are no "fiscal device credentials" or "operator credentials" in this integration — those belong to a separate fiscal-device hardware/POS system that the merchant uses outside CloudCart.
+- `payment` (with the older `payment_two` / `payment_four`) — the **Terminal ID** values per provider; see the table above.
+- **Where the payment type comes from.** A provider's `n18_type` (the NAP payment-type code its sales get in the XML) is part of CloudCart's catalogue entry for that provider, set when CloudCart adds the provider. No screen, here or in the provider's settings, changes it; for these providers the merchant only fills the Terminal ID box. The value for a given provider, e.g. CloudCart Pay, is not in the code (verify with CloudCart).
 
 ### Two-tab UI: Settings + List
 
@@ -102,19 +92,15 @@ The N18 Audit Settings view extends the standard app-settings layout with one ex
 
 ### Adaptive Terminal-ID box layout
 
-When there are 3 or fewer payment-provider mappings the Terminal-ID box renders as a `slide` panel inline with the main form. With 4+, it switches to a separate `panel` (full-width drawer). This auto-collapse keeps short stores readable and gives high-payment-count merchants room.
-
-### Settings shape vs the previous wiki description
-
-The earlier wording describing "operator credentials", "tax representative ID", "real-time NAP reporting toggle", "batch fallback", and "receipt QR code" does NOT correspond to fields the controller actually accepts. The N18 Audit settings are limited to UIN + domain + payment-provider mapping. The merchant configures fiscal-device + customer receipt behaviour separately (typically in a registered NAP fiscal-device system + their POS / receipt printer setup).
+With 3 or fewer providers the Terminal ID box opens as an inline slide panel; with 4 or more, as a separate full-width panel.
 
 ### NAP registration is prerequisite, not in-app
 
-The merchant must register their e-shop with NAP via Annex 33 BEFORE installing this app. NAP issues the UIN — there's no in-app NAP registration workflow.
+The merchant must register their e-shop with NAP via Annex 33 BEFORE installing this app. NAP issues the UIN — there's no in-app NAP registration workflow. For CloudCart Pay, the payment details Annex 33 asks for (provider, Merchant ID, virtual POS ID, receiving account) are on the **NRA declaration information** card ([[ccpay-onboarding-nra-declaration]]); for another provider they come from that provider.
 
 ### No sandbox / test mode
 
-The integration has no `environment` / `test_mode` toggle. The XML file is generated locally and downloaded; the merchant submits it to NAP manually. For testing, the merchant can generate XMLs for past periods without affecting their NAP record (the file submission is the regulatory action, not the XML generation).
+There is no test mode. Generating a file submits nothing to NAP (the merchant uploads it), so files for past periods can be generated freely to check them.
 
 ### Historical backfill IS supported
 

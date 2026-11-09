@@ -7,8 +7,8 @@ aliases: ["Order payment row", "Payment action row", "Change payment provider", 
 tags: [orders, order-details, payment, refund, capture, mark-paid, payment-log]
 plan_gates: ["authorize_payment"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 > Part of [[orders-details]]. See the hub for the other aspects (header, products, addresses, shipping, history, actions, known issues).
@@ -37,9 +37,9 @@ Main column of `/admin/orders/details/<order_id>`, below the products table, alo
 
 | Payment status | Primary action(s) |
 |---|---|
-| `authorized` (authorisation hold) | **Capture authorization** (formatted amount in label) + **Cancel authorization** — both only if the gateway supports `captureAuthorization`. Capture is hidden if `allow_capture_authorization` is not strictly `true`. Full flow: [[orders-payment-capture]]. |
+| `authorized` (authorisation hold) | **Capture authorization** (formatted amount in label) + **Cancel authorization** — both only if the gateway supports `captureAuthorization`. Capture hides unless `allow_capture_authorization` is `true`. Full flow: [[orders-payment-capture]]. |
 | `completed` (paid) | **Refund** (only if admin has `orders.refund` permission AND provider supports refund). On a **returnable** order this opens the return modal, not a plain refund — see Business rules and [[orders-details-returns]]; otherwise [[orders-payment-refund]]. |
-| `requested` / `pending` (offline) | **Mark as paid** (opens the offline-payment modal below). Full flow: [[orders-payment-mark-paid]]. |
+| `requested` / `pending` | Offline: **Mark as paid** (modal below; [[orders-payment-mark-paid]]). Online: **Synchronize** if supported (no Mark as paid). |
 | Other statuses | No primary action. |
 
 ### Cog dropdown — secondary actions by status
@@ -48,7 +48,7 @@ Main column of `/admin/orders/details/<order_id>`, below the products table, alo
 |---|---|
 | `authorized` | **Capture** + **Cancel authorization**. |
 | `completed` | **Refund** + **Sync** (only if provider supports `sync` — re-queries the gateway for the latest status). |
-| `requested` / `pending` | **Mark as paid** + **Lease** (only when payment is type=credit and provider is NOT `fusion_pay` / `klear` / `dsk_bnpl` / `fibank_bnpl` — re-sends the leasing email). |
+| `requested` / `pending` | Offline: **Mark as paid** + **Lease** (credit type only, not `fusion_pay` / `klear` / `dsk_bnpl` / `fibank_bnpl`; re-sends the leasing email). Online: **Sync** if supported. |
 | `cancelled` | **Sync** (only if provider supports sync). |
 | Other statuses | No secondary actions. |
 
@@ -70,7 +70,7 @@ When the gateway has rich `provider_data` (transactions, auth codes), a **Full L
 
 The single place to read the **full request/response history** the platform exchanged with the provider for one order — covers both **card-gateway exchanges** (authorize / capture / refund / sync / 3DS callbacks to the bank) and **BNPL request exchanges** (loan-application / status-poll / confirm / refund calls to the lender), in one unified timeline. To reach it: open the order, scroll to the **Payment** row, click **View more**, then **Full LOG**. Each entry shows **Date**, **Action**, **Sender**, **Receiver**, **REQUEST** body, **RESPONSE** body, separated by `=========================`.
 
-**Supported provider allowlist** — the Full LOG link is only rendered for these 14 provider keys (verified 2026-06-10): card gateways `borica_way4`, `raiffeisen`, `dsk_bank`, `nestpay`, `euplatesc`, `cardlink`, `cib_bank`, `btepos`, `icard`; BNPL providers `iute`, `payapp`, `dsk_bnpl`, `fibank_bnpl`, `plati_posle`. Other providers (Stripe, Braintree, EveryPay, Mokka, FusionPay / Klear, TBI Bank, SmartUcf, Mollie, PayPal, etc.) write to the same log but the **Full LOG** link is NOT surfaced — only CloudCart staff can read those entries directly.
+**Supported provider allowlist** — the Full LOG link renders only for these 17 provider keys (verified 2026-11-09): card gateways `borica_way4`, `raiffeisen`, `dsk_bank`, `nestpay`, `euplatesc`, `cardlink`, `cib_bank`, `btepos`, `icard`, `cloudcart_pay`, `revolut`, `simple_pay`; BNPL `iute`, `payapp`, `dsk_bnpl`, `fibank_bnpl`, `plati_posle`. Other providers (Fibank, myPOS, Stripe, Braintree, EveryPay, Mokka, Klear, TBI Bank, Mollie, PayPal, etc.) write to the same log, but no Full LOG link shows: only CloudCart staff read those entries.
 
 ## Settings & fields
 

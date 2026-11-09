@@ -4,11 +4,11 @@ nav_path: "Nitrogen → Storefronts → Create Storefront → Connect GitHub"
 route_name: nitrogen.storefront.create
 route_path: /admin/nitrogen/create
 aliases: ["Connect GitHub for Nitrogen", "Nitrogen GitHub App", "Nitrogen GitHub OAuth", "github=connected return signal"]
-tags: [nitrogen, storefronts, create, wizard, github, oauth, owner-only]
+tags: [nitrogen, storefronts, create, wizard, github, oauth, staff-permission]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Nitrogen → Create Storefront — GitHub connection
 
@@ -66,17 +66,17 @@ The integration uses the **CloudCart Nitrogen GitHub App** (installable per GitH
 
 If loading repositories later throws (typically because the App installation was revoked or the token expired), the wizard auto-disconnects, re-saves the storefront name in sessionStorage, and re-routes through `/admin/api/core/nitrogen/github/connect`. The merchant does not see a "GitHub broken" error — they see the re-authorisation page. The repository-load mechanics are detailed on [[nitrogen-create-storefront-repository]].
 
-### Owner-only
+### Who can connect
 
-GitHub connection is part of the owner-only Create wizard (the pillar's `isOwner` group). Moderators cannot reach it. See the hub [[nitrogen-create-storefront]] and [[nitrogen]] for the pillar-wide rule; there is no delegation row in [[settings-staff]].
+The GitHub connection sits under the **Nitrogen Storefronts** permission, like the rest of the Nitrogen area: the store owner always has it, and a moderator has it when it is ticked for them in [[settings-staff]]. There is no separate row for GitHub. See [[nitrogen]].
 
 ## Related
 
 - [[nitrogen-create-storefront]] — hub.
 - [[nitrogen-create-storefront-setup]] — the prior step that picks the GitHub method.
 - [[nitrogen-create-storefront-repository]] — the step reached after a successful connection.
-- [[nitrogen]] — pillar-wide owner-only rule.
-- [[settings-staff]] — staff roles (no delegation row for this owner-only wizard).
+- [[nitrogen]] — the Nitrogen Storefronts permission.
+- [[settings-staff]] — where a moderator is given the Nitrogen Storefronts permission.
 
 ## Open questions
 

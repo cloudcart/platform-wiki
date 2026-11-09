@@ -7,8 +7,8 @@ aliases: ["Pazaruvaj", "Пазарувай", "Pazaruvaj feed", "Pazaruvaj.com", 
 tags: [apps, exports, xml, feed, price-comparison, bulgaria, pazaruvaj]
 plan_gates: []
 created: 2026-06-11
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > One of the predefined sub-feeds of [[apps-xml-feed]] (the XML Feed app). See that hub for the shared activation / settings / status / public-URL mechanics common to all sub-feeds.
@@ -68,7 +68,7 @@ Not category mapping. The real causes are shared with every sub-feed: the produc
 When a Web Api Key is set, a **post-purchase script** sends the buyer's email and the purchased products to Pazaruvaj so it can request **store and product reviews**. The product IDs in that script must match the IDs in the feed. This is Pazaruvaj's "Trusted Shop" badge / review-collection mechanism.
 
 ### One item per variant
-The Pazaruvaj feed emits one `<item>` per **variant**, every variant including options not shown in listings, binding siblings with an item-group id. This needs the `variants.listing` plan feature, since its conversion id must match the feed id. The row name carries every option value, and the Status tab total counts products against the plan limit. See [[apps-xml-feed]].
+The Pazaruvaj feed emits one `<item>` per **variant**, every variant including options not shown in listings, binding siblings with an item-group id. This needs the `variants.listing` plan feature, since its conversion id must match the feed id; without it the feed sends one item per product (verify). No setting on the feed's screens changes this, and a parameter's "Show each variant as a separate product in the product listing" option does not narrow it. The row name carries every option value, and the Status tab total counts products against the plan limit. See [[apps-xml-feed]].
 
 ### Plan gating
 Sub-feeds are plan-gated **per consumer**: Pazaruvaj may be unlocked on a plan where another feed (e.g. Google AdWords) needs an upgrade — see [[apps-xml-feed]] and [[plan-gates]].

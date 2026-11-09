@@ -7,8 +7,8 @@ aliases: ["Econt COD", "Econt cash on delivery", "Econt insurance", "Econt decla
 tags: [apps, shipping, courier, bulgaria, econt, cod, insurance, declared-value, plan-gate]
 plan_gates: [SHIPPING_PAYMENT_SYNC]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[apps-econt]]. See the hub for the other aspects (Settings, addresses, shipments, waybill mapping, pallet, coverage / caches).
@@ -29,7 +29,7 @@ Sidebar → Apps → Econt → **Settings** tab → **Additional settings** → 
 - Bind an Econt CD agreement (`cd_agreement_num`) so Econt knows where to deposit COD takings.
 - Pick a payout method (Cash / Credit) — only when a `key_word` (Client number) is selected.
 - Enable a Declared Value flag and set the minimum amount over which it applies.
-- Enable `sync_payments` so that COD payments coming back from Econt automatically transition the order to "Paid" status (PAID PLAN-FEATURE GATED).
+- Enable `sync_payments` so that COD collected by Econt marks the payment completed and the order **Completed** (despite the label, never "Paid"; PAID PLAN-FEATURE GATED).
 - Enable Payment after receiving (`pay_after_accept`) OR Payment after testing (`pay_after_test`) — mutually exclusive.
 
 ## Settings & fields
@@ -43,7 +43,7 @@ Sidebar → Apps → Econt → **Settings** tab → **Additional settings** → 
 | **Payout method** (`payment_method`) | Select: Cash / Credit. Depends on `key_word` being set; help-text: *"this would be taken into account when the delivery is paid by the sender"*. |
 | **Declared Value** (`oc`) | Switch. |
 | **Declared Value over** (`oc_total`) | Currency; depends on `oc = 1`. The shipment's declared value flag is set only when the order total exceeds this threshold. |
-| **Automatically set order status to paid** (`sync_payments`) | Switch. **PAID PLAN-FEATURE GATED** (`SHIPPING_PAYMENT_SYNC`); shows a yellow alert if plan doesn't include it. When ON, COD payments coming back from Econt automatically transition the order to "Paid" status. |
+| **Automatically set order status to paid** (`sync_payments`) | Switch. **PAID PLAN-FEATURE GATED** (`SHIPPING_PAYMENT_SYNC`); shows a yellow alert if plan doesn't include it. When ON, collected COD sets the payment completed and the order straight to **Completed** ([[orders-sync-cod-status-flip]]). |
 | **Payment after receiving** (`pay_after_accept`) | Switch. Mutually exclusive with `pay_after_test`. |
 | **Payment after testing** (`pay_after_test`) | Switch. Mutually exclusive with `pay_after_accept`. |
 | **I have an "Online sales without cash register" agreement with Econt** (`department_agreement`) | Switch shown with the shipment-inventory (опис) feature (`packing_list`, on [[econt-settings-tab]]). Controls how a cart-wide discount appears in the опис — see Business rules. Enable **only** with a signed department contract. |
@@ -88,11 +88,11 @@ So insurance is per-shipment opt-in (per the order's settings), and Econt requir
 
 ### COD sync via separate flow
 
-When the customer pays cash on delivery, Econt reports the payment back to CloudCart via the [[orders-sync-cod]] flow (separate per-plan-quota'd subscription). The `sync_payments` switch on this page is what wires the incoming COD-paid event to an automatic order-status transition to "Paid".
+When the customer pays cash on delivery, Econt reports the payment back to CloudCart via the [[orders-sync-cod]] flow (separate per-plan-quota'd subscription). The `sync_payments` switch on this page is what turns the incoming COD-paid event into an automatic move to "Completed".
 
 ### `sync_payments` is plan-feature gated
 
-The `SHIPPING_PAYMENT_SYNC` plan feature key gates `sync_payments`. If the merchant's plan does NOT include this feature, the switch shows a yellow alert and the auto-paid behavior is not available. Merchants on plans without the feature still receive COD via Econt; they just have to mark the order Paid manually.
+The `SHIPPING_PAYMENT_SYNC` plan feature key gates `sync_payments`. If the merchant's plan does NOT include this feature, the switch shows a yellow alert and the auto-paid behavior is not available. Without the feature, the merchant marks COD orders paid manually.
 
 ### `pay_after_accept` and `pay_after_test` are mutually exclusive
 

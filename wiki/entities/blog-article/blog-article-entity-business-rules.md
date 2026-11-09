@@ -4,8 +4,8 @@ nav_path: "Entity → Blog Article → Business rules"
 aliases: ["Blog Article business rules", "Article slug uniqueness", "Article required category", "Article title length", "Article permission", "Article plan limit", "Article author", "Article SEO fallback", "Article comment moderation"]
 tags: [entity, blog, marketing, content, business-rules, validation, permissions]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[blog-article]]. See the hub for the other aspects (data model, lifecycle, storefront & modules, programmatic access).
@@ -28,7 +28,7 @@ The rules below behave as constraints (block save) or fallbacks (fill a default)
 
 ### Slug uniqueness
 
-Article slugs must be unique within the store. The platform blocks save on duplicate slug with a validation error. If the merchant renames a slug, the platform creates an SEO redirect from the old slug so external bookmarks and emails continue to work. See [[seo-redirect]].
+Article slugs must be unique within the store. The platform blocks save on duplicate slug with a validation error. If the merchant renames a slug, the old slug is kept in a hidden 30-day history, not as a redirect rule; for links that must keep working longer, add a rule on the 301 Redirects screen. See [[seo-redirect]].
 
 ### Required category at publish
 

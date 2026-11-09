@@ -5,8 +5,8 @@ aliases: ["Theme customization cascade", "CSS specificity cascade", "Render orde
 tags: [design, theme, customization, css, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[theme-customization-layers]]. See the hub for the other aspects (themes, editor, custom assets, plan gating, overlay).
@@ -106,7 +106,7 @@ Custom CSS/JS is rendered AFTER `theme.css` in the `<head>`. So a `.btn-primary 
 ### Example: Theme switch and back
 
 1. Merchant on Theme A has 47 customised colours in the Theme Editor + 50 lines of Custom CSS/JS.
-2. Merchant switches to Theme B. The storefront immediately shows Theme B with its own defaults (no Theme A variables visible, no Theme A custom CSS visible).
+2. Merchant switches to Theme B. The storefront shows Theme B (guests once their cached copy expires) with its own defaults (no Theme A variables visible, no Theme A custom CSS visible).
 3. Merchant tries Theme B for a week, customises a few colours under Theme B.
 4. Merchant switches back to Theme A. Theme A's 47 customised colours + 50 lines of Custom CSS/JS are restored. Theme B's saved colours are still in the DB but invisible.
 5. To combine: the merchant copies Theme A's Custom CSS/JS, switches to Theme B, pastes those lines into Theme B's Custom CSS/JS editor.

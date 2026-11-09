@@ -7,8 +7,8 @@ aliases: ["Econt Settings", "Econt configuration", "Настройки Екон�
 tags: [apps, shipping, courier, bulgaria, omniship, econt, settings]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[apps-econt]]. See the hub for the other aspects (addresses, shipments, waybill mapping, pallet, COD / insurance, coverage / caches).
@@ -49,7 +49,7 @@ Route: `apps.econt.settings` at `/admin/shipping/econt/settings`.
 
 ### 3. Sender data box ("pickup") — DISABLED FOR ECONT (does NOT appear on this tab)
 
-> ⚠️ **Econt-specific (verified 2026-06-10):** unlike every other courier, **Econt does NOT render the Sender-data / pickup box on its Settings tab** — no "Данни на подателя / Начин на вземане (от адрес / от офис)" block here. **For Econt the sender pickup address is set ONLY in the [[econt-addresses-tab|Addresses tab]]** (its editor carries the `office`/`address` pickup radio per saved address). Do NOT tell a merchant to set the sender in a Settings "Данни на подателя" block — it isn't there for Econt. (DPD Bulgaria, Speedy, Fan Courier, GLS, etc. DO show this box.)
+> ⚠️ Unlike other couriers, Econt shows **no** "Данни на подателя / Начин на вземане" block here. The sender pickup is set **only** in the [[econt-addresses-tab|Addresses tab]].
 
 ### 4. Services box (Allowed methods)
 - Multi-select tags input (`settings.allowed_methods`), populated from Econt's service-tier list.
@@ -59,7 +59,7 @@ Route: `apps.econt.settings` at `/admin/shipping/econt/settings`.
   - **Top toggle** — `to_{channel}` ON/OFF. Mutex guard: turning a channel OFF while no others are active flips another ON automatically (at least one always active).
   - **Delivery Price Calculation for {channel}** select — required; **five** options (Econt has **no** `calculator_fixed` / handling-fee option, unlike most other couriers):
     - `calculator` — Econt real-time calculator (no extra field).
-    - `free` — calculator + free shipping ("Minimum Order Value for Free Delivery" Currency input).
+    - `free` — calculator + free shipping: free when the cart total before shipping (subtotal minus discounts, plus taxes counted before shipping) is **at or above** "Minimum Order Value for Free Delivery"; an empty value makes it always free.
     - `fixed_price` — fixed per cart subtotal tier.
     - `fixed_weight` — fixed per weight tier.
     - `price_and_weight` — combined cart total + weight matrix.
@@ -81,7 +81,7 @@ Route: `apps.econt.settings` at `/admin/shipping/econt/settings`.
 - **Send package dimensions** (`send_dimensions`) — switch.
 - **Default width / depth / height for one item** — cm; only when `send_dimensions = 1`.
 - **Offices from countries** (`officesCountries`) — multi-select; only when `to_office = 1`. Required.
-- **Choose a content description** (`order_content`) — a dropdown with three options: **Product name** (`name`), **Product SKU** (`sku`), **Product barcode** (`barcode`). It sets the **product-description note (заб.)** on the waybill — **not** the main "съдържание" field, which shows the order number. This is shared OmniShip waybill behaviour (contents = order number, the product-note text, and the name-fallback when a product has no SKU / barcode) — the full rule is on **[[shipping-provider-mech-waybill]]**.
+- **Choose a content description** (`order_content`) — **Product name**, **Product SKU** or **Product barcode**. It sets the **product-description note (заб.)** on the waybill, **not** the main "съдържание" field (the order number). Rule: [[shipping-provider-mech-waybill]].
 - **Inventory Enable** (`packing_list`) — switch (submits a shipment опис).
 - **"Online sales without cash register" agreement with Econt** (`department_agreement`) — switch shown with `packing_list`; sets how a cart-wide discount appears in the опис (negative line vs proportional). Enable only with a signed department contract — see [[econt-cod-insurance]].
 - **I have an agreement with two tax groups** (`two_tax_groups`) — switch shown with `department_agreement` on, for an agreement with groups of 20% and 9%. See [[econt-cod-insurance]].
@@ -127,6 +127,7 @@ A sticky bottom bar with **Save changes** / **Discard** appears on any change �
 - **Credentials gate the form.** Until **Connect** validates against Econt, the form is locked.
 - **At least one channel always active.** Turning a channel OFF while no other is active flips another ON automatically.
 - **Sender data is in Addresses, not Settings.** See section 3 and [[econt-addresses-tab]] for the Econt pickup point.
+- **Rate tables (`fixed_price`, `fixed_weight`, `price_and_weight`).** Rows are per channel, both bounds inclusive, an empty upper bound open. With the category switch on, the cheapest row matching the cart and one of its products' categories wins; otherwise the cheapest general row. The two are not added up, and a category table with no matching row falls back to the general rows. When no row matches, that channel's Econt method is not offered for the cart (exact checkout message: verify).
 - **`dc` ↔ `dc_cp` and `pay_after_accept` ↔ `pay_after_test` are pairwise mutex.** Only one of each pair can be ON.
 - **`sync_payments` is plan-feature gated** (`SHIPPING_PAYMENT_SYNC`) — see [[econt-cod-insurance]] for COD rules and the 10000 BGN cap.
 

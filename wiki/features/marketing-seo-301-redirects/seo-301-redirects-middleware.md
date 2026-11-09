@@ -7,8 +7,8 @@ aliases: ["Redirect middleware", "has_301_redirects setting", "redirects301 cach
 tags: [marketing, seo, redirects, middleware, cache, performance]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-25
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[marketing-seo-301-redirects]]. See the hub for the other aspects (types, validation, CSV import, wildcards, marketing pass-through, auto-tracking).
@@ -63,7 +63,7 @@ The middleware sits in front of storefront requests. It SKIPS the redirect looku
    site.home, selection, site.showcase, site.vendors, site.vendor.view,
    site.tag, category.view, category.list, blog.list, blog.view,
    blog.article.view, page, site.preview.page, bundles.list.list,
-   bundles.list.category, product.view, contacts
+   bundles.list.category, product.view, products.list, contacts
    ```
    Other routes — checkout, account, search, etc. — never trigger a redirect lookup. This is by design: a 301 from `/checkout` makes no SEO sense.
 4. **The store has zero redirects** (`setting('has_301_redirects')` is `false`).

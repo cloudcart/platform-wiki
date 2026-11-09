@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Landing Pages → Plan gates"
+nav_path: "Design → Static pages → Plan gates"
 route_name: admin.pages.list
-route_path: /admin/marketing/pages
+route_path: /admin/design/pages
 aliases: ["Plan gates", "static_pages", "faq_page", "landing_page", "storefront_builder", "Page count cap", "Page count limit", "Лимит страници"]
 tags: [marketing, content, pages, plan-gates, billing]
 plan_gates: ["static_pages", "faq_page", "landing_page", "storefront_builder"]
 created: 2026-06-10
-updated: 2026-10-21
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-landing-pages]]. See the hub for the other aspects (list view, page types, editor, system slots, FAQ editor, builder rules).
@@ -17,22 +17,20 @@ source_count: 2
 
 ## Purpose
 
-Landing-page creation is gated by **four** plan-feature keys — one numeric cap on the total count, and three access gates per page type. This page documents the exact mapping per key, where the gate redirects when blocked, and how the "(N)" counter on **+ Add new page** is derived.
+Landing-page creation is gated by **four** plan-feature keys — one numeric cap on the total count, and three access gates per page type. This page documents the exact mapping per key, where the gate redirects when blocked, and how the remaining-pages count is derived.
 
 ## Where to find it
 
-The plan gates affect three surfaces:
+The pages list is at `/admin/design/pages` ([[landing-pages-list-view]]); it shows no remaining-pages counter (the retired list showed one as **+ Add new page (N)**). The plan gates act on two surfaces:
 
-- **+ Add new page** counter on [[landing-pages-list-view]] — shows `static_pages` remaining cap.
-- **Choose page type** modal on [[landing-pages-types]] — each card's clickability is gated by its corresponding plan-feature key.
+- **Choose page type** modal on [[landing-pages-types]] — shows every card on every plan; the plan features gate the screens the cards open.
 - The page builder itself — `storefront_builder` gates every builder action (opening, auto-save, block settings); separately, the **Video slider** and **Lookbook** blocks show a padlock in the palette and their settings are refused without their own plan feature.
 
 When blocked by any gate, the merchant is redirected to the per-feature upsell page at [[plan-features]].
 
 ## What the merchant can do here
 
-- See the remaining-pages allowance via the "(N)" counter on **+ Add new page**.
-- See which page-type cards are dimmed / hidden because of the access gates on the **Choose page type** modal.
+- Meet the access gates when a page-type card opens a screen the plan doesn't include (the modal itself hides or dims no card).
 - Click through to [[plan-features]] when over a cap or below a tier — that page shows the upgrade or feature-pack offer.
 - Extend the numeric `static_pages` cap via a feature pack (without a full plan upgrade) — see [[plan-vs-feature-pack]].
 - Extend the access gates (`landing_page`, `faq_page`, `storefront_builder`) only via a plan upgrade — they're not feature-pack extendable. (verify)
@@ -43,34 +41,34 @@ When blocked by any gate, the merchant is redirected to the per-feature upsell p
 
 | Mapping | Shape | What it controls |
 |---|---|---|
-| `static_pages` | Numeric | Total page count cap across all four types (regular / faq / landing / builder). The **+ Add new page (N)** counter shows remaining slots; hitting the cap blocks new pages until upgrade or delete. Extendable via feature pack. |
-| `landing_page` | Access | Lower plans cannot pick the **External page** (`landing`) type at all — `/admin/marketing/pages/add/landing` route is gated. Restricts the type-picker card. |
-| `faq_page` | Access | Lower plans cannot pick the **FAQ page** type at all — `/admin/marketing/pages/add/faq` route is gated. Restricts the type-picker card. |
+| `static_pages` | Numeric | Total page count cap across all four types (regular / faq / landing / builder). Hitting the cap blocks new pages until upgrade or delete. Extendable via feature pack. |
+| `landing_page` | Access | Lower plans cannot pick the **External page** (`landing`) type at all — `/admin/design/pages/add/landing` is gated; the type-picker card still shows. |
+| `faq_page` | Access | Lower plans cannot pick the **FAQ page** type at all — `/admin/design/pages/add/faq` is gated; the type-picker card still shows. |
 | `storefront_builder` | Access + callback | Gates the **Dynamic page** (builder) type at `/admin/marketing/pages/builder/*`. The access check is a callback for the whole builder; it does not restrict individual modules — only **Video slider** and **Lookbook** carry gates of their own, see [[landing-pages-builder-rules]]. |
 
-### The "(N)" counter mechanism
+### The remaining-pages count
 
-The header's "(N)" remaining-pages counter is fetched async via `data-box-ajax="{route('admin.common.remaining', 'page')}"`. The endpoint reads:
+The retired list fetched its "(N)" counter from the admin's remaining-items endpoint; the current list does not call it. The count is:
 
 ```
 remaining = plan_feature_cap[static_pages] - count(pages)
 ```
 
-Where the `count(pages)` includes ALL four types (regular + faq + landing + builder), and the cap comes from the plan's `static_pages` value plus any active feature packs. The counter may briefly show "(...)" until the AJAX resolves on first render — see [[landing-pages-list-view]].
+Where the `count(pages)` includes ALL four types (regular + faq + landing + builder), and the cap comes from the plan's `static_pages` value plus any active feature packs. The current list shows no counter — see [[landing-pages-list-view]].
 
 ## Business rules
 
 ### When over the `static_pages` cap
 
-The merchant is redirected to the per-feature upsell at [[plan-features]]. The numeric `static_pages` cap extends via packs — see [[plan-vs-feature-pack]]. Alternatives that don't require an upgrade: delete unused pages from [[landing-pages-list-view]] until the counter goes positive.
+The merchant is redirected to the per-feature upsell at [[plan-features]]. The numeric `static_pages` cap extends via packs — see [[plan-vs-feature-pack]]. Alternatives that don't require an upgrade: delete unused pages from [[landing-pages-list-view]] to free slots.
 
 ### When below the access tier for a specific page type
 
 The merchant is redirected to the per-feature upsell at [[plan-features]]. The per-type access gates (`landing_page`, `faq_page`, `storefront_builder`) require a plan upgrade — feature packs do NOT lift them. (verify)
 
-### Plan-feature gating runs BOTH client-side (card hidden) AND server-side (route blocked)
+### Plan-feature gating sits on the destination, not the card
 
-The merchant typically sees the gated type card visually disabled on the **Choose page type** modal — that's the client-side hint. The authoritative check is server-side: if a merchant hand-edits the URL to `/admin/marketing/pages/add/faq` on a plan that doesn't include `faq_page`, the route still redirects to the upsell. The same is true for `landing` and the builder.
+The **Choose page type** modal shows every card on every plan. The check is tied to the destination address: opening `/admin/design/pages/add/faq` on a plan without `faq_page` is restricted server-side, and the same holds for `landing` and the builder. How the gate applies when the admin app switches to the form without a full page load is not confirmed (verify).
 
 ### Two builder modules have gates of their own
 
@@ -78,7 +76,7 @@ Even when the merchant's plan includes `storefront_builder`, two modules are gat
 
 ### Bulk Delete frees `static_pages` slots immediately
 
-Deleting pages from [[landing-pages-list-view]] (single or bulk) immediately re-counts and the "(N)" counter updates on the next AJAX poll. No nightly recount or cache-flush delay.
+Deleting pages from [[landing-pages-list-view]] (single or bulk) frees the slots at once; the count is taken live. No nightly recount or cache-flush delay.
 
 ### Bulk Duplicate consumes `static_pages` slots
 
@@ -87,8 +85,8 @@ Each copy made via the bulk Copy action is a new page counted against `static_pa
 ## Related
 
 - [[marketing-landing-pages]] — hub.
-- [[landing-pages-list-view]] — the "(N)" counter on **+ Add new page**.
-- [[landing-pages-types]] — the four type cards gated by these features.
+- [[landing-pages-list-view]] — the pages list (no counter).
+- [[landing-pages-types]] — the type cards whose destinations these features gate.
 - [[landing-pages-builder-rules]] — the builder's own rules, including the two separately gated modules.
 - [[plan-features]] — the per-feature upsell page the merchant is redirected to.
 - [[plan-gates]] — the platform-wide plan-gate catalogue.

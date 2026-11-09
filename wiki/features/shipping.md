@@ -7,8 +7,8 @@ aliases: ["Shipping", "Couriers", "Courier integrations", "Shipping providers", 
 tags: [shipping, couriers, providers, directory, hub]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # Shipping — courier integrations directory
 
@@ -38,7 +38,7 @@ This is a directory — it has no settings of its own. All shipping configuratio
 - [[apps-dpdbulgaria-speedy]] — DPD Bulgaria (Geopost network).
 - [[apps-pigeonexpress]] — Pigeon Express (address / office / locker).
 - [[apps-nextlevel]] — Next Level Delivery (address / office / locker, COD + insurance).
-- [[apps-dpdbulgaria-speedy|Speedy]] — Speedy — **discontinued by CloudCart support** (existing merchants only; new stores → DPD Bulgaria).
+- [[apps-dpdbulgaria-speedy-credentials|Speedy]] — the old Speedy app (v1) — **discontinued**: at checkout it shows nothing and switches itself off (→ DPD Bulgaria, "Speedy v2").
 - [[apps-rapido]] — Rapido — **discontinued** (→ DPD Bulgaria).
 
 ### Romania
@@ -91,7 +91,7 @@ This is a directory — it has no settings of its own. All shipping configuratio
 ## Business rules
 
 - **Shared engine.** Most couriers extend the OmniShip framework, so their Settings layout, the three delivery channels, the five pricing models (`calculator`, `calculator_fixed`, `free`, `fixed_price`, `price_and_weight`), and geo-zone gating are common — only credentials and per-courier service lists differ. [[apps-econt]] is bespoke and the most feature-rich.
-- **Deprecations are business-level, not code-level.** Speedy and Rapido still have working code for existing merchants, but new integrations should use [[apps-dpdbulgaria-speedy]].
+- **Deprecations.** The old Speedy app is switched off in the code, existing stores included; Rapido still has working code. New integrations should use [[apps-dpdbulgaria-speedy]].
 - **Aggregators expose sub-couriers.** [[apps-eushipment]] and [[apps-sendcloud]] each surface multiple downstream couriers under one app.
 - **Configuration is per store** on [[settings-shipping]]; this directory never holds settings.
 - **Wallet payments change COD and the payer.** Any wallet amount lowers the COD amount and makes the sender pay shipping, on every courier. See [[virtual-wallet-shipping-cod]].

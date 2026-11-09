@@ -7,8 +7,8 @@ aliases: ["Variant types", "Variant display types", "Variant visualisation types
 tags: [products, variants, option-types, validation, storefront-rendering]
 plan_gates: ["multi_variants"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Variants — the 6 option types
@@ -17,9 +17,9 @@ source_count: 4
 
 ## Purpose
 
-Canonical reference for the **6 variant parameter types** CloudCart supports. Picking the type does **three things at once**: it decides what the customer sees on the storefront picker, what fields the per-Value form shows, and the validation on those fields (e.g., `numeric_alpha` rejects pure-digit or pure-letter Value names). The full per-type breakdown is in the reference table below.
+Canonical reference for the **6 variant parameter types** CloudCart supports. The type decides the storefront picker, the fields of the per-Value form, and their validation (e.g., `numeric_alpha` rejects pure-digit or pure-letter Value names).
 
-Type is chosen ONCE when the Parameter is created in the wizard ([[products-variants-wizard]]) and is **locked after creation** — see Business rules. The merchant cannot switch a "Color sample" Parameter to "Radio button" later without recreating it.
+Type is chosen ONCE in the wizard ([[products-variants-wizard]]) and is **locked after creation** — see Business rules.
 
 ## Where to find it
 
@@ -37,11 +37,11 @@ The type radio sits on **Products → Variants → + Add variant → Step 1 → 
 
 Each row lists the type key (chosen once in Step 1), the per-Value form fields, the storefront picker the customer sees, and the best use case.
 
-| # | Type label (BG / EN) | Type key | Admin Value form fields | Storefront picker | Best use case |
+| # | Type label (BG (verify) / EN) | Type key | Admin Value form fields | Storefront picker | Best use case |
 |---|---|---|---|---|---|
 | 1 | **Селект меню** / **Select option** | `select` | Name only (max 150 chars) | Dropdown; customer picks one | Many values (10+) — country, language, voltage |
 | 2 | **Радио бутони** / **Radio button** | `radio` | Name only (max 150 chars) | Row of radio buttons, all visible; one click | 2–5 options shown all at once |
-| 3 | **Снимки** / **Image sample** | `image` | Name + **Image upload per Value** (jpg / jpeg / png / bmp / webp; counts against the store's [[settings-files|storage quota]]). On edit, a **Delete image** link appears | Row of clickable image tiles; Values with no image show just the name | Patterns, fabrics, designs, prints |
+| 3 | **Снимки** / **Image sample** | `image` | Name + **Image upload per Value** (jpg / jpeg / jpe / gif / png / svg / webp, up to 30 MB; counts against the [[settings-files|storage quota]]). On edit, a **Delete image** link appears | Row of clickable image tiles; a Value with no image gets the store's no-image placeholder | Patterns, fabrics, designs, prints |
 | 4 | **Цветни мостри** / **Color sample** | `color` | Name + **Hex colour picker per Value** (default `#FFFFFF`, pattern `#?[a-f0-9]{3,6}`) | Row of clickable colour swatches filled with the Value's hex | Colour pickers (Red / Blue / Black) |
 | 5 | **2D схема** / **2D schema** | `2d` | Name + 2D coordinate data (X axis + Y axis) | 2D table — X axis as columns, Y axis as rows; each cell a clickable radio | Clothing measurements, anything 2-axis |
 | 6 | **Цифрово-буквена** / **Numeric alpha** | `numeric_alpha` | Name only — **must match `<digits><letters>` pattern** (e.g., `36A`, `40B`, `5XL`). Pure-digit (`36`) or pure-letter (`XL`) rejected at save with *"Размерът трябва да съдържа цифра и буква"* | 2D table identical to `2d`; each cell is one concatenated size (cell X=`A`, Y=`36` submits `36A`) | Sizes with width-and-length axes (`36A`, `36B`, `40A`, `40B`); enables the smart numeric-then-alpha sort |
@@ -52,7 +52,7 @@ Both the per-Value form (**+ Add variant value** on the [[products-variants-valu
 
 ### Type is locked once products use the Parameter
 
-The Parameter's type cannot be changed after any Variant references it. The Edit modal ([[products-variants-wizard]]) still shows the Type radio, but the change is rejected on save. To switch types, the merchant must delete the Parameter and recreate it — which is blocked while products still use it (see [[variants-parameter]]). In practice: **pick the type carefully on first creation**. Switching from `select` to `color` on a Parameter attached to 50 products is a multi-hour migration (recreate Parameter → re-add Values → re-edit every product → delete the old one).
+The Parameter's type cannot be changed after any Variant references it. The Edit modal ([[products-variants-wizard]]) still shows the Type radio, but the change is rejected on save. To switch types, the merchant must delete the Parameter and recreate it — which is blocked while products still use it (see [[variants-parameter]]). So **pick the type carefully on first creation**: switching later means recreating the Parameter, its Values and every product's variants.
 
 ### Cross-Parameter limits on the same product
 
@@ -74,7 +74,7 @@ The hex picker emits `#`-prefixed values, but the validation pattern treats the 
 
 ### Image-sample storage quota
 
-Image uploads on Image-sample Value rows count against the store's overall [[settings-files|storage quota]]. A merchant near quota who tries to upload more sees a quota-exceeded error before the Value saves.
+An upload needs about twice the file's size free in the [[settings-files|storage quota]], otherwise *"You have reached your storage limit"*. The storefront shows the image as a 150 × 150 px thumbnail, resized automatically with its proportions kept, so no swatch size is set. Formats, size and messages: [[products-variants-values]].
 
 ### Type ≠ Variant image gallery
 

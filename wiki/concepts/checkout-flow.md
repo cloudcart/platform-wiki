@@ -7,8 +7,8 @@ aliases: ["Checkout flow", "Order placement flow", "Cart to order flow", "Custom
 tags: [orders, checkout, cart, concepts]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 
 # Checkout flow
@@ -25,10 +25,10 @@ The single most-important boundary: this concept covers everything **up to and i
 
 This concept is split into 8 aspect pages. The Assistant should drill into the aspect that matches the question, not read every page.
 
-- [[checkout-flow-cart-entity]] — Cart row creation, the `ccchc` cookie (24h), auto-touch on revisit, 7-day TTL + cleanup, **Merge cart on login** behaviour.
+- [[checkout-flow-cart-entity]] — Cart row creation, the guest cart's session, auto-touch on revisit, 7-day TTL + cleanup, **Merge cart on login** behaviour.
 - [[checkout-flow-abandoned-detection]] — `abandoned_remainder_interval` (60-min default), recovery email + Messenger, restore-link mechanics, the direct-resubmit edge case (`abandoned = 0`).
 - [[checkout-flow-submit-order-creation]] — the 8-step submit pipeline, `PreOrderCreated` guest-to-customer conversion, immutable `currency` / `locale` / `unit_system` snapshot, source attribution, customer's confirmation URL.
-- [[checkout-flow-guest-vs-registered]] — the behaviour matrix, **Customer accounts** (`registered` / `guests` / `both`), **Convert guests into members**, per-customer discount caps.
+- [[checkout-flow-guest-vs-registered]] — the behaviour matrix, **Customer accounts** (`member` / `guest` / `both`), **Convert guests into members**, per-customer discount caps.
 - [[checkout-flow-order-lifecycle-overview]] — initial `pending` / `not_fulfilled` state, positive flow + `order_complete` auto-promote, `authorized` step, seven negative-branch statuses, three payment-status lifecycle shapes.
 - [[checkout-flow-discounts-and-rules]] — discounts attach during cart, snapshot at submit, Cart Rules run AFTER discounts (post-discount price input), `discounts_used_statuses` counted-status setting.
 - [[checkout-flow-events-and-webhooks]] — `OrderCreated` chain, 4-stage `OrderStatusChange` / `PostOrderStatusChange` sequence, `order-events8` queue, per-status customer-email gating, `is_draft` early-return.

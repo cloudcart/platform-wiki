@@ -3,12 +3,12 @@ type: feature
 nav_path: "Apps → GDPR → Cookies → Behaviour matrix → Banner persistence"
 route_name: ""
 route_path: ""
-aliases: ["banner keeps coming back", "banner returns after reload", "банерът се връща", "лентата не изчезва", "partial consent banner stays", "cookie bar does not disappear", "toggle shows off after save", "cookie consent not saving", "consent lost after reload"]
+aliases: ["banner keeps coming back", "banner returns after reload", "банерът се връща", "лентата не изчезва", "partial consent banner stays", "cookie bar does not disappear", "toggle shows off after save", "cookie consent not saving", "consent lost after reload", "банерът за бисквитки се показва отново"]
 tags: [apps, gdpr, cookies, consent, troubleshooting, support]
 plan_gates: []
 created: 2026-08-08
-updated: 2026-08-08
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[apps-gdpr-cookies-behaviour-matrix]]. See the hub for the other aspects (configurations, visitor actions, theme limits).
@@ -17,15 +17,15 @@ source_count: 3
 
 ## Purpose
 
-The single most misreported cookie-consent behaviour, and how to diagnose it. **A partial consent saves correctly but does not dismiss the prompt** — which looks identical to "my consent isn't saving" unless you know what to check.
+How to diagnose *"the cookie banner keeps coming back"*. Since 06.11.2026 **any** answer — accept, save settings or reject — dismisses the bar or wall, so a prompt that returns after an answer has a specific cause, listed below.
 
 ## Where to find it
 
-On the storefront, after a visitor uses **Save preferences** with only some categories enabled.
+On the storefront, after a visitor has answered the prompt.
 
 ## What the merchant can do here
 
-Decide whether what they are seeing is the designed reminder behaviour or a genuine fault — the checks below separate the two in under a minute.
+Tell the expected cases apart from a genuine fault — the checks below take under a minute.
 
 ## Settings & fields
 
@@ -33,57 +33,46 @@ No settings. The behaviour follows from the configuration on [[gdpr-consent-conf
 
 ## Business rules
 
-### 🔴 The bar keeps showing until the visitor accepts EVERYTHING — by design
-
-If a visitor enables only some categories and presses **Save preferences**, the choice **is stored and honoured** — but the bar reappears on the next page load, and keeps reappearing until every offered category is accepted.
-
-This is intentional: the bar doubles as a **standing reminder that categories remain unaccepted**. It is *not* evidence that the consent failed to save.
-
 ### The outcome table
 
-| Visitor choice | Consent stored? | Choice honoured on re-open? | Bar on next load |
-|---|---|---|---|
-| Accept all | yes | yes | **gone** |
-| Save preferences, **some** categories on | **yes** | **yes — the toggles show what was chosen** | **still shows** ← by design |
-| Save preferences, **all optional off** | **yes** — every category is recorded, each as rejected | **yes** | still shows ← by design |
-| Close with × | **no** | — | shows again on the next page |
-| Nothing | no | — | keeps showing |
+| Visitor action | Answer stored? | Bar / wall on the next page |
+|---|---|---|
+| Accept Cookies | yes, every group accepted | gone |
+| Save settings, any switches | yes, as the switches show | gone |
+| Reject Cookies | yes, optional groups refused | gone |
+| × on the bar | no | shows again |
+| Nothing | no | keeps showing |
 
-So *"the banner came back"* proves nothing on its own. The question is **"were all categories accepted?"** — if not, the bar is supposed to return.
+Before 06.11.2026 the bar kept showing until every group was accepted. A complaint or an internal note from before that date may describe that old rule.
 
-### Verifying a partial consent really saved
+### Why it can still come back
 
-Two checks, in this order:
+- **× instead of a button** — nothing was stored ([[gdpr-consent-actions]]).
+- **The store switched on a group after the answer** (for example the Google Consent Mode group). The stored answer does not name it, so every visitor is asked again.
+- **The answer expired** — 180 days — or the visitor cleared cookies, browses privately, or blocks cookies.
+- **Another host name.** The answer is kept for the host it was given on, so `www.` and the bare domain, or a second domain of the store, each ask separately.
 
-1. **Re-open the prompt** (the cookie-settings link). The toggles should show exactly what the visitor chose. If they do, the consent is stored and working — and the complaint is really the by-design rule above.
-2. Only if the toggles come back wrong, inspect the stored consent value — see [[apps-gdpr-cookies-consent-state]] for its name and format.
+### Verifying an answer was saved
 
-A bar that returns **while the toggles still show the visitor's choice** is correct, documented behaviour.
+Re-open the settings (a `#cookie-settings` link, see [[apps-gdpr-cookies-bar-wall]]). The switches show the stored answer. Only if they come back wrong after an explicit save, inspect the stored value ([[apps-gdpr-cookies-consent-state]]).
 
-### A toggle that starts off is usually a merchant setting, not a lost value
+### A switch that starts off is usually a merchant setting
 
-On a visitor's **first** open, each toggle starts at its group's `default` ([[apps-gdpr-cookies-groups]]). A store whose optional groups are set to *disabled by default* shows them **off** on first open — that is the configured opt-in posture, not a discarded selection.
-
-Distinguish the two cases before escalating:
-
-- **Off on the FIRST open, before any choice** → the group's `default` is off. Expected.
-- **Off on a LATER open, after the visitor turned it on and saved** → potentially a real defect — but check [[gdpr-consent-theme-limits]] first, because the dialog's toggle state is rendered by the theme, not the platform.
+Before any answer, each switch starts at its group's **Default state** ([[apps-gdpr-cookies-groups]]). A store whose optional groups are off by default shows them off on the first open: a configured opt-in posture, not a lost value. That setting does not change what the tracking apps do before an answer ([[apps-gdpr-overview-script-gating]]).
 
 ## Support playbook — "the cookie banner keeps coming back"
 
-Work through these in order; the first three cover almost every report:
-
-1. **Were all categories accepted?** If not, the bar is *supposed* to return. Stop here and explain it.
-2. **Was × used instead of a button?** Then nothing was stored — the bar returns by design ([[gdpr-consent-actions]]).
-3. **Re-open the prompt: do the toggles show the visitor's choice?** If yes, the consent is saving correctly and the complaint is really rule 1.
-4. **Is it the visitor's FIRST open?** Then the toggles show each group's `default` — configuration, not lost data.
-5. Only if the toggles come back wrong **after an explicit save** is this a candidate defect. Before escalating, compare a second theme ([[gdpr-consent-theme-limits]]) and report the exact category, the browser, and whether the store uses the bar or the wall.
+1. **Did the visitor press a button, or the ×?** The × stores nothing.
+2. **Did the store switch on a group recently?** Everyone is asked once more.
+3. **Same host name?** `www.` and the bare domain ask separately.
+4. **Re-open the settings: do the switches show the visitor's choice?** If yes, the answer is stored; look at the browser (private mode, cookie blocking, cleared cookies).
+5. Only if the switches come back wrong **after an explicit save** is this a candidate defect. Report the browser, the host name, the store's bar or wall set-up and the exact steps.
 
 ## Related
 
 - [[apps-gdpr-cookies-behaviour-matrix]] — hub.
 - [[apps-gdpr-cookies-consent-state]] — the stored consent's name, format and lifetime.
-- [[apps-gdpr-cookies-groups]] — the per-group `default` that sets the opening toggle position.
+- [[apps-gdpr-cookies-groups]] — the per-group **Default state** that sets the opening switch position.
 - [[apps-gdpr-cookies-bar-wall]] — the bar / wall presentation the visitor is looking at.
 
 ## Open questions

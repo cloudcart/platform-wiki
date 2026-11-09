@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Dynamic Pages → Page-builder modules → Video"
+nav_path: "Design → Static pages → Dynamic page → Page-builder modules → Video"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["Video module", "Video embed block", "YouTube embed", "Vimeo embed", "Модул видео"]
 tags: [design, modules, page-builder, video, marketing]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Video block (`video`)

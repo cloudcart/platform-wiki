@@ -7,8 +7,8 @@ aliases: ["EIK auto-fill", "APIS Trade Register lookup", "Bulgarian company ID l
 tags: [billing, invoicing, eik, apis, bulgaria, validation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[billing-invoicing]]. See the hub for the other aspects (fields, VAT/VIES, country-driven form, save flow, Vue checkout editor).
@@ -85,6 +85,12 @@ The validator surfaces *"Invalid Company ID"* in two cases:
 - The BG Trade Register said the EIK does not exist (`Invalid` returned by APIS after a syntactically-valid number).
 
 The merchant cannot save the form until they fix the value.
+
+### Every lookup is live; a renamed company
+
+Nothing is cached: each time an EIK is entered, checked or saved, the platform asks the registry again, so re-entering an unchanged EIK fetches its current data. For a Bulgarian EIK the company name, VAT number and address are always the registry's. The form locks them, and saving with another country selected still looks the EIK up, takes the registry's data and sets the country back to Bulgaria. After a rename under the same EIK, the new name appears once the registry service returns it; until then the admin offers no way to type it in. How fast a Trade Register change reaches that service is the service's matter, outside CloudCart.
+
+The platform also has a staff-run refresh that re-reads the Bulgarian records of stores with CloudCart invoices and saves a new record when the registry data changed. It is not scheduled in the code (verify whether it runs). Issued invoices keep the name they were issued with ([[billing-invoicing-save-flow]]).
 
 ## Related
 

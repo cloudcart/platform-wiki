@@ -7,8 +7,8 @@ aliases: ["Geo Zones", "Geographic zones", "Shipping zones", "Tax zones", "Geo-�
 tags: [settings, geo, shipping, tax, zones]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 11
+updated: 2026-11-09
+source_count: 12
 ---
 # Geo Zones
 
@@ -24,7 +24,7 @@ A Google Maps API key on [[settings-cart]] unlocks the Google Places autocomplet
 
 Sidebar → Settings → **Geo Zones**.
 
-The page's breadcrumb reads "Settings → Geo Zones" (with active sub-action label appended on add / edit). The route is `/admin/settings/geo-zones` (list root) or `/add` / `/edit/:id`. The header icon is the globe-africa icon.
+The route is `/admin/settings/geo-zones` (`/add` and `/edit/:id` for the form).
 
 ## Sub-screens
 
@@ -43,9 +43,9 @@ Split into seven aspect pages — drill into the aspect that matches the questio
 - [[settings-geo-zones-post-codes]] — operation 11 syntax (exact / wildcard / range), GR space-stripping, range-numeric-only rule, `*` → `LIKE %` translation.
 - [[settings-geo-zones-google-maps]] — `google_map_api_key` gating: 3-of-11 operations without a key, Places autocomplete, per-country remapping (TR / CZ / GB / US-NY), Geonames region backfill.
 - [[settings-geo-zones-polygon-distance]] — operations 9 and 10: `ST_Contains` point-in-polygon and `ST_Distance_Sphere` spherical-distance.
-- [[settings-geo-zones-matching]] — runtime: MaxMind GeoIP pre-population, country + region requirement, per-consumer conflict rules, US ASCII city-match.
+- [[settings-geo-zones-matching]] — runtime: MaxMind GeoIP pre-population, which rules need a region, per-consumer conflict rules, US ASCII city-match.
 - [[settings-geo-zones-deletion-cascade]] — `ON DELETE SET NULL` on outbound FKs; `ON DELETE CASCADE` on polygon / distance → silent zone-rule removal; no FK-protection error.
-- [[settings-geo-zones-save-semantics]] — `name` max 191; `values` required; form fully replaces rules; IDs change between saves; cache invalidates; no queue / webhook / notification.
+- [[settings-geo-zones-save-semantics]] — `name` max 191; `values` required; form fully replaces rules; IDs change between saves; no zone cache; no queue / webhook / notification.
 
 ## What the merchant can do here
 
@@ -55,6 +55,8 @@ Split into seven aspect pages — drill into the aspect that matches the questio
 What the merchant CANNOT do here:
 
 - Define AND-combined rules within a single zone — use a multi-field operation (operation 5 already constrains country + region + city) or combine via the consumer side.
+- Pick a continent or world region — there is no such rule; add one **Includes** rule per country.
+- Get an "unknown country" message — the location is picked from the country list or a Google suggestion. A rule saved without one fails as a required field; a region rule without a region shows *"Моля, напишете област"* (its English text currently reads *"You don't have permissions to access this section"*).
 - Import zones via CSV / bulk upload.
 - Visually verify on a map — no overview map; only the per-rule Places autocomplete when Maps is configured.
 - Translate zone names per language — see [[settings-geo-zones-save-semantics]].
@@ -72,14 +74,14 @@ For the field-by-field catalogue, drill into the aspect pages. Top-level summary
 
 Each cross-cutting rule is documented on its own aspect page. Slim summary:
 
-- **Rules within a zone are OR-combined** — no AND at the zone level. See [[settings-geo-zones-operations]].
+- **Rules within a zone are OR-combined** — no AND at the zone level; several "except country" rules pool into one exclusion list. See [[settings-geo-zones-operations]].
 - **Without a Maps key, only 3 of 11 operations are available** (`1`, `4`, `11`); ops 2/3/5/6/7/8/9/10 are gated. See [[settings-geo-zones-google-maps]].
-- **Customer must have BOTH country AND region resolved for most rules to evaluate** — `scopeZone` falls through to "only unrestricted methods" otherwise. See [[settings-geo-zones-matching]].
+- **A country is enough for country and post-code rules**; region, city and neighbourhood rules also need the region. With no country, only items without a zone apply. See [[settings-geo-zones-matching]].
 - **Conflicting-zone resolution differs per consumer**: shipping offers ALL matches; tax picks the SINGLE most-recently-created VAT rule; discounts STACK. See [[settings-geo-zones-matching]].
 - **Delete CASCADES silently** — `ON DELETE SET NULL` on zone → consuming shipping / tax / discount (silently widens); `ON DELETE CASCADE` on polygon / distance → silent zone-rule removal. No FK-protection error. See [[settings-geo-zones-deletion-cascade]].
 - **Save fully replaces rules** — delete-then-create-all; rule IDs change between saves; concurrent saves last-write-wins. See [[settings-geo-zones-save-semantics]].
 - **City / neighborhood ops auto-backfill region via Geonames** — silent failure mode if Geonames returns nothing. See [[settings-geo-zones-save-semantics]].
-- **Saving flushes the geo-zone lookup cache** — next cart / checkout sees the new zones. No queue, no webhook, no notification.
+- **No zone cache** — the next cart / checkout reads the saved zones. No queue, no webhook, no notification.
 
 ### Permissions
 
@@ -87,7 +89,7 @@ Sits under the standard settings permission scope. The bulk-delete endpoint URL 
 
 ### Consumed across shipping, tax, and discounts
 
-Geo zones are referenced from shipping methods ([[shipping]]), tax rules ([[settings-taxes]]), discount targets ([[discount-stacking]]), the cart ([[settings-cart]]) for line-item zone display, and the order ([[order]]) for VAT-zone matching at checkout. Deleting or renaming a zone has downstream effects across these — see [[settings-geo-zones-deletion-cascade]].
+Geo zones are referenced from shipping methods ([[shipping]]), tax rules ([[settings-taxes]]), discount targets ([[discount-stacking]]), the cart ([[settings-cart]]) for line-item zone display, and the order ([[order]]) for VAT-zone matching at checkout. Payment methods take no zone. Deleting or renaming a zone has downstream effects across these — see [[settings-geo-zones-deletion-cascade]].
 
 ## Related
 

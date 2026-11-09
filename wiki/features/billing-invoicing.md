@@ -1,21 +1,21 @@
 ---
 type: feature
-nav_path: "Profile → Billing → Invoice details"
+nav_path: "User menu → Merchant profile → Invoice details"
 route_name: admin.billing.invoicing
-route_path: /admin/billing/invoicing
+route_path: /admin/merchant (Invoice details card); old admin form /admin/billing/invoicing
 aliases: ["Invoice details", "Invoicing details", "Billing invoice details", "Company details", "Данни за фактура", "Фирмени данни", "Фактурни данни"]
 tags: [billing, invoicing, company-details, vat, eik, vies, apis]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 # Invoice details (billing)
 
 ## Purpose
 
-The **Invoice details** screen is where the merchant enters the company information that CloudCart prints on **the invoices CloudCart issues to the merchant** for every charge (store plan renewals, paid apps, paid feature packs, paid services). This is the merchant's identity as CloudCart's *customer* — it controls how the merchant's name, company, VAT/EIK number, and billing address appear on the invoices CloudCart bills them with, and it drives VAT treatment (reverse-charge for EU B2B, BG-rate for Bulgarian merchants, no-VAT for outside-EU).
+The **Invoice details** screen is where the merchant enters the company information that CloudCart prints on **the invoices CloudCart issues to the merchant** for every charge (store plan renewals, paid apps, paid feature packs, paid services). This is the merchant's identity as CloudCart's *customer* — it sets the name, company, VAT/EIK number and address on those invoices, and drives VAT treatment (reverse-charge for EU B2B, BG-rate for Bulgarian merchants, no-VAT for outside-EU).
 
 This is **separate** from the store's own invoicing settings ([[settings-invoicing]]), which govern the invoices the merchant's storefront issues to *their* customers. Easy way to keep these straight:
 
@@ -24,15 +24,15 @@ This is **separate** from the store's own invoicing settings ([[settings-invoici
 
 ## Where to find it
 
-- **Profile dropdown** (top-right user-account menu) → **Billing** opens the billing landing area where the invoice-details block is shown.
-- From within that area, the **pencil icon** next to the invoice-details block opens the editor side panel. If no details exist yet, an **Add invoice details** button does the same.
-- The same panel is also opened automatically from the services-purchase flow when the merchant has no invoice details on file (see [[services]]).
+- **Owner's user menu → Merchant profile** (`/admin/merchant`, owner only): the **Invoice details** card under *Profile details*. The **pencil** (or **Add invoice details** when none exist) opens the form in place; **Confirm** saves it. This is where to send the merchant.
+- **Billing / Cards** (`/admin/details/billing`) has **no** invoice-details block: it is the payment history only ([[details-billing]]).
+- Every purchase panel (plan, app, service, domain) shows the same card ([[billing-invoicing-vue-checkout-editor]]).
 
-URL pattern: `/admin/billing/invoicing` (the editor side panel; the read-only summary lives at the billing landing area).
+`/admin/billing/invoicing` is the old admin's side-panel form, not a page to link.
 
 ## Sub-pages (in this cluster)
 
-This feature is split into 6 aspect pages, each covering one well-scoped slice. The Assistant should drill into the aspect that matches the question, not read every page.
+Aspect pages (read the one that matches the question):
 
 - [[billing-invoicing-fields-and-validation]] — every form field (Country, Company ID, VAT, Company, Address, MOL `name`, Email); the request validator required-validation rules; the four merchant-visible validation messages.
 - [[billing-invoicing-eik-apis-lookup]] — the BG branch: 9-digit / 13-digit EIK check-digit algorithm, EGN sole-trader path, APIS Trade Register call at `regdata.apis.bg`, Bulgarian-language address formatting.
@@ -48,9 +48,9 @@ This feature is split into 6 aspect pages, each covering one well-scoped slice. 
 - For **any other EU country**: enter the **VAT ID** (`<country-code><number>`, e.g. `DE123456789`). The system auto-fills the company name and address via EU VIES (see [[billing-invoicing-vat-vies-lookup]]).
 - For **non-EU countries** (and any case where the auto-fill fails): enter all fields manually.
 - Enter the **Materially Responsible Person** (MOL — typically the manager / director whose name is printed on the invoice).
-- Enter the **billing email** the invoice PDFs will be sent to (separate from the merchant's account email).
+- Enter the **billing email** that receives the invoices.
 
-What the merchant **cannot** do here: edit auto-filled fields in BG / EU-with-VIES mode (locked readonly), save invalid EIK / VAT IDs, or maintain multiple billing profiles (one record per merchant — see [[billing-invoicing-save-flow]]).
+What the merchant **cannot** do here: edit auto-filled fields in BG / EU-with-VIES mode (locked readonly), save invalid EIK / VAT IDs, or keep several billing profiles for one store (one current record per store — see [[billing-invoicing-save-flow]]).
 
 ## Settings & fields
 
@@ -68,8 +68,10 @@ The cluster's rules live on the aspect pages. The headline rules:
 - **GB uses HMRC, not VIES** — post-Brexit. UK merchants get the same auto-fill experience via a different upstream. See [[billing-invoicing-vat-vies-lookup]].
 - **VIES values overwrite typed values on save** for non-BG EU records — VIES is authoritative. Similarly, when country ≠ BG, the save runs a silent APIS enrichment that can overwrite the typed country code with the APIS-derived country. See [[billing-invoicing-save-flow]].
 - **Two save surfaces have different required-field rules.** The Smarty `/admin/billing/invoicing` route marks `company_id` + `name` + everything else as always-required. The Vue `/admin/api/core/billing/invoicing` checkout API relaxes `name` and `company_id` to `required_if:country,BG`, hides Company ID entirely for DE, and bypasses VIES for HU via `VatIdHuRule`. See [[billing-invoicing-vue-checkout-editor]].
-- **Single invoicing record per merchant.** Save overwrites the existing record entirely — no audit log, no "old vs new" diff. To track changes the merchant must keep their own external record. See [[billing-invoicing-save-flow]].
-- **Invoice language follows the country.** `country = BG` → `bg`; everything else → `en`. The merchant doesn't choose this. See [[billing-invoicing-save-flow]].
+- **One current record per store.** Each save adds a record that later invoices use; issued invoices keep theirs, and the admin cannot re-issue one. See [[billing-invoicing-save-flow]].
+- **Not the owner's profile; invoices go to its Email.** *Profile details* on Merchant profile are the owner's account. Invoice details are their own record, prefilled from the owner's name, country and email when empty. CloudCart's invoice emails go to the invoice details' **Email**, not the account email.
+- **Per store in the contract too.** The Terms of Use issue CloudCart's invoices to the details entered in each store's admin, and each store may be invoiced to a different company (§11.15, §6.2). See [[terms-of-use-billing-renewal]].
+- **Invoice language follows the country** on this panel: `country = BG` → `bg`; everything else → `en`. The checkout editor takes the account's language instead. See [[billing-invoicing-save-flow]].
 
 ## Related
 
@@ -84,4 +86,4 @@ The cluster's rules live on the aspect pages. The headline rules:
 
 ## Open questions
 
-None — all previously-flagged items resolved or distributed to sub-pages.
+None.

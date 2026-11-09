@@ -7,8 +7,8 @@ aliases: ["Viber plan cap", "viber_messages", "Viber usage", "Viber quota", "Buy
 tags: [marketing, channels, viber, plan-cap, billing]
 plan_gates: ["viber_messages"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-channels-viber]]. See the hub for the other aspects (settings, self-credentials, send pipeline, DLR, system messages, message format).
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-Documents how CloudCart meters the merchant's Viber send volume against their plan. Viber is the only channel besides Web Push with a **dedicated plan-feature key** — it does NOT use the generic `campaign.channel.{mapping}` key pattern. Hitting the cap pauses campaigns using Viber and surfaces a `feature_limit_reached` banner on the channel card.
+Documents how CloudCart meters the merchant's Viber send volume against their plan. Viber is the only channel besides Web Push with a **dedicated plan-feature key** — it does NOT use the generic `campaign.channel.{mapping}` key pattern. At the cap the send path switches the Viber channel **off** with an alert, and a `feature_limit_reached` banner shows on the channel card.
 
 ## Where to find it
 
@@ -27,6 +27,7 @@ The cap value, current usage, and the "Buy more credits" deep-link surface on th
 
 - View sent-count vs the `viber_messages` plan cap.
 - Click "Buy more credits" when approaching the limit (deep-link to plan upgrades / add-on credits).
+- After hitting the cap, buy credits **and** switch the channel back on — nothing re-activates it automatically.
 - Bypass the cap entirely by switching to Self-credentials — see [[viber-channel-self-credentials]].
 
 ## Settings & fields
@@ -55,9 +56,9 @@ These are CloudCart's cost-side units — the merchant doesn't see them directly
 
 ## Business rules
 
-### Cap-reached pauses campaign sends
+### At the cap the channel is switched off
 
-When the `viber_messages` cap is reached, the channel auto-banner shows `feature_limit_reached` and any campaign step that would dispatch a Viber send is paused. The merchant clicks the banner / **Buy more credits** to unlock.
+When the `viber_messages` cap is reached, the send path switches the Viber channel **off** with an alert, and the card shows the `feature_limit_reached` banner. It is not a pause: nothing re-activates the channel automatically. The merchant buys credits (banner / **Buy more credits**) **and** switches the channel back on.
 
 ### Service vs Promotional billing
 
@@ -82,7 +83,7 @@ But they're also responsible for their own InfoBip billing — see [[viber-chann
 
 ### Customer-side requirements (no CloudCart-side billing impact)
 
-The recipient must have Viber installed, internet connectivity, and the sender not blocked. Failures land as `UNDELIVERED` / `EXPIRED` — these still count against the `viber_messages` cap because InfoBip charged for the delivery attempt `(verify)`. See [[viber-channel-message-format]] for the customer-side requirements and [[viber-channel-dlr-status]] for the resulting status codes.
+The recipient must have Viber installed, internet connectivity, and the sender not blocked. A `REJECTED` on send arrives as a normal response, so it counts as sent against the cap. Failures land as `UNDELIVERED` / `EXPIRED` — these still count against the `viber_messages` cap because InfoBip charged for the delivery attempt `(verify)`. See [[viber-channel-message-format]] for the customer-side requirements and [[viber-channel-dlr-status]] for the resulting status codes.
 
 ## How it works
 

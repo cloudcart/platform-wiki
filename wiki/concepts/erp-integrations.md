@@ -7,8 +7,8 @@ aliases: ["ERP integrations", "ERP", "Accounting integrations", "ERP sync", "Е�
 tags: [erp, integrations, apps, sync, accounting, concepts, hub]
 plan_gates: []
 created: 2026-06-11
-updated: 2026-06-11
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # ERP & accounting integrations
 
@@ -52,6 +52,19 @@ Direction, frequency, and which of these are covered differ per system — see e
 - [[apps-also]] — ALSO distribution feed.
 - [[apps-finaleinventory]] — Finale Inventory (inventory management).
 
+### Not integrated
+
+CloudCart has no app for **MegaSet** (Мегасет) or **Soft1 / SoftOne**, and no separate "B2B app" (B2B selling uses the native tools on [[b2b-wholesale]]). Such a system can still feed stock and prices through [[apps-xml-sync]] (a feed it publishes), [[apps-csv-import]] or the public API ([[json-api-v2]]).
+
+### Timing and price flow (selected systems)
+
+| System | Direction and timing | Price |
+|---|---|---|
+| [[apps-microinvest]] | Microinvest pushes products, stock and per-store stock to CloudCart; CloudCart does not poll it. | The price slot chosen in settings; a discount price goes through the chosen fixed discount. |
+| [[apps-zeron]] | CloudCart pulls products every 8 hours; orders are sent on order events. | Zeron's inventory price converted to the store currency, plus an optional percent adjustment. |
+| [[apps-colibri]] | Products pulled every 24 hours, categories every 3 hours. | The chosen price list / level plus markup. |
+| [[apps-universum]] | Products pulled every 8 hours; orders sent on creation. | The variant price; a discounted price goes through the chosen fixed discount. Per-store quantities are synced too. |
+
 ## Where it applies
 
 - Stock behaviour once an ERP owns inventory — see [[inventory-tracking]].
@@ -67,5 +80,5 @@ Direction, frequency, and which of these are covered differ per system — see e
 
 ## Open Questions
 
-- Per-system sync direction + frequency matrix (verify against each app page).
+- Direction and timing for the systems not in the table above (verify against each app page).
 - Whether [[apps-also]] is best classed as ERP or as a product feed (verify).

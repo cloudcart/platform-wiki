@@ -7,8 +7,8 @@ aliases: ["Container code parent terms", "Container codes plan-gating", "Contain
 tags: [marketing, discounts, coupons, container, plan-gating, uses-counter]
 plan_gates: ["discount-container", "discount_global"]
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Container codes — Container terms, value limit, plan-gating & uses counter
@@ -47,7 +47,7 @@ Container codes are one store-wide pool attached to no Container. At checkout al
 
 ### Value limit — the Container's value caps the total
 
-Generating codes does not compare the value with any Container. The limit applies at checkout: a Container's value is the maximum total, and codes add up while they fit. A code larger than what remains is ignored with no error, so a 90% code on a 15% Container gives nothing from that Container.
+Generating codes does not compare the value with any Container. The limit applies at checkout: a Container's value is the maximum total, and codes add up while they fit. That cap is the Container's own **Discount value** field (a percentage) in the **General settings** box of its edit form (English labels; the Bulgarian ones come from the admin's translations); there is no separate cap field. A code larger than what remains is ignored with no error, so a 90% code on a 15% Container gives nothing from that Container.
 
 ### Plan-gating
 

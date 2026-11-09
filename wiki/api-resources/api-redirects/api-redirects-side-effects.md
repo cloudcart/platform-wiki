@@ -8,8 +8,8 @@ aliases: ["Redirects API side effects", "has_301_redirects setting", "redirects3
 tags: [api, json-api-v2, content, seo]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # Redirects API — side effects, plan gating & errors
 
@@ -73,7 +73,7 @@ Worked 422 response bodies are in [[api-redirects-examples]].
 ## Equivalent UI
 
 - [[marketing-seo-301-redirects]] — the admin create/edit modal runs the same `saving` callbacks, so the same `old_url` normalisation, `item` clearing, `has_301_redirects` flip, and `redirects301` cache flush apply to admin-panel writes.
-- [[apps-domain-redirect]] — **distinct** whole-domain DNS-level forwarding (does NOT trigger these per-rule side effects).
+- [[apps-domain-redirect]] — **distinct** own-stores geo-routing app, not DNS-level forwarding (does NOT trigger these per-rule side effects).
 
 ## Related
 

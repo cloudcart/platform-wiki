@@ -7,8 +7,8 @@ aliases: ["What merchants can customise in customer mails", "Customer mail custo
 tags: [marketing, omnichannel, email, notifications, customisation, locale, refire]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-omnichannel-mails-list]]. See the hub for related aspects (mail labels, editor modal, toggles & gating, variables, abandoned-cart).
@@ -44,9 +44,9 @@ The merchant CANNOT change:
 
 - **The trigger event** — each label is hard-wired to a platform event (e.g., `order_add` always fires on order placement). To suppress the trigger entirely, use the per-mail Active flag or the global *Send notifications to customers* master switch (see [[omnichannel-mails-toggles-gating]]). For order status changes there is one shared `order_status_change` mail and no per-status toggle; the per-order `notify_customer` flag is the only per-order lever.
 - **The recipient** — always the order's customer (or the cart's customer / subscriber for `abandoned_restore_link`). **No CC / BCC / fallback addressing.**
-- **The sender** — always `site_email` from [[settings-general]] (or the channel's `from_email` for marketing channels).
+- **The sender** — From is noreply@cloudcart.com with the store's name; the store's email (`site_email` from [[settings-general]]) is the Reply-To. These mails go through the platform's notification mailer (the store's [[apps-smtp|SMTP app]] when active and fully set up, otherwise CloudCart's shared sending account), never through the [[marketing-channels-email|Email channel]], so a broken Email channel does not stop them.
 - **The mail label / key** — adding new platform mail types is a code change. See [[omnichannel-mails-labels]].
-- **The per-locale fallback chain** — the platform automatically renders the admin's current-locale `MailLanguage`, falling back to `config('app.fallback_locale')` if missing.
+- **The language sent** — always the store's language, falling back to English (see Per-locale templates).
 
 ## Settings & fields
 
@@ -62,9 +62,7 @@ Merchants who notice transactional emails arriving with un-rendered HTML tags (e
 
 ### Per-locale templates
 
-Each `Mail` has one or more `MailLanguage` rows — one per language the store supports. The list shows the row matching `site('language')` (the admin's CP language). The platform code accessor returns the current-language template, **falling back to `config('app.fallback_locale')`** if the current-language row doesn't exist.
-
-Editing a template only edits the currently-selected language version; switching admin language and re-opening edits a different `MailLanguage` row. There is no bulk-copy across locales in the Vue UI (verify).
+Each template keeps one version per language. The list, the editor and every send use the version in the **store's language** (the storefront language in [[settings-general]]), **falling back to English** when it has none. The shopper's language and the admin panel's language play no part; changing the admin language does not open another version. See [[omnichannel-mails-order-confirmation]].
 
 ## Business rules
 
@@ -126,5 +124,4 @@ These are platform-event mails; campaigns are merchant-authored marketing blasts
 ## Open questions
 
 - 📡 **`customer_email_notification_type` surface today.** Whether the legacy admin still exposes the "HTML emails" tick or it's now config-only (verify).
-- 📡 **Per-locale bulk operations.** Whether any Vue or API affordance exists to copy a template across all enabled locales (verify roadmap).
 - 📡 **Receipt mail label.** Which `Mail` label drives [[orders-receipt]] sends — `send_invoice` or a separate label (verify).

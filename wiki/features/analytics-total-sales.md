@@ -7,8 +7,8 @@ aliases: ["Total Sales", "Sales over time", "Общи продажби", "Про
 tags: [analytics, ccanalytics, orders, total-sales]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-06-10
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 # Total Sales
 
@@ -30,7 +30,7 @@ The box key is `total-sales`. The box type is `chart` (line chart). The route is
 
 ## What the merchant can do here
 
-- Read a **big amount** in store currency — total revenue for the selected range (orders' `amount_without_shipping` summed; see [[analytics-total-sales-order-filter]] for the exact field).
+- Read a **big amount** in store currency — total revenue for the selected range: the orders' totals, VAT and fees included, with shipping the store charged but without shipping the receiver paid the courier directly (see [[analytics-total-sales-order-filter]]).
 - See a **comparison delta** (percentage + arrow) versus the previous period or previous year when comparison is enabled — see [[analytics-total-sales-comparison]].
 - Read a **line chart** spanning the range; hover any point for the exact amount, order count, and date label.
 - See an **industry-compare** indicator when the plan allows it (`hasIndustryCompare: true`) — see [[analytics-total-sales-industry-compare]].
@@ -43,7 +43,7 @@ The box key is `total-sales`. The box type is `chart` (line chart). The route is
 
 **Bulgarian:** *"Общата сума на продажбите включително такси и доставки. Данните се визуализират спрямо избраните статуси на поръчки в Настройки."*
 
-Note: the tooltip says "includes taxes and shipping", but the backend sums `amount_without_shipping` — the verified field is documented on [[analytics-total-sales-order-filter]].
+The tooltip holds for shipping the store charges (the sender pays); shipping the receiver pays the courier is left out ([[analytics-total-sales-order-filter]]).
 
 ## Settings & fields
 

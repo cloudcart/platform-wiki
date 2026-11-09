@@ -7,8 +7,8 @@ aliases: ["Subscriber channels", "Subscriber channel identifiers", "Channel merg
 tags: [marketing, subscribers, channels, merge, identity]
 plan_gates: ["subscribers"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[marketing-subscribers]]. See the hub for related aspects (list view, bulk actions, detail modal, import, settings, lifecycle).
@@ -110,7 +110,6 @@ A subscriber with all channels removed becomes a "ghost" — queryable via `no_c
 
 - A merchant deletes all per-channel rows but not the subscriber.
 - A uuid-tracked anonymous visitor never typed any identifier.
-- GDPR erasure stripped identifying data but the subscriber id was retained as a no-PII marker.
 
 ## Related
 

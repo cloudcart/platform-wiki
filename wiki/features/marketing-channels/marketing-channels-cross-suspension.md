@@ -7,8 +7,8 @@ aliases: ["Channel auto-suspend", "Channel suspension", "Suspended channel", "Sp
 tags: [marketing, channels, suspension, reputation, spam, bounce]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-channels]]. See the hub for related aspects (catalog, lifecycle, plan caps, pre-flight, UI surfaces).
@@ -21,7 +21,7 @@ The four reasons a channel can be auto-suspended, the default thresholds, the me
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Channels** → **Channels setup**. A suspended channel shows the **Suspended** status badge on its card; the textual `banned_reason` is exposed on the card AND on every campaign that references the channel. The Email channel additionally has a **Reputation** button that opens the modal documented at [[marketing-channels-reputation]].
+Sidebar → **Marketing** → **Channels** → **Channels setup**. A suspended channel's card shows only **Disabled** — no Suspended badge and no reason text on the card. The reason shows as a red-triangle tooltip on the campaign rows that use the channel, and in the admin alert. The Email channel additionally has a **Reputation** button that opens the modal documented at [[marketing-channels-reputation]].
 
 ## What the merchant can do here
 
@@ -45,9 +45,9 @@ The thresholds above are **defined only on the Email channel** — SMS, Viber, a
 
 ### Merchant-visible suspension messages
 
-When at least one trigger fires, the channel card and any dependent campaign surface one of these messages (the platform inserts the channel name + the breaking value):
+When at least one trigger fires, the admin alert and the campaign-row tooltip carry one of these messages (the platform inserts the channel name + the breaking value):
 
-- *"Your campaign channel:channel was suspended with a reason"*
+- *"Your campaign channel:channel was suspended with a reason: …"* (BG *„Вашият канал за кампания:channel е спрян с основание: …“*) — the alert's opening
 - *"Your spam score is:value which is higher than our maximum of:number"*
 - *"Your bounced score is:value which is higher than our maximum of:number"*
 - *"Your open rate is:value which is lower than our minimum of:number"*
@@ -68,10 +68,10 @@ Both exemptions apply only to auto-suspend; `cc_denied` (the manual route) ignor
 
 A CloudCart employee can grant a **temporary bypass** via the `manual_allowed_suspended` setting on the channel. It carries:
 
-- An **expiry timestamp** (ISO 8601 `expire` field) — once expired, the per-trigger threshold checks resume automatically.
+- An **expiry timestamp** (ISO 8601 `expire` field) — the store's next billing date, or the month end — after which the default thresholds apply again.
 - Optional **per-trigger custom thresholds** (e.g., `spam`, `bounced`, `open`) that supersede the channel's defaults until expiry. A merchant onboarding a freshly migrated list might be granted a higher temporary bounce threshold while they clean the list.
 
-The override is requested through CloudCart support — the merchant cannot set it themselves.
+The override is set by CloudCart staff in the Console — the merchant cannot set it themselves.
 
 ### `cc_denied` trumps everything
 
@@ -85,7 +85,11 @@ This is the path used when CloudCart needs to stop the channel for reasons outsi
 
 ### What happens to in-flight campaigns when a channel auto-suspends
 
-Auto-suspension follows the same cascade as manual deactivation — see [[marketing-channels-cross-lifecycle]]. Every campaign whose action references the suspended channel is marked stopped. The merchant must restart them manually after fixing the underlying issue and the channel returns to Active.
+Auto-suspension does **not** follow the manual-deactivation cascade ([[marketing-channels-cross-lifecycle]]). The sync switches the channel off, stores the reason and raises an admin alert; **no campaign's state changes**. Each later campaign step that meets the suspended channel drops itself and raises an alert.
+
+### A suspension does not lift by itself
+
+The channel is now inactive, and the reputation sync evaluates only active channels, so improving metrics never lifts it. Recovery is by CloudCart staff in the Console: they set temporary thresholds (the override above) or clear a manual denial. Clearing a suspension removes the reason but does **not** switch the channel back on. Reconnect does not help either — it deliberately leaves a reputation-suspended channel off (see [[email-channel-reconnect]]).
 
 ### Reputation reads (Email only)
 

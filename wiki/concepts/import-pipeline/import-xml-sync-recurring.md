@@ -1,12 +1,12 @@
 ---
 type: concept
 nav_path: "Concept → Import pipeline → XML Sync (recurring)"
-aliases: ["Recurring XML import", "XML Sync schedule", "Feed hash short-circuit", "Per-field update policy", "Discontinued product handling", "XML sync transport", "xml_sync-interval"]
+aliases: ["Recurring XML import", "XML Sync schedule", "Feed hash short-circuit", "Per-field update policy", "Update for existing checkbox", "XML Sync delta threshold", "Discontinued product handling", "XML sync transport", "xml_sync-interval"]
 tags: [ops, imports, xml, sync, feeds, concepts]
 plan_gates: [xml_sync_limit, "xml_sync-interval"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[import-pipeline]]. See the hub for the other aspects (stages, concurrency lock, validation, upsert + provenance, plan gates + 2FA, history + recovery).
@@ -15,16 +15,16 @@ source_count: 1
 
 ## Definition
 
-[[apps-xml-sync]] is the **recurring** variant of the XML import pathway. Instead of one-shot upload + process, the merchant configures a feed URL + mapping ONCE and the platform pulls fresh data on a recurring schedule (default 12 hours; plan-feature `xml_sync-interval` can shorten the cadence for higher-tier plans). Each sync run is recorded as its own row in [[settings-import-history]].
+[[apps-xml-sync]] is the **recurring** variant of the XML import pathway. Instead of one-shot upload + process, the merchant configures a feed URL + mapping ONCE and the platform pulls fresh data on a recurring schedule (default 12 hours, shortened by the store's `xml_sync-interval` value, but never below about hourly per task). Each sync run is recorded as its own row in [[settings-import-history]].
 
-XML Sync is **plan-gated by `xml_sync_limit`** — a quota of concurrent sync tasks per plan. A merchant exceeding the limit can't add more sync feeds until they upgrade. The sync supports **per-field update policies** (always update price; never overwrite description), **discontinued-product handling** (deactivate / keep when SKU disappears from feed), and a **feed-hash short-circuit** (skip downstream insertion when the feed content hasn't changed since last sync).
+XML Sync is **plan-gated by `xml_sync_limit`** — a quota of concurrent sync tasks per plan. A merchant exceeding the limit can't add more sync feeds until they upgrade. The sync supports a **per-field Update checkbox** (on / off per field), **discontinued-product handling** (deactivate / keep when SKU disappears from feed), and a **feed-hash short-circuit** (skip downstream insertion when the feed content hasn't changed since last sync).
 
 ## Scope
 
 Covered:
 
 - Recurring schedule mechanics — default 12-hour cadence + `xml_sync-interval` plan cap.
-- Per-field update policies — always update / update if delta < N% / never update.
+- The per-field Update checkbox — on (overwritten every run) or off (never changed by the sync).
 - Discontinued-product handling — "Disable missing items" toggle.
 - Feed-hash short-circuit — skipping insertion when feed unchanged.
 - HTTP / HTTPS transport constraints — no FTP, no SFTP, no S3, no Basic Auth headers, no gzip.
@@ -35,14 +35,14 @@ Covered:
 Not covered here:
 
 - One-time XML import (non-recurring) — see [[apps-xml-import]] feature page.
-- Concurrent-import lock interaction (a manual "Run now" can be blocked) — see [[import-concurrency-lock]].
+- The CSV import lock, which XML Sync never checks — see [[import-concurrency-lock]].
 - Plan gates on the sync task itself — see [[import-plan-gates-and-2fa]].
 
 ## Contrasts
 
-- **Recurring XML Sync vs one-time XML Import** — [[apps-xml-import]] is fire-and-forget; the merchant uploads / configures a URL, the platform processes, done. [[apps-xml-sync]] is recurring — same feed URL, runs every 12 hours (or shorter). Both share `import1` queue.
+- **Recurring XML Sync vs one-time XML Import** — [[apps-xml-import]] is fire-and-forget. [[apps-xml-sync]] is recurring — same feed URL, runs every 12 hours (or shorter). Both share `import1` queue.
 - **One-shot mapping vs reused mapping** — for one-time imports the mapping lives only on that task. For XML Sync, the mapping is reused on every scheduled run — the merchant doesn't re-map every 12-hour pull.
-- **Per-field update policy vs full upsert** — most importers do a blanket upsert on mapped fields. XML Sync layers per-field policies on top, so the merchant can pin certain fields against feed-driven changes (e.g., never overwrite the merchant-curated description with the supplier's generic copy).
+- **Per-field Update checkbox vs full upsert** — most importers do a blanket upsert on mapped fields. XML Sync adds a per-field on/off Update checkbox, so the merchant can pin certain fields against feed-driven changes (e.g. keep the merchant's price, sync quantity).
 - **Feed-hash short-circuit vs always-process** — XML Sync hashes the parsed feed content and skips downstream insertion when the hash matches the last sync. Most other importers process every run.
 
 ## Where it applies
@@ -55,19 +55,20 @@ The XML Sync flow has three configuration screens + ongoing scheduled runs:
 
 ### Scheduled-run lifecycle
 
-1. **Sync task configured** — merchant enters feed URL, picks match column (`sku` / `barcode` / `product.id`), maps XML fields → product fields, sets per-field update policies + discontinued-product handling.
+1. **Sync task configured** — merchant enters feed URL, picks match column (`sku` / `barcode` / `product.id`), maps XML fields → product fields, sets the per-field Update checkboxes + discontinued-product handling.
 2. **First run fires immediately** after save — re-initialises the parser queue and pulls the feed.
-3. **Subsequent runs** fire every 12 hours by default (or shorter per `xml_sync-interval` plan feature).
+3. **Subsequent runs** fire every 12 hours by default (or per the store's `xml_sync-interval`). A task read less than 1 hour ago is skipped, so a 20-minute cadence is never possible — see [[apps-xml-sync-job-pipeline]].
 4. **Each run** writes a row to [[settings-import-history]] with stats (`created_count`, `updated_count`, `skipped_count`, `failed_count`).
-5. **Manual "Run now"** is available from the sync task — kicks off an immediate run (subject to the [[import-concurrency-lock]] gate).
+5. **No "Run now" button** — re-saving Step 3 forces a re-read; the Active switch or the Status page Start only enqueue the tick, still behind the 1-hour gate.
 
-### Per-field update policies
+### Per-field Update checkbox
 
-For each mapped field the merchant picks an update policy:
+Each field a sync can change has one **Update for existing** checkbox in Step 2, checked by default:
 
-- **Always update** — overwrite every run. Typical for price, quantity.
-- **Update if delta within N%** — overwrite only if the new value differs by less than N percent from the current. Protects against feed typos (a feed with `price=0.01` instead of `100` would otherwise zero out pricing).
-- **Never update** — set on initial import, never overwrite after. Typical for merchant-curated descriptions and SEO fields.
+- **Checked** — every run writes the feed's value when it differs from the product's current one.
+- **Unchecked** — the sync never changes that field.
+
+There is **no percentage / "only if the change is under N%" option**. A bad feed value (a price of 0.01 instead of 100) is written as-is on a checked field; the only protection is unchecking that field or fixing the feed. A sync can change only price, discounted price, quantity, minimum order quantity, status and (with the Stores app) per-store quantity; names, descriptions and images are not part of XML Sync. See [[apps-xml-sync-update-policy]].
 
 ### Discontinued-product handling
 
@@ -95,7 +96,7 @@ These constraints are why some supplier integrations need a thin proxy to transl
 
 ### Example — daily supplier XML sync
 
-Merchant installs [[apps-xml-sync]] → creates a sync task → enters feed URL `https://supplier.com/feed.xml`, picks "Match by SKU" as `product_map`, maps XML fields, sets per-field policies (always update price + quantity, never update description), enables "Disable missing items". The first sync fires immediately on save; subsequent syncs run every 12 hours (or shorter per `xml_sync-interval`). Each run writes a history row in [[settings-import-history]] with stats. The merchant verifies recent runs via [[apps-xml-sync-status]]; after 6 months the history has 365+ rows because retention is indefinite — see [[import-history-and-recovery]].
+Merchant installs [[apps-xml-sync]] → creates a sync task → enters feed URL `https://supplier.com/feed.xml`, picks "Match by SKU" as `product_map`, maps XML fields, leaves Update checked on price + quantity and unchecks status, enables "Disable missing items". The first sync fires immediately on save; subsequent syncs run every 12 hours (or shorter per `xml_sync-interval`). Each run writes a history row in [[settings-import-history]] with stats. The merchant verifies recent runs via [[apps-xml-sync-status]]; history rows are kept only briefly (verify) — see [[import-history-and-recovery]].
 
 ## Related
 
@@ -104,10 +105,10 @@ Merchant installs [[apps-xml-sync]] → creates a sync task → enters feed URL 
 - [[apps-xml-sync-status]] — last-N-runs status surface.
 - [[apps-xml-import]] — one-time XML import (the non-recurring sibling).
 - [[settings-import-history]] — per-run history rows.
-- [[import-concurrency-lock]] — manual "Run now" is subject to the single-import lock.
+- [[import-concurrency-lock]] — the CSV import lock (XML Sync is not subject to it).
 - [[import-plan-gates-and-2fa]] — `xml_sync_limit` + `xml_sync-interval` plan features.
-- [[import-upsert-and-provenance]] — per-field upsert pattern that the policies extend.
+- [[import-upsert-and-provenance]] — per-field upsert pattern that the Update checkbox extends.
 
 ## Open Questions
 
-- Exact delta-percentage range options for the "update if delta < N%" policy (single value, dropdown, per-field?).
+_None._

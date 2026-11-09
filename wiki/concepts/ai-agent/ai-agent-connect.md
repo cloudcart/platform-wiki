@@ -5,8 +5,8 @@ aliases: ["Connect AI agent", "Connect your store to an AI agent card", "AI agen
 tags: [ai, agent, setup, dashboard, concepts]
 plan_gates: []
 created: 2026-11-03
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Connecting the store to an AI agent
@@ -25,6 +25,8 @@ Connecting takes one copied sentence. The merchant copies it from the admin and 
 |---|---|
 | **[[dashboard]]** | A card with a **New** badge (*НОВО*), titled *Connect your store to an AI agent* (*Свържи магазина си с AI агент*). Always there, on the onboarding and the full dashboard alike. |
 | **Every other admin page** | A bar above the navigation with the same title and button. Its **X** (*Hide for 7 days*) hides it for 7 days on that browser, then it comes back. The dashboard card stays either way. |
+
+Both show to **every admin** of the store, owner or moderator, on every plan; the bar is left off the dashboard, where the card is. Copying creates no token or key and changes nothing in the store: the agent gets in only once the merchant gives it a sign-in. A moderator may copy the sentence, but then needs a token from the owner or signs the agent in with their own admin session ([[ai-agent-access]]).
 
 The card's text: *"Copy the setup instruction with one click and paste it into Claude, ChatGPT or another AI agent. It connects to your store, and from there you can ask it questions and give it tasks in plain language."*
 

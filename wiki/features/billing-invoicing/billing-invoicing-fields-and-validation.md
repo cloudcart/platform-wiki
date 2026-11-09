@@ -7,8 +7,8 @@ aliases: ["Invoice details fields", "Billing invoicing fields", "Invoicing valid
 tags: [billing, invoicing, fields, validation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[billing-invoicing]]. See the hub for the other aspects (EIK/APIS lookup, VAT/VIES lookup, country-driven form, save flow, Vue checkout editor).
@@ -21,7 +21,7 @@ Document every field on the *Invoice details* side panel — label, what it cont
 
 ## Where to find it
 
-The same panel as the hub: Profile dropdown → Billing → pencil icon on the invoice-details block. Route `POST /admin/billing/invoicing`.
+The **Invoice details** card on **Merchant profile** (`/admin/merchant`, owner's user menu): pencil or **Add invoice details**, then **Confirm**. See the hub [[billing-invoicing]]. The old admin's form posts to `/admin/billing/invoicing`.
 
 ## What the merchant can do here
 
@@ -75,9 +75,9 @@ When the BG EIK lookup or the VIES lookup succeeds, the `company`, `vat`, and `a
 
 The save validators do NOT require the `vat` field — EU sole traders below their country's VAT threshold can save the form with the VAT field left empty. Only the FORMAT check fires when the field is filled. See [[billing-invoicing-vat-vies-lookup]] for the outage / empty-field rules.
 
-### Single invoicing record per merchant
+### One current record per store
 
-There is exactly one invoice-details record per merchant account. Saving the form replaces the existing record entirely — there is no history. See [[billing-invoicing-save-flow]].
+Invoice details are per store. Saving adds a new record that becomes the current one; issued invoices keep the record they were issued with. See [[billing-invoicing-save-flow]].
 
 ### Validity warning surfaces on other screens
 

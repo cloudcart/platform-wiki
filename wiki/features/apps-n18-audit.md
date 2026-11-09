@@ -7,8 +7,8 @@ aliases: ["N18 Audit", "N18 fiscal audit", "Naredba N18", "Регистър На
 tags: [apps, administration, fiscal, audit, compliance, bulgaria]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # N18 Audit (Bulgarian fiscal-compliance register)
 
@@ -25,9 +25,9 @@ The merchant must first register their e-shop with NAP per Annex 33; NAP issues 
 
 **This is NOT real-time fiscal-receipt reporting.** CloudCart does NOT auto-submit to NAP — it produces a monthly file the merchant uploads manually. For real-time fiscal receipts and customer-facing QR codes, the merchant integrates a registered fiscal device (separate from this app).
 
-> **No on/off control — this app has no "active / inactive" state.** Once it is installed it simply works; there is no Enable / Disable button and no "Activate application" switch on its screen. So *"the app is disabled"* is never the explanation for it not working — check its own settings, credentials, or plan access instead, and use **Uninstall** if the merchant genuinely wants it off.
+> **No on/off control — this app has no "active / inactive" state.** Once it is installed it simply works; there is no Enable / Disable button and no "Activate application" switch on its screen. So *"the app is disabled"* is never the explanation for it not working — check its settings instead, and use **Uninstall** to turn it off.
 >
-> What the merchant does control is the app's own settings — the audit reporting is driven by the `active` setting (with the NAP-assigned `uin`), not by an app-level on/off button.
+> What the merchant controls is the app's own settings (the NAP-assigned `uin` above all).
 
 ## Where to find it
 
@@ -47,16 +47,9 @@ Sidebar → Apps → install → **N18 Audit**. See [[apps-n18-audit-settings]] 
 
 ## Settings & fields
 
-App key: `n18_audit`. Only ONE setting is required when activating:
+App key: `n18_audit`. The only required setting is the NAP-assigned `uin`; the domain, the refund method for reversals and the per-provider **Terminal ID** boxes are optional — see [[apps-n18-audit-settings]].
 
-- `uin` — the NAP-assigned unique e-shop number (required when `active = 1`).
-
-Optional:
-- `domain` — defaults to the store's primary host URL (used in the XML's `domain_name` field).
-- `payment_two` / `payment_four` — map CloudCart payment providers to NAP payment-service-provider identifier types (`n18_type` of 2 or 4 on the payment-provider configuration).
-- `terminalId` — POS terminal ID mapping (for type-2 payment providers).
-
-Audit data is per `site_id`: each store has its own UIN and its own list of generated XML files, managed separately.
+Audit data is per `site_id`: each store has its own UIN and its own list of generated XML files.
 
 ## Business rules
 
@@ -66,6 +59,7 @@ The audit file is generated from the store's **orders**, selected by their **ord
 
 - **Sales** (`<order>`) — every order that reached status **`paid`**, **`completed`**, or **`fulfilled`** during the month (by the date that status was set).
 - **Reversals** (`<rorder>`) — orders that had **already been sold** (previously reached paid / completed / fulfilled) and then moved to a reversing status — **`voided`**, **`timeouted`**, **`cancelled`**, **`failed`**, **`refunded`**, **`chargebacked`**, **`disputed`**, or **`not_fulfilled`** — during the month, and were **not** re-sold afterwards.
+- `fulfilled` / `not_fulfilled` are not order statuses: they are the order's [[shipping-status]] being set (shipment created / Fulfil) or removed, read from the same history.
 - **Partial returns** are read separately from the order's return records (by the return date), because a partial return does not change the order status and would otherwise be invisible; each appears as a reversal row.
 
 Wallet top-up and gift card orders stay out of `<order>`; a fully wallet-paid order has `paym` = 5 ([[virtual-wallet-vat-documents]]).
@@ -99,12 +93,12 @@ A sale and its later reversal therefore commonly fall in **different monthly fil
 
 - **Currency.** Amounts are reported in **BGN for order dates before January 2026** and in **EUR from January 2026 onward** (matching Bulgaria's euro adoption — see [[apps-bgn2eur]]). An order in the other currency is converted at the fixed **1.95583** rate.
 - **Amounts per sale**: goods value **without VAT**, **discount**, **VAT**, and **total with VAT**; each line item carries its name (trimmed to ~200 characters), quantity, unit price and VAT rate. Reversals are written as **negative** amounts and summed into `<r_total>` (a negative total).
-- **Payment type.** Each sale's payment maps to a NAP payment-type code, configured **per payment provider** (the `n18_type` mapping set from the app's payment settings — see [[apps-n18-audit-settings]]). **Cash on delivery (наложен платеж)** has its own codes, and is **not** merged into "bank transfer": through a postal-money courier, code 3; with **Money transfer** (`money_transfer`) on and a courier supporting it, the provider's own type; otherwise code 5.
+- **Payment type.** Each sale's payment maps to a NAP payment-type code, fixed by CloudCart **per payment provider** (its `n18_type`; no screen changes it — see [[apps-n18-audit-settings]]). **Cash on delivery (наложен платеж)** has its own codes, and is **not** merged into "bank transfer": on a shipping method with **Use postal money order** on, code 3; through a courier integration with **Money transfer** (`money_transfer`) on when the order was placed, the provider's own type; through a courier integration without it, code 5; on a method with no courier integration, the provider's own type.
 - **Text values.** `&` becomes " and ", `<` and `>` become a space, and repeated spaces collapse, because the tax authority's validator rejects XML entities.
 
 ### Regenerating a period creates a new file
 
-Each generation of a month produces a **new, separate file** (its name carries the generation timestamp) — it does **not** overwrite the previous one. If the merchant regenerates a month, **both** files exist; the merchant downloads the correct one and deletes the obsolete file manually. (Starting a new generation for a period cancels any generation of that period still in progress.)
+Each generation of a month produces a **new, separate file** (its name carries the generation timestamp) — it does **not** overwrite the previous one. If the merchant regenerates a month, **both** files exist; the merchant downloads the correct one and deletes the obsolete file manually. (Starting a new generation for a period cancels any generation of that period still in progress.) The new file takes the sales already stamped with that month again, plus any that qualified since; sales stamped with another month stay out.
 
 ### Monthly XML export, not real-time
 
@@ -165,10 +159,7 @@ Each save creates one period entry. To backfill, the merchant repeats the flow p
 
 This is for merchants applying the **alternative regime for absentee payments** under Наредба № Н-18/2006. The CloudCart app implements the file-submission obligation in **Чл. 52т, ал. 2**. The full consolidated ordinance text lives on lex.bg at `https://lex.bg/laws/ldoc/2135540645`; only the alternative-regime section is relevant — articles **Чл. 52о – 52у** (Глава седма "г"), **Приложение № 33** (e-shop registration form that issues the UIN), and **Приложение № 38** (the XML audit-file schema).
 
-A focused extract is checked into `wiki/resources/naredba-n18-alt-rezhim.txt` (UTF-8, ~33 KB, 711 lines). Grep markers:
-- Articles → `^Чл\. <N>\.` (covers `Чл. 52о` to `Чл. 52у`)
-- Annex 33 → `^Приложение № 33`
-- Annex 38 → `^Приложение № 38`
+A focused extract is in `wiki/resources/naredba-n18-alt-rezhim.txt` (grep `^Чл\. 52`, `^Приложение № 33`, `^Приложение № 38`).
 
 The XML schema the app emits lives at [`wiki/resources/dec_audit.xsd`](../resources/dec_audit.xsd) (Windows-1251 original) + [`dec_audit.utf8.xsd`](../resources/dec_audit.utf8.xsd) (UTF-8 copy), with a minimal example at [`dec_audit-sample.xml`](../resources/dec_audit-sample.xml) / [`dec_audit-sample.utf8.xml`](../resources/dec_audit-sample.utf8.xml). For an element-by-element field reference with Bulgarian documentation strings and value enumerations (paym codes, r_paym codes, e_shop_type), see [`dec_audit-schema-cheatsheet.md`](../resources/dec_audit-schema-cheatsheet.md).
 

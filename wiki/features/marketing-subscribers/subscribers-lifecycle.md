@@ -7,8 +7,8 @@ aliases: ["Subscriber lifecycle", "Subscriber sources", "Subscriber webhooks", "
 tags: [marketing, subscribers, lifecycle, gdpr, webhooks, plan-cap, sources]
 plan_gates: ["subscribers"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 > Part of [[marketing-subscribers]]. See the hub for related aspects (list view, bulk actions, detail modal, channels, import, settings).
@@ -23,14 +23,14 @@ Subscriber identity is created, mutated, and (sometimes) erased on signals from 
 
 Mostly invisible UI — cross-cutting business rules. The merchant interacts with it through:
 
-- The "Subscribed by" filter on [[subscribers-list-view]].
+- The "Subscribed from" filter on [[subscribers-list-view]].
 - The marketing-consent toggles on [[subscribers-bulk-actions]] and [[subscribers-detail-modal]].
 - The `subscriber.*` webhook settings on [[settings-hooks]].
 - The `marketing.subscribers` permission grant on [[settings-staff]].
 
 ## What the merchant can do here
 
-- See the source attribution per subscriber (the "Subscribed by" column on [[subscribers-list-view]]).
+- See the source attribution per subscriber (the "Subscribed from" column on [[subscribers-list-view]]).
 - See and override the marketing-consent state per channel.
 - Receive `subscriber.created` / `updated` / `deleted` webhook events in their hook receiver.
 - See the plan-cap status via the Limits modal (see [[subscribers-settings]]).
@@ -38,9 +38,9 @@ Mostly invisible UI — cross-cutting business rules. The merchant interacts wit
 
 ## Settings & fields
 
-### Source tracking — "Subscribed by" (`subscriber_from`)
+### Source tracking — "Subscribed from" (`subscribed_from`)
 
-Every subscriber has a `subscriber_from` field set at creation. The 13 sources, with merchant-facing label:
+Every subscriber has a `subscribed_from` field (the segment condition is `subscriber.from`) set at creation. The 13 sources, with merchant-facing label:
 
 | Constant | Label |
 |----------|-------|
@@ -58,7 +58,7 @@ Every subscriber has a `subscriber_from` field set at creation. The 13 sources, 
 | `web_push` | Web push |
 | `API` | API |
 
-This drives the `subscriber.from` segment condition and the "Subscribed by" filter on [[subscribers-list-view]]. **The list is mostly stable** — new sources are added carefully, because old segments may filter by them.
+The `subscriber.from` segment condition and the "Subscribed from" filter on [[subscribers-list-view]] offer only **9** of them: not `subscribe_form`, `subscribe_from_missing_product`, `web_push` or `API`. For form sign-ups use the `subscriber.from_form` condition ([[capture-source-attribution]]).
 
 ### Webhook events ([[settings-hooks]])
 
@@ -70,7 +70,7 @@ A subscriber's lifecycle fires three webhooks, processed by the standard retry p
 
 ### Permission gate
 
-A moderator needs either the broad **Marketing** permission OR the specific **Subscribers** (`marketing.subscribers`) grant from [[settings-staff]] to list, view, edit, delete, import, export, tag, segment, or bulk-act on subscribers. Owners always pass. The export sub-action additionally honours the `marketing.subscribers_export` granular permission when configured.
+A moderator needs either the broad **Marketing** permission OR the specific **Subscribers** (`marketing.subscribers`) grant from [[settings-staff]] to list, view, edit, delete, import, tag, segment, or bulk-act on subscribers. Owners always pass. There is **no subscriber file export** ([[customers-export]] is Customers only); the `marketing.subscribers_export` grant only counts for the import's 2FA step.
 
 ## Business rules
 
@@ -121,7 +121,7 @@ When the store approaches the cap, the alert reads: *"You reached the limit of f
 
 ### GDPR — erasure and right-to-be-forgotten
 
-When a customer exercises their GDPR right to erasure, the platform runs the subscriber-delete cascade above and writes a marketing-log entry recording the deletion reason for compliance audit. Email PII is stripped from logs; the subscriber-ID reference remains as a no-PII marker. The cascade is symmetric: erasing the customer account also strips the linked subscriber row's PII (the audit-marker row remains).
+The GDPR app records the request; the merchant erases. Deleting the Customer also deletes the linked Subscriber(s) through a queued job, with the full cascade above and nothing kept; a Subscriber with no Customer is deleted here. See [[subscriber-vs-customer-privacy]].
 
 ### Custom fields — per-subscriber attributes
 
@@ -134,7 +134,7 @@ Subscribers support arbitrary **custom fields** defined at `/admin/marketing/sub
 - [[subscribers-bulk-actions]] — explicit admin marketing flips (symmetric).
 - [[subscribers-detail-modal]] — per-channel marketing toggles.
 - [[subscribers-channels]] — channel identity + merge that this aspect's cascade tears down.
-- [[subscribers-import]] — `subscriber_from = 'import'` source attribution + plan-cap truncation.
+- [[subscribers-import]] — `subscribed_from = 'import'` source attribution + plan-cap truncation.
 - [[subscribers-settings]] — Limits modal + chronological-cap setting `subscribers.max_id`.
 - [[settings-hooks]] — `subscriber.created` / `updated` / `deleted` webhooks.
 - [[settings-staff]] — `marketing.subscribers` permission grant.

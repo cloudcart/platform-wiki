@@ -7,8 +7,8 @@ aliases: ["Page builder utility modules", "Code module", "Store locations module
 tags: [design, modules, storefront-customisation, page-builder]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Utility modules — Page-builder blocks
@@ -21,7 +21,7 @@ These modules do NOT appear on the Modules screen — they only exist inside the
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Landing pages** → open a Dynamic page → click **Add block** → pick the module from the block picker. Availability depends on which apps are installed (see Business rules).
+Sidebar → **Design** → **Static pages** → open a Dynamic page → click **Add block** → pick the module from the block picker. Availability depends on which apps are installed (see Business rules).
 
 ## What the merchant can do here
 

@@ -7,8 +7,8 @@ aliases: ["XML Sync side effects", "XML Sync the search index sync", "XML Sync s
 tags: [apps, imports, xml, sync, side-effects, search-engines, webhooks]
 plan_gates: ["xml_sync_limit"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[apps-xml-sync]]. See the hub for the other aspects (job pipeline, update policy, discontinued handling, fetch transport).
@@ -26,7 +26,7 @@ For what produces these writes see [[apps-xml-sync-job-pipeline]]; for what data
 There is no merchant UI for the side effects. They surface in:
 
 - The storefront (eventually) — the search index-driven listings catch up product-by-product.
-- Webhook receivers — `product.created` / `product.updated` fires per affected product.
+- Webhook receivers — `product.updated` fires per affected product (never `product.created`: a sync creates nothing).
 - The product's [[products-change-log|Change log]] — every Variant `quantity` change is auditable per [[inventory-debugging-playbook]].
 - [[settings-hooks]] — where the merchant configures the webhook destinations that receive the burst.
 
@@ -38,7 +38,7 @@ There is no merchant UI for the side effects. They surface in:
 
 What the merchant **cannot** do here:
 
-- Suppress webhooks during a sync — every affected product fires `product.created` / `product.updated`. Bulk sync does **NOT** suppress them.
+- Suppress webhooks during a sync — every affected product fires `product.updated`. Bulk sync does **NOT** suppress them.
 - Force the search index to catch up synchronously — the queue drains as it drains.
 - Receive an **email** when a sync fails — there is no failure-email notification (see below).
 
@@ -49,7 +49,7 @@ What the merchant **cannot** do here:
 | the search index re-index | `MakeSearchable` job on `searchable-import4` queue | Async, chunks of 100 |
 | Storefront page cache | Product / category / search caches | Async on Save |
 | Smart-collection re-eval | Per affected collection | Async on Save |
-| Webhooks | `product.created` / `product.updated` | Fires per product, NOT suppressed |
+| Webhooks | `product.updated` | Fires per product, NOT suppressed |
 | Disable-missings | the search re-index with `action=update` per deactivated product | Async; drops them from listings as ES catches up |
 | Sync history entry | Run stats (created / updated / skipped / failed) | Per run, on [[apps-xml-sync-status]] |
 
@@ -57,12 +57,12 @@ What the merchant **cannot** do here:
 
 ### Side effects on each sync run
 
-- New products from the feed → created in the operational database.
+- Feed items matching no variant → skipped; XML Sync never creates products.
 - Existing products with changes → updated per the policy in [[apps-xml-sync-update-policy]].
 - Missing products → handled per [[apps-xml-sync-discontinued]] (`disable_missings`); when set, missing products are deactivated **and** fire the search re-index with `action=update` so the storefront drops them on the next search-index sync chunk.
 - A **sync history entry** is created with stats (created / updated / skipped / failed counts), visible on [[apps-xml-sync-status]].
 - the search re-index events fire **per affected product** → queue follow-up `MakeSearchable` jobs on `searchable-import4`.
-- **Webhooks fire per product** (`product.created` / `product.updated`) — the same [[settings-hooks]] channel as admin saves. **Bulk sync does NOT suppress them**; receivers must be idempotent and ready for a burst proportional to the row count.
+- **Webhooks fire per product** (`product.updated`) — the same [[settings-hooks]] channel as admin saves. **Bulk sync does NOT suppress them**; receivers must be idempotent and ready for a burst proportional to the row count.
 - **Smart-collection re-evaluation** runs (membership changes from new / updated products).
 - **Cache invalidation**: product / category / search pages flushed.
 

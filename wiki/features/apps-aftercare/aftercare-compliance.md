@@ -7,8 +7,8 @@ aliases: ["Aftercare compliance", "Right of withdrawal EU", "Directive 2023/2673
 tags: [apps, aftercare, compliance, eu, withdrawal, legal]
 plan_gates: []
 created: 2026-07-24
-updated: 2026-07-24
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[apps-aftercare]]. See the hub for the other aspects (admin inbox, settings, free-vs-Pro, storefront flow).
@@ -40,7 +40,7 @@ No settings live on this aspect. The compliance-relevant settings (`withdrawal_w
 
 ### The withdrawal window starts on DELIVERY, not the order date
 
-The cooling-off clock starts on **physical possession**: `window_start` is the order's **delivery date**, falling back to the dispatch / fulfilment date (for digital lines, the auto-fulfilment date). It is **null until the order ships** — before that there is no deadline yet. `window_end` = `window_start` + `withdrawal_window_days` (default / minimum **14**; the merchant may extend to 365 but never shorten below 14).
+The cooling-off clock starts on **physical possession**: `window_start` is read from the order's latest shipment record — its **delivery date**, else its dispatch date, else the date the order was fulfilled (for digital lines, the auto-fulfilment date). A delivery date still in the future does not start the in-account countdown. It is **null until the order ships** — before that there is no deadline yet. `window_end` = `window_start` + `withdrawal_window_days` (default / minimum **14**; the merchant may extend to 365 but never shorten below 14).
 
 The **right to withdraw exists from the moment the contract is concluded**, so a customer may withdraw **before** delivery too (Directive 2011/83/EU Art. 9). Only the countdown waits for delivery; the withdrawal function itself is available throughout.
 

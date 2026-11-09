@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Landing Pages → FAQ editor"
+nav_path: "Design → Static pages → FAQ editor"
 route_name: admin.pages.edit
-route_path: /admin/marketing/pages/edit/{page_id}
+route_path: /admin/design/pages/edit/{page_id}
 aliases: ["FAQ page", "FAQ editor", "Q&A editor", "Shifting rows", "Question/answer pairs", "FAQ страница", "Често задавани въпроси"]
 tags: [marketing, content, pages, faq, editor, shifting-rows]
 plan_gates: ["faq_page"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-landing-pages]]. See the hub for the other aspects (list view, page types, editor, system slots, builder rules, plan gates).
@@ -23,14 +23,14 @@ FAQ pages are plan-gated by the `faq_page` plan feature (see [[landing-pages-pla
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Pages** → **+ Add new page** → pick **FAQ page** (label: `help.faq_page`).
+Sidebar → **Design** → **FAQ** (opens the add form directly), or **Design** → **Static pages** → **Add page** → pick **FAQ**.
 
 Direct routes:
 
 | Action | Route name | Path |
 |--------|------------|------|
-| Add FAQ page | `admin.pages.add` | `/admin/marketing/pages/add/faq` |
-| Edit FAQ page | `admin.pages.edit` | `/admin/marketing/pages/edit/{page_id}` (when the page's type is `faq`) |
+| Add FAQ page | `admin.pages.add` | `/admin/design/pages/add/faq` |
+| Edit FAQ page | `admin.pages.edit` | `/admin/design/pages/edit/{page_id}` (when the page's type is `faq`) |
 
 ## What the merchant can do here
 

@@ -1,12 +1,12 @@
 ---
 type: concept
 nav_path: "Concept → CloudCart Admin mobile app → Home, analytics and help"
-aliases: ["App home screen", "App insights", "App analytics", "App support", "Customer Service Center in the app", "Account manager in the app", "App notifications inbox", "Начало", "Статистики", "Анализи", "Top products in the app", "Customer value", "Return rate", "Настройки на анализите", "Топ продукти по продажби", "Стойност на клиента", "Процент връщания", "Център за обслужване", "Вашият акаунт мениджър", "Известия"]
+aliases: ["App home screen", "App insights", "App analytics", "App support", "Customer Service Center in the app", "Account manager in the app", "App notifications inbox", "Начало", "Статистики", "Анализи", "Top products in the app", "Customer value", "Return rate", "Настройки на анализите", "Топ продукти по продажби", "Стойност на клиента", "Процент връщания", "Център за обслужване", "Вашият акаунт мениджър", "Известия", "Някои системи са недостъпни", "Platform status", "Network error", "Справката не може да бъде заредена"]
 tags: [mobile-app, dashboard, analytics, support, notifications, concepts]
 plan_gates: []
 created: 2026-10-06
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # CloudCart Admin app — home, analytics and help
@@ -26,13 +26,17 @@ A greeting by time of day ("Good morning", "Good afternoon", "Good evening"), th
 - **Insights** (Статистики) — **New orders**, **Abandoned orders**, **Out of stock products** and **Total customers**.
 - **Sales** and **Store performance** — **Total order income** and **Total orders** for a chosen period, against the **Previous period**.
 - Periods: Today, Yesterday, Last 7 days, Last 30 days, Last 90 days, This month, Previous month, Last 3 months, Last year, or **Custom range…**. "No data for this period" when there is nothing to show.
-- **Platform status** — "All systems operational" or "Some systems down", with **View status** for details.
+- **Platform status** — "All systems operational" (Всички системи работят нормално) or "Some systems down" (Някои системи са недостъпни), with **View status** (Виж статуса) for details, and "Checking status…" while it loads. Which status source the card reads is set in the app's own code (verify).
 
 ### Analytics (Анализи)
 
 **Total sales**, **Conversion rate** and **Sessions** for the chosen period, with **Comparison** (or **No comparison**) and **Custom range**. **Analytics settings** (Настройки на анализите) is in the same section.
 
 The reports include **Top products by units sold** (Топ продукти по продадени бройки), **Top products by sales** (Топ продукти по продажби), **Customer value** (Стойност на клиента), **Average order value**, **Returns over time**, **Net revenue** (Нетни приходи), **Return rate** (Процент връщания) and **Taxes**. The note "Data is displayed according to the default statuses defined in the settings and cannot be changed" applies to them. The full reports are in the web admin's [[analytics]].
+
+### When data does not load
+
+A report that cannot be loaded shows "Could not load this report." (Справката не може да бъде заредена.). The red "Network error. Please check your connection and try again." is not among the app's translated texts, so it appears in English whatever the language (verify). What triggers it, and which addresses the app calls for its figures, is decided in the app's own code, which the wiki does not cover. The web admin in the phone's browser shows the same data meanwhile ([[mobile-admin-app]]).
 
 ### Notifications (Известия)
 
@@ -75,3 +79,4 @@ The menu also has **Switch store**, **Open admin panel**, **Account** (with **De
 - Which report shows which figure (verify): the report names come from the app's strings.
 - Whether the Insights tiles open the matching lists (for example, out-of-stock products) or are figures only.
 - Which period the Home screen opens on.
+- What makes the app show "Network error", and which host and endpoints it calls for Home and Analytics.

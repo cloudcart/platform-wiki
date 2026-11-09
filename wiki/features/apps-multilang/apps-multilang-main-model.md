@@ -7,8 +7,8 @@ aliases: ["Multilang master site", "Multilang sister sites", "Master vs sister",
 tags: [apps, administration, multi-language, storefront, sync]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[apps-multilang]]. See the hub for the other aspects (translation engine, SEO & domains).
@@ -60,7 +60,7 @@ Each translated entity has its OWN URL handle on the sister site. The merchant C
 
 ### Stores app vs Multilang — different concerns
 
-Multilang is the engine for language-specific sister sites driven from one master admin. [[apps-stores]] (separate app) is a multi-storefront feature where different stores have potentially DIFFERENT catalogs and operate as independent businesses. **Multilang is for "one catalog, many languages"; Stores is for "many catalogs / many businesses."** They are separate apps with separate data models — both CAN be active, but the merchant typically picks one model depending on whether they want translated copies of one catalog or independent sister stores.
+Multilang is the engine for language-specific sister sites driven from one master admin. [[apps-stores]] (separate app) is a multi-storefront feature where different stores have potentially DIFFERENT catalogs and operate as independent businesses. **Multilang is for "one source catalog, many languages": each sister holds its own copy of the products, linked to the master's and filled from it; Stores is for "many catalogs / many businesses."** They are separate apps with separate data models — both CAN be active, but the merchant typically picks one model depending on whether they want translated copies of one catalog or independent sister stores.
 
 ### Per-language overrides
 

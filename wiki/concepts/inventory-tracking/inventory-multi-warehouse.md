@@ -5,8 +5,8 @@ aliases: ["Inventory multi-warehouse", "Multiple warehouses", "Per-warehouse sto
 tags: [catalog, inventory, stock, multi-warehouse, apps, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[inventory-tracking]]. See the hub for the other aspects (variant model, decrement timing, restock, oversell, bundle stock, in-stock badge, debugging playbook).
@@ -40,7 +40,7 @@ Covered:
 Not covered here:
 
 - The per-Variant tracking model — see [[inventory-variant-model]].
-- Specific multi-warehouse app pages — see [[apps-store-locations]], [[apps-microbg]], [[apps-microinvest]], [[apps-fgo]], [[apps-smart-bill]], [[apps-emag-sync]] for the integrations themselves.
+- Specific multi-warehouse app pages — see [[apps-store-locations]], [[apps-microbg]], [[apps-microinvest]], [[apps-fgo]], [[apps-smart-bill]] for the integrations themselves.
 - Order routing logic — owned by the app, not CloudCart.
 
 ## Contrasts
@@ -94,7 +94,7 @@ This is the most flexible pattern but requires custom integration work — there
 - [[apps-microbg]] — Bulgarian cloud accounting + warehouse, 3-min sync pattern.
 - [[apps-microinvest]] — Microinvest Delta on-prem ERP (different product from Micro.bg).
 - [[apps-fgo]] / [[apps-smart-bill]] / [[apps-szamlazz]] — invoicing / ERP integrations with optional stock sync.
-- [[apps-emag-sync]] — eMag marketplace stock sync.
+- [[apps-emag-sync]] — eMAG gets a one-way feed; eMAG sales never change CloudCart stock.
 - [[apps-xml-sync]] — generic supplier-feed stock sync.
 - [[settings-hooks]] — webhooks the merchant subscribes for headless fulfilment.
 - [[json-api-v2]] — API surface for headless integrations.

@@ -5,8 +5,8 @@ aliases: ["Tax fields", "Fee fields", "Tax / Fee attributes", "Tax form fields",
 tags: [entity, taxes, fees, vat, attributes, fields]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[tax]]. See the hub for the other aspects (VAT-vs-Fee discrimination, overrides, order snapshot, validation, business rules).
@@ -36,7 +36,7 @@ The full attribute catalogue for a single Tax / Fee row on [[settings-taxes]]. T
 | **VAT flag** (`vat`) | Both — **NOT user-toggleable** | Auto-set on create from the Add Tax / Add Fee pick; preserved on update | Discriminates rule TYPE — **NOT** whether the rule's own amount is VAT-taxable. `vat = yes` → a VAT rate rule; `vat = no` → a Fee. The type-picker choice becomes `vat` and is locked; any value the form submits is overwritten. See [[tax-entity-vat-vs-fee]]. |
 | **Price includes VAT** (`price_with_vat`) | Tax only | Toggle on the Tax form (`tax_prices`) | `1` = entered product prices ALREADY include VAT (GROSS, typical EU consumer pricing); `0` = NET (typical US / B2B, VAT added at checkout). Per-rule, not store-wide. **FORCED to `0` for fees.** See [[tax-pricing-models]]. |
 | **OSS registration** (`oss_registration`) | Tax only | Toggle inside the Regions box when target = `regions` | EU One-Stop-Shop flag. Does NOT auto-swap to destination-country VAT rate — see [[tax-oss-semantics]]. Persistence is presence-based (stored `true` when the field is present at all). Manual switch — does NOT auto-track the €10,000 annual threshold. |
-| **Shipping inclusion** (`shipping`) | Tax only — no UI control | enum **`yes` / `no` only** (defaults to `yes`) | Controls **bucketing in the totals pipeline** (`tax.before` when `no`; `tax.after` when `yes`), NOT "VAT also applies to the shipping line". Whether VAT applies to shipping is driven by the shipping quote's own `allow_modify_vat` flag, not this field. **FORCED to `no` for fees.** There is no `specific` value (older wiki phrasing was wrong). |
+| **Shipping inclusion** (`shipping`) | Tax only — no UI control | enum **`yes` / `no` only** (defaults to `yes`) | Not read by the totals: fees always go before shipping, VAT after, and VAT on the shipping line is decided per quote (`allow_modify_vat`, [[settings-taxes-pricing-display]]). **FORCED to `no` for fees.** There is no `specific` value (older wiki phrasing was wrong). |
 | **Per-region overrides** (`regions[]`) | Tax only | Repeatable rows in the Regions Exceptions box | Visible only when a Google Maps API key is configured AND a `geo_zone_id` is picked. Different rate per sub-region via Google Places autocomplete. Each row stores `state_iso_2`, the place name (`text`), and the rate. See [[tax-entity-overrides]]. |
 | **Per-category overrides** (`categories[]`) | Tax only | Repeatable rows in the Categories Exceptions box | Always visible on the Tax form. Different rate for specific product categories (e.g., 9% on Books while base is 20%). Each row has Description (required), Category (required), Region (only if target=regions AND maps key configured), Amount. See [[tax-entity-overrides]]. |
 | **No-VAT reason — EU** (`without_vat_reasons`) | Tax only | Free text, **max 64,000 characters** | Wording printed on the invoice when an EU sale qualifies for zero VAT (intra-community supply, reverse charge). Empty falls back to a platform default. |

@@ -1,14 +1,14 @@
 ---
 type: feature
 nav_path: "Design → Custom CSS/JS → Editor"
-route_name: admin.custom.assets
-route_path: /admin/storefront/custom-assets
+route_name: design.custom-assets
+route_path: /admin/design/custom-assets
 aliases: ["Custom CSS/JS editor", "Custom code editor", "CodeMirror custom assets", "custom_assets field", "Редактор персонализиран код"]
 tags: [design, custom, css, js, advanced]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 > Part of [[design-custom-assets]]. See the hub for the other aspects (injection point, storage & lifecycle).
 
@@ -20,7 +20,7 @@ This aspect covers the **editor surface** of the [[design-custom-assets]] screen
 
 ## Where to find it
 
-Sidebar → **Design** → **Custom CSS/JS**, route `/admin/storefront/custom-assets`. The editor is the entire body of the screen — there are no tabs or sub-sections. The Save button sits top-right. See the hub [[design-custom-assets]] for the full sub-route table.
+Sidebar → **Design** → **Custom CSS/JS**, route `/admin/design/custom-assets` (the screen's header reads *Add CSS/JS*). The editor is the entire body of the screen — there are no tabs or sub-sections and no save button until the code is changed. See the hub [[design-custom-assets]].
 
 ## What the merchant can do here
 
@@ -30,10 +30,7 @@ The screen is a single full-width form with one big CodeMirror editor:
   - **Mode:** `htmlmixed` — HTML with embedded `<style>` / `<script>` blocks all highlighted appropriately.
   - **Line numbers** on the left.
   - **Line wrapping** on (long lines wrap visually without horizontal scroll).
-  - **Code folding** (collapse / expand nested tags via the fold gutter).
-  - **Active-line highlight** (the line the cursor is on is shaded).
-  - **Bracket matching** (jumping between matching `<tag>` / `</tag>` or `{ }`).
-  - **Vertical resize handle** — the editor starts at 250px minimum and the merchant can drag the bottom-right corner to make it taller.
+  - **Grows with its content** from a 420px minimum height; the page scrolls, not the editor.
 - Paste any combination of:
   - `<style>...</style>` blocks for CSS rules.
   - `<script>...</script>` blocks for inline JavaScript.
@@ -41,7 +38,7 @@ The screen is a single full-width form with one big CodeMirror editor:
   - `<link rel="stylesheet" href="...">` tags for external stylesheets.
   - `<meta name="...">` tags (rarely useful but allowed).
   - Plain HTML markup of any kind.
-- Click **Save** (top-right *"Edit"* button, label `global.action.edit`) — persists the editor content. Success message: *"Theme settings successfully edited"*.
+- Change the code: a *You have unsaved changes* bar appears with **Save changes** (and a discard option). Saving shows *All settings are saved successfully*. There is no separate **Edit** button; it belonged to the retired screen at `/admin/storefront/custom-assets`. The Bulgarian wording of the bar comes from the admin's translations, not the code.
 
 Where that pasted markup actually lands is covered in [[design-custom-assets-injection]].
 
@@ -49,7 +46,7 @@ Where that pasted markup actually lands is covered in [[design-custom-assets-inj
 
 - The merchant cannot **target a specific page** with their custom code — whatever is pasted is injected into the `<head>` of EVERY storefront page. To scope code to certain pages, wrap the JS in client-side path checks (e.g., `if (location.pathname.startsWith('/category/')) { ... }`). See [[design-custom-assets-injection]] for why there is no server-side per-page filter.
 - The merchant cannot **target the footer / body close** — only the `<head>`. Scripts that need the DOM ready can use standard `DOMContentLoaded` / `load` listeners.
-- The merchant cannot **preview before saving** — there is no draft mode, no staging, no "test on a sandbox URL". Save publishes to the LIVE storefront immediately.
+- The merchant cannot **preview before saving** — there is no draft mode, no staging, no "test on a sandbox URL". Save publishes to the LIVE storefront: signed-in visitors see it at once, guests within up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 - The merchant cannot **see syntax errors** — the editor has no JS / CSS linter. A typo (e.g., a missing closing brace) only surfaces when the storefront renders, where the broken script silently fails or breaks the whole page.
 - The merchant cannot **roll back** — there is no version history. Saving replaces the previous content entirely; the merchant must keep their own backup. See [[design-custom-assets-storage]].
 - The merchant cannot **enable / disable** the custom code without deleting it. To turn it off temporarily, clear the editor or wrap everything in HTML comments (`<!-- ... -->`).
@@ -62,25 +59,24 @@ Where that pasted markup actually lands is covered in [[design-custom-assets-inj
 
 | Field | Editor | Format | Required | Maximum |
 |-------|--------|--------|----------|---------|
-| `custom_assets` | CodeMirror `htmlmixed` mode (line numbers, wrapping, folding, active-line, bracket matching) | Free-form HTML / CSS / JS (any combination) | No (an empty save removes all custom code) | No documented limit (constrained by the database column, typically large-text). |
+| `custom_assets` | CodeMirror `htmlmixed` mode (line numbers, wrapping) | Free-form HTML / CSS / JS (any combination) | No (an empty save removes all custom code) | No documented limit (constrained by the database column, typically large-text). |
 
 ### Save action
 
 | Action | Trigger | Confirmation | Result |
 |--------|---------|--------------|--------|
-| **Edit** (Save) | Click *Edit* button top-right (label `global.action.edit`) | None | Saves via AJAX. Success message: *"Theme settings successfully edited"*. The storefront serves the new code on the next page load (within seconds — there's no cache flush step). |
+| **Save changes** | The *You have unsaved changes* bar, shown once the code differs from the saved value | None (leaving with unsaved changes asks first) | Saves in the background; the bar confirms *All settings are saved successfully*. The storefront serves the new code on the next page load (within seconds — there's no cache flush step). |
 
-Submitting the form (e.g., by pressing Enter while focused on the button) goes through the same AJAX save handler; the form is prevented from reloading the page.
 
 ## Business rules
 
-### The editor is initialised on a hidden textarea
+### The editor
 
-The editor library is CodeMirror 5.41–5.59 (loaded from cdnjs at render time), configured for `htmlmixed` mode with HTML / XML / JS / CSS modes also loaded. The dark theme is `base16-dark`. The editor is initialised on a hidden `<textarea>` and its content is synced back to the textarea on every `change` event, so the standard form submit picks up the latest content.
+The editor is CodeMirror in `htmlmixed` mode with line numbers and line wrapping, built into the admin. It has no linter, folding or preview.
 
 ### Save stores the raw value with no validation
 
-The save endpoint receives a POST with one field — `custom_assets` — and stores its raw value verbatim. There is no parsing, no validation, and no transaction wrapper. Failures (e.g., database connection errors) bubble up as standard errors and the merchant sees a generic toast failure. The reasons there is no sanitisation, and the per-theme storage behaviour, are on [[design-custom-assets-injection]] and [[design-custom-assets-storage]] respectively.
+The save endpoint receives a POST with one field — `custom_assets` — and stores its raw value verbatim, for the active theme. There is no parsing and no validation. Failures (e.g., database connection errors) bubble up as standard errors and the merchant sees a generic toast failure. The reasons there is no sanitisation, and the per-theme storage behaviour, are on [[design-custom-assets-injection]] and [[design-custom-assets-storage]] respectively.
 
 ## Related
 

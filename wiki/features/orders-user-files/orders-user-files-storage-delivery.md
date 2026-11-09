@@ -7,8 +7,8 @@ aliases: ["User files storage", "User files delivery", "Order file URL", "Custom
 tags: [orders, files, customer-uploads, storage, notifications, smarty]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[orders-user-files]]. See the hub for the other aspects (list view, deletion, data model).
@@ -21,12 +21,12 @@ Where a customer-uploaded file physically lives, how the merchant's `file_url` r
 
 ## Where to find it
 
-The `file_url` is exposed in each row of the [[orders-user-files-list|User Files list]] (`/admin/order-files`). The customer's copy is delivered out-of-band via the post-checkout download-link email — there is no UI for the merchant to resend it from this page.
+The `file_url` is exposed in each row of the [[orders-user-files-list|User Files list]] (`/admin/order-files`). The customer sees their own upload as a link in the order's product list (see *Customer-side delivery* below); there is no UI for the merchant to send it from this page.
 
 ## What the merchant can do here
 
 - **Open / download a file** by following its `file_url` from the list. The URL streams the file through the merchant's own domain.
-- Nothing else — the merchant cannot re-send the customer email, change the storage backend, or configure a retention rule from this page (deletion is on [[orders-user-files-delete]]).
+- Nothing else — the merchant cannot send the file to the customer, change the storage backend, or configure a retention rule from this page (deletion is on [[orders-user-files-delete]]).
 
 ## Settings & fields
 
@@ -43,13 +43,13 @@ The `file_url` attribute is computed on demand by checking the storage backend, 
 
 ## Business rules
 
-### Customer-side delivery — automatic download-link email
+### Customer-side delivery — a link in the order's product list
 
-When a customer places an order containing a file-type option, the platform automatically sends them a *"Files download link for order #X in <store>"* email (notification template `send_order_files_download_link`) containing the proxy URL(s) for the customer's own uploads. The customer therefore has the file before the merchant ever opens the [[orders-user-files|User Files]] list — this list is purely the merchant's view + management. Email delivery is set up earlier in the order pipeline — see [[orders-notify-customer]].
+Each upload shows as a link next to its option wherever the order's product list renders: the thank-you page, the order in the customer's account, and order emails that carry the product list ([[orders-notify-customer]]). No dedicated email exists for it. The *Files download link* email (`send_order_files_download_link`) is a different thing: it goes out only for [[digital-products|digital products]] on a paid or completed order, so a file-type option never triggers it. The [[orders-user-files|User Files]] list is purely the merchant's view + management.
 
 ### Deleting a file breaks the customer's link
 
-If the merchant [[orders-user-files-delete|deletes]] the file from the admin, the customer's email link returns 404 — the storage blob is gone.
+If the merchant [[orders-user-files-delete|deletes]] the file from the admin, the link on the customer's order and in earlier emails returns 404 — the storage blob is gone.
 
 ### Retention — manual cleanup only
 
@@ -62,7 +62,7 @@ Removing a file nulls the option's `value` but leaves the option row on the orde
 ## Related
 
 - [[orders-user-files]] — hub.
-- [[orders-notify-customer]] — the customer download-link email is part of the order-notification flow.
+- [[orders-notify-customer]] — the order emails whose product list carries the upload link.
 - [[orders-user-files-delete]] — what deleting a file does to storage + the customer link.
 - [[orders-user-files-data-model]] — where `file_url` sits among the per-file fields.
 - [[file-asset]] — entity page for file-storage records (shared quota).

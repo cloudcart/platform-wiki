@@ -7,8 +7,8 @@ aliases: ["Category showcase module", "showcaseCategories module", "showcaseCate
 tags: [design, modules, products, category, showcase]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Product module — Category showcase (`product.showcase` with `type=category`)
@@ -33,7 +33,7 @@ Renders as a homepage row (or theme-placed slot). Category IMAGE comes from the 
 - Header text for the row.
 - Toggle whether each tile shows the category NAME.
 - Toggle whether each tile shows the category short DESCRIPTION.
-- Pick the categories to surface (multi-select tree picker; drag to reorder).
+- Pick the categories to surface (multi-select tree picker; the tile order comes from the categories, see Business rules).
 - Toggle slider mode with arrows / pagination indicators.
 - Pick arrow position (top / center).
 - Pick tiles per row (1-12).
@@ -55,7 +55,7 @@ Renders as a homepage row (or theme-placed slot). Category IMAGE comes from the 
 | `type` | enum | `category` (for category instances) | `category`, `vendor` | — | `in:category,vendor` | Fixed by the theme JSON for category instances |
 | `show_name` | bool | `true` | on / off | — | `bool` | Show category name on each tile |
 | `show_description` | bool | `true` | on / off | — | `bool` | Show category short description |
-| `showcase` | multi-select tree | `[]` | category IDs (drag-reorder) | up to 40 entries | freeform; existence-validated | Which categories to surface |
+| `showcase` | multi-select tree | `[]` | category IDs | up to 40 entries | freeform; existence-validated | Which categories to surface |
 | `per_row` | int | `3` | 1-12 | 1-12 | `int:1,12` | Tiles per row |
 | `enable_slider` | toggle | off | on / off | — | freeform | Render as a carousel |
 | `enable_arrows` | bool | `true` | on / off | — | `bool` | Show next/prev arrows (slider mode) |
@@ -88,9 +88,13 @@ Renders as a homepage row (or theme-placed slot). Category IMAGE comes from the 
 
 Each tile renders the category's stored IMAGE + name + (optional) short description. To change a tile, edit the category record in [[products-categories]] — the module just lays them out.
 
-### Order preserved from picker
+### Tiles follow the category order, not the picker order
 
-Categories are saved in the order they were picked. The runtime fetches them and orders by the stored `order` column (category natural order) when the picker stores IDs — verify per-theme that the picker preserves drag-reorder.
+The tiles are ordered by each category's own position number, ascending, across all picked categories. The order in which categories were picked or dragged in the picker is not used (the brand showcase, by contrast, keeps its picker order — [[design-module-product-showcase-brand]]). That number is the category's place among its siblings on the Categories **Organize** tab ([[products-categories-list-organize]]) and restarts at 1 under every parent. So tiles of two top-level categories follow their Organize order, but picked categories from different parents interleave: the first child of each parent comes before any second child. To change the tile order, reorder the categories on the Organize tab.
+
+### Also a Page Builder block
+
+The same showcase is offered as a block in the Page Builder ([[design-modules-page-builder]]), for example on a page set as the home page; it orders its tiles the same way.
 
 ### Cap at 40 categories
 
@@ -139,5 +143,4 @@ the platform code — orders by the category natural `order` column.
 
 ## Open questions
 
-- 📡 **Picker drag-reorder vs category natural order.** Some pickers preserve the drag order; the runtime orders by the category's `order` column. Verify whether the merchant's picker order is honoured per theme.
 - 📡 **Nested categories.** Whether the picker allows sub-categories and how nested tiles render — verify per-theme.

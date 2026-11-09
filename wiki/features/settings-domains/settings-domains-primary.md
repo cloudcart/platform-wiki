@@ -7,8 +7,8 @@ aliases: ["Primary domain", "Set as primary", "Canonical URL", "Invalid domain h
 tags: [settings, domains, primary, canonical, redirect]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[settings-domains]]. See the hub for related aspects (add flow, DNS / Cloudflare, SSL, deletion, plan gates).
@@ -26,7 +26,7 @@ Settings → Domains → per-domain row → **Set as primary** action. Currently
 ## What the merchant can do here
 
 - See which domain is currently primary — visible at the top of the list with a **"Primary"** badge on the primary domain card.
-- **Set another domain as primary** — opens the `ConfirmModal` (*"Set as primary? — This will change the canonical URL of your store. You will be redirected to the new URL."*). On confirm, the platform verifies the gates below and either:
+- **Set another domain as primary** — opens *"Set {domain} as your primary domain?"* (*"Are you are sure you want to set this domain as a primary?"*). On confirm, the platform verifies the gates below and either:
   - Switches the primary, triggers the hard redirect, and reloads the admin SPA on the new domain; OR
   - Surfaces a guidance modal pointing the merchant to fix whichever gate failed.
 
@@ -50,11 +50,11 @@ Only one domain can be `is_primary=true` at a time. Setting another domain as pr
 
 When the merchant tries to set a domain as primary, the platform checks three conditions and opens the relevant guidance modal if any fails:
 
-1. **DNS pointing correctly** — if the domain's Cloudflare DNS zone isn't yet active, the merchant is taken to the DNS management modal to finish the nameserver change. See [[settings-domains-dns-cloudflare]]. ConfirmModal payload: `noDnsPrimarySet`. Modal title *"Invalid domain headers"* with message *"Your domain doesn't point at CloudCart. Fix the DNS first."*
-2. **SSL provisioned** — if no valid SSL certificate is in place, the merchant is taken to the SSL modal to install one. ConfirmModal payload: `installSSLForPrimarySet`. Modal title *"Install SSL"* with message *"This domain needs a valid SSL certificate before it can be the primary."* — clicking OK opens the SSL modal. See [[settings-domains-ssl]].
-3. **Powered-by-CloudCart header check** — for externally-owned domains, the platform performs a live HTTP GET to `https://<host>/.well-known/acme-challenge/_selftest` and looks for the string `cloudcart.com` in **any response header** (not specifically `x-powered-by`). If the domain doesn't actually point at CloudCart, the check fails with *"Invalid domain headers"* and the merchant is taken to the DNS modal.
+1. **DNS pointing correctly** — while the domain's zone is missing or not Active, the admin shows *"Please set your DNS Records before making the domain primary!"* with a **Manage DNS** button. See [[settings-domains-dns-cloudflare]].
+2. **SSL provisioned** — with no certificate it shows *"You need to install SSL first, for making this domain as a primary!"* and opens the SSL modal. The server refuses with *"No SSL found"*, *"Invalid certificate expiring date"* or *"The SSL certificate has expired on: <date>"*. See [[settings-domains-ssl]].
+3. **Powered-by-CloudCart header check** — for domains other than `*.cloudcart.net`, the server requests `http://<host>/.well-known/acme-challenge/_selftest` (plain http) and needs a response header whose value is exactly `cloudcart.com`, which in practice is CloudCart's `x-powered-by: cloudcart.com`. The Let's Encrypt check reads `x-powered-by` itself, so the two agree. If it fails: *"Invalid domain headers"*. The same check runs when **Domain active** is switched on.
 
-If the merchant's `cnameFeature` quota is exhausted at the moment they try to set-as-primary on a CNAME-mode domain, the ConfirmModal opens with the `manageDnsWithPaidCNAME` payload instead — routing to the `PlanFeature` panel. See [[settings-domains-plan-gates]].
+When the store has CNAME slots, **Set as primary** goes straight to the confirmation and these server checks decide, since a CNAME-mode domain has no zone to show as Active ([[settings-domains-external-dns]]).
 
 ### Powered-by header check — single ~5-second timeout, no retry
 
@@ -73,9 +73,13 @@ Setting a new primary causes a **hard redirect** — the admin page reloads on t
 - Setting a new primary domain triggers a **hard redirect** (the admin page reloads on the new domain's URL).
 - Outbound email templates, sitemaps, canonical tags, and webhook payloads start emitting the new primary URL on subsequent requests / cron runs.
 
-### Non-primary domains continue to serve
+### Non-primary domains redirect to the primary
 
-Non-primary domains that are still **Active** continue to be served by CloudCart — they typically 301-redirect to the canonical primary so search engines consolidate signal on one URL. See [[apps-domain-redirect]] / [[apps-domain-redirect-settings]] for the configurable redirect-behaviour app. The merchant can have many non-primary domains all redirecting to the primary if they own multiple TLD variants (`mystore.com`, `mystore.bg`, `mystore.eu`).
+A request that arrives on any other of the store's domains, its `*.cloudcart.net` address included, is answered with a **301 to the same path and query string on the primary domain** (the admin panel uses a 302), so search engines consolidate signal on one URL. This is automatic platform behaviour, not a setting: it runs before any page loads, so it covers every storefront page, including cart and checkout (payment-provider callback and return addresses are exempt). The merchant can have many non-primary domains all redirecting to the primary if they own multiple TLD variants (`mystore.com`, `mystore.bg`, `mystore.eu`).
+
+The target is always this store's own **Active** primary, which must already be served by CloudCart (the *"Invalid domain headers"* check), so this cannot forward a domain to a site hosted elsewhere — see [[seo-301-redirects-types]]. [[apps-domain-redirect]] is a different thing: country-based routing between the merchant's own stores.
+
+If an Active primary stops resolving (for example its registration lapsed), the other addresses keep redirecting to it until it is deactivated, the admin panel included (302), so the merchant cannot reach **Set as primary**. The `*.cloudcart.net` address has no gates, and switching the primary back to it from CloudCart's side restores the store at once.
 
 ### "Invalid domain headers" — what to tell the merchant
 
@@ -95,7 +99,8 @@ When the merchant sees *"Invalid domain headers"* the cause is almost always one
 - [[settings-cart]] — checkout URL uses the primary.
 - [[marketing-seo-canonical]] — `<link rel="canonical">` emission downstream.
 - [[marketing-seo-sitemap]] — sitemap URLs derive from the primary.
-- [[marketing-seo-301-redirects]] / [[apps-domain-redirect]] / [[apps-domain-redirect-settings]] — redirect of non-primary domains to the primary.
+- [[marketing-seo-301-redirects]] — per-URL 301 rules.
+- [[apps-domain-redirect]] / [[apps-domain-redirect-settings]] — own-stores geo-routing (not the automatic non-primary → primary redirect).
 
 ## Open questions
 

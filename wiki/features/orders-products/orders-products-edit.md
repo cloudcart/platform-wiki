@@ -7,8 +7,8 @@ aliases: ["Edit order line", "Order edit product", "Edit line quantity", "Edit l
 tags: [orders, products, line-items, edit]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[orders-products]]. See the hub for the other aspects (add, delete, line discount, fulfillment popover, stock effects, side effects).
@@ -63,7 +63,7 @@ When the line is tracked (the variant's `tracking` flag was on at the time the l
 
 ### Edit triggers a shipping re-quote
 
-Saving a quantity / price edit re-runs the courier quote API to recompute shipping cost — a new weight or value may change the rate. The order's shipping line may update silently. The merchant should verify the shipping total after editing.
+Saving an edit that changed something re-quotes shipping. On an unlocked, unpaid order the shipping line may update silently; a locked or paid order keeps its price; a courier error rolls the edit back. See [[orders-products-courier-requote]].
 
 ### Edit triggers tax recalculation
 

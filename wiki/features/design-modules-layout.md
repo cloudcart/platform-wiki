@@ -7,8 +7,8 @@ aliases: ["Layout modules", "Layout settings", "Header layout", "Footer layout",
 tags: [design, modules, layout]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Storefront Modules — Layout
@@ -90,7 +90,7 @@ The image-preview select for the header / footer module pulls its options from t
 
 ### Cache invalidation is automatic
 
-Save and Reset both bump the per-site cache key, so the new layout is live on the next storefront request. No manual cache clear required.
+Save and Reset both bump the per-site cache key, so pages rendered afterwards use the new layout; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Plan-gating
 

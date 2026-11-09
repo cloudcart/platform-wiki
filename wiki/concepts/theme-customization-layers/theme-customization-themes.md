@@ -5,8 +5,8 @@ aliases: ["Theme customization Layer 1", "Theme as base layer", "Theme switch ef
 tags: [design, theme, customization, scss, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[theme-customization-layers]]. See the hub for the other aspects (editor, custom assets, cascade, plan gating, overlay).
@@ -25,7 +25,7 @@ source_count: 3
 
 The site's active theme is stored as the site's `template` slug. Layer 2's variable values and Layer 3's Custom CSS/JS code are both keyed against this same slug — so when the slug changes (theme switch), the merchant's view of the other two layers' content changes with it.
 
-The catalogue has roughly 67 themes (free + paid); ~45 declare `page_builder: true` to expose the Dynamic-page surface to merchants.
+The catalogue has roughly 67 themes (free + paid); ~45 declare `page_builder: true`, which only adds the admin links to the builder's Homepage, Thank you and 404 pages; the builder itself doesn't check it ([[landing-pages-builder-rules]]).
 
 ## Scope
 
@@ -62,7 +62,7 @@ The new theme's catalogue of:
 - **Page-builder block templates** (the `page_builder: true` flag in `theme.json` + block restrictions).
 - **Layout templates** (header / footer / menu / button variants).
 
-…becomes live immediately when the theme is installed.
+…becomes live when the theme is installed (guests once their cached page expires, up to 20 minutes).
 
 ## How it works
 

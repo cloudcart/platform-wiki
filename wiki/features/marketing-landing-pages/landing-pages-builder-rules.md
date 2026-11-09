@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Landing Pages → Builder rules"
+nav_path: "Design → Static pages → Dynamic page → Builder rules"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["Page Builder", "Dynamic page", "Builder page", "Builder editor", "Page history", "Builder module restrictions", "Builder автоматично активиране", "Builder pages"]
 tags: [marketing, content, pages, builder, history, modules, restrictions]
 plan_gates: ["storefront_builder"]
 created: 2026-06-10
-updated: 2026-10-21
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-landing-pages]]. See the hub for the other aspects (list view, page types, editor, system slots, FAQ editor, plan gates).
@@ -19,11 +19,11 @@ source_count: 2
 
 A page of type `builder` (one of the four types from [[landing-pages-types]]) is edited via the **drag-and-drop page builder** rather than the standard add/edit form. The builder owns the module palette, row settings, auto-save, publish action, and the page-history snapshot store. This page covers the **builder-specific business rules** that differ from regular / faq / landing pages: auto-active on publish, page-history retention, module-restriction validation, and the relationship to system slots.
 
-Builder pages are gated by the `storefront_builder` plan feature (see [[landing-pages-plan-gates]]). The card on the type-picker is hidden if the merchant's plan doesn't include this feature, and the route is blocked.
+Builder pages are gated by the `storefront_builder` plan feature (see [[landing-pages-plan-gates]]): the **Dynamic page** card always shows in the type picker, but on a plan without the feature opening the builder leads to the plan-feature page. Rows, row settings and moving blocks: [[landing-pages-builder-rows]].
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Pages** → **+ Add new page** → pick **Dynamic page** (label: `help.builder_page`).
+Sidebar → **Design** → **Static pages** (`/admin/design/pages`) → **Add page** → pick **Dynamic page**.
 
 Direct routes:
 
@@ -37,11 +37,10 @@ Direct routes:
 
 The builder is its own surface (the standard Add/Edit form for `regular` / `faq` / `landing` does NOT apply). High level:
 
-- Drag modules from the palette into rows / columns on the canvas.
-- Edit per-module settings (text, images, links, products, banners).
-- Changes on the canvas are auto-saved as draft history snapshots (marked *Autosaved*); the storefront keeps showing the last published version.
-- **Publish changes** → creates a published history snapshot and publishes the page.
-- Roll back by opening an earlier version from the page-history list (it shows the latest 50 of the up to 500 kept) and publishing it.
+- Add rows and blocks, edit, copy, move and remove them — see [[landing-pages-builder-rows]].
+- Changes on the canvas are auto-saved as drafts; the storefront keeps showing the last published version. The builder reopens on the newest version, so an unpublished draft is what the canvas shows next time.
+- **Публикувай** (*Publish changes*), at the bottom of the right-hand sidebar next to **Прегледай** (*Preview*, the version on the canvas, opened in a new tab), publishes the page.
+- Roll back in the sidebar section **История на промените** (*Page history changes*): the latest 50 versions by date and time, each marked **Публикувано** (*Published*) or **Запазено** (*Autosaved*). Clicking one only loads it on the canvas; the live page changes when it is published.
 - For builder system pages (theme-declared) — see [[landing-pages-system-slots]] — bind the page directly to a system slot at creation time via `/admin/marketing/pages/builder/system_page/{key}`.
 
 The Page name, URL handler, Featured image, SEO title / SEO description, and Canonical fields still apply to builder pages — they're managed via the builder UI's settings panel rather than the standard editor form.
@@ -75,7 +74,7 @@ When publishing a `builder` page from the builder UI (**Publish changes**), `act
 
 ### Builder pages keep edit history (last 500 versions)
 
-When the merchant publishes a `builder` page, a new `PageHistory` row is created with the page's full content snapshot + `published = 1`; every auto-save also adds a row, marked *Autosaved* instead of *Published*. The model retains the **last 500 versions per page** (published and auto-saved together) — rows beyond that are deleted on every publish or auto-save. The builder's history list shows the latest 50; the merchant opens one and publishes it to roll back.
+When the merchant publishes a `builder` page, a new `PageHistory` row is created with the page's full content snapshot + `published = 1`; every auto-save also adds a row, marked *Autosaved* instead of *Published*. The model retains the **last 500 versions per page** (published and auto-saved together) — rows beyond that are deleted on every publish or auto-save. The builder's history list shows the latest 50. Restoring is opening an older version and publishing it: that adds a new published version and deletes none of the newer ones. **Запазено** marks an unpublished auto-save, not a live page.
 
 Regular / faq / landing pages do **NOT** keep edit history this way — every save overwrites in place.
 
@@ -87,16 +86,9 @@ The bulk Copy action ([[landing-pages-list-view]]) copies builder pages with the
 
 The storefront URL for a builder page is rendered exactly like any other page: `/page/<url_handle>` (or `/private-page/<url_handle>` if the Private toggle is on). The builder editor's preview-popover uses the same helper as the standard editor.
 
-### Module restrictions are stricter on Blog system pages than on `home` / `thank_you` / `error.404`
-
-This is a frequent source of confusion. The wiki's earlier "a homepage builder page must include the products module" claim was **incorrect**. The actual rule:
-
-- **Blog list / Blog view** as system slots → required modules enforced (both slots are currently switched off, so this never applies today).
-- **Home / Thank-you / 404** as system slots → no required modules; the merchant can publish whatever they want.
-
 ### Content storage rewrites image URLs (same as regular pages)
 
-Builder pages' JSON content is piped through the platform code / the platform code recursively on save / read — so embedded image URLs stay portable across CDN domain changes. See [[landing-pages-editor]] for the same mechanism on regular pages.
+Embedded image addresses are stored in a portable form, so they survive a change of the image delivery domain ([[landing-pages-editor]]). Required modules per system slot: see *Module restrictions per system slot* above.
 
 ## Related
 
@@ -110,4 +102,4 @@ Builder pages' JSON content is piped through the platform code / the platform co
 
 ## Open questions
 
-- 📡 **Theme `page_builder` flag and `system_pages` declaration.** The visibility of the **Dynamic page** card and the builder-system-page slots depends on theme-config flags whose exact keys should be verified against `vuejs-storefront` theme manifests. (verify)
+- None. The theme's `page_builder` flag decides only whether the admin links to the Homepage, Thank-you and 404 builder pages (Design menu, Theme Editor); the builder itself does not check it, and Dynamic pages render with the platform's page template on any theme. 45 of the 57 built-in themes declare it, another custom theme among them.

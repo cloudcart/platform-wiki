@@ -8,8 +8,8 @@ aliases: ["Checkout authorize step", "Checkout login", "Checkout guest", "Checko
 tags: [storefront, checkout, customer, authorize, login, guest, register]
 plan_gates: []
 created: 2026-06-12
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[checkout]]. See the hub for the other aspects (shipping, payment, sidebar, submit, routing, JavaScript).
@@ -40,7 +40,7 @@ The controller passes an `$allowed_tabs` collection from `cart->getAllowedLoginM
 |---|---|---|---|
 | 1 | `guest` | `checkout/authorize/guest.tpl` | Allowed tabs includes `guest` — the most common configuration |
 | 2 | `register` | `checkout/authorize/register.tpl` | No guest allowed but register is |
-| 3 | (none) | `checkout/authorize/no-authorize.tpl` | Neither — customer must use the **"You have an account → log in"** addon link in the step header |
+| 3 | (none) | `checkout/authorize/no-authorize.tpl` | Neither. A notice says why: a digital product (*"Only registered customers can purchase digital products"*) or a subscription in a guests-only store, else no sign-in method enabled |
 
 The **"You have an account?"** link is rendered in the step's right-side addon (`cc-checkout-title-addon`) whenever `$allowed_tabs->has('login')`. Clicking it opens the login form in an ajax panel (`checkout/authorize/login.tpl`) without leaving the checkout page.
 
@@ -75,15 +75,14 @@ Merchant-controllable settings that change what this step renders:
 
 | Setting | Where set | Effect |
 |---|---|---|
-| Allow guest checkout | [[settings-cart]] | If OFF, removes `guest` from `allowed_tabs`. |
-| Allow registration | [[settings-cart]] | If OFF, removes `register`. |
+| **Customer profiles** (`checkout_customer_access`) | [[settings-cart-accounts-registration]] | `both`: guest, register, login. `member`: register, login. `guest`: guest only. A digital or subscription line drops `guest`. |
 | `checkout_login_code` | Platform option, no admin screen | Turns on the email codes. |
 | Custom fields (`type = register`) | [[customers-custom-fields]] | Adds extra inputs after email. |
 | GDPR settings | [[settings-general]] | Adds marketing-consent + privacy-policy checkboxes. |
 
 ## Business rules
 
-- **Allowed-tabs precedence — guest > register.** If both are allowed, the template renders **only the guest form** (the `{if $allowed_tabs->has('guest')}` branch wins). To force registration, the merchant must disable guest on [[settings-cart]].
+- **Allowed-tabs precedence — guest > register.** If both are allowed, the template renders **only the guest form**. To force registration, the merchant sets Customer profiles to registered only on [[settings-cart]]. A digital product or a subscription in the cart removes `guest` whatever the setting, so under `both` the register form (with password) shows — see [[checkout-flow-guest-vs-registered]].
 - **Email is the single identity key.** Both guest and register paths bind on email. A guest email matching an existing [[customer|Customer]] does not continue as a guest: the code popup opens ([[checkout-code-popup]]).
 - **Custom fields gate the Continue button.** Required custom fields must pass validation before the form submits; the guest endpoint (`checkout.guest`) re-validates server-side.
 - **Bumper Offer block can render here.** If the `bumper_offer` app is installed and enabled and has products to surface, its block injects at the bottom of this step in mobile view — see [[apps-bumpcart]].
@@ -103,11 +102,11 @@ Merchant-controlled settings affecting this section are listed under "Settings &
 
 ## Theme variations
 
-The template is shared from the theme templates — every theme inherits the same DOM. Themes can override individual sub-templates for per-theme tweaks, but the structure documented here applies to the default `flair` theme and every variant unless explicitly overridden.
+Shared from the theme templates, so every theme inherits it unless it overrides a sub-template.
 
 ## Known issues / by-design vs bug
 
-None recorded for this section. Any merchant-facing surprises specific to this step are noted inline in the sections above (Business rules / Open questions).
+None beyond the business rules above.
 
 ## Related
 

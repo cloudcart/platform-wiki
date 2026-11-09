@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Apps → Cart Rules → Rules"
+nav_path: "Marketing → Apps → Cart Rules → Rules"
 route_name: apps.cart-rules.settings
 route_path: /admin/apps/cart-rules/rules
 aliases: ["Cart Rules list", "Rules list", "Cart rules table", "Reorder cart rules", "Toggle cart rule"]
 tags: [apps, marketing, automation, rules-engine, list]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 
 # Cart Rules — the list table
@@ -21,7 +21,7 @@ The **Cart Rules list** is the merchant's home for every promotional rule config
 
 ## Where to find it
 
-**Sidebar → Apps → Cart Rules → Rules tab.**
+**Sidebar → Marketing → Apps → Cart Rules** — the link opens this list on the **Rules** tab.
 
 Route: `/admin/apps/cart-rules/rules` (route name `apps.cart-rules.settings`). List data loads from GET `/api/cart-rules` (paginated, filterable).
 
@@ -41,7 +41,7 @@ Route: `/admin/apps/cart-rules/rules` (route name `apps.cart-rules.settings`). L
 - **Restore** a soft-deleted rule from the UI (`deleted_at` is set but recovery requires support / direct DB).
 - **Duplicate / clone** a rule — neither the list nor the editor exposes a Clone affordance (verified). A variant must be rebuilt from scratch via **+ New rule**.
 - **Export / import** rules between stores.
-- **Preview** a rule against a fake cart — there is no simulator (verified). Workaround: save as Draft → briefly switch to Active → place a test order → switch back to Draft.
+- **Preview** a rule against a fake cart — there is no simulator (verified). Workaround: save it Inactive → briefly switch it Active → place a test order → switch it back. The admin has only Active and Inactive; Draft cannot be set ([[cart-rules-known-issues]]).
 
 ## Settings & fields
 

@@ -3,12 +3,12 @@ type: feature
 nav_path: "Orders → COD sync → Quota"
 route_name: admin.orders.sync.cod
 route_path: /admin/orders/sync/cod
-aliases: ["COD sync quota", "COD sync capacity", "COD sync subscription", "Add more COD", "shipping_payment_sync plan gate", "COD sync period"]
+aliases: ["COD sync quota", "COD sync capacity", "COD sync subscription", "Add more COD", "shipping_payment_sync plan gate", "COD sync period", "COD sync pack", "Синхронизация на наложени платежи лимит"]
 tags: [orders, cod, sync, plan-gate, billing]
 plan_gates: ["shipping_payment_sync"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # COD sync — quota
 
@@ -32,7 +32,11 @@ The usage banner at the top of the COD sync page (`/admin/orders/sync/cod`) — 
 
 ### Metered plan gate — `shipping_payment_sync`
 
-COD sync is a plan-gated feature with **explicit usage metering** — distinct from on/off plan gates because the merchant can buy add-on packs. The merchant consumes one sync event each time the platform polls and registers a status change for a COD order.
+COD sync is a plan-gated feature with **explicit usage metering** — distinct from on/off plan gates because the merchant can buy add-on packs.
+
+**One unit = one order the sync marked as paid in the current calendar month.** The count is the orders whose payout the sync recorded with a last sync date in this month. Polls that find nothing, and failed attempts, use nothing.
+
+**The monthly limit** is the plan's own value plus the value of every active paid pack for this feature. A pack therefore raises the limit in every month while it is active; unused units do not carry over. The plan's own value and the pack prices are in the plan and billing catalog, not in the code.
 
 ### Period — calendar month, not billing month
 
@@ -48,7 +52,7 @@ The link routes to the plan-feature upgrade page for `shipping_payment_sync` (pe
 - A "Buy more COD-sync events" purchase form (if the plan supports buying packs), OR
 - A plan-upgrade prompt (if the plan is the baseline and doesn't allow add-on packs).
 
-The merchant lands on the standard plan-upgrade UI; resolution happens there, not on the COD sync page.
+The merchant lands on the standard plan-upgrade UI; resolution happens there, not on the COD sync page. Buying a pack restarts the store's COD-sync job; it does not install or subscribe to any courier app.
 
 ## Business rules
 
@@ -66,7 +70,11 @@ The same job-level pre-checks also bail out on a plan-expired, suspended, or in-
 
 ### Quota-burn protection
 
-The platform caps retries per order and jumps the attempt counter to 15 on permanent configuration errors specifically to avoid wasting quota — see [[orders-sync-cod-errors]] and [[orders-sync-cod-eligibility]].
+Failed attempts never use quota (only an order marked paid counts). The platform also caps retries per order and jumps the attempt counter to 15 on permanent configuration errors, which stops polling that order — see [[orders-sync-cod-errors]] and [[orders-sync-cod-eligibility]].
+
+### Couriers that can sync
+
+COD sync works for couriers whose integration can read their cash-on-delivery payouts: [[apps-econt|Econt]], [[apps-dpdbulgaria-speedy|DPD Bulgaria (Speedy)]], [[apps-dpdromania|DPD Romania]], [[apps-pigeonexpress|Pigeon Express]], MPL, [[apps-nextlevel|Next Level]] and [[apps-berry|Berry]], plus the retired Speedy and Rapido apps. Each waybill keeps the courier login it was made with, and the sync uses that login.
 
 ## Related
 

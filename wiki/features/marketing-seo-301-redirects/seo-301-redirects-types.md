@@ -7,8 +7,8 @@ aliases: ["301 redirect types", "Redirect destination types", "Manual redirect",
 tags: [marketing, seo, redirects, types]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-25
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[marketing-seo-301-redirects]]. See the hub for the other aspects (validation, CSV import, middleware, wildcards, marketing pass-through, auto-tracking).
@@ -80,6 +80,7 @@ Because of this, there is **no native, path-preserving "forward this entire Clou
 
 - The per-URL `external` type is **fixed-target per rule** (above), and it only fires on the indexable storefront routes plus the 404 fallback (see [[seo-301-redirects-middleware]]) — not literally every path.
 - The [[apps-domain-redirect]] app is **not** a generic source→target forwarder: it geo-routes between the merchant's **own** CloudCart stores (no external domains accepted), is **302** (not 301), and lands at the target **root** (drops the path).
+- The only native path-preserving whole-domain 301 is to the store's own **primary** domain ([[settings-domains-primary]]), which must already be served by CloudCart, never a site hosted elsewhere.
 - HTTP-level domain redirects (HTTPS upgrade, `www`↔non-`www`, trailing slash) are **infrastructure-level** (the platform edge / host config) — see [[seo-handling]].
 
 So forwarding a whole store to a **separate external domain** path-by-path with 301s is **not a self-serve native feature**: it needs either **one `external` rule per source path** (each pointing at its specific external URL), or an **infrastructure / edge-level** path-preserving redirect (the platform edge, or the merchant's own CDN / DNS in front of the store).

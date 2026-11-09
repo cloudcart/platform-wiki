@@ -3,8 +3,8 @@ type: entity
 aliases: ["Domain relationships", "Domain links", "Site-Domain relationship", "SSL certificate relationship", "Cloudflare zone relationship", "the store resolver"]
 tags: [settings, apps, domains, ssl, dns, entity, relationships]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 > Part of [[domain]]. See the hub for the other aspects (attributes, lifecycle, SSL, DNS / Cloudflare, primary + plan gates).
@@ -26,7 +26,7 @@ A Domain:
 
 - **Belongs to one** [[site|Site]] — Site-scoped end-to-end; one Domain cannot serve multiple Sites. A Site can have many Domains (one primary, others as aliases, plus the always-present `<handle>.cloudcart.net`).
 - **Has one** SSL certificate at any given time — either Let's Encrypt (auto-renewed via the [[apps-lets-encrypt]] app) OR external (merchant-managed). The two modes are mutually exclusive (switching requires Remove + reinstall) — see [[domain-ssl]].
-- **References** a Cloudflare zone OR Cloudflare custom-hostname binding — depending on the add path. The merchant doesn't pick this; the platform chooses. See [[domain-dns-cloudflare]].
+- **References** a Cloudflare zone OR Cloudflare custom-hostname binding — depending on the add path. The merchant picks it in the Activate Domain modal. See [[domain-dns-cloudflare]].
 - **Is referenced by** [[settings-cart|cart/checkout]] URLs and [[orders-shipping-waybill|courier waybill]] / [[orders-invoice|invoice]] customer-facing URLs — all generated against the Site's primary Domain.
 - **Is referenced by** admin session cookies — admin cookies are scoped to a specific Domain, which is why setting a new primary Domain triggers a hard redirect (the admin SPA reloads on the new URL because the cookie was scoped to the old one). See [[domain-primary-and-plan-gates]].
 - **Is resolved by** the hostname-resolution middleware on EVERY storefront and admin-panel request — the request's `Host` header is matched against Domain rows to find the Site.

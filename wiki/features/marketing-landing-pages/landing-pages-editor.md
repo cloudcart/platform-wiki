@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Landing Pages → Add / Edit"
+nav_path: "Design → Static pages → Add / Edit"
 route_name: admin.pages.edit
-route_path: /admin/marketing/pages/edit/{page_id}
+route_path: /admin/design/pages/edit/{page_id}
 aliases: ["Edit page", "Add page", "Page editor", "Page form", "URL handler", "SEO title", "SEO description", "Featured image", "Private page", "Редакция на страница"]
 tags: [marketing, content, pages, editor, validation, seo]
 plan_gates: ["static_pages"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-landing-pages]]. See the hub for the other aspects (list view, page types, system slots, FAQ editor, builder rules, plan gates).
@@ -17,16 +17,16 @@ source_count: 3
 
 ## Purpose
 
-The **Add / Edit** form is the per-page content editor. It is the same screen for adding a new page and editing an existing one (the URL differs by `{page_id}`). The exact fields and content widget vary per **type** — see [[landing-pages-types]] for the four shapes. This page covers the **field-level** behaviour, **validation rules**, **URL-handle handling**, **Open Graph image semantics**, **canonical override**, and the optional **Private** toggle from the membership app. The FAQ editor's per-row Q&A specifics live on [[landing-pages-faq-editor]]; the builder editor's save / history / module rules live on [[landing-pages-builder-rules]].
+The **Add / Edit** form is the per-page content editor, one screen for adding and editing. Its fields vary per **type** ([[landing-pages-types]]). This page covers fields, validation, the URL handle, the Open Graph image, the canonical override and the membership app's **Private** toggle. FAQ rows: [[landing-pages-faq-editor]]; the builder: [[landing-pages-builder-rules]].
 
 ## Where to find it
 
-From the list ([[landing-pages-list-view]]) — click any row's name to open Edit, or click **+ Add new page** → pick a type → Add form. Direct routes:
+From the list ([[landing-pages-list-view]], Sidebar → **Design** → **Static pages**) — click any row's name to open Edit, or click **Add page** → pick a type → Add form. Direct routes:
 
 | Action | Route name | Path |
 |--------|------------|------|
-| Add | `admin.pages.add` | `/admin/marketing/pages/add/{type}` |
-| Edit | `admin.pages.edit` | `/admin/marketing/pages/edit/{page_id}` |
+| Add | `admin.pages.add` | `/admin/design/pages/add/{type}` |
+| Edit | `admin.pages.edit` | `/admin/design/pages/edit/{page_id}` |
 
 For builder-type pages, the editor is a separate route — `/admin/marketing/pages/builder/{page_id?}` — see [[landing-pages-builder-rules]].
 
@@ -51,9 +51,9 @@ For builder-type pages, the editor is a separate route — `/admin/marketing/pag
 | `url_handle` | Required + lowercase regex (`address_name_sanitize_trim_js`) + unique across ALL types | *"URL is required."* / *"Invalid URL format"* / *"The provided title for the URL is already taken"* / *"The maximum allowed characters for the 'URL handler' are X"* |
 | `seo_title` | Max chars cap | *"The maximum allowed characters for the 'SEO title' are X"* |
 | `seo_description` | Max chars cap | *"The maximum allowed characters for the 'SEO description' are X"* |
-| `content` (regular / faq) | Max 10 000 000 chars; required; FAQ also requires at least one Q&A row | *"You have to provide any content"* / *"The maximum allowed characters for the content are X"* |
+| `content` | Max 10 000 000 chars; required on every type except FAQ, where each row needs a question and an answer | *"You have to provide any content"* / *"The maximum allowed characters for the content are X"* |
 
-Name max length matches the database's 191-character indexable text-column cap. Content max is effectively unlimited for any reasonable HTML page.
+The current editor shows these as *"Field is required"*-style messages. Pages a theme seeded follow the same rules: they open in the editor of their type, and their placeholder text is replaced here ([[design-themes-switch-effects]]).
 
 ### Name uniqueness is case-INsensitive
 

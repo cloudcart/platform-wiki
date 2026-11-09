@@ -7,8 +7,8 @@ aliases: ["Per-store stock", "Local Pickup quantities", "Store products tab", "S
 tags: [apps, stores, local-pickup, inventory, stock, quantity, pricing]
 plan_gates: ["stores"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Local Pickup — per-store stock
 
@@ -69,6 +69,17 @@ The storefront does **not** filter the public product list by the customer's nea
 ### No per-store pricing
 
 The Stores app does not store per-location prices. A product has one price + one discount across all stores. To run a different price per location, the merchant uses another approach (separate products, [[apps-multilang]] sister stores, or [[customers-custom-groups]] for customer-group-based pricing).
+
+### Loading per-store stock from files and other systems
+
+The app shows in the admin sidebar as **Local Pickup** (Bulgarian: **Магазини**). Besides the Quantity change modal, per-store quantities can come from:
+
+- [[apps-xml-sync]] and [[apps-xml-import]] — while this app is installed, their mapping offers store name + store quantity rows. A store is matched by its name and created if missing; a quantity under 1 removes that store's row.
+- [[apps-google-sheets]] — the **Stores** column adds one row per store (Store ID, Store name, Quantity); Download writes those quantities back to existing stores by Store ID.
+- [[apps-microinvest]] — each Microinvest object's quantity becomes a store, created by name; [[apps-universum]] also syncs per-store quantities.
+- The API resource below.
+
+The product CSV import has no per-store field. These sources write the per-store rows and the overall quantity separately; nothing adds them up unless the merchant runs the Sum toggle above.
 
 ### Programmatic access
 

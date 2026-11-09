@@ -7,8 +7,8 @@ aliases: ["Change log rules", "Change log retention", "Change log purge", "One s
 tags: [catalog, products, audit, history, debugging, support]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[products-change-log]]. See the hub for the other aspects (initiator decoding, logged fields).
@@ -26,7 +26,6 @@ These rules apply to the [[products-change-log|Change log]] modal regardless of 
 ## What the merchant can do here
 
 - Rely on a complete, chronological audit trail for one product — every save produces exactly one entry.
-- Open the log for soft-deleted products (within the 10-day window) and still read full history.
 - Open the log as any admin user who can see the products list (no separate permission to grant).
 
 ### What the merchant CANNOT do here
@@ -52,7 +51,7 @@ The merchant cannot edit or delete an entry, and there is no revert button. To u
 
 ### Hard-deleting the product purges its log
 
-When a product is hard-deleted (after the soft-delete window expires, or via the API), the entire change log for that product is purged at the same time. The merchant cannot recover the history after hard-delete. Soft-deleted products (within the 10-day window — see [[product|Product]]) still have their log intact and viewable.
+When a product is removed permanently (shortly after the merchant deletes it; there is no retention window), the entire change log for that product is purged at the same time. The merchant cannot recover the history after hard-delete.
 
 ### Storage / retention
 
@@ -65,7 +64,7 @@ Visible to all admin users who can see the products list. There is no separate A
 ## Related
 
 - [[products-change-log]] — hub.
-- [[product]] — the product entity; the 10-day soft-delete window governs when the log survives a delete.
+- [[product]] — the product entity and its delete model.
 - [[products-products]] — the products list / editor where deletes and saves originate.
 - [[products-change-log-fields]] — how each entry's diff is rendered and paginated.
 - [[products-change-log-initiator]] — who each entry is attributed to.

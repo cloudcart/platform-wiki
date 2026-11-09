@@ -7,8 +7,8 @@ aliases: ["Import history retention", "Import history the analytics store storag
 tags: [settings, import, history, retention, the analytics store, storage, permission]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 9
+updated: 2026-11-09
+source_count: 10
 ---
 
 > Part of [[settings-import-history]]. See the hub for the other aspects (List tab, Details tab, change-log modal, action states).
@@ -25,7 +25,7 @@ The behaviours documented here are platform-wide and apply to the whole [[settin
 
 ## What the merchant can do here
 
-- See years of accumulated import history without any auto-cleanup.
+- See past imports for as long as the logging database keeps them (see Retention).
 - Filter and paginate through unbounded history (server-side, scales to 100k+ records per job).
 - Recognise the source app of any past import via the **Name** column — the platform writes a human-readable name like *"Szamlazz - Daily sync"* rather than the internal `mapping` code.
 - Read every staff member's imports — the history is store-scoped, not staff-scoped.
@@ -33,7 +33,7 @@ The behaviours documented here are platform-wide and apply to the whole [[settin
 What the merchant **cannot** do:
 
 - Delete a history row from the UI — there is no delete affordance anywhere on the page.
-- Set a retention policy — there is no auto-cleanup config.
+- Set or extend the retention period — there is no setting for it.
 - Restrict moderators to "only my imports" — there is no per-staff filter.
 - Restrict moderators to "only CSV imports" — there is no per-importer permission.
 
@@ -46,9 +46,9 @@ Both the per-job summary and the per-record detail entries live in a **separate 
 1. The Details tab scales to 100,000+ records per import without bloating the main store database — see [[settings-import-history-details-view]] for the pagination rationale.
 2. CloudCart support **cannot** clean up history rows with the standard store-database tooling — they must operate on the separate logging database directly.
 
-### Retention — indefinite, no auto-cleanup
+### Retention — set on the logging database, not in the platform
 
-There is **no scheduled cleanup, no retention TTL, no expiration policy** on this surface. Past import jobs and their per-record detail rows accumulate **forever** — a merchant who has run daily imports for years sees years of history. Server-side pagination handles browse-time size; the storage footprint grows monotonically.
+No platform job deletes import history. The daily `remove_global_import_records_failed` job only drops rows older than 7 days from the separate failed-imports list. How long the logging database keeps history is set on the database itself, outside the platform's code; support reports entries disappearing after about **2 days** (verify). An empty page therefore does not mean the import never ran or that data was lost: the task's own last-run time on its app screen still shows it.
 
 ### No UI delete — an API route exists but is unexposed
 
@@ -82,7 +82,7 @@ Unlike [[settings-queue-view]], this page does **not** auto-refresh. The merchan
 
 ### Pagination — server-side, scales unbounded
 
-Both the List view and the per-job Details view paginate server-side using the standard `Grid` page-size control with default sort `created_at desc`. A job with 100,000 record-level entries does not return all rows to the browser; the detail tab loads one page at a time. Filtering and search also apply at the DB level so they remain responsive on years-long histories.
+Both the List view and the per-job Details view paginate server-side using the standard `Grid` page-size control with default sort `created_at desc`. A job with 100,000 record-level entries does not return all rows to the browser; the detail tab loads one page at a time. Filtering and search also apply at the DB level.
 
 ## Business rules
 
@@ -92,11 +92,11 @@ Because the platform does not record which specific staff member ran a given imp
 
 ### History never blocks new imports
 
-Unbounded history accumulation has no effect on the merchant's ability to run new imports — no throttle by history count, no quota. The only practical cost of indefinite retention is logging-database storage on CloudCart's infrastructure, invisible to the merchant.
+The amount of history has no effect on new imports: no throttle by history count, no quota.
 
 ### Cleanup is a support-side operation
 
-If a merchant explicitly wants old history removed (e.g. for a data-protection request, or because the table is unwieldy to browse), the only option is a CloudCart support ticket. Support can prune by date range, importer type, or job ID via direct operations on the logging database or the unexposed `DELETE` endpoint.
+A merchant who wants history removed early (e.g. a data-protection request) asks CloudCart support (see above).
 
 ### The `mapping` code is the platform-internal identifier
 
@@ -118,4 +118,4 @@ Once a staff member has access to the Settings → Import history page, they see
 
 ## Open questions
 
-None.
+- The logging database's actual retention period (support reports about 2 days); not set in the platform's code.

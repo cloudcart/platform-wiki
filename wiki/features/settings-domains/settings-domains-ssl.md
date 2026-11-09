@@ -7,8 +7,8 @@ aliases: ["SSL modal", "Manage SSL", "Install SSL", "Let's Encrypt SSL", "Extern
 tags: [settings, domains, ssl, lets-encrypt, certificates]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[settings-domains]]. See the hub for related aspects (add flow, DNS / Cloudflare, primary, deletion, plan gates).
@@ -27,7 +27,7 @@ Settings → Domains → per-domain row → **SSL** (or **Manage SSL** / **Insta
 
 - **Inspect the current certificate** — issuer, expiry date, and whether it's free (Let's Encrypt, auto-renewing) or external (merchant-managed).
 - **Install a new certificate** — opens the modal in install mode with two tabs: **Automatic** (Let's Encrypt — generates a fresh cert via ACME) and **Manual** (upload the certificate + private key + intermediate chain).
-- **Replace an existing certificate** — same UI as install; replacing a Let's Encrypt cert with an external one disables auto-renewal for this domain; replacing an external cert with Let's Encrypt re-enables it.
+- **Replace an existing certificate** — only after **Remove**: both install tabs work only on a domain with no certificate ([[settings-ssl-manual-install]]). Replacing a Let's Encrypt cert with an external one ends auto-renewal for this domain; the reverse restores it.
 
 Full SSL screen behaviour (both "Manage existing cert" mode and "Install new" mode) is documented at [[settings-ssl]].
 
@@ -44,23 +44,22 @@ Full SSL screen behaviour (both "Manage existing cert" mode and "Install new" mo
 
 ### SSL provisioning when a domain is added
 
-When a domain is added (either via Add existing or Buy new — see [[settings-domains-add-flow]]):
+**Nothing is issued when a domain is added** (Add existing or Buy new — [[settings-domains-add-flow]]). The merchant installs a certificate from the row's **Install SSL** link (before the DNS is Active it carries the hint *"To secure your domain, first set up DNS records."*):
 
-1. CloudCart attempts to provision a **free Let's Encrypt SSL** certificate automatically (requires the Let's Encrypt app installed — see [[apps-lets-encrypt]]).
-2. The free certificate is auto-renewed before expiry by the daily sweep (see below).
-3. If the merchant uploads an **external SSL** (e.g., a paid wildcard cert), it replaces the Let's Encrypt one. **CloudCart does NOT renew external certs automatically** — the merchant must replace them before expiry or the storefront breaks with browser security warnings.
+1. **Automatic install** issues a free Let's Encrypt certificate on that click; it needs the paid Let's Encrypt Manager app ([[apps-lets-encrypt]]) and is then auto-renewed by the daily sweep (below).
+2. **Manual install** takes an **external SSL** (e.g., a paid wildcard cert). **CloudCart does NOT renew external certs** — the merchant must replace them before expiry or the storefront breaks with browser security warnings.
 
 The SSL modal clearly labels which mode the current certificate is in: *"Managed by Let's Encrypt"* or *"Managed by external provider. You should change it manually before the expiration date."*
 
 ### Let's Encrypt auto-renewal sweep — 25 days before expiry
 
-A platform-wide background command (`SslSitesCommand`) sweeps all certificates daily. It renews Let's Encrypt certificates whose `valid_to < now + 25 days`. This is INDEPENDENT of the **domain registration** renewal warning (which surfaces at 1 month before `expire_date` for CloudCart-purchased domains — see [[settings-domains-add-flow]]).
+A daily platform-wide sweep renews Let's Encrypt certificates whose `valid_to < now + 25 days`. It skips inactive domains, stores whose plan has expired, and stores whose Let's Encrypt Manager subscription is unpaid (error *"Renew error: no active subscription"*). This is INDEPENDENT of the **domain registration** renewal warning (which surfaces at 1 month before `expire_date` for CloudCart-purchased domains — see [[settings-domains-add-flow]]).
 
 A merchant whose domain has 28 days till **registration** expiry sees the renewal CTA but no SSL action is triggered yet (the cert renew sweep activates at 25 days).
 
 ### SSL certificate expiry — automatic fallback + admin alert
 
-The same daily sweep also handles expired certificates. The companion **support / developer** command `php artisan hosts:deactivate-expired` runs this sweep on demand (CloudCart-staff-only) — it iterates every Domain row across the platform, checks SSL validity, deactivates expired ones, and emits the alerts described below. Support runs the on-demand version when a merchant reports their storefront is showing the wrong domain after an expiry.
+The same daily sweep also handles expired certificates on active domains (stores whose plan has expired are skipped). A different, staff-run command, `hosts:deactivate-expired`, deactivates the custom domains of stores whose plan has expired; it is not part of the SSL sweep.
 
 When a domain's certificate expires:
 
@@ -78,6 +77,10 @@ When a Certificate model is deleted (via the SSL modal Remove button or otherwis
 ### SSL issuance — apex + `www` variant both go in the SAN
 
 The Let's Encrypt issuance path tries BOTH `<host>` and `www.<host>` (including the apex+www variants in the certificate SAN). This means a single cert covers both forms — the merchant doesn't need to add two domains for `example.com` and `www.example.com` to get HTTPS on both. The same Powered-by-CloudCart header check that runs during set-as-primary (see [[settings-domains-primary]]) is also used during issuance.
+
+### HTTPS redirect follows the certificate
+
+A domain with an installed certificate is served over https: a plain-http request gets a 301 to the https address (302 in the admin), on every path except `/.well-known/acme-challenge/` and payment callbacks. A domain with no certificate (never installed, or removed) is served over plain http, and an https request to it is redirected to http the same way. `*.cloudcart.net` addresses are always https. On a non-primary domain the redirect goes straight to the primary ([[settings-domains-primary]]).
 
 ### SSL must be installed before set-as-primary
 

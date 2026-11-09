@@ -5,8 +5,8 @@ aliases: ["Shipping provider configuration", "Carrier credentials", "Sender addr
 tags: [shipping, couriers, providers, integrations, configuration, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[shipping-provider-mechanism]]. See the hub for the other aspects (pricing models, pickup points, waybill, COD, geo routing, status tracking).
@@ -49,13 +49,13 @@ Not covered:
 
 1. **Installing the app** from the [[apps]] catalog (filtered to category 4) or from [[settings-shipping]]'s "Browse shipping integrations" modal — same effect either way.
 2. **Entering API credentials** the carrier provided. The credential shape varies:
-   - **Username + Password** — Econt (the merchant's Econt account login), Speedy (Speedy username + Speedy password).
+   - **Username + Password** — Econt (the merchant's Econt account login), DPD Bulgaria / Speedy v2 (the DPD API username + password, the same as for the old Speedy app — see [[apps-dpdbulgaria-speedy-credentials]]).
    - **Client ID + Client Secret** — DHL, DPD, GLS.
    - **API key / API token** — BoxNow, some Romanian carriers.
 3. **Testing the connection** — most apps validate credentials by calling the carrier's API on save. Invalid credentials return a carrier-specific error inline on the field. (verify — exact validation behaviour per carrier.)
 4. **Configuring the sender address book** — pickup addresses from which the carrier collects packages. The merchant typically has ONE default sender address (their warehouse / office); multi-warehouse merchants can store multiple and pick one per order. The address format is carrier-specific:
    - Econt requires `key_word` (auto-fills firm + city / office / quarter / street from Econt's address registry).
-   - Speedy requires Speedy site / street IDs.
+   - DPD Bulgaria (Speedy) picks a sender client address of the DPD account, an office or a locker.
    - DHL / DPD / GLS use standard country + city + postcode + street fields.
 5. **Selecting allowed delivery channels** — most Bulgarian / Romanian carriers expose three options the merchant can individually enable / disable: to address, to office / branch, to locker.
 

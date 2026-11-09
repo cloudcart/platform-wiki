@@ -7,8 +7,8 @@ aliases: ["Review submission form", "Leave a review", "Review validation", "Repl
 tags: [apps, others, reviews, qa, storefront, validation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 > Part of [[apps-product-review]]. See the hub for the other aspects (settings, moderation, Q&A, internals).
@@ -58,6 +58,20 @@ The review-submit form accepts only `product_id`, `user_name`, `rating`, `title`
 ### Replying to a review demands an email address
 
 the request validator requires `user_email`, whereas the initial review submission does NOT require an email. This is asymmetric and may surprise merchants (who'd expect symmetry between review-create and reply-create): a customer can leave a review with no email but must supply one to reply to an existing review.
+
+### Which name is saved as the author
+
+The typed name is not always the one saved:
+
+1. **Signed-in customer** — the form shows no name or email field; the account's full name and email are used.
+2. **Remembered visitor** — the store remembers a visitor on that browser after they sign in, place an order, subscribe, or open a link from one of the store's campaigns. If that record has a name, it is saved instead of the typed one.
+3. Otherwise, the name typed in the form.
+
+The platform does not prefill the guest name field. So when reviews from different people carry the same person's name, they were most likely sent from a browser that person had used to sign in, order or open a campaign link, for example the merchant testing their own store. Reviews from a campaign review link take the name of the subscriber the link was sent to ([[apps-product-review-campaign-link]]); answers follow the same order, then the signed-in admin's name.
+
+### Which name the storefront shows
+
+When the review is linked to a customer account, the storefront shows the account's **current** name, so renaming the customer renames their reviews; otherwise it shows the saved name. The avatar initials come from the same name. The merchant cannot edit an existing review's author name; a review under any name can be added from the admin ([[apps-product-review-moderation]]).
 
 ### Customer notification on merchant reply — none
 

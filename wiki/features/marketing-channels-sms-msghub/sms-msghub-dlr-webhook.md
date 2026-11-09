@@ -7,11 +7,13 @@ aliases: ["SMS MsgHub DLR", "MsgHub delivery report", "MsgHub webhook", "MsgHub 
 tags: [marketing, channels, sms, msghub, dlr, webhook]
 plan_gates: ["campaign.channel.sms_msghub_message"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-channels-sms-msghub]]. See the hub for the other aspects (overview, send pipeline, settings, length & billing).
+
+> **Retired.** The current platform code no longer loads the MsgHub channel, so SMS campaigns go through NTH ([[marketing-channels-sms-nth]]). This page describes how MsgHub worked; verify on production before relying on it.
 
 # SMS MsgHub — DLR webhook, Viber clarification & policy gate
 

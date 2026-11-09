@@ -7,8 +7,8 @@ aliases: ["Borica CSR generation", "Borica certificate upload", "Borica Terminal
 tags: [paymentproviders, payment-providers, borica-way4, csr, certificate, onboarding]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[payment-providers-borica-way4]]. See the hub for related aspects (settings fields, payment lifecycle, authorize/capture, save card, refund/sync).
@@ -77,15 +77,15 @@ OU = <terminal_id from merchant>
 CN = <store primary host>
 ```
 
-Two CSRs are generated in one call — one for test (`_D.csr` suffix) and one for live (`_P.csr` suffix). Each download link is environment-aware.
+One call generates two CSRs: test (`_D.csr`) and live (`_P.csr`).
 
 ### Per-merchant key material — not shared
 
-The merchant's own RSA private key + Borica-signed public certificate are generated and stored per-store. CloudCart never ships a shared per-merchant key for Borica Way4. (Contrast with Raiffeisen, which historically uses a CloudCart-wide bundled key — `(verify)`.)
+Each store has its own RSA private key and Borica-signed certificate; no key is shared across stores (Raiffeisen may differ — `(verify)`).
 
 ### Per-environment files — separate test + live keys
 
-Separate test and live private keys + certificates are stored. Test mode uses Borica's `MPI_OW_APGW_D_2026.cer` gateway certificate; live mode uses `MPI_OW_APGW_P_2026.cer`. These gateway certificates ship bundled with CloudCart and are rotated by year — a CloudCart release replaces them when Borica rotates.
+Separate test and live private keys + certificates are stored. Borica's gateway certificates (`MPI_OW_APGW_D_2029.cer` for test, `MPI_OW_APGW_P_2029.cer` for live) ship with CloudCart; a release replaces them when Borica rotates them.
 
 ### Special test terminal V1800001
 
@@ -93,7 +93,7 @@ The platform ships a fully-working **shared test terminal** with terminal ID `V1
 
 - The platform short-circuits the CSR / certificate flow entirely — no CSR generation, no certificate upload, just test mode.
 - Activation in live mode is also allowed without a live certificate (the live-mode block in [[borica-way4-settings-fields]] makes a single exception for `V1800001`).
-- Useful for trial accounts that want to see the gateway in action before signing a real contract with Borica.
+- Useful for trials before a Borica contract.
 
 ### Cannot activate live without valid certificates
 
@@ -106,7 +106,7 @@ Error text shown to the merchant: *"Borica: cannot change to live mode if not al
 
 ### Certificate-key mismatch detection
 
-On upload, the platform extracts the `.cer` from the `.zip` and validates that its public key matches the previously generated private key for that environment. Mismatch triggers explicit errors (verbatim strings):
+On upload, the platform extracts the `.cer` from the `.zip` and validates that its public key matches the previously generated private key for that environment. **Generate CSR** is offered only while no Terminal ID is saved; generating again creates new key pairs for both environments and keeps only the Terminal ID and the new keys, so a certificate Borica signed for an earlier CSR no longer matches and the bank must sign the new CSR. Mismatch errors (verbatim):
 
 - Test: *"Borica: test private key and certificate do not match"*.
 - Live: *"Borica: real private key and certificate do not match"*.

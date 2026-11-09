@@ -5,8 +5,8 @@ aliases: ["Shipping checkout cascade", "Shipping method filter chain", "Why don'
 tags: [shipping, checkout, debugging, cascade, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[shipping-calculation]]. See the hub for the other aspects (rate models, geo gating, carrier integrations, COD surcharge, discounts + Cart Rules, persistence).
@@ -15,7 +15,7 @@ source_count: 4
 
 ## Definition
 
-The **shipping cascade** is the deterministic 8-step pipeline the platform walks at checkout to decide which shipping methods the customer sees and which is pre-selected. Every method on [[settings-shipping]] is evaluated against every gate; any failure silently drops the method from the candidate list. The customer never sees an explanation of *why* a method is missing — only the survivors.
+The **shipping cascade** is the deterministic 8-step pipeline the platform walks at checkout to decide which shipping methods the customer sees and which is pre-selected. Every method on [[settings-shipping]] is evaluated against every gate; any failure silently drops the method. The customer sees only the survivors.
 
 ```
 Step 1 Collect candidate methods (active = yes)
@@ -23,7 +23,7 @@ Step 2 Filter by geographic scope (target = restofworld OR matching geo_zone)
 Step 3 Compute the quote per method (custom rate-row lookup OR carrier getQuotes)
 Step 4 Apply category-rate split (custom methods only, when enabled)
 Step 5 Apply COD surcharge (when payment = COD)
-Step 6 Filter by allowed-payment-method (method's payment allow-list includes customer's choice)
+Step 6 Allowed-payment pairing (chosen method's list limits the payment step)
 Step 7 Filter by customer-group (per-customer-group restrictions)
 Step 8 Present matching methods (auto-select / collapse if only one)
 ```
@@ -51,7 +51,7 @@ Not covered here:
 
 ## Contrasts
 
-- **Silent drop vs. explicit error** — every cascade gate fails silently. The customer sees only the survivors. The merchant has no log of which gate dropped which method. This is the cascade's single biggest support-ticket source.
+- **Silent drop vs. explicit error** — every cascade gate fails silently; the merchant has no log of which gate dropped which method. The cascade's biggest support-ticket source.
 - **"Match" vs. "auto-select"** — survival means the method shows at checkout. Auto-selection means it's the pre-selected radio. The default-shipping-type on [[settings-cart]] picks the auto-select among survivors.
 - **Active gate vs. installed-but-misconfigured** — `active = no` (Step 1) drops cleanly; **installed-but-misconfigured carrier integration** drops at Step 3 because `getQuotes` rejects the request. Both look identical to the customer.
 - **Allowed-payment filter vs. customer-group filter** — both are explicit allow-lists per method, but they apply at different steps (6 and 7). A method can pass one and fail the other.
@@ -71,7 +71,7 @@ Each candidate is checked against the customer's shipping address. See [[shippin
 ### Step 3: compute the quote per method
 
 - **Custom methods** look up the matching rate row by subtotal / weight / both — see [[shipping-calc-rate-models]]. If no row matches, the method is **dropped**.
-- **Carrier integrations** call `getQuotes` — see [[shipping-calc-carrier-integrations]]. If the carrier's API rejects the request (invalid credentials, no service in range, weight cap exceeded), the method is **dropped**.
+- **Carrier integrations** call `getQuotes` — see [[shipping-calc-carrier-integrations]]. If the carrier returns no price (rejected request, no selected service for the address), the method is **dropped**, unless the courier applies a **fallback price** (Econt, DHL, EuShipment, ACS Courier, Rapido — [[shipping-calc-rate-card-fields]]).
 
 This is the step where installed-but-misconfigured carriers silently disappear.
 
@@ -85,9 +85,7 @@ When the customer's payment method is **Cash on Delivery**, some shipping method
 
 ### Step 6: filter by allowed-payment-method pair
 
-Each method has a multi-select of allowed payment methods. Methods whose allow-list does NOT include the customer's currently-selected payment method are **dropped**.
-
-Practical example: a merchant runs a "Cash on delivery" Econt method AND a "Card on delivery" Econt method as two separate rows. The first has only COD in its allowed-payments; the second has only card. The customer's choice of payment filters which Econt row shows up.
+Each method can have a list of allowed payment methods (on a courier: **Define payment methods**). It works the other way round: once a method is chosen, the payment step offers only its listed payment methods; an empty list allows all. The shipping method is not dropped by the payment choice ([[shipping-provider-checkout-filters]]).
 
 **Special case — when COD is the store's ONLY payment method.** A courier's settings warn: *"{app} is not available for cash on delivery orders, and cash on delivery is the only active payment method in your store. Customers will not see {app} at checkout until you enable another payment method."* On top of the per-method allow-list, the checkout applies one more filter: if the store has **exactly one configured payment provider and it is Cash on delivery**, only shipping methods that **actually support COD survive**. "Support COD" here is the *integration's own COD capability*, not the per-method allow-list — and **every** carrier integration gates that on its own *"Activate cash on delivery"* (`cd`) toggle plus the COD cap. So in a COD-only store, **any courier whose COD toggle is off is dropped entirely**, taking its destination types (locker / office) with it. This applies to all couriers (Econt, Speedy, DPD, Sameday, GLS, Cargus, BoxNow, …) — [[apps-boxnow|BoxNow]] is just the most visible because it is locker-only, so the symptom reads as "my lockers vanished". See [[shipping-provider-mech-cod]] for the per-provider toggle and the full rule. When the store also offers card / bank transfer / etc., this extra filter does **not** run.
 
@@ -105,16 +103,16 @@ The customer sees every method that survived Steps 1–7. Behaviour depends on [
 
 ### Zero-matching-methods debug procedure
 
-When the customer sees "no shipping method available" at checkout, the merchant walks the cascade in order:
+When the customer sees *"There are no shipping methods available"* (BG: *"Не можем да открием подходящ метод за доставка за посочения от вас адрес…"*), the merchant walks the cascade:
 
 1. **Step 1** — Are any methods `active = yes` on [[settings-shipping]]? If not, activate one.
 2. **Step 2** — Does any active method's geo scope include the customer's country (or zone, polygon, distance)? If the only methods are `target = geo_zone` and the zone doesn't include the country, the customer sees nothing. Either add `target = restofworld` fallback or extend the zone via [[settings-geo-zones]].
 3. **Step 3 (custom)** — Does any active method's rate table cover the cart's subtotal / weight? If the lowest row's `from` is above the cart subtotal, the method is dropped. Add a low-bracket row.
-4. **Step 3 (carrier)** — Are the carrier's credentials valid on the carrier's app screen (e.g., [[apps-econt]], [[apps-dpdbulgaria-speedy|Speedy]])? Failed authentication drops the method silently.
-5. **Step 6** — Does any active method allow the customer's selected payment method? If the only methods restrict to "card" and the customer picked COD, the customer sees nothing. **Also**: if the store's ONLY payment method is COD, **any** courier whose *"Activate cash on delivery"* (`cd`) toggle is OFF is dropped entirely — [[apps-boxnow|BoxNow]] is the most visible (locker-only), but Econt / Speedy / etc. vanish the same way. The relevant gate is the courier's own COD toggle (see the Step 6 special case above + [[shipping-provider-mech-cod]]).
+4. **Step 3 (carrier)** — Are the carrier's credentials valid on its app screen (e.g., [[apps-econt]], [[apps-dpdbulgaria-speedy|Speedy]])? Failed authentication drops the method silently.
+5. **Step 6** — A missing *payment* method after choosing shipping is that method's payment list. **Also**: if the store's ONLY payment method is COD, **any** courier whose *"Activate cash on delivery"* (`cd`) toggle is OFF is dropped entirely — [[apps-boxnow|BoxNow]] is the most visible (locker-only), but Econt / Speedy / etc. vanish the same way. The relevant gate is the courier's own COD toggle (see the Step 6 special case above + [[shipping-provider-mech-cod]]).
 6. **Step 7** — Has the customer been placed in a customer group that no method allows?
 
-The platform does not surface which gate dropped which method. The merchant must work through this manually.
+The platform does not surface which gate dropped which method.
 
 **Customer-side cause — a stale restored pickup point.** The steps above are all merchant configuration. One cause is on the customer's side instead: a **returning customer reusing a saved address that carries a previously-chosen office / locker**. The storefront restores that pickup point and pre-selects it; if the carrier has since decommissioned or removed it (or no longer serves it), resolution returns nothing and the *same* red error appears even though the typed address is perfectly valid — so the message's "check your address" hint is a red herring here. Re-opening the picker and choosing a current office / locker clears it. See [[shipping-provider-mech-pickup-points]] for the persistence mechanism.
 

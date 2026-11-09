@@ -7,8 +7,8 @@ aliases: ["Vue inline invoicing", "Inline Vue editor invoicing", "Checkout panel
 tags: [billing, invoicing, vue, checkout, hungary, surface-differences]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[billing-invoicing]]. See the hub for the other aspects (fields, EIK/APIS, VAT/VIES, country-driven form, save flow).
@@ -54,7 +54,7 @@ The pencil icon (`fa-pen`) expands it into the full form.
 - **Country** picker (`CountriesComponent`) — `cols-width="6"`, `can-clear="false"`. For DE-invoiced sites (`siteUser.issuer_company_id === 7` — CloudCart GmbH) the picker is filtered to **EU countries only** (`euOnly` computed). See [[billing-invoicing-country-driven-form]].
 - **Company or business name** — disabled when registry auto-fill is active (BG or non-BG EU).
 - **Company ID** — **HIDDEN entirely for DE** (`v-if="invoicing.country !== 'DE'"`). For all other countries it follows the standard rules.
-- **VAT ID** — always editable; triggers VIES validation as the merchant types (or HMRC for GB; format-only for HU — see "Country-required fields differ by surface" below).
+- **VAT ID** — locked while the country is Bulgaria (filled from the registry with the Company ID); for other countries editable, and triggers VIES validation as the merchant types (or HMRC for GB; format-only for HU — see "Country-required fields differ by surface" below).
 - **Address** — disabled when registry-filled.
 - **Materially Responsible Person** — always editable.
 - **Email** — always editable.

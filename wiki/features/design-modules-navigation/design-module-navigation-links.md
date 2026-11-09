@@ -3,12 +3,12 @@ type: feature
 nav_path: "Design → Modules → Navigation → Navigation links"
 route_name: admin.storefront.widgets
 route_path: /admin/storefront/widgets
-aliases: ["Navigation links module", "navigationLinks", "footerLinks1", "footerLinks2", "footerLinks3", "navigationLinksPage", "navigation.links", "Footer columns module", "Top-bar links module", "Навигационни връзки", "Долни връзки"]
+aliases: ["Navigation links module", "navigationLinks", "footerLinks1", "footerLinks2", "footerLinks3", "navigationLinksPage", "navigation.links", "Footer columns module", "Top-bar links module", "Навигационни връзки", "Долни връзки", "Странично меню - Страници", "Page menu - Pages", "Sidebar menu - Pages"]
 tags: [design, modules, navigation, footer, header, links]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Storefront Modules — Navigation links (`navigationLinks`, `footerLinks1-3`, `navigationLinksPage`)
@@ -21,9 +21,9 @@ The **Navigation links** module type (`navigation.links`) renders a SIMPLE, FLAT
 
 - `navigationLinks` — top-bar shortcuts above the header (Blog, Brands, Contacts).
 - `footerLinks1` / `footerLinks2` / `footerLinks3` — extra footer columns next to [[design-module-navigation-footer]].
-- `navigationLinksPage` — links shown in the static page menu sidebar.
+- `navigationLinksPage` — the left sidebar box on regular and FAQ static pages.
 
-Each instance is an independent flat list with its own enable toggle, optional title, and links — edited via its own card on the Modules screen. The same module type can appear multiple times on one storefront.
+Each instance is an independent flat list with its own enable toggle, optional title and links, edited via its own card.
 
 ## Where to find it
 
@@ -37,9 +37,9 @@ Each instance appears as its own card. Click the card to open the side panel for
 | `footerLinks1` | Footer column 2 | **Footer navigation links 1** |
 | `footerLinks2` | Footer column 3 | **Footer navigation links 2** |
 | `footerLinks3` | Footer column 4 | **Footer navigation links 3** |
-| `navigationLinksPage` | Page menu sidebar | **Page menu - Pages** |
+| `navigationLinksPage` | Left box on static pages | **Странично меню - Страници** (EN *Page menu - Pages*) |
 
-The exact instance names a theme ships depend on the theme's `theme.json`; the merchant only sees cards for instances the active theme declares.
+The merchant only sees cards for instances the active theme declares.
 
 ## What the merchant can do here
 
@@ -47,7 +47,7 @@ The exact instance names a theme ships depend on the theme's `theme.json`; the m
 - **Add up to N links** (no hard cap — typical use is 3-8 per column) via the **+ Add link** button.
 - **Pick a link type per row** — Product, Product Category, Vendor, Blog, Blog Article, Page, Section, External URL.
 - **Pick a target value** — autocomplete or select, scoped to the link type.
-- **Override the caption** — defaults to the target's name when blank, but the merchant can overwrite.
+- **Set the caption** — required; a row without one is refused on save.
 - **Pick an icon** (FontAwesome class) — only when the active theme advertises `functions.navigations.icon.status`.
 - **Toggle `open in new tab`** per row.
 - **Delete individual rows** via the **Delete** button on each row.
@@ -88,22 +88,22 @@ On save, every link row is validated independently. Validation errors:
 ### Theme-specific notes
 
 - **Icon column visibility.** The `class` (icon) input only appears when the active theme advertises `functions.navigations.icon.status = true` in its theme config. Themes without this flag never expose the icon picker, and an icon class sent via the API is dropped on save.
-- **Default link sets per theme.** Each theme ships its own DEFAULT link set (e.g., Echappe's `navigationLinks` defaults to Blog + Contacts shortcuts). Resetting reverts to those theme defaults.
+- **Default link sets per theme.** Resetting reverts to the theme's default links.
 - **Per-instance availability.** Not every theme ships every instance. Most themes ship `navigationLinks`; multi-column-footer themes also ship `footerLinks1-3`; only themes with a static-page menu ship `navigationLinksPage`.
 
 ## Business rules
 
 ### Flat lists only — distinct from `main` / `footer` menu trees
 
-`navigation.links` is a flat list with 8 link types and NO nesting. The `main` / `footer` trees in [[design-navigation]] are richer: 4-level nesting plus 12 link types (the same 8 plus Snippet, Mega-menu, Banner, Heading). Use the trees for the headline menus; use this module for top-bar shortcuts and extra footer columns.
+`navigation.links` is a flat list with 8 link types and no nesting. The `main` / `footer` trees in [[design-navigation]] nest 4 levels and add Snippet, Mega-menu, Banner and Heading links.
 
 ### Saving is destructive — no partial update
 
-Each instance is stored independently. On **Save module**, the platform deletes ALL existing links for that instance and re-inserts the rows currently in the form. There is no partial update and no undo: if the merchant removes one row and saves, that link is gone. The storefront picks up the new links on the next request — save / Reset refresh the cache automatically.
+Each instance is stored independently. On **Save module**, the platform deletes ALL existing links for that instance and re-inserts the rows currently in the form. There is no partial update and no undo: if the merchant removes one row and saves, that link is gone. Pages rendered afterwards show the new links; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Empty `links[]` array on save → error
 
-If the merchant clicks **Save module** with NO link rows, the save fails with *"Invalid request"*. To "disable" the module without losing all links, the merchant flips the `enabled` toggle off instead.
+Saving with no link rows fails with *"Invalid request"*; to hide the module, switch `enabled` off instead.
 
 ### Per-language captions via multylang
 
@@ -112,6 +112,10 @@ When the `multylang` app is installed, `link_caption` accepts per-language entri
 ### No plan-gating
 
 `navigation.links` is not in the `paid_widgets` allowlist — available on every plan.
+
+### `navigationLinksPage` is the static page's left box
+
+It renders only on regular and FAQ pages, in the left sidebar of themes whose static page has one (about half, including the `knowledge` and `motivation` families); never on Dynamic or External pages, the homepage or categories. The box shows the links only, never the title. Switching the module off removes the box and the page text takes the full width; that is how to hide it. In most themes its card has no group, so it shows under **Покажи всички** on the **Други** tab. The card's description ("links visible at the top of your store") is generic text and does not describe this module. Breadcrumbs: [[page]].
 
 ### `mailto:` / `tel:` URLs work via `external` link type
 
@@ -128,6 +132,4 @@ For "Email us" or "Call us" links, the merchant picks `external` and enters `mai
 
 ## Open questions
 
-- 📡 **Icon picker availability.** Depends on the active theme's `functions.navigations.icon.status` setting; query the theme's settings to confirm whether the icon column is exposed.
-- 📡 **Per-language link captions.** Captions store per-language sub-keys only when the `multylang` app is installed.
 - ⏸️ **Maximum link count.** No hard cap — practical limit is theme rendering width. Test very long lists above ~20 rows.

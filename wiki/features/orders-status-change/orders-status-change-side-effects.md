@@ -7,8 +7,8 @@ aliases: ["Status change side effects", "Order status pipeline", "What happens o
 tags: [orders, status, side-effects, pipeline]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[orders-status-change]]. See the hub for the other aspects (pill, transition rules, notification, fulfillment gate, bulk, API).
@@ -56,7 +56,7 @@ So a merchant on a `paid`-configured store who bulk-cancels old pending orders s
 
 ### Side effect 2 — Invoice / receipt number issued
 
-Invoice and receipt numbers are issued on **every** status change, not only on `Paid`, provided an invoicing provider is active per [[settings-invoicing]]. See [[orders-invoice]] for numbering modes (auto / manual / external) and [[orders-receipt]] for fiscal-receipt cases. Receipt / fiscal printer apps fire here too.
+Every status change checks for invoice and receipt numbers; each is issued once, when the order first is paid, completed, fulfilled or digital. The invoice number needs invoicing on ([[settings-invoicing]]; modes on [[orders-invoice]]), the receipt number the N18 Audit app ([[orders-receipt]]).
 
 ### Side effect 3 — Webhook, customer email, history rows (the "post" block)
 

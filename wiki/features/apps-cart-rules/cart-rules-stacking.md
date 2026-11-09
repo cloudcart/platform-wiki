@@ -3,12 +3,12 @@ type: feature
 nav_path: "Apps → Cart Rules → Stacking"
 route_name: ""
 route_path: ""
-aliases: ["Cart rule stacking", "Cart-level stacking", "Product-level stacking", "Winner-takes-all", "Rule evaluation order", "Multi-row OR-fallback", "Products consumed across rules"]
+aliases: ["Cart rule stacking", "Cart-level stacking", "Product-level stacking", "Winner-takes-all", "Rule evaluation order", "Multi-row OR-fallback", "Products consumed across rules", "Cart rule message", "Dashed box in cart"]
 tags: [apps, cart-rules, marketing, promotions, stacking, evaluation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[apps-cart-rules]]. See the hub for the other aspects.
@@ -29,13 +29,13 @@ Cart Rules also stack with the simpler [[marketing-discounts]] system: product d
 
 ## Where to find it
 
-Stacking is **NOT configurable** in the rule editor — no per-rule "stack with others" toggle, no "exclusive" flag, no global `combine_rules` setting (older wiki phrasing referred to one; no such setting exists). The merchant controls it indirectly via `sort_order` priorities and cart-level vs product-level scope (see [[cart-rules-scoping]]).
+Stacking is **not configurable** — no per-rule "stack with others" toggle, no "exclusive" flag, no global `combine_rules` setting. The merchant controls it indirectly via `sort_order` and cart-level vs product-level scope ([[cart-rules-scoping]]).
 
 ## What the merchant can do here
 
 Stacking is an engine behaviour, not a configured setting. The merchant influences which rules apply, and in which order, through three indirect levers (detailed in *Settings & fields*): distinct `sort_order` priorities; cart-level vs product-level scope via the action-triggers (see [[cart-rules-scoping]]); and deliberate sequencing — put narrow / specific rules first, broad / catch-all rules last, so broad rules don't starve narrow ones.
 
-If the merchant needs *"these two rules must both apply on the same product"*, the answer is **"not possible at the cart level — make them product-level so they accumulate, or merge them into a single rule"**.
+If the merchant needs *"these two rules must both apply on the same product"*, the answer is **not possible**: a line taken by one rule is out of the pool for every later rule (see *Products consumed across rules*).
 
 ## Settings & fields
 
@@ -54,21 +54,28 @@ No user-editable settings on this aspect. The merchant influences it via:
 Every time the cart's product list is read, active rules evaluate in **descending `sort_order`** (highest priority first). Two basis facts:
 
 - **Matching sees the post-discount price** — a rule matches the price per line **after** product discounts and line-level codes from [[marketing-discounts]] have applied (or the regular price if none). "Orders over", Countdown and payment-method discounts come after the rules, so a rule does not see them, and their thresholds are checked after the rule's product-level reductions. See [[discount-stacking-evaluation-order]].
-- A matching rule contributes both an **upsell message** (if its row has one) and a **discount action** (cart-level or per line). Only ONE message per rule shows — see *Message-row precedence*.
+- A matching rule contributes a **discount action** (cart-level or per line). Messages come from rows **not** reached — see *Message-row precedence*.
 
 ### Rows are an OR-fallback chain — highest-`sorting` row fires FIRST
 
 Multi-row rules are an **OR-fallback ladder**, **NOT** accumulating deals on the same cart. The row with the **highest `sorting` value evaluates first** (`sorting=2` before `1` before `0`); the engine stops at the first row whose triggers all match, attaches that row's action, and **skips every other row of the rule**. So **only ONE row per rule fires**. Use this for tiered fallbacks (*"cart > 100 EUR → 10%; else cart > 50 EUR → 5%; else nothing"*).
 
-**Which row is "first" — the direction is the INVERSE of top-to-bottom (easy to get backwards):** in the editor the rows are listed by `sorting` **ascending**, so the row you add **first** (Row 0, lowest `sorting`) sits at the **top**, and every row you add afterwards appends **below** it with a higher `sorting`. But the matcher tests the **highest `sorting` first**, so evaluation runs **bottom-to-top**: the **bottom (last-added) row is tested first**, and the **top row (Row 0) is the last-resort fallback** — applied only when no lower row matched. **Put the most generous tier on the bottom (last-added) row.** (Verified against the code: rows are stored `sorting`-ascending and the matcher reverses them before evaluating.)
+**Which row is "first" — bottom-to-top:** the editor lists rows by `sorting` ascending, so Row 0 is at the **top** and each added row goes **below** it. The matcher tests the highest `sorting` first, so the **bottom (last-added) row is tested first** and the top row is the last-resort fallback. **Put the most generous tier on the bottom row.**
 
 **Common merchant mistake** — putting the more generous tier on the **top** row thinking it fires "first". It fires **last**; the top row wins only when no other row matched.
 
-> **Rows and the rules list run in OPPOSITE directions — same drag gesture, opposite meaning.** In the **rules list**, the **top** rule has the highest `sort_order` and is evaluated **first** (top-to-bottom — see *Evaluation order* above). Inside **one rule**, the **top** row has the lowest `sorting` and is evaluated **last** (bottom-to-top). So dragging a *rule* to the top makes it win first; dragging a *row* to the top makes it the fallback.
+> **Rules and rows run in opposite directions.** In the rules list the **top** rule is evaluated first; inside one rule the **top** row is evaluated last. Dragging a *rule* to the top makes it win first; dragging a *row* to the top makes it the fallback.
 
 ### Message-row precedence — the upsell pattern
 
-The customer sees the message from the **lowest tier they have NOT yet qualified for** (`sorting` greater than the matched row's). Example, a 3-row rule: Row 0 cart > 25 EUR → 5%, Row 1 cart > 50 EUR → 10%, Row 2 cart > 100 EUR → free shipping. At 40 EUR only Row 0 matches → 5% applied, and Row 1's message *"Spend over 50 EUR for 10% off"* shows. Only one message per rule displays; matching the **top tier** shows none — nothing above to upsell to.
+A row's message is a nudge toward a row **not yet reached**; the matched row's own message never shows. Each message is a dashed box in the cart drawer, the cart page and the checkout summary; several are joined by `Or` / `Или`. No other feature writes these boxes.
+
+- **When a rule matched**, it shows at most one message: from the first row below the matched one in the editor. Example: Row 0 cart > 25 EUR → 5%, Row 1 > 50 EUR → 10%, Row 2 > 100 EUR → free shipping. At 40 EUR Row 0 applies and Row 1's message shows; at the top tier none shows.
+- **When no rule matched the cart**, every active rule shows its topmost message, to every shopper with items in the cart, including those its conditions exclude (another customer group, another category).
+- **Once any rule matches**, rules that did not match show no message.
+- A row whose conditions hold but whose action's target or gate fails counts as **not matched** ([[cart-rules-actions]]).
+
+To remove a box, clear that row's message ([[apps-cart-rules-rules-editor]]) or set the rule Inactive.
 
 ### Products consumed across rules
 

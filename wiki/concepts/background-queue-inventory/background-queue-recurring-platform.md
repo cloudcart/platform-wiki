@@ -5,8 +5,8 @@ aliases: ["Recurring scheduled processes", "Scheduled jobs", "Platform schedule"
 tags: [background, async, scheduled, cron, support, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-10-06
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[background-queue-inventory]]. See the hub for related aspects (imports/exports, the search index sync, order side-effects, Queue View, process catalogue).
@@ -47,8 +47,8 @@ Not covered:
 | What happens | How often | Visible on Queue View |
 |---|---|---|
 | Looks for abandoned carts past the recovery threshold and sends the customer the recovery email (when [[abandoned-cart-recovery]] is enabled on the merchant's plan + active on the customer's cart) | Every 3 minutes | No |
-| Inactive carts older than the merchant's age-out threshold are removed from the active list (the customer can start a fresh cart at any time) | Every hour | No |
-| Stale "safe-delete" carts (checkout started but never finalised) are cleaned up | Every hour | No |
+| Carts not changed for 7 days (a platform value, not a merchant setting), and carts that became an order, are marked deleted | Every hour | No |
+| Carts already marked deleted are removed for good, with their items | Every hour | No |
 | Active expired discounts are de-activated so the storefront stops applying them | Every hour | No |
 
 ### Subscriptions, billing, and account state

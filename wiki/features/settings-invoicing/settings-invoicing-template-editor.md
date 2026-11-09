@@ -7,8 +7,8 @@ aliases: ["Invoice template", "Click-to-edit preview", "Section modals", "Header
 tags: [settings, invoicing, template, preview, sections]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-invoicing]]. See the hub for the other aspects (activation modes, numbering, issuer block, credit note, HTML templates, external systems).
@@ -31,7 +31,7 @@ Sidebar → Settings → **Invoicing** → **Invoice template** tab (default). R
 
 ## What the merchant can do here
 
-- See a **live preview** of how the invoice will look.
+- See a **live preview** of the invoice's sections. It is drawn in the admin, not the PDF, and has no page boundaries ([[orders-invoice-single-rendering]]).
 - **Click a section in the preview** to open its settings modal/panel.
 - Configure **header rows** — arbitrary `{ key, value }` pairs (e.g., `"VAT №" → "BG123456789"`). Stored as `custom_header_text` JSON. See [[settings-invoicing-issuer-block]] for the company-info side; this section also embeds the row builder for additional header lines.
 - Configure **what's printed** on the invoice — toggles for product image thumbnails, barcodes, payment details, zero-shipping line hiding.
@@ -45,7 +45,7 @@ Sidebar → Settings → **Invoicing** → **Invoice template** tab (default). R
 
 | Field | Key | What it does |
 |-------|-----|--------------|
-| Show payment details | `show_payment_details` (bool) | Print the IBAN / account info on the invoice footer. |
+| Show payment details | `show_payment_details` (bool) | Print the **Payments** table (provider, date, status, amount) after the totals. |
 | Show payment description | `show_payment_description` (bool) | Print the merchant-configured payment-method description text. |
 | Print product barcode | `print_product_barcode` (bool) | Render each line item's SKU/EAN as a barcode in the items table. |
 | Show product image in list | `show_product_image_list` (bool) | Render thumbnail next to each line item. |

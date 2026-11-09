@@ -7,8 +7,8 @@ aliases: ["GDPR request processing", "Processing a data subject request", "Erasu
 tags: [apps, gdpr, compliance, requests, workflow]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # GDPR → Requests: processing workflow
 
@@ -68,6 +68,8 @@ Right-to-erasure does NOT mean deleting ALL data. The merchant retains:
 - Records under legal hold (active disputes / litigation).
 
 Erasure typically means anonymising the customer's personal identifiers (name, email, phone, address → "Deleted customer") while keeping the financial / audit trail intact. [[orders]] are normally retained under financial retention even after erasure.
+
+Deleting the customer on [[customers]] removes their account and their carts, but not their orders: each order keeps its own copy of the customer's name, email and IP address, which the deletion does not change ([[subscriber-vs-customer-privacy]]). Policy acceptances stay ([[apps-gdpr-acceptance]]).
 
 ### Erasure has no rollback / grace period
 

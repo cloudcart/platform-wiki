@@ -7,8 +7,8 @@ aliases: ["Discount products list view", "Discount products row actions", "Disco
 tags: [marketing, discounts, fixed, products, list-view, bulk-actions]
 plan_gates: ["discount_fixed"]
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Discount products — list view, row actions, bulk actions
@@ -50,6 +50,7 @@ Marketing → Discounts → (click **Products** on a Fixed-type discount row) �
 
 | Filter | Options |
 |--------|---------|
+| **Search and Filter** box | Product name; a part of the name matches. |
 | **Active** | Yes / No |
 
 ### List sorting

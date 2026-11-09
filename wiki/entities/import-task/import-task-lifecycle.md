@@ -4,8 +4,8 @@ nav_path: "Entity → Import Task → Lifecycle"
 aliases: ["Import task lifecycle", "Import task states", "Import task status transitions", "Single-import lock", "HTTP 409 import lock", "Cancel import task"]
 tags: [entity, settings, ops, imports, lifecycle, states]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 > Part of [[import-task]]. See the hub for the other aspects (attributes, types + queues, processing model, provenance + recovery, history + webhooks).
@@ -14,7 +14,7 @@ source_count: 0
 
 ## Identity
 
-The complete state machine an Import Task moves through, from the moment the merchant clicks **Import** in a source app to the final completed / failed / cancelled state — plus the **store-wide single-import lock** that allows only one Task to be in `processing` at a time per Site. Also documents what happens after completion (indefinite retention, no auto-cleanup, no "retry failed rows" affordance) and the operational consequences of the lock for merchants running concurrent imports.
+The complete state machine an Import Task moves through, from the moment the merchant clicks **Import** in a source app to the final completed / failed / cancelled state — plus the **store-wide single-import lock** that allows only one Task to be in `processing` at a time per Site. Also documents what happens after completion (how long history is kept, no "retry failed rows" affordance) and the operational consequences of the lock for merchants running concurrent imports.
 
 ## Aliases
 
@@ -52,7 +52,7 @@ If the merchant closes the browser mid-mapping, the Task remains in `pending (wi
 
 ### What happens after Completion / Failure / Cancellation
 
-- The Task and its record-level entries persist **indefinitely** in [[settings-import-history]]. There is no auto-cleanup, no TTL, no retention purge — see [[import-task-history-and-webhooks]] for the full retention rules.
+- The Task and its record-level entries stay in [[settings-import-history]] for as long as the logging database keeps them (support reports about 2 days, verify); no platform job deletes them — see [[import-task-history-and-webhooks]].
 - The provenance tag on the imported records persists forever — the merchant can use the "Imported with" filter months / years later. See [[import-task-provenance-and-recovery]].
 - There is **NO "retry failed rows" affordance** on the Task. To re-attempt failures, the merchant fixes the source data and runs a **NEW** Import Task from the originating app.
 
@@ -78,7 +78,7 @@ When the merchant clicks Cancel in [[settings-queue-view]]:
 ## Where it appears
 
 - [[settings-queue-view]] — surfaces `pending-queued` and `processing` Tasks; the merchant cancels in-flight Tasks here.
-- [[settings-import-history]] — surfaces completed / failed / cancelled Tasks indefinitely.
+- [[settings-import-history]] — surfaces completed / failed / cancelled Tasks while they are kept.
 - All source apps ([[customers-import]] / [[apps-csv-import]] / [[apps-xml-import]] / [[apps-xml-sync]] / [[apps-json-import]] / [[apps-blog-csv-import]]) — return HTTP 409 when a second import is attempted under the lock.
 
 ## Related
@@ -86,7 +86,7 @@ When the merchant clicks Cancel in [[settings-queue-view]]:
 - [[import-task]] — hub.
 - [[import-task-attributes]] — the status enum + processed-rows counter that drives the progress display.
 - [[import-task-processing-model]] — chunked 500-row processing that the lifecycle depends on.
-- [[import-task-history-and-webhooks]] — indefinite retention after completion.
+- [[import-task-history-and-webhooks]] — retention after completion.
 - [[import-task-provenance-and-recovery]] — recovery paths when a Task fails or is cancelled (the platform does NOT roll back partial imports).
 - [[settings-queue-view]] — the merchant's window into in-flight Tasks.
 - [[settings-import-history]] — the historical surface.

@@ -7,14 +7,14 @@ aliases: ["XML Sync Status", "XML Sync progress", "Xml Sync per-task status"]
 tags: [apps, imports, xml, sync, status, progress, monitoring]
 plan_gates: ["xml_sync_limit"]
 created: 2026-05-21
-updated: 2026-06-11
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # XML Sync → Status
 
 ## Purpose
 
-The **Status** page is the per-task progress and monitoring view for an XML Sync task. After [[apps-xml-sync-step3]] has saved the task config, this is where the merchant triggers an immediate sync (manual override of the recurring schedule), monitors progress (rows parsed, created, updated, deactivated, deleted, errors), views run history, sees the next scheduled run time, and sees plan-feature usage (sync-task slot consumption + per-sync product totals). The `:id` URL parameter is the task ID. It uses the same status pattern as [[apps-xml-import-status]].
+The **Status** page is the per-task progress and monitoring view for an XML Sync task. After [[apps-xml-sync-step3]] has saved the task config, this is where the merchant monitors progress (rows parsed, created, updated, deactivated, deleted, errors), views run history, sees the next scheduled run time, and sees plan-feature usage (sync-task slot consumption + per-sync product totals). The `:id` URL parameter is the task ID. It uses the same status pattern as [[apps-xml-import-status]].
 
 For the full feature set, see [[apps-xml-sync]].
 
@@ -24,7 +24,7 @@ Sidebar → Apps → XML Sync → click on a task → Status. Route: `/admin/app
 
 ## What the merchant can do here
 
-- **Start / Stop button** — trigger an immediate sync, or interrupt a running one. Shows a loading state during the change.
+- **Activate / Deactivate** button (page header) — switches XML Sync's schedule on or off for the **whole store**, not this task (see Business rules).
 - **Last updated** — when the most recent run finished.
 - **Next execution** — for active recurring tasks, when the next auto-run is scheduled.
 - **History link** — drill into run history.
@@ -50,7 +50,7 @@ The History link opens the **shared import history page** (a separate page, not 
 
 | Field | Notes |
 |---|---|
-| **active** | Whether the task is currently running OR scheduled for next run. |
+| **active** | Whether the store's XML Sync schedule exists (all tasks), not this task's own switch; the button then reads Deactivate. |
 | **last_update** | Timestamp of last sync completion. |
 | **next_update** | Timestamp of next scheduled run. |
 | **history** | URL / route to per-task run history. |
@@ -69,14 +69,7 @@ The History link opens the **shared import history page** (a separate page, not 
 
 ### Recurring schedule respected
 
-When `active = true`, the task runs on the configured interval (e.g., daily at 02:00). The merchant can:
-- **Trigger early** — the Start button fires an immediate sync.
-- **Stop** — interrupts an in-flight run; the schedule continues at the next interval.
-- **Stop + Deactivate** — halts entirely; the task won't auto-run until re-activated.
-
-### Manual Start re-queues, doesn't replace
-
-Triggering a sync while a scheduled run is already in flight does not cancel the in-flight run — it finishes naturally and the new one runs next.
+A task whose list switch is on runs on the store's schedule. The header button does not run a task early: **Deactivate** removes the schedule for every task, **Activate** puts it back.
 
 ### Next execution is shared across all sync tasks
 
@@ -84,11 +77,11 @@ All sync tasks share one parser tick for the whole app, so the **Next execution*
 
 ### Stop is app-level — it halts ALL sync tasks for the store
 
-The Status page's Stop control stops **every** sync task on the store, not just the one being viewed. To pause a single task, use the Active toggle on [[apps-xml-sync-settings]].
+**Deactivate** stops **every** sync task on the store, not just the one viewed, and turns off no task's switch, so the list still shows them on. To pause one task, use its switch on [[apps-xml-sync-settings]]; that task's page can still read **Deactivate** and show a Next execution time, because both describe the store's schedule, while the parser skips the task.
 
 ### No rollback on Stop
 
-Stopping a task cancels its pending background work and flips it inactive, but products created or updated by the in-flight run stay written — there is no undo. The merchant restores via product backup or manual cleanup.
+**Deactivate** cancels the store's pending XML Sync work without changing any task's switch; products already written stay. The merchant restores via product backup or manual cleanup.
 
 ### Plan-feature gating across tasks
 

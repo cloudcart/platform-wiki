@@ -7,8 +7,8 @@ aliases: ["PAT owner-only", "Only store owners can manage CLI tokens", "PAT 403"
 tags: [settings, security, tokens, permissions, owner-only]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[settings-pat-tokens]]. See the hub for related aspects (list view, create flow, scopes, restrictions, security, endpoints).
@@ -40,7 +40,7 @@ The enforcement is invisible by design: Moderators / Administrators never see th
 
 ### Per-store cap
 
-The page's `meta.max_tokens` defines the maximum number of tokens this admin can have active. **Fixed at 100**, NOT plan-based. The "`<N>` of 100 tokens" chip in the page header always shows the second number as 100. Since only the owner can create, this is effectively a **10-tokens-per-store limit**.
+The page's `meta.max_tokens` defines the maximum number of tokens this admin can have active. **Fixed at 100**, NOT plan-based. The "`<N>` of 100 tokens" chip in the page header always shows the second number as 100. Since only the owner can create, this is effectively a **100-tokens-per-store limit**. Inactive and expired tokens count until deleted. At the cap **Create Token** is disabled; a create sent from a page not refreshed fails with only the generic *"The given data was invalid."* toast ([[settings-pat-tokens-create-flow]]).
 
 To free a slot when at the cap, the merchant deletes an existing token from the list. There is no "request more tokens" path; the cap is fixed.
 

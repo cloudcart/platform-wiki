@@ -3,8 +3,8 @@ type: entity
 aliases: ["Smart Collection discount link", "Discount targeting a collection", "Selection discount scope", "Promotional pricing follows rules", "Отстъпка върху колекция"]
 tags: [catalog, products, collections, smart-grouping, discounts, entity]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 > Part of [[smart-collection]]. See the hub for the other aspects (rule builder, evaluation, storefront, vs category, management).
@@ -46,7 +46,19 @@ Whenever the collection's membership is re-evaluated (rule edit or underlying pr
 
 ### Eligible discount types as a criteria field too
 
-Note the inverse relationship: **Discounts** is also one of the criteria *Fields* in the rule builder (see [[smart-collection-entity-rule-builder]]), limited to currently-active fixed / percent / flat, non-shipping, non-customer-restricted discounts. That lets a collection select "products that currently have discount X" — distinct from a discount targeting the collection.
+Note the inverse relationship: **Discounts** is also one of the criteria *Fields* in the rule builder (see [[smart-collection-entity-rule-builder]]): a Fixed, or no-code Flat / Percent discount (not shipping, Countdown, Quantity or a container). That lets a collection select "products that currently have discount X" — distinct from a discount targeting the collection. Membership is the products holding an active price row of that discount at the last regeneration, customer-group rows included.
+
+### The **Sale** rule reads active discounts, not a product flag
+
+**Sale** *is Yes* selects products holding an active price row (inside its dates, switched on) of a discount on a stored list; *is No* selects the rest. The list holds the discounts active at the moment it was built, in store time: Fixed discounts, and no-code Flat / Percent discounts with any target other than *Orders over* alone, including those aimed at a smart collection, a vendor or a category. Codes, containers, shipping, Countdown and Quantity discounts are left out. The product's own sale flag plays no part (it always reads No, see [[product-entity-business-rules]]).
+
+The list is a snapshot, rebuilt by:
+
+- creating a discount, or saving it from its form;
+- the hourly expiry sweep switching an ended discount off;
+- a nightly check at about 00:10 UTC that regenerates every Sale collection whose list differs from the discounts active now. This is how a discount with a future start date joins: not at its start, but at the first nightly run on or after that day.
+
+The Active switch in the Discounts list and the bulk status action trigger no rebuild; the nightly check picks them up. The nightly check does not cover the **Discounts** rule, so a collection using it does not pick up a discount that starts by date until it regenerates for another reason, such as a save of the collection or of that discount (verify); an ended discount leaves it through the expiry sweep. Re-saving the collection rebuilds either list at once.
 
 ## Where it appears
 

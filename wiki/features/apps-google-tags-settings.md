@@ -7,8 +7,8 @@ aliases: ["Google Tag Manager Settings", "GTM settings", "GTM container config"]
 tags: [apps, google, tag-manager, settings]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-28
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # Google Tag Manager → Settings
 
@@ -54,11 +54,11 @@ These are the standard GTM bootstrap requirements.
 
 ### Data layer pushes
 
-CloudCart pushes ecommerce events to the GTM data layer at user-action moments. The merchant's GTM tags consume these events to fire whichever pixels they want.
+Each storefront page pushes one `cc_page_data` object (page type and context; the order on the thank-you page). No GA4-style `{event, ecommerce}` objects are pushed: the merchant's GTM tags read `cc_page_data`. See [[apps-google-tags]].
 
 ### Cookie consent integration
 
-GTM tags should respect [[apps-gdpr-overview]] consent state. The merchant configures consent triggers inside GTM's UI.
+With [[apps-gdpr-overview]] active, the container loads once the Performance cookie group counts as accepted (until the visitor answers it does). Consent for the tags inside is set in GTM.
 
 ### Permission
 Standard apps permission scope.
@@ -86,15 +86,15 @@ The `code` is a single string field — the platform stores ONE GTM container ID
 
 ### Built-in data-layer variables come from the Datalayer app
 
-The variables available in the data layer are NOT configured on this Settings page — they're emitted by [[apps-datalayer]] when that app is installed. The two main payloads are `cc_page_data` (page-specific context: product, category, cart, line items, totals, order on checkout-return) and `cc_customer_data` (when the customer is logged in). On the checkout-return page, an additional GA4-format `purchase` event fires via the cc-analytics events pipeline.
+The variables available in the data layer are NOT configured on this Settings page: every storefront page emits them, whatever the state of [[apps-datalayer]]. The two main payloads are `cc_page_data` (page-specific context: product, category, cart, line items, totals, the order on checkout-return) and `cc_customer_data` (the logged-in or guest-cart customer). No GA4-format `purchase` event is pushed for GTM; GA4's purchase is sent by [[apps-google-analytics]] itself ([[apps-google-analytics-purchase-event]]).
 
 ### GTM Preview Mode works out of the box
 
 There is no special toggle for GTM Preview Mode here. Because CloudCart injects the standard GTM `<script>` / `<noscript>` snippets unchanged, GTM's Preview Mode (`?gtm_debug=...`) functions normally on a CloudCart storefront — the merchant enables Preview from inside tagmanager.google.com and navigates to their storefront URL.
 
-### Settings save → JS rebuild → storefront cache busts on next page load
+### Settings save → JS rebuild
 
-Saving a new GTM container ID triggers a rebuild of the shared `cc_applications_config.js` on S3 (because the Google Tags manager implements `AppJsRegenerate`). The file is versioned by `last_build` timestamp, so storefront browsers naturally fetch the new version on the next page load.
+Saving a new GTM container ID triggers a rebuild of the shared `cc_applications_config.js` on S3 (because the Google Tags manager implements `AppJsRegenerate`). Its address carries a version stamp written into the page HTML, so signed-in visitors get the new file on the next page load and guests once their cached page copy expires (up to 20 minutes, [[storefront-arch-caching-invalidation]]).
 
 ### Wiki note: no "Server-side GTM URL" field exists
 
@@ -102,7 +102,7 @@ This page's earlier table mentions a "Server-side GTM URL" field; verified again
 
 ### Wiki note: no "Push ecommerce events" / "Include customer identifiers" toggles on this page
 
-Those toggles also don't exist as saveable fields. The data layer pushes are controlled by whether [[apps-datalayer]] is installed (the actual emitting app), not by a setting on Google Tag Manager's page.
+Those toggles don't exist as saveable fields, and the data layer pushes have no switch anywhere: they are part of every storefront page.
 
 ### Single inline-edit box, single field
 

@@ -4,8 +4,8 @@ nav_path: "Concept → JSON-API v2 → Webhook integration"
 aliases: ["JSON-API v2 webhooks", "API writes fire webhooks", "API webhook side-effects", "product.created via API", "order.updated via API", "JSON-API webhook parity"]
 tags: [api, json-api, webhooks, hooks, integration, concepts]
 created: 2026-06-10
-updated: 2026-08-06
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[json-api-v2]]. See the hub for the other aspects (auth, headers/envelope, pagination, filtering & sorting, endpoints, status codes, audit log, CORS & soft-delete, atomic operations).
@@ -14,13 +14,13 @@ source_count: 2
 
 ## Definition
 
-**API writes fire the same webhooks as admin UI writes.** Both code paths go through the same record-save lifecycle, and webhook events (`product.created`, `order.updated`, `discount.created`, `customer.created`, `subscriber.created`, etc.) are dispatched **at the data layer where the record is saved** — not from the request handler. An integrator who creates a product via `POST /api/v2/products` will trigger the same `product.created` webhook deliveries to subscribed receivers as if the admin had clicked "Save" in the admin UI.
+**API writes fire the same webhooks as admin UI writes, with one exception: products.** Most events (`order.updated`, `customer.created`, `discount.created`, `subscriber.created`, `product.deleted`, etc.) are dispatched **at the data layer where the record is saved**, so an API write fires them exactly as an admin save does.
 
-This parity is the cornerstone of "API as a peer of the admin panel" — it means automation that subscribes to webhooks does NOT need to distinguish between admin-UI-driven and API-driven changes for behavioural purposes. (If they need to distinguish for **audit** purposes, see [[json-api-audit-log]].)
+**`product.created` and `product.updated` fire only from saves in the admin panel.** A product created or changed through JSON-API v2 (or the Admin GraphQL API) sends neither, and nor do background imports ([[products-products]]). The one API exception: saving only a product's metafield values through Admin GraphQL sends `product.updated` ([[metafields-webhooks]]). An integration that needs to react to API product writes should act on its own write's response rather than wait for a webhook. (To tell writers apart for **audit**, see [[json-api-audit-log]].)
 
 ## Scope
 
-- The parity guarantee — API writes fire the same webhooks as admin UI writes.
+- The parity rule, and the product exception.
 - The hook-dispatch location (data layer, not request-handler layer) and why that matters.
 - API-specific side-effects layered on top:
   - Products / variants change-log capture (`initiator = "api"` + key id + name).
@@ -36,25 +36,25 @@ Not covered:
 
 ## Contrasts
 
-- **JSON-API v2 webhook parity vs admin GraphQL webhook parity** — both fire from the same data layer, so both behave identically for hook subscribers.
+- **JSON-API v2 vs Admin GraphQL** — both behave identically for hook subscribers, including the product exception.
 - **Webhook side-effect (behavioural) vs audit-log entry (forensic)** — webhooks fire regardless of who wrote the data; audit-log capture is per-resource and inconsistent (see [[json-api-audit-log]]).
-- **API writes fire webhooks vs storefront writes fire webhooks** — storefront mutations (cart/customer) also fire model-layer hooks. The webhook subscriber sees the same `product.updated` whether the change came from API, admin SPA, storefront customer action, scheduled job, or bulk import.
+- **API writes vs storefront writes** — storefront mutations (cart/customer) also fire model-layer hooks. For products, only an admin-panel save sends `product.created` / `product.updated`.
 
 ## How it works
 
 ### Hook dispatch from the data layer
 
-Webhook events (`product.created`, `order.updated`, `discount.created`, `customer.created`, `subscriber.created`, etc.) are dispatched at the data layer where the record is saved — specifically when a record is created / updated / deleted — NOT from the request handler. This design choice has two consequences:
+Webhook events (`order.updated`, `discount.created`, `customer.created`, `subscriber.created`, `product.deleted`, etc.) are dispatched at the data layer when a record is created / updated / deleted, NOT from the request handler. Two consequences:
 
-1. **Every code path that saves the record fires the hook** — the JSON-API v2 path, the admin GraphQL mutation, the admin SPA, the storefront mutation, scheduled tasks, command-line tools, bulk imports — all share the same save path and therefore all fire the same hook events.
+1. **Every code path that saves the record fires the hook** — JSON-API v2, Admin GraphQL, the admin panel, the storefront, scheduled tasks, imports. Product create/update are the exception (above).
 2. **Hook subscribers cannot tell** (from the event payload alone) which code path triggered the save. The event payload carries the record state, not the actor identity. For actor identity, the integrator must consult the audit log — see [[json-api-audit-log]].
 
 ### Common API write → webhook event mapping
 
 | API write | Triggered webhook event | Notes |
 |---|---|---|
-| `POST /api/v2/products` | `product.created` | Fires before search-engine sync; receivers must be idempotent. |
-| `PATCH /api/v2/products/{id}` | `product.updated` | Chatty — fires on every stock save too; see [[settings-hooks]]. |
+| `POST /api/v2/products` | none | `product.created` fires only for admin-panel saves. |
+| `PATCH /api/v2/products/{id}` | none | `product.updated` fires only for admin-panel saves. |
 | `DELETE /api/v2/products/{id}` | `product.deleted` | Soft-delete sets `deleted_at`; the hook still fires. See [[json-api-cors-soft-delete]] for soft-delete read semantics. |
 | `PATCH /api/v2/orders/{id}` (status change) | `order.updated` + any status-transition side-effects (invoice issue, customer email, etc.) | Routed through the shared status-change path. |
 | `PATCH /api/v2/orders/{id}/fulfill` | `order.updated` (with fulfillment side-effect) | Custom route — the side-effect chain is identical to the admin **Fulfill products** action. |
@@ -72,14 +72,15 @@ In addition to the standard webhook events, API writes carry a small set of "thi
 
 ### Practical implications for webhook subscribers
 
-- **Idempotency is mandatory.** The `product.updated` webhook fires on every save — including every stock decrement, every search-engine sync, every bulk-import row. Subscribers that mutate downstream systems on every event will create duplicate work unless they dedupe.
+- **Idempotency is mandatory.** Events can repeat for one change; subscribers that mutate downstream systems should dedupe.
+- **API product writes are silent.** A product sync over the API cannot rely on `product.created` / `product.updated` to trigger its own follow-up steps.
 - **The webhook does NOT carry actor identity.** A subscriber that needs to know "was this an API write or an admin write?" must consult the resource's audit log (only orders + products/variants have one — see [[json-api-audit-log]]).
 - **Status-transition side-effects can cascade.** A `PATCH /orders/{id}` that changes status to `paid` fires `order.updated` AND triggers stock decrement (see [[inventory-decrement-timing]]) AND may trigger the invoice-issue side-effect AND the customer-email side-effect. The webhook subscriber sees one `order.updated` event but the downstream chain can be long.
 - **Webhook-to-API-key association.** Webhooks created via `POST /api/v2/webhooks` are associated with the calling API key. Deleting that key (see [[json-api-auth]]) can affect those hook subscriptions; verify before deleting if the key has active hooks.
 
 ## Where it applies
 
-- Every API write across all 31 writable resources fires the corresponding record-save event (and therefore any subscribed webhook).
+- Every API write across the writable resources fires its record-save event (and any subscribed webhook), except product create / update.
 - The `webhooks` resource itself supports CRUD via the API — so integrations can self-subscribe to events (see [[json-api-endpoints]] + [[settings-hooks]] for the admin UI equivalent).
 - Status-transition side-effects on orders (invoice issue, customer notification, inventory decrement) are triggered by API writes the same as admin writes.
 

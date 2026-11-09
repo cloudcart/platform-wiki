@@ -7,8 +7,8 @@ aliases: ["Queue actions", "Queue retry", "Queue stuck job", "Queue cancel"]
 tags: [settings, queue, actions, diagnostics, support]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[settings-queue-view]]. See the hub for the other aspects (page UI, visibility, running-detection, recurring jobs, queue families, event subscribers).
@@ -69,7 +69,7 @@ The Queue page itself is observation-only — see [[settings-queue-view-page]] f
 
 A separate housekeeping job (`delete_csv_tables`, runs once per 24 hours, marked NOT visible on this page) iterates over per-site `csv_import_*` tables and drops any table created more than 72 hours ago.
 
-Practical impact for the merchant: once those staging tables are gone, a stuck CSV-import queue entry **cannot** be re-triggered from the old staging data — the merchant must re-upload the source CSV. This is independent from [[settings-import-history]] retention; history rows are kept indefinitely, only the temporary staging tables are pruned at 72 h.
+Practical impact for the merchant: once those staging tables are gone, a stuck CSV-import queue entry **cannot** be re-triggered from the old staging data — the merchant must re-upload the source CSV. This is independent from [[settings-import-history]] retention; history rows follow their own retention, while the temporary staging tables are pruned at 72 h.
 
 ### Failed periodic vs failed one-shot
 

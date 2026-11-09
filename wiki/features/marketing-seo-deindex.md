@@ -7,8 +7,8 @@ aliases: ["Deindex filtered pages", "Noindex query limit", "Filtered & sorted no
 tags: [marketing, seo, deindex, noindex, indexing]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # Deindex Filtered and Sorted pages (noindex meta tag for parameterized URLs)
 
@@ -66,10 +66,10 @@ All other storefront routes are evaluated by other rules:
 
 - **`/products` (`products.list`)** is always sent with a `noindex` response header.
 - **Always noindex regardless of this setting**: checkout (`checkout`, `checkout.*`), cart sub-pages (`cart.*`), compare, the entire customer-account area (`site.account`, `site.account.*`), the storefront auth pages (`site.auth.*`), and vendor-contact sub-URLs (`/contacts/<vendor>`).
-- **Product / CMS-page / Home / Blog / Contacts**: governed by per-page noindex flags on the entity itself, not by this setting.
+- **Product / CMS-page / Home / Blog / Contacts**: indexable; no entity has a per-page noindex switch.
 - **`ajax.*` routes never get robots meta** — explicitly opted out of robot directives.
 
-This card cannot force-noindex a parameter-free URL (e.g. `/category/test` with no query). To noindex a specific entity-driven URL, use the per-entity `no_index_meta` toggle (where exposed) or robots.txt.
+This card cannot force-noindex a parameter-free URL (e.g. `/category/test` with no query). No product, category or CMS page has its own noindex switch; to keep one out of search use robots.txt, a 301 rule or (CMS pages) a canonical to another page — see [[seo-meta-canonical-noindex]].
 
 ### How "meaningful parameters" are counted
 

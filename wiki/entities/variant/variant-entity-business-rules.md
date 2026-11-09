@@ -4,8 +4,8 @@ nav_path: "Entity → Variant → Business rules"
 aliases: ["Variant business rules", "Variant invariants", "Variant save rules", "Variant SKU uniqueness", "Default variant pointer", "Cascade rename of v1/v2/v3", "Variant cascade cleanup"]
 tags: [entity, catalog, variants, business-rules]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[variant]]. See the hub for the other aspects (attributes, lifecycle, relationships, side effects and API).
@@ -14,7 +14,7 @@ source_count: 2
 
 ## Identity
 
-The catalogue of invariants and save-time rules the [[variant|Variant]] record obeys — SKU uniqueness, the 3-parameter hard cap, the one-default-Variant rule, the cascade rename of denormalised labels (`v1` / `v2` / `v3`), the `minimum` floor, the unit-of-measure auto-defaults, the cascade cleanup on delete, and the historical-order-survives rule. The rules the AI Assistant cites for *"Why did my CSV import skip those rows?"*, *"Why did the back-in-stock email fire?"*, *"What happens to old orders if I delete this colour option?"*.
+The catalogue of invariants and save-time rules the [[variant|Variant]] record obeys — SKU uniqueness, the 3-parameter hard cap, the one-default-Variant rule, the cascade rename of denormalised labels (`v1` / `v2` / `v3`), the `minimum` floor, the unit-of-measure auto-defaults, the cascade cleanup on delete, and the historical-order-survives rule.
 
 ## Aliases
 
@@ -32,7 +32,7 @@ A Variant references at most 3 Parameter Options (via `p1` / `p2` / `p3`) becaus
 
 ### One default Variant per Product
 
-Exactly one Variant per Product is the default. The Product's `default_variant_id` column stores the pointer (the flag is NOT on the Variant row); the referenced Variant is pre-selected when the customer lands on the product page. Picking a new default rewrites the Product, not the Variants.
+Exactly one Variant per Product is the default. The Product's `default_variant_id` column stores the pointer (the flag is NOT on the Variant row); the referenced Variant is pre-selected when the customer lands on the product page. There is **no default-Variant picker**: every save points it at the cheapest Variant (a tie goes to the oldest). When all Variants share one price and at least two carry different sale prices, the one with the lowest sale price wins instead. To make a Variant the default, price it lowest.
 
 ### Denormalised labels (`v1` / `v2` / `v3`) cascade-rename on Option rename
 
@@ -50,13 +50,13 @@ The Product's `price_from` and `price_to` are min/max `price` across its active 
 
 SKU uniqueness is validated store-wide on save. The inline-edit save returns a validation error with the SKU field highlighted (*"This SKU is already in use"* or the localized equivalent). The **bulk CSV import path logs the duplicate row and SKIPS** it rather than failing the whole import — intentional, since bulk imports often contain a few duplicates.
 
-### `compare_at_price` and `cost_price` are per-Variant
+### Sale price is per-Variant, on the default Fixed discount
 
-`compare_at_price` / `msrp` are editable per-Variant on the **Variants tab**; CSV import accepts a per-Variant `compare_at_price` column. Older admin layouts only expose the Product-level field — use the Variants tab. `cost_price` is settable via CSV import (when the column is included) and via the JSON-API v2 / GraphQL API; it surfaces **only** on admin reports (margin analytics, accounting) — never on the storefront. There is no product-catalogue CSV export screen, so `cost_price` cannot be pulled out that way; for a catalogue dump use an [[apps-xml-feed|XML product feed]] or the [[apps-google-sheets|Google Sheets app]].
+The **Discount** cell of the [[products-variants-matrix|Variants matrix]] takes an amount or percent per Variant; the editor turns it into a sale price saved on the store's default Fixed discount, not on the Variant row. Every product save rewrites these prices, so an empty cell leaves the Variant without one. A Variant has no `compare_at_price`, `msrp` or `cost_price` field. For a catalogue dump use an [[apps-xml-feed|XML product feed]] or the [[apps-google-sheets|Google Sheets app]].
 
 ### Restock-notification trigger; deleting a Parameter Option does NOT block
 
-The back-in-stock email fires when a Variant's stock transitions from `<= 0` to `> 0` — NOT only when the merchant explicitly clears an out-of-stock label. The waitlist is queried, emails dispatched, and rows cleared in one batch ([[products-missing-product]]). Deleting a Parameter Option does NOT block when historical orders reference its Variants. The Variant rows are removed, but order line items' `variant_id` is set to NULL via `ON DELETE SET NULL`. The order line retains its **snapshotted SKU and label text** so the order remains readable ([[variant-entity-lifecycle]]).
+The back-in-stock email fires when a Variant's stock transitions from `<= 0` to `> 0` — NOT only when the merchant explicitly clears an out-of-stock label. The waitlist is queried, emails dispatched, and rows cleared in one batch ([[products-missing-product]]). In the admin, deleting a Parameter Option is refused while any Variant uses it; historical orders do not block it. When a Variant row does go, order line items' `variant_id` is set to NULL and the line keeps its **snapshotted SKU and label text** ([[variant-entity-lifecycle]]).
 
 ### Discount type `fixed` targets a single Variant
 
@@ -77,7 +77,7 @@ When a Variant is deleted (typically as part of a Product cascade — see [[prod
 ## Where it appears
 
 - [[products-variants-options]] — Parameter / Option management; option rename triggers the `v1` / `v2` / `v3` cascade.
-- [[products-products]] — Variants tab; per-Variant `compare_at_price`, default-Variant picker, SKU edits.
+- [[products-products]] — the editor's Variants matrix: per-Variant price, Discount and SKU.
 - [[products-inventory]] — bulk SKU / quantity edits; uniqueness errors surface here.
 - [[apps-csv-import]] — CSV import; silent-skip-duplicates rule applies.
 - [[marketing-discounts-fixed]] — `fixed` discount picker; one Variant per discount.

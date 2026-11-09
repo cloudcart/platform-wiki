@@ -5,8 +5,8 @@ aliases: ["Place order pipeline", "Cart to order snapshot", "Order creation step
 tags: [orders, checkout, submit, order-creation, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[checkout-flow]]. See the hub for the other aspects (cart entity, abandoned detection, guest vs registered, lifecycle overview, discounts & rules, events & webhooks).
@@ -50,9 +50,9 @@ When the customer hits **Place order** on the checkout page:
 2. **Discount re-evaluation** — all matching discounts ([[discount]]) re-attach to the cart against the final state. See [[checkout-flow-discounts-and-rules]].
 3. **Cart Rules re-evaluation** — Cart Rules ([[cart-rule]]) fire AFTER discounts on the post-discount cart total. See [[checkout-flow-discounts-and-rules]].
 4. **Order row is created** — the Cart's lines are snapshotted into Order + Order Products + Order Discounts + Order Addresses + Order Payment rows. The order's initial `status` is `pending` and `status_fulfillment` is `not_fulfilled`. The `currency` and `locale` are locked at this moment and never change afterward (so historical invoices stay correct even if the store later switches currency or language).
-5. **Customer linkage** — for registered checkout, `customer_id` is set to the logged-in customer. For guest checkout, `customer_id` is null but `customer_email` / `customer_first_name` / `customer_last_name` are still captured. If the **Convert guests into members** setting is ON, a customer account is also created and a generated password is emailed. See [[checkout-flow-guest-vs-registered]].
+5. **Customer linkage** — `customer_id` is the logged-in customer, or for a guest the **Guests**-group Customer record found or created by email. With **Convert guests into members** ON, that guest record becomes a registered account and a generated password is emailed. See [[checkout-flow-guest-vs-registered]].
 6. **Payment record** — a payment row is attached to the order, initially in `initiated` status. The customer is redirected to the payment provider (or, for offline methods, sees the *Thank you / awaiting payment* page).
-7. **Stock decrement** — whether stock decrements at order creation or only on payment confirmation depends on the **Reduce items on Paid order** setting (`order_status_for_quantity_decrease`) on [[settings-cart]]: when set to `paid` (default), only `paid` / `authorized` / `completed` orders decrement; when set to `pending`, `pending` orders also decrement immediately. See [[inventory-decrement-timing]] for the full matrix.
+7. **Stock decrement** — whether stock decrements at order creation or only on payment confirmation depends on the **Reduce items on Paid order** setting (`order_status_for_quantity_decrease`) on [[settings-cart]]: when set to `paid`, only `paid` / `authorized` / `completed` orders decrement; when set to `pending`, `pending` orders also decrement immediately. See [[inventory-decrement-timing]] for the full matrix.
 8. **`OrderCreated` event fires** — the event bus fans out to: the order-confirmation email job, the per-order analytics job (`analytics2` queue, 60s delay), the merchant's `order.created` webhooks ([[settings-hooks]]), and any app-specific listeners. See [[checkout-flow-events-and-webhooks]] + [[notification-delivery]].
 
 ### Pre-order event runs guest-to-customer conversion

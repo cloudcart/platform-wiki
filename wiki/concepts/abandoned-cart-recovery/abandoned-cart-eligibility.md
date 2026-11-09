@@ -5,8 +5,8 @@ aliases: ["Abandoned cart eligibility", "Seven-check filter", "Recovery eligibil
 tags: [orders, cart, abandoned, recovery, eligibility, consent, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[abandoned-cart-recovery]]. See the hub for the other aspects (threshold, restore link, channels, bulk send, attribution, plan quota).
@@ -15,14 +15,14 @@ source_count: 4
 
 ## Definition
 
-Even when a cart has crossed the abandonment threshold (see [[abandoned-cart-threshold]]), the platform applies a **seven-check eligibility filter** plus a **two-layer marketing consent gate** before any restore link is actually dispatched. Both the automated sweep AND the manual bulk **Send restore link** action on [[orders-abandoned]] run through the same filter. A cart that fails any check is skipped (auto-sweep) or silently deleted from the list (bulk action — see [[abandoned-cart-bulk-send]] for the per-path failure handling).
+Even when a cart has crossed the abandonment threshold (see [[abandoned-cart-threshold]]), the platform applies a **seven-check eligibility filter**, plus a **consent check on guest carts only**, before any restore link is actually dispatched. Both the automated sweep AND the manual bulk **Send restore link** action on [[orders-abandoned]] run through the same filter. A cart that fails any check is skipped (auto-sweep) or silently deleted from the list (bulk action — see [[abandoned-cart-bulk-send]] for the per-path failure handling).
 
 ## Scope
 
 Covered:
 
 - The seven runtime eligibility checks the platform applies to every cart pre-send.
-- The two-layer marketing consent gate (Customer-level + Email-channel — same as [[subscriber-vs-customer]]).
+- The consent check, made only for guest (subscriber) carts, never for a registered customer's cart.
 - The identified-subscriber-before-cart-update rule (cross-customer-leak guard).
 - The `unconfirmed_send` interaction for subscriber-only recipients.
 - Silent-failure semantics — why merchants don't see per-cart error messages.
@@ -35,9 +35,9 @@ Not covered here:
 
 ## Contrasts
 
-- **Eligibility filter vs marketing consent** — the seven-check filter is a *plumbing* check (does this cart have an identifiable recipient with a non-expired token?). The two-layer consent is a *permission* check (did the customer agree to marketing on the Customer record AND on the Email channel?). Failing either suppresses the send.
+- **Eligibility filter vs marketing consent** — the seven-check filter is a *plumbing* check (does this cart have an identifiable recipient with a non-expired token?). The consent check is a *permission* check, made only for a guest cart: does the subscriber's Email channel accept marketing?
 - **Anonymous guest vs identified subscriber** — only carts with a logged-in customer (`user_id`) OR an identified email subscriber (`subscriber_id`) ever qualify. Fully anonymous carts (no captured email anywhere) are excluded from the list entirely.
-- **Customer-owned cart vs Subscriber-owned cart** — customer-owned carts only need the Customer-level `marketing` flag + standard Email-channel deliverability flags. Subscriber-owned carts additionally need email verification IF the Email channel's `unconfirmed_send` setting is OFF (the default).
+- **Customer-owned cart vs Subscriber-owned cart** — a registered customer's cart goes to the account's email with no consent or Email-channel check. A guest cart needs an Email-channel address that accepts marketing, is not unsubscribed or bounced, and is verified unless the Email channel's `unconfirmed_send` setting is ON (default OFF).
 
 ## Where it applies
 
@@ -55,20 +55,14 @@ Before any restore link is sent (auto-sweep or manual bulk action), the cart mus
 
 Wallet top-up and gift card carts are never tracked ([[wallet-gift-instrument-checkout]]). A cart that fails any check is excluded from the abandoned list AND from auto-sweep sends AND from manual bulk sends. See [[abandoned-cart-bulk-send]] for the silent-delete behaviour on the bulk path.
 
-### Two-layer marketing consent (per [[subscriber-vs-customer]])
+### Consent check — guest carts only
 
-For the recovery EMAIL specifically (Messenger has its own consent model — see [[abandoned-cart-channels]]), the platform additionally checks:
+For the recovery EMAIL (Messenger has its own model — see [[abandoned-cart-channels]]):
 
-1. **Customer-level `marketing` flag** — if the cart's customer has `marketing = no`, the recovery email is suppressed.
-2. **Email-channel `marketing` flag** — the linked subscriber's Email channel must have `marketing = yes`.
+- **Registered customer's cart** — **no consent check**. The reminder goes to the account's email whatever the customer's marketing flag or Email-channel flags say.
+- **Guest (subscriber) cart** — the subscriber needs an Email-channel address with `marketing = yes`, `unsubscribed = no`, `bounced = no`, and `verified = yes` unless the Email channel's `unconfirmed_send` is ON ([[email-channel-settings-pane]]). Without such an address no reminder is sent, and a cart whose address lacks marketing consent is dropped from the list when the send runs.
 
-Plus the standard Email-channel deliverability flags:
-
-- `unsubscribed = no`
-- `bounced = no`
-- `verified = yes` *if the Email channel's `unconfirmed_send` setting is OFF (the default — see [[marketing-channels-email]]).*
-
-Any one of these failing skips the send silently. The cart remains in [[orders-abandoned]] with `date_sent = NULL`.
+At the sending service the reminder goes out as promotional: Elastic Email adds its own unsubscribe link and skips addresses that unsubscribed through it ([[abandoned-cart-channels]]).
 
 ### Subscriber-owned carts — identification timing
 
@@ -89,9 +83,9 @@ So a merchant investigating "why didn't this cart get a recovery email?" has to 
 1. Customer adds items, fills email on the shipping address step (creating a Subscriber with `subscriber_from = order_creating`), then leaves without checking out.
 2. Subscriber row was auto-created. Email channel `marketing = no` (customer didn't tick the consent box).
 3. Cart goes abandoned. The seven-check eligibility filter passes (has items, has identifiable subscriber, has email, valid token, no order, not soft-deleted).
-4. **But the two-layer consent check fails** — Email-channel `marketing = no` blocks the send.
-5. The recovery email is suppressed silently. The cart remains in [[orders-abandoned]] but `date_sent` stays NULL.
-6. The merchant clicks Send restore link in bulk on this cart — but the same two-layer check applies, and the cart is deleted from the list without a clear reason (see [[abandoned-cart-bulk-send]]).
+4. **But the consent check fails** — the guest's Email channel has `marketing = no`.
+5. When the send runs (sweep or **Send restore link**), the cart gets no email and is dropped from [[orders-abandoned]].
+6. Had the visitor been signed in as a registered customer, the reminder would have gone out: a registered customer's cart is not consent-checked.
 
 ## Related
 
@@ -100,8 +94,9 @@ So a merchant investigating "why didn't this cart get a recovery email?" has to 
 - [[abandoned-cart-restore-link]] — what happens on the send path after eligibility passes.
 - [[abandoned-cart-channels]] — Messenger channel has its own consent model.
 - [[abandoned-cart-bulk-send]] — silent-delete behaviour on eligibility failure during bulk send.
-- [[subscriber-vs-customer]] — the canonical reference for the two-layer marketing consent model.
+- [[subscriber-vs-customer]] — the two consent layers; only the Email-channel layer is read here, and only for guest carts.
 - [[marketing-channels-email]] — the Email channel deliverability flags (`marketing`, `unsubscribed`, `bounced`, `verified`, `unconfirmed_send`).
+- [[email-channel-settings-pane]] — the `unconfirmed_send` switch.
 - [[cart]] — the cart entity carrying `key`, `user_id`, `subscriber_id`, `updated_at`.
 - [[customer]] — recipient when the cart belongs to a registered customer.
 - [[subscriber]] — recipient when the cart belongs to an identified email subscriber.

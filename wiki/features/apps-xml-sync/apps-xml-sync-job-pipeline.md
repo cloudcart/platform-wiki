@@ -7,8 +7,8 @@ aliases: ["XML Sync job pipeline", "XML Sync parse insert pipeline", "XML Sync q
 tags: [apps, imports, xml, sync, recurring, queue, pipeline]
 plan_gates: ["xml_sync_limit"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[apps-xml-sync]]. See the hub for the other aspects (update policy, discontinued handling, fetch transport, side effects).
@@ -56,7 +56,7 @@ Separating parse from insert means a failure in one stage does not corrupt the o
 Defaults (queue config):
 
 - **Parse interval: 43200 seconds (12 hours)** default.
-- Force queue: **`import1`** — shared with [[apps-xml-import]].
+- Force queue: **`import1`** — shared with [[apps-xml-import]]; with the priority pack, `import{N}` instead (see [[apps-xml-sync-features]]).
 - single = false (concurrent tasks allowed).
 
 ## Business rules
@@ -84,11 +84,15 @@ There is **no Last-Modified / If-Modified-Since HTTP-header check** before fetch
 
 ### Manual trigger: save Step 3, or toggle Active OFF→ON
 
-Saving [[apps-xml-sync-step3]] forces the next queue tick to re-parse the task **immediately** (without waiting for the 12h timer) by re-initialising the parser queue and clearing the feed hash. Toggling the task's Active switch off and then on triggers the same path. There is no separate "Run now" button — these are the two manual-trigger gestures.
+Saving [[apps-xml-sync-step3]] forces the next queue tick to re-parse the task **immediately** (without waiting for the 12h timer) by re-initialising the parser queue and clearing the feed hash. Toggling the Active switch off and on also enqueues the parser, but clears nothing, so a task read under an hour ago is skipped. The Status page Start does the same. There is no "Run now" button.
+
+### The 1-hour gate counts from the end of the last read
+
+A task's last-read time is stamped when its parse finishes (after the download and dispatch) or fails, and the gate counts from there. If a tick fires while the previous run is still queued, it can queue another run (a second history row); that one finds the task read under an hour ago and does nothing.
 
 ### 3-strike auto-deactivate
 
-Identical failure tracking to XML Import: every fetch / parse failure bumps the task's internal `job_id` counter. **On the 3rd consecutive failure the task is auto-deactivated** (active flips to 0). The merchant must investigate the captured `error` and re-enable manually. A successful run resets the counter. Failure strikes also push an in-CP **admin notification** ("alert") so the merchant sees the failure even without opening the Status page; empty-feed responses push an info-level alert separately. The alert carries the **app name + task name + the error text** but **no clickable link** to the task — to investigate, the merchant opens the XML Sync task list / [[apps-xml-sync-status|Status page]] (the task name links to its editor; the red-icon tooltip shows the last error). These strike alerts are in-CP only — no email is sent.
+Identical failure tracking to XML Import: every failure bumps the task's internal `job_id` counter: an unreachable host, a non-200 answer (*"Url return status code: 404"*), a fetch error, or an empty feed / missing product tag (*"Empty XML feed file"*, *"Unable to find search tag: …"*). Such a run finds no products, so it never triggers the missing-products sweep. **On the 3rd consecutive failure the task is auto-deactivated** (active flips to 0). The merchant must investigate the captured `error` and re-enable manually. A successful run resets the counter. Failure strikes also push an in-CP **admin notification** ("alert") so the merchant sees the failure even without opening the Status page; empty-feed responses push an info-level alert separately. The alert carries the **app name + task name + the error text** but **no clickable link** to the task — to investigate, the merchant opens the XML Sync task list / [[apps-xml-sync-status|Status page]] (the task name links to its editor; the red-icon tooltip shows the last error). These strike alerts are in-CP only — no email is sent.
 
 ### Auto-uninstall when no active tasks remain
 

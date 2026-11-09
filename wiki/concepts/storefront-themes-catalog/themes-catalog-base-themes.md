@@ -4,8 +4,8 @@ nav_path: "Concept → Storefront themes catalog → Base themes"
 aliases: ["Themes catalog base themes", "General-purpose themes", "Base theme catalogue", "Theme production usage", "Theme ranking"]
 tags: [storefront, themes, catalog, reference]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[storefront-themes-catalog]]. See the hub for the other aspects (data source, inheritance, pricing tiers, special-client variants, install flow).
@@ -93,10 +93,10 @@ These are catalog-active bases (`in_dev = 0`, `active = 'yes'`, no special-clien
 Best-effort ordering from a snapshot of the store records (joined on `template_id`, no status filter — every site that has ever been provisioned against a theme). Numbers are illustrative of relative scale, not absolute production counts:
 
 1. **`knowledge-freedom`** (Motivation; carries the redesigned customer account, [[customer-account]]) — 143 sites. By far the most heavily provisioned theme in this sandbox; effectively a *de-facto* general-purpose option even though its name marks it as a child of `knowledge`.
-2. **`flair`** — 57 sites. Canonical general-purpose base; also the platform fallback for any missing template.
+2. **`flair`** — 57 sites. Canonical general-purpose base. It is not read for other themes on the storefront, where the template lookup covers only the active theme's own folders and the shared `_global` layer (verify).
 3. **`themex`** — 14 sites. General clothing-category base.
 4. **another custom theme** — 9 sites. Special-client (SFA) but widely provisioned.
-5. **`knowledge`** — 8 sites. Base behind `knowledge-freedom`.
+5. **`knowledge`** — 8 sites. `knowledge-freedom` shares its name only: it ships its own full template set and JS/CSS build, and the storefront never reads `knowledge`'s templates for it.
 6. **a theme that ships it** — 7 sites.
 7. **`flair-religiousandceremonial`**, **another custom theme**, **`amber`**, **`echappe`**, **`natureface-liquid`**, **`summer`** — 2–5 sites each.
 

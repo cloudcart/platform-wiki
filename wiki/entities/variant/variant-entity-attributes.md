@@ -4,8 +4,8 @@ nav_path: "Entity → Variant → Key attributes"
 aliases: ["Variant attributes", "Variant fields", "Variant record schema", "SKU fields", "Variant columns"]
 tags: [entity, catalog, variants, attributes]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[variant]]. See the hub for the other aspects (lifecycle, relationships, business rules, side effects and API).
@@ -14,7 +14,7 @@ source_count: 2
 
 ## Identity
 
-The full per-field schema for the [[variant|Variant]] record — every attribute the Variant stores, plus a precise list of what is NOT stored on the Variant despite appearing alongside it in the admin UI. This page is the reference the AI Assistant cites when a merchant asks *"Where is `compare_at_price` saved?"*, *"Does the Variant have its own active flag?"*, or *"What's the difference between `unit_id` and `base_unit_id`?"*.
+The full per-field schema for the [[variant|Variant]] record — every attribute the Variant stores, plus a precise list of what is NOT stored on the Variant despite appearing alongside it in the admin UI. This page is the reference the AI Assistant cites when a merchant asks *"Where is a variant's sale price saved?"*, *"Does the Variant have its own active flag?"*, or *"What's the difference between `unit_id` and `base_unit_id`?"*.
 
 The Product carries descriptive content (name, description, SEO, category, vendor) and the three master switches (`tracking`, `continue_selling`, `threshold` — see [[inventory-variant-model]]). The Variant carries inventory + money + per-SKU overrides.
 
@@ -30,7 +30,7 @@ The Product carries descriptive content (name, description, SEO, category, vendo
 | `sku` | Stock-Keeping Unit code | Merchant-defined identifier for inventory + accounting. Must be unique within the store (the platform blocks duplicate SKUs on save — see [[variant-entity-business-rules]]). Empty is allowed for non-tracked products. |
 | `barcode` | Barcode / EAN / UPC | Optional. Used by scanner workflows (POS, warehouse). No uniqueness constraint. |
 | `price` | Selling price in cents | The price the customer pays for this Variant. Integer cents (1000 = 10 BGN). |
-| `compare_at_price` / `msrp` | Strike-through price in cents | Optional. When set and greater than `price`, the storefront renders a "from X / now Y" layout. NOT in the canonical Variant fillable columns — persisted via the discount system (a `compare_at_price` is implemented as a price discount linked to the Variant). The merchant edits it in the Variants tab; the platform persists it as a discount record. |
+| Sale price (the matrix **Discount** column) | Not a Variant column | Saved as a price on the store's default Fixed discount, linked to the Variant ([[variants-pricing]]). A Variant has no `compare_at_price`, `msrp` or `cost_price` field. |
 | `cost_price` | Cost price in cents | Optional. Internal margin tracking — never shown on the storefront. Settable via CSV import (when the column is included) and readable/writable via the JSON-API v2 / GraphQL API; surfaced in admin margin / accounting reports only. (There is no product-catalogue CSV export screen — see [[apps-xml-feed]] / [[apps-google-sheets]].) |
 | `quantity` | Stock on hand | Integer count. Combined with [[product|Product]]-level `tracking` and `continue_selling` to determine buyability. See [[inventory-variant-model]] for the per-Variant model. |
 | `weight` | Variant weight | In the store's [[product|unit system]] (`metric` / `imperial`). Drives shipping calculation. |
@@ -58,7 +58,7 @@ These attributes appear alongside the Variant in the admin UI but live elsewhere
 | Attribute | Where it actually lives | Why |
 |-----------|-------------------------|-----|
 | `tracking` / `continue_selling` | Parent [[product|Product]] | These master switches apply to every Variant of the product equally. Editing on the Product cascades to every Variant immediately, with no per-Variant override. See [[inventory-variant-model]]. |
-| Default-variant pointer | Product's `default_variant_id` column | The "default variant" is **not** a flag on the Variant row — the Product points to whichever Variant should be pre-selected on the storefront. Changing the default rewrites the Product, not the Variants. |
+| Default-variant pointer | Product's `default_variant_id` column | The "default variant" is **not** a flag on the Variant row — the Product points to the Variant pre-selected on the storefront. It is recalculated on every save and cannot be picked by hand — see [[variant-entity-business-rules]]. |
 | Per-Variant visibility / "active" flag | Does not exist | The Variant table has **no `active` column**. To hide a single Variant from the storefront picker, the merchant must either delete the Parameter Option (which removes the Variant) or set `quantity = 0` with the parent Product's `tracking = yes` and `continue_selling = no` (greys it out in the picker). See [[variant-entity-lifecycle]]. |
 | `created_at` / `updated_at` | Does not exist on the Variant | Change tracking happens at the Product level. The Product's `date_modified` ticks on every Variant save. See [[variant-entity-business-rules]]. |
 | Parameter list | Parent Product (`p1` / `p2` / `p3` slots) | The Product defines WHICH parameters exist (up to 3); the Variant references WHICH options it picks for each. |
@@ -68,7 +68,7 @@ These attributes appear alongside the Variant in the admin UI but live elsewhere
 - [[products-variants-options]] — variant parameter and option management.
 - [[products-inventory]] — per-Variant inventory grid; bulk Update Quantities + Set / Add modes.
 - [[products-products]] — Product list shows SUM of Variant quantities; the Variants tab on the product editor is where per-Variant fields are edited.
-- [[apps-csv-import]] / [[apps-xml-sync]] — bulk-import paths that write per-Variant rows; CSV accepts per-Variant `compare_at_price` as a column.
+- [[apps-csv-import]] / [[apps-xml-sync]] — bulk-import paths that write per-Variant rows.
 
 ## Related
 

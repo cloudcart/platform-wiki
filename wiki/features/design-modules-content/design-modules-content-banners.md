@@ -7,8 +7,8 @@ aliases: ["Banner module", "Banner grid", "Homepage banners", "Sidebar banner", 
 tags: [design, modules, content, banners]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Content modules — Banners
@@ -109,7 +109,7 @@ All banner modules are universally available — no plan feature required.
 
 ## Tips
 
-- Upload all banners in the same aspect ratio — the grid renders cleanly when sizes match.
+- Upload all banners in the same aspect ratio — the grid renders cleanly when sizes match. The platform sets no recommended pixel size: the theme's layout and `per_row` decide how wide a banner shows. An upload can be up to 1024 MB ([[settings-files]]), but smaller files load faster.
 - The same banner module map (`extra.banner`) powers multiple instances — picking the right INSTANCE matters more than picking the right module type.
 - For mobile-responsive layouts, set `per_row` to a number that divides evenly into 12 (the underlying responsive grid).
 - The `script` type is the right escape hatch for affiliate networks, A/B-test snippets, and one-off third-party embeds.

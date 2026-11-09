@@ -7,8 +7,8 @@ aliases: ["Existing discount eligibility", "Discount picker filter", "Which disc
 tags: [orders, discount, eligibility, filtering]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[orders-discount-add]]. See the hub for the other aspects (form fields, manual discounts, delete, recalculation, API).
@@ -60,6 +60,10 @@ A subtler exclusion: if an existing discount has NO code AND its target type is 
 ### When the subtotal drops below the threshold
 
 The `order_over` threshold is checked again on every recalculation. If a discount required "Order over 100" and the merchant later removes products until the order falls to 80, the discount stays listed on the order (see [[orders-discount-add-delete]] to remove it), but its amount stops being deducted. The amount keeps being deducted only if **Save the discount in the order** is on for that discount.
+
+### Orders created in the admin get no automatic order-level discount
+
+An order created in the admin ([[orders-add]]), like any order being edited, takes its order-level discounts only from what is stored on the order. No-code **Orders over** discounts and [[apps-cart-rules|Cart Rules]] apply automatically only in the storefront cart and checkout, so a manual order above the threshold gets neither. To give one, add the discount here: a no-code Orders over discount is listed once the order's subtotal reaches its threshold. A Cart Rule cannot be added to an order; use a manual discount instead.
 
 ### The picker is not the storefront's check
 

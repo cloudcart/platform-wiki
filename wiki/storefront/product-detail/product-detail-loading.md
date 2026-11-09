@@ -5,8 +5,8 @@ route_path: /product/{slug}/{cart_key?}
 themes_using: [all]
 tags: [storefront, product, routing, middleware, embed, seo]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 > Part of [[product-detail]]. See the hub for the other aspects (on-page layout, the buying flow, JavaScript hooks & customisation).
@@ -74,7 +74,7 @@ The on-page module toggles and per-product authoring are on [[product-detail-jav
 
 ## Known issues / by-design vs bug
 
-- **301 redirect on slug change** — if a merchant renames a product's URL handle, the old slug returns a 301 to the new canonical URL. Customers / bots holding the old URL are not broken. By design — see [[seo-handling]].
+- **301 redirect on slug change** — if a merchant renames a product's URL handle, the old slug returns a 301 to the new URL for **30 days**, then 404 unless a rule on [[marketing-seo-301-redirects]] covers it. See [[seo-301-redirects-auto-tracking]].
 - **Inactive product → 404** — once a product is deactivated, the URL returns 404 (not a redirect). Customers with bookmarks lose the page. By design.
 - **Quantity-per-shop tab skipped for sites 402 and 8766** — there is a hardcoded exclusion of two specific tenant IDs in the product controller (`!in_array(site('site_id'), [402, 8766])`). This is a per-tenant carve-out (verify — likely a legacy fix and should be settings-driven).
 - **`_latest_viewed` session is cleared on every view** — by design, because tracking has moved to a cookie-driven mechanism; the legacy session array is no longer the source of truth for the "Recently viewed" module.

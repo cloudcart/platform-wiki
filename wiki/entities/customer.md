@@ -7,8 +7,8 @@ aliases: ["Customer", "Buyer", "Shopper", "Account holder", "Storefront account"
 tags: [entity, customers, core]
 plan_gates: ["customers"]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 # Customer
@@ -47,7 +47,7 @@ The Customer record is where **identity, marketing consent, order history, and f
 
 - **Customer ≠ Subscriber.** Same email may be both, but they are independent records with independent lifecycles. Disabling marketing on one does not disable the other. See [[subscriber-vs-customer]].
 - **Three independent flags — no cascade.** Toggling Active off does NOT revoke marketing consent. Banning does NOT auto-deactivate. Each flag is set independently. See [[customer-entity-status-flags]].
-- **Deletion orphans orders.** Hard-deleting a customer wipes carts but **leaves orders behind** with a dangling `customer_id`. To preserve order history while preventing further activity, use **Ban** or **Deactivate** — never Delete. See [[customer-entity-lifecycle]].
+- **Deletion keeps orders, removes the Subscriber.** Hard-deleting a customer wipes carts and (queued) the linked Subscriber(s); orders stay with their own copy of name and email. To keep the customer while stopping activity, use **Ban** or **Deactivate**. See [[customer-entity-lifecycle]].
 - **Guest dedup is per-scope.** A registered customer's email does NOT block a guest checkout with the same email — the two records coexist until manual merge. See [[customer-entity-lifecycle]].
 - **Aggregates lag.** `income`, `completed_orders`, and `last_order_date` are pre-aggregated snapshots updated by the recalc service on order-status changes, not live-computed on every read. See [[customer-entity-api-and-webhooks]].
 

@@ -7,8 +7,8 @@ aliases: ["Customer mail variables", "Mail allowed_vars", "Mail allowed_subject_
 tags: [marketing, omnichannel, email, notifications, variables, templating]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-omnichannel-mails-list]]. See the hub for related aspects (mail labels, editor modal, toggles & gating, abandoned-cart, customisation limits).
@@ -31,7 +31,7 @@ The variables legend appears in the right-hand panel of the **template editor mo
 
 ## Settings & fields
 
-### Variable allow-list shape (verbatim from `App\Helper\Mail\Config::$customer_mail_type_vars`) (verify)
+### Variable allow-list shape
 
 Per-label, three keys may be set:
 
@@ -45,7 +45,7 @@ The endpoint `GET /admin/api/core/marketing/customer-mails/{id}/variables` retur
 
 ### Allowed variables — `order_product_fulfil` sampling
 
-For the `order_product_fulfil` label (verify):
+For the `order_product_fulfil` label:
 
 `{$logo}`, `{$shop_url}`, `{$shop_name}`, `{$customer_first_name}`, `{$customer_last_name}`, `{$customer_email}`, `{$product_list}`, `{$related_products}`, `{$best_sellers}`, `{$order_id}`, `{$purchase_date}`, `{$total}`, `{$subtotal}`, `{$order_discount}`, `{$order_status}`, `{$note}`, `{$site_order_link}`, `{$shipping_provider}`, `{$fulfillment_status}`, `{$billing_address}`, `{$shipping_address}`, `{$shipping_provider_description}`, `{$payment_provider_description}`, `{$desired_delivery_date}`, `{$admin_note}`, `{$delivery_date}`, `{$expedition_date}`, `{$tracking_link}`, `{$tracking_code}`, `{$shipping_price}`, `{$payment_status}`, `{$payment_provider}`, `{$tax}`.
 
@@ -57,13 +57,13 @@ For the `order_product_fulfil` label (verify):
 - **Newsletter** (`customer_newsletter_subscribe`, `customer_newsletter_unsubscribe`) — subscriber + shop variables.
 - **Product favourite labels** (`product_out_of_stock`, `product_quantity_low`) — product + customer + shop variables.
 
-The exact per-label list is in `Config::$customer_mail_type_vars` (verify).
+**Order confirmation** (`order_add`): the `order_product_fulfil` list above minus the delivery and tracking variables (`{$delivery_date}`, `{$expedition_date}`, `{$tracking_link}`, `{$tracking_code}`); `{$tax}` is allowed. The bank-transfer, cash-on-delivery and voucher confirmations add `{$bank_details}`, `{$cod_details}` and `{$voucher_details}`. See [[omnichannel-mails-order-confirmation]].
 
 ## Business rules
 
 ### Server-side filtering before template rendering
 
-When an event fires, the variables passed to the template are filtered with the platform code. So even if the calling code passes extra context (e.g., `{$secret_internal_token}`), it's **stripped before** the template engine substitutes — preventing data leakage via merchant-edited templates. The subject is filtered with the same approach against `allowed_subject_vars` (verify).
+When an event fires, only the label's allowed variables are substituted. So even if the calling code passes extra context (e.g., `{$secret_internal_token}`), it's **stripped before** the template engine substitutes — preventing data leakage via merchant-edited templates. A variable that is not on the label's list is left in the email as the literal `{$name}` text. The subject is filtered with the same approach against `allowed_subject_vars` (verify).
 
 ### Variable insertion path — copy-from-legend, not free-type
 
@@ -97,4 +97,3 @@ The template engine syntax for substitution is `{$variable_name}` — single cur
 ## Open questions
 
 - 📡 **Save-time validation of `required_subject_vars`.** Whether the Vue editor adds a save-blocking warning when a required variable is missing (verify roadmap).
-- 📡 **Behaviour of unallowed variables at render time.** Whether the template engine drops, blanks, or leaves raw `{$unallowed}` codes (verify with a template-engine test).

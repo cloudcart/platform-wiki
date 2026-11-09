@@ -3,12 +3,12 @@ type: feature
 nav_path: "Products → Categories → Cart & checkout restrictions"
 route_name: categories.settings
 route_path: /admin/products/categories
-aliases: ["Per-category payment restrictions", "Per-category shipping restrictions", "Define custom payment methods", "Define custom shipping methods", "Technological delivery time", "make_interval", "Категория — методи на плащане", "Категория — методи на доставка"]
+aliases: ["Per-category payment restrictions", "Per-category shipping restrictions", "Define custom payment methods", "Define custom shipping methods", "Technological delivery time", "make_interval", "Категория — методи на плащане", "Категория — методи на доставка", "Restriction inheritance to subcategories", "Main vs additional category restrictions"]
 tags: [products, categories, taxonomy, cart, payment, shipping, checkout]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[products-categories]]. See the hub for the other aspects (list & organize, edit modal, hierarchy rules, SEO/taxonomy, deletion rules, JSON-API/validation).
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-The per-category overrides that change what the customer sees at checkout when their cart contains a product from a restricted category — specifically **which payment methods are offered**, **which shipping methods are offered**, and **how much production lead time (`make_interval`) the storefront's delivery-date picker must respect**. These are the most consequential merchant-facing rules on the Categories screen: a single toggle on the wrong category can show *"no payment methods available"* at checkout. They overlay the store-wide defaults from [[settings-cart]].
+The per-category overrides that change what the customer sees at checkout when their cart contains a product from a restricted category — specifically **which payment methods are offered**, **which shipping methods are offered**, and **how much production lead time (`make_interval`) the storefront's delivery-date picker must respect**. A single toggle on the wrong category can leave checkout with no payment method.
 
 ## Where to find it
 
@@ -33,9 +33,9 @@ The lead-time field (Technological delivery time) is visible only when the store
 - Leave both toggles OFF → all installed methods work for products in this category (the default).
 
 ### What the merchant CANNOT do here
-- Define **per-product** payment or shipping restrictions from this screen (those live on the product itself; see [[products-products]]).
+- Define **per-product** payment or shipping restrictions — they do not exist anywhere. A product follows its **main category**'s restriction; to restrict one product, move it to a category of its own.
 - Order the methods within the restriction list (the customer sees them in the order configured under [[settings-payment-providers]] / [[shipping]]).
-- Conditionally apply restrictions (e.g., "only on orders over X" — that's a discount / cart-rule pattern via [[apps-cart-rules]]).
+- Conditionally apply restrictions (e.g., "only on orders over X"). Payment methods have their own order-amount limits; [[apps-cart-rules|Cart Rules]] only discount and never hide a method.
 
 ## Settings & fields
 
@@ -66,7 +66,14 @@ The platform's rule for a customer's cart:
 - If the intersection is empty, the customer is told no payment methods are available and the order cannot be completed.
 - Same logic for shipping methods.
 
-**Practical merchant pitfall**: defining restrictions on multiple categories can produce an empty intersection. Customers see *"no payment methods available"* at checkout for orders with products from incompatible categories. The merchant must coordinate restrictions carefully — OR keep restrictions on a single *"special"* category.
+**Pitfall**: restrictions on several categories can intersect to nothing; coordinate them, or keep restrictions on a single *"special"* category.
+
+### Only the product's main category counts, with no inheritance
+
+- **Main (primary) category only.** Each cart product is checked against the restriction of its **main category**. Its **additional categories** are ignored, restricted or not.
+- **No inheritance.** A restriction on a parent category does not reach its subcategories: a product whose main category is a subcategory follows that subcategory's own setting (none means all methods). To restrict a branch, set it on each subcategory that is a main category.
+- **Where it applies:** only the payment and shipping lists of the storefront checkout (headless storefronts included). The **Fast Order** app's form always places a **cash on delivery** order and does not check category restrictions; orders created in the admin or through the API are not checked either.
+- **Checked when the list is built.** The final submit re-checks the payment method against the apps' rules only, not the category restriction.
 
 ### Restrictions overlay the store-wide defaults
 
@@ -74,7 +81,7 @@ The store-wide list of installed payment / shipping methods is configured under 
 
 ### `make_interval` drives the checkout delivery-date picker
 
-When products in a category have `make_interval > 0`, the customer's earliest delivery slot is pushed beyond the **maximum** `make_interval` of all cart products. This is the **build-to-order / custom-cut lead-time hook** used by [[apps-shipping-hours]]. With multiple cart products from different categories, the largest `make_interval` wins.
+With `make_interval > 0`, the earliest delivery slot is pushed past the **largest** `make_interval` among the cart's products (the lead-time hook of [[apps-shipping-hours]]).
 
 ### `make_interval` is required when the Shipping Hours app is installed
 
@@ -90,7 +97,7 @@ Saving cart-restriction changes triggers an immediate customer-cart cache flush 
 
 ### Same logic on the JSON-API v2 path
 
-PATCH through [[api-categories]] applies the same AND-combine intersection logic on the storefront — there is no per-actor bypass. Validation messages mirror the admin form; see [[products-categories-api-validation]].
+Restrictions saved through [[api-categories]] work the same; validation mirrors the admin form ([[products-categories-api-validation]]).
 
 ### Permission
 

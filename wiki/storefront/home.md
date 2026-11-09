@@ -5,8 +5,8 @@ route_path: /
 themes_using: [all]
 tags: [storefront, home, landing, customisation, modules]
 created: 2026-06-08
-updated: 2026-06-08
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Storefront — Home page
@@ -40,7 +40,7 @@ The base `flair` home (in order) renders:
 1. **Carousel / slider** (hero) — the theme templates, driven by the `carousel` module instance.
 2. **Text block 1** (`homeText1`) — a free-text panel above the showcases.
 3. **Featured products showcase** (`showcaseProducts`) — either a slider (`productShowcaseSlider.tpl`) or a grid (`productShowcase.tpl`) depending on the module's `enable_slider` setting. Image srcset is `300x300` desktop, `600x600` mobile.
-4. **Featured categories showcase** (`showcaseCategory`) — grid or slider of category cards.
+4. **Featured categories showcase** (`showcaseCategory`) — category cards in the categories' own order, not the picker's ([[design-module-product-showcase-categories]]).
 5. **Text block 2** (`homeText2`).
 6. **Featured brands / vendors showcase** (`showcaseBrand`) — grid or slider of vendor logos.
 7. **Home banners** (`banners`) — the theme templates, a rectangular promo banner row.
@@ -89,7 +89,7 @@ Home-specific hooks (from the `flair` base theme template):
 ## Known issues / by-design vs bug
 
 - **By design**: the order of blocks in `home/home.tpl` is hard-coded in the template — the merchant cannot drag-and-drop reorder them via [[design-modules]]. To reorder, the merchant must either build a custom landing page with [[marketing-landing-pages]] and set it as the home, or hire a developer to fork the theme.
-- **By design**: if every module on the home is disabled, the customer sees an empty `<div class="_content">` between header and footer — no warning is rendered.
+- **By design**: if every module on the home is disabled, the area between header and footer is empty, with no warning.
 - **By design**: the `Paysera Bot` user agent is short-circuited to a payment-gateway verification handshake — this is a one-time check Paysera runs when the merchant activates the Paysera integration, not a permanent override.
 - See [[storefront-known-issues]] for cross-page bugs.
 

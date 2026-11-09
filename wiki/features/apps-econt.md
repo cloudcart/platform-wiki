@@ -7,8 +7,8 @@ aliases: ["Econt", "Econt Express", "Econt shipping", "Еконт", "Еконт 
 tags: [apps, shipping, courier, bulgaria, omniship]
 plan_gates: [SHIPPING_PAYMENT_SYNC]
 created: 2026-05-22
-updated: 2026-11-03
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # Econt (shipping provider)
 
@@ -42,6 +42,8 @@ Drill into the aspect that matches the question, not every page:
 - [[econt-settings-tab]] — the 10-section Settings layout: credentials, visualization, allowed services, per-channel calculator cards (address / office / locker), geo zones, payment providers, the three Additional-settings boxes, pallet box, save bar.
 - [[econt-addresses-tab]] — sender-address book; the ONLY place sender pickup is configured (the Settings "Sender data" box is disabled). Default flag drives which address each order uses.
 - [[econt-shipments]] — Shipments + Shipments return tabs; date filter, tracking-link column, single and bulk print (A4 / A6 modal when no preset).
+- [[econt-waybill-form]] — the waybill form's fields, the опис rows, no department choice per product.
+- [[econt-waybill-save]] — Generate Waybill: 3-second wait, timeouts and duplicates, Econt's yellow message, no import of outside waybills.
 - [[econt-waybill-recipient-mapping]] — recipient block composed by merging shipping + billing address, the `name_person` ("упълномощено лице") B2B field, and the manual-B2B-order UX issue.
 - [[econt-pallet]] — pallet master switch, dimensions (min 60 cm per axis), category / weight triggers, and the pallet-vs-parcel decision tree.
 - [[econt-cod-insurance]] — cash on delivery (`cd`, `cd_agreement`, `cd_agreement_num`), declared value (`oc`), the plan-gated `sync_payments` flag, 10000 BGN COD cap, three-condition insurance gate.
@@ -72,7 +74,7 @@ The bulk of fields live on the aspect pages. The hub records only the top-level 
 | **Username** (`settings.username`) | Provided by Econt after the merchant signs a courier contract. Required. |
 | **Password** (`settings.password`) | Same source. Required. Stored encrypted; masked once saved. |
 
-The platform validates credentials on save by calling Econt's API. The **Addresses**, **Shipments**, and **Shipments return** tabs only become visible after credentials validate. Full per-tab fields: see the seven aspect pages above.
+The platform validates credentials on save by calling Econt's API. The **Addresses**, **Shipments**, and **Shipments return** tabs only become visible after credentials validate. Full per-tab fields: see the aspect pages above.
 
 ## Business rules (cluster-wide)
 
@@ -96,11 +98,7 @@ Unlike every other courier, Econt's Settings tab does NOT render the shared "Sen
 
 ### Waybill = Bill of lading
 
-Econt uses "Bill of lading" (товарителница) terminology. Clicking Generate waybill in [[orders-shipping-waybill]] calls Econt's bill-of-lading API; Econt assigns a tracking number and the platform stores it. See [[econt-waybill-recipient-mapping]] for the recipient-composition rules.
-
-### Sender selection is Default-only
-
-The platform picks the sender address purely from the merchant's chosen **Default** address in the address book. There is no smart routing (no nearest-warehouse / per-zone logic). See [[econt-coverage-and-caches]].
+Econt uses "Bill of lading" (товарителница) terminology. **Fulfill products** opens [[econt-waybill-form]]; what Generate Waybill does is on [[econt-waybill-save]]. The sender is always the **Default** address (no per-zone routing).
 
 ### Mutual-exclusion validation on return waybills
 
@@ -119,7 +117,7 @@ Standard apps permission scope. No special per-Econt grant.
 
 ## Related
 
-- [[shipping-calc-rate-models]] — rate-table semantics: when a method uses a from/to rate table (по тегло / по цена), an **empty upper bound (`до` / `to`) means no upper limit — the bracket runs to infinity** (both bounds inclusive). A blank top row is intended, not invalid, and never hides the method at checkout.
+- [[shipping-calc-rate-models]] — rate-table semantics: an **empty upper bound (`до` / `to`) means no upper limit** (both bounds inclusive); a blank top row is intended, not invalid.
 - [[apps]] — App Store hub.
 - [[shipping]] — top-level shipping integrations landing.
 - [[orders-shipping-waybill]] — per-order waybill generation flow.

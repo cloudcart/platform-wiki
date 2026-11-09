@@ -7,8 +7,8 @@ aliases: ["Smart Collections rule types", "Smart Collections value types", "Smar
 tags: [products, collections, selections, rule-types, operators, validation]
 plan_gates: ["product_collections"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[products-smart-collections]]. See the hub for the other aspects (list view, editor, rule builder, evaluation, storefront side-effects, rules and limits).
@@ -17,7 +17,7 @@ source_count: 1
 
 ## Purpose
 
-The complete catalogue of every `value_type` enum the backend accepts on a smart-collection rule row, with the operators valid per type, the validation rules applied server-side, and the gaps between the UI dropdown and the backend acceptance set. This is the canonical reference for support agents diagnosing *"why does my rule reject this value"* or *"why does this product not match the rule it should"* tickets.
+Every `value_type` a smart-collection rule row accepts, with its operators, its server-side validation and the gaps between the UI dropdown and what the backend accepts. Use it for *"why does my rule reject this value"* or *"why does this product not match"*.
 
 The row-layout UI for picking a type lives on [[smart-collections-rule-builder]] — this page is the field reference.
 
@@ -44,9 +44,9 @@ The merchant picks one of the 10 visible types per row from the Type dropdown, t
 | **`selection`** | **No** (backend only) | `In` / `Not in` | Multi-record (other collections) | "Collection-of-collections" — references other smart collections by ID. Subject to anti-circular safeguard — see [[smart-collections-rules-and-limits]]. UI-hidden as a known gap. |
 | **`price`** | Yes (Price) | `equal`, `not_equal`, `gt`, `gte`, `lt`, `lte`, `between`, `not_between` | Numeric currency input(s) | Integer **0 ≤ price ≤ 50,000** validated server-side. `between` / `not_between` use two inputs; the second must be **strictly greater than** the first. |
 | **`digital`** | Yes (Digital product) | `is` / `is_not` | Yes / No dropdown | Product-flag boolean. |
-| **`sale`** | Yes (Sale) | `is` / `is_not` | Yes / No dropdown | Product-flag boolean. |
+| **`sale`** | Yes (Sale) | `is` / `is_not` | Yes / No dropdown | Not a flag: an active product discount, from a list rebuilt on discount saves and nightly — see [[smart-collection-entity-discount-link]]. |
 | **`new`** | Yes (New) | `is` / `is_not` | Yes / No dropdown | Product-flag boolean. |
-| **`featured`** | **No** (backend only) | `is` / `is_not` | Yes / No dropdown | "Is featured" product flag. UI-hidden as a known gap. |
+| **`featured`** | **No** (backend only) | `is` / `is_not` | Yes / No dropdown | "Is featured" flag; hidden in the UI. |
 
 ### UI operator labels vs backend operator codes
 

@@ -3,8 +3,8 @@ type: entity
 aliases: ["Personal Access Token", "PAT", "PAT Token", "CLI Token", "GraphQL token", "Personal API token", "Личен достъп", "PAT токен"]
 tags: [settings, security, tokens, cli, graphql, developer, entity]
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 # Personal Access Token
 
@@ -44,7 +44,7 @@ The per-admin maximum is **100 tokens** (fixed, NOT plan-based). Since only the 
 
 ### Scope catalog (NOT plan-dependent)
 
-The scope list is fixed: 2 primary scopes (`full-access`, `read-only`) plus 14 granular scopes (`products`, `products:read`, `orders`, `orders:read`, `customers`, `customers:read`, `settings`, `settings:read`, `inventory`, `discounts`, `blog`, `blog:read`, `webhooks`, `webhooks:read`), fetched at `/admin/api/core/account/cli-tokens/scopes`. Every merchant sees every scope regardless of plan; the 10-token cap also does not vary by plan.
+The scope list is fixed: 2 primary scopes (`full-access`, `read-only`) plus 16 granular scopes (`products`, `products:read`, `orders`, `orders:read`, `customers`, `customers:read`, `settings`, `settings:read`, `metaobjects`, `metaobjects:read`, `inventory`, `discounts`, `blog`, `blog:read`, `webhooks`, `webhooks:read`), fetched at `/admin/api/core/account/cli-tokens/scopes`. Scopes and the 100-token cap are the same on every plan.
 
 **Permission-tree downgrade does NOT auto-revoke tokens.** A token keeps working for its declared scopes after the issuing admin's permission tree is narrowed — scopes are validated against the static catalog at runtime, not the current permission tree. To revoke a downgraded admin's tokens, delete or deactivate them manually.
 

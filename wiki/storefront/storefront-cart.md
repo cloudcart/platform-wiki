@@ -5,8 +5,8 @@ route_path: /cart/{cart_key}
 themes_using: [all]
 tags: [storefront, cart, drawer, add-to-cart, conversion]
 created: 2026-06-08
-updated: 2026-11-03
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 # Cart (page + drawer + header compact) — hub
@@ -40,7 +40,7 @@ This page is large enough that it is split into a hub (this file) + three aspect
 ## How it loads
 
 1. The bare `/cart` route redirects to `/cart/{freshKey}` so the browser holds a stable URL.
-2. The cart instance resolves the current cart — for guests by the `_cart_key` cookie, for logged-in customers by their account; if both exist they are merged (see [[cart-vs-order-lifecycle]]).
+2. The cart instance resolves the current cart — for guests by the cart key kept in the store session (there is no cart cookie), for logged-in customers by their account; if both exist they are merged (see [[cart-vs-order-lifecycle]]).
 3. A **shared cart link** (URL key ≠ resolved instance key) merges the linked cart and redirects to the canonical URL.
 4. The Smarty template `cart.full` renders the cart HTML (full layout in non-AJAX mode, fragment only in AJAX mode).
 
@@ -74,7 +74,7 @@ Most themes redefine `cart/full.tpl` and `cart/compact.tpl` but reuse the `_glob
 
 ## Known issues / by-design vs bug
 
-The cart-key permanence, guest-merge semantics, drawer-vs-page summary difference, "Clear cart" event quirk, `action_after_add_to_cart=none` behaviour, crawler 404, and plan-gate hard-crash are all catalogued on [[storefront-cart-customisation]].
+The cart-key permanence, guest-merge semantics, drawer-vs-page summary difference, "Clear cart" event quirk, `action_after_add_to_cart=stay_on_page` behaviour, crawler 404, and plan-gate hard-crash are all catalogued on [[storefront-cart-customisation]].
 
 ## Related
 

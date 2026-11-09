@@ -5,8 +5,8 @@ route_path: /product/{slug}/{cart_key?}
 themes_using: [all]
 tags: [storefront, product, details, add-to-cart, conversion]
 created: 2026-06-08
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 # Product detail page
@@ -43,7 +43,7 @@ The default `flair` layout splits the page into a main column (image gallery) an
 
 ## Storefront behaviour
 
-Selecting a variant rewrites the price / SKU / stock / gallery in place; the surrounding form POSTs to `cart.add` through the AJAX pipeline and then opens the cart drawer (or redirects, per `action_after_add_to_cart`). Stock states (`in-stock`, `out-of-stock`, `pre-order`, `request`, `subscribe`) decide whether Add-to-cart, a quote request, or a "Notify me" form renders. The full buying flow is on [[product-detail-buying]].
+Selecting a variant rewrites the price / SKU / stock / gallery in place; the surrounding form POSTs to `cart.add` through the AJAX pipeline, then follows `action_after_add_to_cart`: a confirmation popup (default), the cart page or its side panel, the checkout, or nothing ([[settings-cart-ui-behavior]]). Stock states (`in-stock`, `out-of-stock`, `pre-order`, `request`, `subscribe`) decide whether Add-to-cart, a quote request, or a "Notify me" form renders. The full buying flow is on [[product-detail-buying]].
 
 ## JavaScript behaviour
 

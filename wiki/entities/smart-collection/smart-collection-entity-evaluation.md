@@ -3,8 +3,8 @@ type: entity
 aliases: ["Smart Collection evaluation", "Collection membership refresh", "Selection cached product list", "Smart Collection status flag", "Pending vs Finished collection", "Преизчисляване на колекция"]
 tags: [catalog, products, collections, smart-grouping, evaluation, entity]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 > Part of [[smart-collection]]. See the hub for the other aspects (rule builder, storefront, discount link, vs category, management).
@@ -40,10 +40,11 @@ The merchant should not assume a freshly-edited collection is settled until the 
 ### What triggers re-evaluation
 
 - **Rule / metadata edit.** The merchant changes any criteria row, adds / removes a row, or edits the name / SEO / image. On save, the collection re-enters Pending until the job completes.
-- **Underlying product change.** A product whose data is potentially relevant (price, category assignment, vendor, tags, properties, sale flag, etc.) is created, edited, or deleted. The platform re-evaluates affected collections automatically:
+- **Underlying product change.** A product whose data is potentially relevant (price, category assignment, vendor, tags, properties, etc.) is created, edited, or deleted. The platform re-evaluates affected collections automatically:
   - Adding a product whose data matches → added on the next evaluation cycle.
   - Editing a product so it stops matching → removed on the next cycle.
   - Deleting a product → removed.
+- **Discount changes.** A discount created or saved, or switched off by the expiry sweep, and a nightly check for discounts that started or ended by date, re-evaluate **Sale** collections — see [[smart-collection-entity-discount-link]].
 
 ### Latency at scale
 

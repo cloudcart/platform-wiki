@@ -7,11 +7,13 @@ aliases: ["Etsy listing config", "Etsy category", "Etsy who_made", "Etsy when_ma
 tags: [apps, marketplace, etsy, listings, parameters, shipping]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[apps-etsy]]. See the hub for the other aspects (connection, sync mechanics, variants + states).
+>
+> **Not available today:** the Etsy integration no longer connects or syncs, and its admin address returns to the Apps catalogue (see [[apps-etsy]]). This page describes how it worked.
 
 # Etsy — per-listing config + parameter mapping
 

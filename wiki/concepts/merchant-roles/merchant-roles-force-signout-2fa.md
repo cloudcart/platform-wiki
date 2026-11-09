@@ -5,8 +5,8 @@ aliases: ["Force sign out", "Mass logout", "sessionKeyGuard rotation", "Two-fact
 tags: [access, security, 2fa, sessions, admin, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[merchant-roles]]. See the hub for the other aspects (owner, moderator, permissions tree, API access, notifications + audit, storefront contrast).
@@ -18,7 +18,7 @@ source_count: 1
 Two mechanisms protect admin sessions from credential leaks and unauthorised access:
 
 1. **Force sign out** — an Owner-only button on [[settings-staff]] that mass-invalidates **every** admin session in one click. Immediate, audit-friendly. Deletes session records, invalidates the 2FA session layer, and signs the Owner out as a side effect.
-2. **Two-factor authentication (2FA)** — per-admin-account verification on sensitive actions. Two channels: **email two-factor** (always-on after first login) and **authenticator-app TOTP** (opt-in).
+2. **Two-factor authentication (2FA)** — per-admin-account verification on sensitive actions. Two channels: **email two-factor** (sent while CloudCart's platform switch is on) and **authenticator-app TOTP** (opt-in).
 
 A third, lower-friction option — `sessionKeyGuard` cookie-name rotation on [[settings-general]] — achieves a similar end-result by making existing cookies stop being recognised. Less immediate, but useful when the merchant doesn't want to sign the Owner out.
 
@@ -42,7 +42,7 @@ Not covered here:
 
 - **Force sign out vs `sessionKeyGuard` rotation** — both invalidate admin sessions. Force sign out is **Owner-only, immediate, audit-friendly** (button on [[settings-staff]] header). Session key rotation is on [[settings-general]] (Security box) and **rotates the cookie name pattern** so existing cookies stop being recognised — less immediate but doesn't require signing the Owner out.
 - **Force sign out vs API-Key revocation** — Force sign out only kills human-facing browser sessions. It does **NOT** revoke API Keys or PAT Tokens — those are separate credentials with their own revocation surfaces ([[settings-api-keys]] / [[settings-pat-tokens]]). See [[merchant-roles-api-access]].
-- **Email two-factor vs authenticator-app TOTP** — email two-factor is the default channel, **always active** for any admin who has logged in once. Authenticator-app TOTP is **opt-in** via the Configure button in the Edit modal; once configured, login defaults to the authenticator-app code (faster than email).
+- **Email two-factor vs authenticator-app TOTP** — email two-factor follows a CloudCart platform switch, not a merchant setting. Authenticator-app TOTP is **opt-in** via the Configure button in the Edit modal; once configured, login defaults to the authenticator-app code (faster than email).
 - **Fresh 2FA check vs every-action challenge** — once an admin passes a 2FA challenge in the current session, the 2FA check lets the next sensitive action consume the flag instead of triggering a new challenge.
 
 ## Where it applies
@@ -77,7 +77,7 @@ Use this when the merchant wants to invalidate stray sessions without the disrup
 
 The platform supports two 2FA channels for each admin account:
 
-- **Email two-factor** — codes sent to the admin's email on demand. **Always active** for any admin who has logged in once; the Edit modal shows it as *"Email two factor authentication is active."*
+- **Email two-factor** — codes sent to the admin's email on demand. Sent only while CloudCart's platform switch is on; the Edit modal's *"Email two factor authentication is active."* row shows regardless.
 - **Authenticator-app TOTP** — the admin scans a QR code with Google Authenticator / Authy / 1Password / etc. Set up via the Configure button in the Edit modal. Once configured, login defaults to the authenticator-app code (faster than email).
 
 The configuration screens live on [[account-cc2fa]], [[account-cc2fa-email]], [[account-cc2fa-codes]].

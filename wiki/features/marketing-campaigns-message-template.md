@@ -7,8 +7,8 @@ aliases: ["Message editor", "Campaign message editor", "Set message", "Edit camp
 tags: [marketing, campaigns, message, template, editor]
 plan_gates: ["abandoned_orders", "campaigns"]
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Campaign message editor
@@ -27,7 +27,7 @@ The editor is split into 7 aspect pages, each one well-scoped. The Assistant sho
 
 - [[message-template-email-designer]] — Unlayer drag-and-drop designer flow; the two stacked panels (template picker + scratch designer); custom **Product** block; lazy-loaded Unlayer script.
 - [[message-template-channel-variants]] — SMS / Viber / Web Push editor (the channel settings panel wrapping the system-message configuration form); per-channel field shapes; mobile-phone preview; **Write with AI** helper; character-count caps.
-- [[message-template-merge-tags]] — variables catalogue (`{$shop.name}`, `{$customer.first_name}`, `{$dynamic_discount_code}`, `{$generate_discount_code:N%}`, `{$triggered_products:N}`, `{$unsubscribe_url}`); the Variables legend pane; click-to-copy.
+- [[message-template-merge-tags]] — variables catalogue (`{$shop.name}`, `{$customer.first_name}`, `{$dynamic_discount_code}`, `{$discount_code:CODE}`, `{$triggered_products:N}`, `{$unsubscribe_url}`); the Variables legend pane; click-to-copy.
 - [[message-template-saved-and-predefined]] — Email-only library; saved-template payload + link propagation; predefined-template catalog; saved-template edits ripple to linked campaigns.
 - [[message-template-demo-send]] — **Send example email** / **Send demo message**; synthetic subscriber substitution; transactional-mail rails; bypasses plan caps + the campaign delivery log; UTM stamping still applies.
 - [[message-template-validation]] — two-pass validation (field-level + per-variable); per-channel max-length caps (Email 191/191, Viber 1000/30, Web Push 63/128); required-with trio for Viber; base64 local-image rejection for Email.
@@ -107,7 +107,7 @@ Linked Email steps see saved-template edits at the next send. Detach by editing 
 - [[marketing-channels-sms-nth]] — SMS NTH channel internals.
 - [[marketing-channels-viber]] — Viber channel internals.
 - [[marketing-channels-webpush]] — Web Push channel internals.
-- [[marketing-discounts]] — discounts; the `{$dynamic_discount_code}` and `{$generate_discount_code:N%}` variables require discount configuration.
+- [[marketing-discounts]] — discounts; active codes appear as `{$discount_code:CODE}` (a cart link), and `{$dynamic_discount_code}` needs Code PRO.
 - [[marketing-segments]] — segments; `{$triggered_products:N}` resolves against segment-matched products.
 - [[email-template]] — EmailTemplate entity (saved layouts).
 - [[marketing-omnichannel-mails-list]] — customer-mail flow that reuses the Email scratch modal.

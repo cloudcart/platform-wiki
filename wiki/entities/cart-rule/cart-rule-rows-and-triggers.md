@@ -4,8 +4,8 @@ nav_path: "Entity → Cart Rule → Rows and triggers"
 aliases: ["Cart Rule rows", "Cart Rule triggers", "Cart Rule conditions", "Trigger taxonomy"]
 tags: [entity, marketing, automation, discounts, rules-engine, triggers]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # Cart Rule — Rows and triggers
@@ -49,7 +49,7 @@ Within one row, every trigger must be true for the row to fire. This is strict A
 The trigger taxonomy is hard-coded into the cart-rule engine — three `condition_type` families with these filter types per family (verify — recorded from `_mapping_condition_methods` 2026-06-02):
 
 - **Cart-level** (`condition_type=cart`): `cart_amount` (total subtotal post-discounts), `cart_quantity` (total units), `cart_products_count` (distinct product lines).
-- **Product-level** (`condition_type=product`): 14 filters in total — record-set matches (`product`, `category`, `vendor`, `tag`, `selection`), per-line numeric filters (`product_amount`, `product_line_amount`, `product_quantity`), boolean flags (`product_new`, `product_featured`, `product_sale`), text filter (`product_title`), and variant/option value filters (`product_variant`, `product_option`).
+- **Product-level** (`condition_type=product`): 14 filters in total — record-set matches (`product`, `category`, `vendor`, `tag`, `selection`), per-line numeric filters (`product_amount`, `product_line_amount`, `product_quantity`), boolean flags (`product_new`, `product_featured`, `product_sale`), text filter (`product_title`), and variant/option value filters (`product_variant`, `product_option`). A `category` match checks only the product's **main category** — not its subcategories or any extra category it is also shown in.
 - **Customer-level** (`condition_type=customer`): `customer_group` (group membership — and the platform-managed Guests group acts as the registered-vs-guest proxy since there is no separate flag), `order_amount` (lifetime spend — **completed orders only**), `order_count` (lifetime order count — **completed orders only**).
 
 **Action-only filter types** (available inside an action's own triggers but NOT as row triggers): `product_from_condition`, `product_not_from_condition`, `product_lowest_price`, `product_highest_price`. Used to narrow which cart lines actually receive the discount — see [[cart-rule-actions]].

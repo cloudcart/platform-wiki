@@ -7,8 +7,8 @@ aliases: ["Add category modal", "Edit category modal", "Category form", "Кат�
 tags: [products, categories, taxonomy, navigation, modal]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[products-categories]]. See the hub for the other aspects (list & organize, hierarchy rules, cart restrictions, SEO/taxonomy, deletion rules, JSON-API/validation).
@@ -30,7 +30,7 @@ Modal title: *"Add category"* on create, *"Edit - {name}"* on edit. Modal size: 
 - Fill in the **Category name** (required) — used as the display name everywhere.
 - Add a **Description** via the rich-text editor — shown on the storefront category landing page.
 - Pick a **Parent category** from a searchable dropdown — leave empty for a top-level category.
-- Toggle **Display subcategories** — controls recursive inclusion of subcategory products on the storefront listing.
+- Toggle **Display subcategories** — shows the subcategories as tiles on the category page.
 - Upload a **Category image** — single image, drag-or-click; used on category cards and some marketing surfaces.
 - Assign a **Google Shopping taxonomy** node — used by feed-generating apps (see [[products-categories-taxonomy]]).
 - Turn on **Define custom payment methods for this category** — pick a subset of installed payment providers that are allowed when the cart contains a product from this category (see [[products-categories-cart-restrictions]]).
@@ -41,7 +41,7 @@ Modal title: *"Add category"* on create, *"Edit - {name}"* on edit. Modal size: 
 
 ### Modal load behaviour
 
-On edit, the modal **pre-fetches the full record** (parent dropdown options, payment / shipping providers, delivery-time flag) when it opens — a loader shows briefly. On create, the modal opens immediately with empty defaults.
+On edit, the modal **pre-fetches the full record** (parent options, providers, delivery-time flag), so a loader shows briefly. On create it opens at once.
 
 ## Settings & fields
 
@@ -52,7 +52,7 @@ On edit, the modal **pre-fetches the full record** (parent dropdown options, pay
 | General | **Category name** | Required. Free text. Used as the display name everywhere. Max 191 chars; must be unique within the same parent — see [[products-categories-hierarchy-rules]]. |
 | General | **Description** | Rich-text. Shown on the storefront category landing page (top of the product list). Max 250,000 chars. |
 | General | **Parent category** | Optional. Picks the parent in the hierarchy. Searchable dropdown of all other categories. |
-| General | **Display subcategories** | Toggle. When ON, the storefront listing includes products from all subcategories (recursive). When OFF, only direct-child products show. |
+| General | **Display subcategories** | Toggle. ON adds tiles of the direct subcategories (theme permitting); the listing includes all subcategories' products either way. |
 | Logo | **Category image** | Single image upload, drag-or-click. Stored alongside other store assets — see [[settings-files]]. Delete button shown when an image is set. NOT auto-deleted when the category is deleted (becomes orphan). |
 | Taxonomy | **Google Shopping taxonomy** | Optional. Tree-search picker; sets `taxonomy_id` to a node in the `apps.google_product_category` table (verify). Used by [[apps-google-shopping]] and similar feed generators. Informational only — does NOT restrict which products can go in the category. |
 | Cart rules | **Define custom payment methods** | Toggle (`all_payment = 0` when ON). When OFF, all installed payment methods work for products in this category. When ON, only the methods the merchant picks are offered — see [[products-categories-cart-restrictions]]. |

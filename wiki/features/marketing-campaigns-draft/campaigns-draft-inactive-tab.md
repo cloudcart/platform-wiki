@@ -7,8 +7,8 @@ aliases: ["Inactive campaigns tab", "Stopped campaigns list", "Paused campaigns"
 tags: [marketing, campaigns, inactive, list]
 plan_gates: ["abandoned_orders", "campaigns"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-campaigns-draft]]. See the hub for the other aspects (Draft tab, entry paths, unsaved-changes guard, pre-flight checks, lifecycle actions).
@@ -21,9 +21,9 @@ The **Inactive** tab lists every campaign that WAS started and has now been stop
 
 A campaign can land here three ways:
 
-- The merchant flipped the Status toggle from Active to Inactive on the Active tab.
-- The channel-suspension cascade auto-stopped it (see [[marketing-channels]] + [[marketing-campaigns-banned-info]]).
-- A regular campaign was explicitly inactivated by an admin or by completing its run.
+- The merchant switched an **Automated** campaign off with its Status switch (Regular campaigns have no switch).
+- The merchant switched off a channel the campaign uses — every campaign with a step on that channel is set inactive, drafts included (see [[marketing-channels-cross-lifecycle]]). Reputation auto-suspension does **not** move campaigns here.
+- A regular campaign was explicitly inactivated by an admin. (Completing its run does not: a completed Regular campaign keeps `active = 1` and is auto-archived.)
 
 The Inactive tab is the sibling of [[campaigns-draft-tab|the Draft tab]] on the four-tab campaigns list ([[marketing-campaigns]]).
 
@@ -40,23 +40,23 @@ Sidebar → **Marketing** → **Campaigns** → click the **Inactive** tab.
 ## What the merchant can do here
 
 - See every Inactive campaign in a sortable / filterable table — same table shape as Draft / Active.
-- Flip the Status toggle back to Active → re-runs the activation pre-flight (see [[campaigns-draft-preflight-checks]]).
-- Open the campaign in [[marketing-campaigns-edit|the editor]] — read-only unless the merchant first re-activates (or until the editor save flow takes over).
+- Switch an **Automated** campaign back on with its Status switch → re-runs the activation pre-flight (see [[campaigns-draft-preflight-checks]]). A **Regular** campaign has no switch and cannot be re-activated from the UI.
+- Open the campaign in [[marketing-campaigns-edit|the editor]] — read-only, as for any non-draft campaign.
 - View full historical Statistics ([[marketing-campaigns-statistics]]) and Logs ([[marketing-campaigns-statistics-log]]) — the hourly aggregation job keeps updating these.
 - Click the **banned-reason badge** (if present) → opens [[marketing-campaigns-banned-info]] with the channel-suspension explanation.
 - Copy a campaign → new Draft via [[marketing-campaigns-copy]].
 - Archive → moves to [[marketing-campaigns-archive]] (Inactive rows are the natural archive target).
-- Delete → soft-delete with cascade — see [[campaigns-draft-lifecycle-actions]].
+- Delete is **not** offered here — delete works only on an archived campaign, so archive first (see [[campaigns-draft-lifecycle-actions]]).
 
 ## Settings & fields
 
 ### Columns rendered
 
-Identical to the Draft tab plus the Status toggle:
+Identical to the Draft tab plus the Status column:
 
 | Column key | Label | Behaviour on Inactive tab |
 |------------|-------|---------------------------|
-| `title` | Campaign title | Click opens editor (read-only unless re-activated). |
+| `title` | Campaign title | Click opens editor (read-only). |
 | `created_at` | Date added | Creation date. |
 | `goal` | Goal | Trigger condition / purpose. |
 | `actions_count` | Steps | Number of action steps. |
@@ -65,14 +65,14 @@ Identical to the Draft tab plus the Status toggle:
 | `turnover` | Turnover | Revenue from attributed orders — continues to update hourly. |
 | `subscribers_count` | Subscribers | Count of enrolled subscribers (retained). |
 | `statistics` | Logs | Link to per-action logs. |
-| `status` | Status | **Inactive toggle** — flipping it triggers Inactive→Active pre-flight. |
-| `actions` | Actions | Edit, Copy, Archive, Delete. |
+| `status` | Status | **Automated**: off switch — switching it on runs the Inactive→Active pre-flight. **Regular**: read-only progress badge, no switch. |
+| `actions` | Actions | Copy, Archive. |
 
 ### Banned-reason badge
 
-If the campaign was auto-stopped by the channel-suspension cascade (spam / bounce / open / cc_denied — see [[marketing-channels]]), the row carries a banned-reason badge near the title. Clicking the badge opens [[marketing-campaigns-banned-info]] showing the suspension trigger and the channel involved.
+If a channel the campaign uses is suspended (spam / bounce / open / cc_denied — see [[marketing-channels]]), the row carries a banned-reason badge near the title. Clicking the badge opens [[marketing-campaigns-banned-info]] showing the suspension trigger and the channel involved. A suspension does not itself change the campaign's status.
 
-The campaign is **not** auto-reactivated when the channel comes back; the merchant must manually flip the toggle (after also clearing the banned reason).
+Switching a channel back on reactivates nothing: an Automated campaign can be switched on again one by one; a Regular one cannot.
 
 ## Business rules
 
@@ -86,15 +86,15 @@ The hourly campaign-statistics aggregation job continues to update `reached` / `
 
 ### Inactive→Active re-runs pre-flight checks
 
-When the merchant flips the Status toggle back to Active, the same pre-flight gate fires as for any activation: channels configured + active + sufficient credits + not-draft. Failing the check keeps the campaign Inactive and surfaces the error. Full check matrix on [[campaigns-draft-preflight-checks]].
+When the merchant switches an Automated campaign back on, the same pre-flight gate fires as for any activation: channels configured + active + sufficient credits + not-draft. Failing the check keeps the campaign Inactive and surfaces the error. Full check matrix on [[campaigns-draft-preflight-checks]].
 
-### Enrolled subscribers are retained — mid-funnel resume
+### Enrolled subscribers are retained — dropped steps are not resumed
 
-The `subscriber_to_campaigns` pivot rows stay intact when a campaign flips Active→Inactive. Subscribers mid-funnel (e.g., on Day 2 of a Day-1/Day-3/Day-7 drip) keep their `progress` value. When the campaign is re-activated, **already-enrolled** subscribers do NOT auto-restart from step 1 — they pick up where they were, though timing may shift (the worker re-evaluates next-step delays from the resume moment). New subscribers entering the trigger segment after re-activation join the campaign at step 1 normally. See [[campaigns-draft-lifecycle-actions]] for the full subscriber-retention rules.
+The `subscriber_to_campaigns` pivot rows stay intact when a campaign flips Active→Inactive. But steps that came due while the campaign was stopped (or while its channel was off) were dropped and are **not** re-created, so after re-activation the campaign stays *"Executing"* without sending them. Subscribers who already completed a step are never re-sent it. New subscribers entering the trigger segment after re-activation join the campaign at step 1 normally. See [[campaigns-draft-lifecycle-actions]].
 
-### Channel-suspension cascade — Inactive is the destination
+### Channel switch-off — Inactive is the destination
 
-When a channel auto-suspends or the merchant turns it off manually, every campaign referencing that channel with `active=1` flips to `active=0` and lands on this tab with a banned-reason badge. See [[campaigns-draft-preflight-checks]] for cascade scope.
+When the merchant switches a channel off manually, every campaign with a step on that channel is set `active=0` — drafts (which become inactive and read-only) and archived ones included (archived ones stay on the Archived tab). Reputation auto-suspension, a rejected Email key, or reaching the plan cap change no campaign's state. See [[marketing-channels-cross-lifecycle]].
 
 ### Toggle endpoint trust gap
 
@@ -108,9 +108,9 @@ Required for every campaign endpoint — see [[marketing-campaigns-policy]].
 
 - [[marketing-campaigns-draft]] — hub.
 - [[marketing-campaigns]] — parent four-tab list.
-- [[marketing-campaigns-edit]] — editor (read-only on Inactive unless re-activated).
+- [[marketing-campaigns-edit]] — editor (read-only for any non-draft campaign).
 - [[marketing-campaigns-banned-info]] — banned-reason explainer linked from the row badge.
-- [[marketing-channels]] — channel setup; channel suspension drops campaigns onto this tab.
+- [[marketing-channels]] — channel setup; a manual channel switch-off drops campaigns onto this tab.
 - [[marketing-campaigns-archive]] — Archived tab; Inactive rows are the typical archive source.
 - [[marketing-campaigns-statistics]] — Statistics screen; continues to update for Inactive.
 - [[marketing-campaigns-statistics-log]] — Logs screen.

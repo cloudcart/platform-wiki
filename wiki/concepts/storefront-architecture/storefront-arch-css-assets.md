@@ -5,8 +5,8 @@ aliases: ["Storefront CSS", "theme.css", "Theme Editor variables", "stylesheet_v
 tags: [storefront, css, assets, theme-editor, cache, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[storefront-architecture]]. See the hub for related aspects (request lifecycle, theme inheritance, the search index read-side, JS bundles, Smarty plugins, caching).
@@ -53,14 +53,15 @@ Not covered here:
 
 ### The storefront `<head>` asset order
 
-The storefront's `<head>` includes (in this order):
+The storefront's `<head>` includes (in this order, per the shared page layout; the theme's own part shown as `knowledge-freedom` orders it):
 
-1. `themes/<theme>/css/styles.min.css?<last_build>` — the theme's compiled CSS (LESS/SCSS-built, theme-author-controlled).
-2. `themes/_global/css/checkout.min.css?<last_build>` — shared checkout CSS (only on checkout pages).
-3. `<site_id>/css/theme.css?<stylesheet_version>` — the merchant's Theme-Editor-substituted CSS, hosted on S3.
-4. `site/css/build.min.css?<last_build>` — platform-level shared CSS (Font Awesome, common utility classes, third-party plugins).
-5. The Google Fonts URL the platform built from the merchant's Theme Editor typography selections.
-6. The merchant's **Custom CSS/JS** payload (rendered verbatim — see [[design-custom-assets]] and [[theme-customization-layers]] Layer 3).
+1. The Google Fonts URL the platform built from the merchant's Theme Editor typography selections.
+2. Font Awesome Pro (`all` and `duotone` styles) — the platform's icon CSS, on every theme. Each theme's own CSS also builds in Font Awesome; icon sets are not a merchant setting.
+3. `themes/_global/css/checkout.min.css?<last_build>` — shared checkout and account CSS, on every page.
+4. `themes/<theme>/css/styles.min.css?<last_build>` — the theme's compiled CSS.
+5. `site/css/build.min.css?<last_build>` — platform plugin styles (carousels, galleries, phone field).
+6. `<site_id>/css/theme.css?<stylesheet_version>` — the merchant's Theme-Editor-substituted CSS, hosted on S3.
+7. The merchant's **Custom CSS/JS** payload (rendered verbatim — see [[design-custom-assets]] and [[theme-customization-layers]] Layer 3).
 
 The order matters: later rules win on equal CSS specificity. So Custom CSS/JS overrides everything else, which is intentional — that's the merchant's escape hatch.
 
@@ -76,7 +77,7 @@ On every [[design-theme-editor]] save, the platform:
 4. Stamps the merchant's `stylesheet_version` setting with a fresh UNIX timestamp.
 5. Clears the `front_theme` per-merchant cache.
 
-The next storefront request emits `<site_id>/css/theme.css?<stylesheet_version>` — the new timestamp busts the browser cache for this one merchant only.
+Pages rendered afterwards emit `<site_id>/css/theme.css?<stylesheet_version>` — the new timestamp busts the browser cache for this one merchant only; a page already in the full-page cache keeps the old link until it expires (guests within 20 minutes).
 
 The theme's compiled `styles.min.css` (and JS bundle) are NOT recompiled on a Theme Editor save — those are theme-author-shipped binaries. Only the variable-substituted `theme.css` is regenerated.
 
@@ -109,7 +110,7 @@ Splitting platform-wide vs per-merchant invalidation means:
 - [[storefront-arch-theme-inheritance]] — paired template inheritance model.
 - [[storefront-arch-js-bundles]] — paired per-theme JS bundle.
 - [[design-theme-editor]] — the visual variable editor at `/admin/builder`.
-- [[design-custom-assets]] — the raw HTML/CSS/JS injection at `/admin/storefront/custom-assets`.
+- [[design-custom-assets]] — the raw HTML/CSS/JS injection at `/admin/design/custom-assets`.
 - [[theme-customization-layers]] — the 3-layer customisation stack.
 
 ## Open Questions

@@ -4,8 +4,8 @@ nav_path: "Entity → SEO 301 Redirect"
 aliases: ["301 Redirect", "URL redirect", "Per-URL redirect", "SEO redirect", "Redirect rule", "Permanent redirect", "301 пренасочване", "URL пренасочване", "Пренасочване"]
 tags: [entity, seo, marketing, redirects, url-management, migration]
 created: 2026-05-24
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # SEO 301 Redirect
@@ -16,7 +16,7 @@ A **301 Redirect** is a permanent URL rule (old URL → new URL) the storefront 
 
 Every rule on this screen is **always 301**; the platform does NOT offer 302 (temporary) redirects through the admin UI. Redirects exist for three merchant scenarios: **migration** (preserving SEO from URLs on the merchant's previous platform), **restructuring** (a category or product URL slug changed), and **removed products / pages** (avoiding 404s by sending visitors to a related replacement). The platform also auto-creates rules in some cases (slug rename, CSV import — see the sub-pages below).
 
-A 301 Redirect is distinct from a **domain redirect** ([[apps-domain-redirect]]): domain redirects operate at the DNS / host layer; a 301 Redirect here operates at the URL / path layer within the merchant's storefront host.
+A 301 Redirect is distinct from the **Domain Redirect** app ([[apps-domain-redirect]]), which routes visitors between the merchant's own stores by country (302, to the target store's home page); a 301 Redirect here operates at the URL / path layer within the merchant's storefront host.
 
 ## Aliases
 
@@ -59,7 +59,7 @@ A 301 Redirect:
 - **Is consulted by** the storefront's redirect middleware on a fixed list of "indexable" routes — see [[seo-redirect-lookup-and-cache]].
 - **Flips** the site setting `has_301_redirects` — saving the first rule flips it to `true`, deleting the last rule flips it back.
 
-Supplemented by but NOT the same as: **URL-handle history** (separate slug-rename mechanism with 30-day TTL — see [[seo-redirect-auto-tracking]]) and **Domain redirect** ([[apps-domain-redirect]] — whole-domain forwarding at the DNS / host layer).
+Supplemented by but NOT the same as: **URL-handle history** (separate slug-rename mechanism with 30-day TTL — see [[seo-redirect-auto-tracking]]) and **Domain Redirect** ([[apps-domain-redirect]] — own-stores geo-routing, not a forwarder to an external domain).
 
 ## Lifecycle
 
@@ -71,7 +71,7 @@ A 301 Redirect rule moves through five states: **Created** (added manually, impo
 - [[seo-handling]] — concept page covering the 10 SEO surfaces (canonical, deindex, sitemap, robots, etc.).
 - [[marketing-seo]] — parent hub for all SEO sub-screens.
 - [[product]] / [[category]] / [[vendor]] / [[blog-article]] / [[marketing-landing-pages]] — entities a rule can target; slug rename auto-tracks the old URL for 30 days — see [[seo-redirect-auto-tracking]].
-- [[apps-domain-redirect]] / [[apps-domain-redirect-settings]] — whole-domain 301 forwarding (separate host-layer mechanism).
+- [[apps-domain-redirect]] / [[apps-domain-redirect-settings]] — own-stores geo-routing (302, lands at the target store's home page).
 - [[settings-domains]] — primary domain determines the `Location` header host.
 - [[settings-queue-view]] — the CSV-import background job runs on the `import` queue.
 
@@ -86,7 +86,7 @@ A 301 Redirect can be managed via **JSON-API v2** at [[api-redirects]] — usefu
 - [[marketing-seo]] — sibling SEO settings.
 - [[seo-meta]] — sister SEO entity (meta titles / descriptions per page).
 - [[product]] / [[category]] / [[vendor]] / [[blog-article]] / [[marketing-landing-pages]] — entities a redirect can target.
-- [[apps-domain-redirect]] — whole-domain redirect (different layer).
+- [[apps-domain-redirect]] — own-stores geo-routing (different mechanism).
 - [[settings-domains]] — primary domain for the `Location` header host.
 
 ## Open Questions

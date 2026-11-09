@@ -7,8 +7,8 @@ aliases: ["Total Orders", "Order count", "Total sales over time", "Общ бро
 tags: [analytics, ccanalytics, orders, total-orders]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-05-27
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 # Total Orders
 
@@ -92,7 +92,7 @@ Total Orders only counts orders (it does not sum money), so it runs faster than 
 ### What's NOT included
 
 - **Drafts / abandoned carts** — tracked separately and never counted here.
-- **Anonymous orders are NOT excluded** (unlike Total Customers). A guest-checkout order still counts because Total Orders just counts orders.
+- **Orders without a Customer record still count** (unlike Total Customers); guest checkouts count in both.
 - **Cancelled / voided orders** — counted only if `cancelled` / `voided` was added to `cc_analytics.statuses` (default config excludes both).
 - **Test orders** — there is no "test order" flag; a manually-created test order that matches the status filter WILL be counted. To exclude tests, set them to a non-counted status via the order-status workflow.
 

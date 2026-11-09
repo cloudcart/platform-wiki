@@ -7,8 +7,8 @@ aliases: ["Order locking", "Lock orders setting", "Moderator collision protectio
 tags: [orders, list, locking, lock-orders, auto-complete, save-side-effects, smarty]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[orders]]. See the hub for the other aspects (columns, filters, bulk actions, status taxonomy, default visibility, export).
@@ -36,7 +36,7 @@ The store owner enables or disables **Lock orders** (`lock_orders`) on **Setting
 
 ### Tune the lock window
 
-The owner adjusts **Lock time** (`lock_orders_time`) on **Settings → General** — value in minutes, default `7`. Longer values reduce collision risk but increase the wait if a moderator opened an order and forgot it; shorter values let moderators take over more quickly but increase the risk of two-moderators-editing collisions.
+The owner adjusts **Lock time** (`lock_orders_time`) on **Settings → General** — minutes, default `7`. Longer means fewer collisions but a longer wait behind a forgotten open order.
 
 ### Toggle auto-complete
 
@@ -54,14 +54,14 @@ The owner toggles `order_complete` on [[settings-cart]] — default ON. When ON,
 
 ### Order locking — silent moderator collision protection
 
-When `lock_orders = yes` AND the viewing admin is NOT the store owner, opening [[orders-details]] writes a lock onto the order: `{moderator_id, date_locking, lockFrom}` stored in order meta. If a SECOND moderator opens the same order within the next `lock_orders_time` minutes (default `7`), they get an *"Order is opened from other"* access-denied screen and CANNOT view the order.
+When `lock_orders = yes` AND the viewing admin is NOT the store owner, opening [[orders-details]] writes a lock (who, when) onto the order. If ANOTHER moderator opens the same order within the next `lock_orders_time` minutes (default `7`), they get an access-denied screen *"Поръчката се обработва от <username>"* (EN *"Order is opened from <username>"*) and CANNOT view the order. The lock is checked only on opening: the holder re-opening renews it, and no save is ever blocked by it ([[orders-products-courier-requote]]).
 
 Key implications:
 
-- The owner role **bypasses the lock entirely** — owner can always open any order.
+- The owner **bypasses the lock entirely** and writes none, so an owner with the order open blocks no one.
 - The lock is silently **auto-released when its window expires** — there's no explicit unlock action in the UI.
 - The lock applies to **single-order opening**, not to bulk operations on the list. Bulk actions ([[orders-list-bulk-actions]]) release any database row locks the platform holds before iterating and do not enforce the order-lock check per row.
-- A moderator who navigates AWAY from the order page does NOT release the lock — the timer continues until expiry.
+- Leaving the order page does NOT release the lock; it runs until expiry.
 
 ### Auto-promotion to `completed` (silent side-effect on every save)
 

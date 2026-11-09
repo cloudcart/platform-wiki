@@ -5,8 +5,8 @@ aliases: ["Order initial state", "Positive lifecycle", "Negative branch", "Payme
 tags: [orders, checkout, lifecycle, status, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[checkout-flow]]. See the hub for the other aspects (cart entity, abandoned detection, submit-to-order, guest vs registered, discounts & rules, events & webhooks).
@@ -83,7 +83,7 @@ The order's `status` typically tracks the payment's `status` (paid → paid, com
 
 ### Stock decrement runs on `authorized` orders under default config
 
-The **Reduce items on Paid order** setting (`order_status_for_quantity_decrease = paid`, the default) actually decrements stock when an order reaches ANY of `paid`, `authorized`, OR `completed`. So pre-auth providers (Klarna, Stripe pre-auth, Borica Way4) that move orders straight to `authorized` reserve stock at the auth step, not just at the eventual capture. Merchants using these providers should treat *"auth received"* as *"stock gone"* for inventory-availability purposes. See [[inventory-decrement-timing]] for the full matrix.
+The **Reduce items on Paid order** setting (`order_status_for_quantity_decrease = paid`) actually decrements stock when an order reaches ANY of `paid`, `authorized`, OR `completed`. So pre-auth providers (Klarna, Stripe pre-auth, Borica Way4) that move orders straight to `authorized` reserve stock at the auth step, not just at the eventual capture. Merchants using these providers should treat *"auth received"* as *"stock gone"* for inventory-availability purposes. See [[inventory-decrement-timing]] for the full matrix.
 
 ## Related
 

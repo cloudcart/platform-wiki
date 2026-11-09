@@ -3,12 +3,12 @@ type: feature
 nav_path: "Apps → XML Import → Plan gates"
 route_name: apps.xml_import
 route_path: /admin/apps/xml_import (install, create-task, activate)
-aliases: ["XML Import plan gates", "xml_import gate", "xml_import_limit", "xml_import_total_products", "xml_import-priority", "xml_import-interval", "XML Import — paywall", "XML Import — 402 modal", "XML Import — feature pack extension", "XML Import feature packs", "processing priority", "processing frequency", "limit reached email", "products not processed", "продуктов лимит достигнат"]
+aliases: ["XML Import plan gates", "xml_import gate", "xml_import_limit", "xml_import_total_products", "xml_import-priority", "xml_import-interval", "XML Import — paywall", "XML Import — 402 modal", "XML Import — feature pack extension", "XML Import feature packs", "processing priority", "processing frequency", "minimum import interval", "import every 20 minutes", "limit reached email", "products not processed", "продуктов лимит достигнат"]
 tags: [apps, imports, xml, plan-gated, paywall]
-plan_gates: ["xml_import", "xml_import_limit", "xml_import_total_products"]
+plan_gates: ["xml_import", "xml_import_limit", "xml_import_total_products", "xml_import-interval"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[apps-xml-import]]. See the hub for the other aspects (wizard, job pipeline, fetch transport, mapping fields, side effects).
@@ -17,7 +17,7 @@ source_count: 1
 
 ## Purpose
 
-XML Import is one of CloudCart's more expensive features to run (large feeds, long-running jobs, dedicated queue, downstream search re-index storms — see [[apps-xml-import-side-effects]]). The platform gates it on three independent `PlanFeature` keys so the offering can be tuned per plan: whether the app can be installed at all, how many tasks can run concurrently, and a global cumulative cap on imported product count across all tasks.
+XML Import is one of CloudCart's more expensive features to run (see [[apps-xml-import-side-effects]]). The platform gates it on three independent `PlanFeature` keys so the offering can be tuned per plan: whether the app can be installed at all, how many tasks can run concurrently, and a global cumulative cap on imported product count across all tasks.
 
 This page is the canonical reference for the three gates, what each controls, what HTTP response each triggers, and how feature packs extend them. For the install / configure UI see [[apps-xml-import-overview]]; for the underlying gating concept see [[plan-gates]].
 
@@ -74,16 +74,16 @@ A task toggled to inactive does not count against the `xml_import_limit` cap. So
 
 The cumulative cap is computed over **every product** whose `app_import` field begins with `xml_import` — i.e. every product ever imported by this app, regardless of which task imported it. Deleting the task does NOT decrement the counter. The merchant must delete the **products** themselves to free up cap headroom.
 
-This trips up merchants who think "I'll delete the old task and the cap resets". It doesn't. The intent is to prevent recycling imports as a way to bypass the cap.
+This trips up merchants who think "I'll delete the old task and the cap resets". It doesn't.
 
 ### Processing priority + frequency are also feature packs
 
 Beyond the caps above, two more plan dimensions are sold as feature packs — `xml_import-priority` and `xml_import-interval`:
 
 - **Priority** — a higher priority value gets the merchant's tasks picked up sooner in the queue (their tasks run first). See [[apps-xml-import-job-pipeline]] for the queue model.
-- **Frequency (interval)** — a shorter interval = more frequent auto-runs (fresher data); the default falls back to 12 hours.
+- **Frequency (interval)** — a value in seconds that replaces the 12-hour default; shorter = more frequent automatic runs. The platform sets no lower limit, but a task read less than **1 hour** ago is skipped ([[apps-xml-import-job-pipeline]]), so no plan re-imports the same task more often than about hourly (never every 20 minutes). Per-plan and pack values live in the plan catalogue (verify).
 
-These are NOT 402-style failures — a free-plan merchant can still run an import; it just runs after every higher-priority task, at the default cadence. They're worker-side scheduling driven by the plan / pack value, not request-time gates.
+These are NOT 402-style failures — a free-plan merchant can still run an import; it just runs after every higher-priority task, at the default cadence.
 
 ### Feature packs — three of them
 

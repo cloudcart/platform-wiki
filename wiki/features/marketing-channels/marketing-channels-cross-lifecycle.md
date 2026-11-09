@@ -7,8 +7,8 @@ aliases: ["Channel lifecycle", "Channel states", "Install activate suspend", "De
 tags: [marketing, channels, campaigns, lifecycle, install, activate]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-channels]]. See the hub for related aspects (catalog, suspension, plan caps, pre-flight, UI surfaces).
@@ -21,7 +21,7 @@ The five lifecycle phases every channel moves through on a given store, the two 
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Channels** → **Channels setup**. State is surfaced on each card via the status badge (Active / Inactive / Suspended / Configuration required) and the Active / Inactive toggle switch.
+Sidebar → **Marketing** → **Channels** → **Channels setup**. State is surfaced on each card via the status badge and the Active / Inactive toggle switch. A reputation-suspended channel shows only **Disabled** — there is no Suspended badge (see [[marketing-channels-cross-suspension]]).
 
 ## What the merchant can do here
 
@@ -40,7 +40,7 @@ The state badge on each card derives from a combination of the per-channel state
 | Install | Card's **Install** button (Viber, SMS, Web Push) | `installed` and `first_install` set (per-channel) |
 | Uninstall | Trash-can icon → confirm dialog | `installed` removed; settings and logs kept; new sends blocked |
 | Activate | Card's Active toggle ON | `active = 1`; campaign pre-flight checks now pass for this channel |
-| Deactivate | Card's Active toggle OFF + confirm modal | `active = 0`; dependent campaigns auto-stopped (see below) |
+| Deactivate | Card's Active toggle OFF (+ confirm modal when a campaign step uses the channel) | `active = 0`; dependent campaigns auto-stopped (see below) |
 | Configure (Email only) | Multi-step wizard | `configured = 1` when all four steps complete |
 
 ## Business rules
@@ -53,19 +53,19 @@ A channel goes through these phases on each store:
 2. **Installed but inactive** — credentials present, `installed = 1`, but `active = 0`. Set up but turned off (e.g., paused for the season).
 3. **Configured (Email only)** — Email additionally needs `firstName` → `domain` → `verify` (DNS records OK) → `configured` (sender email confirmed) to actually send. An Email channel that's installed-but-not-configured is treated as **not configured** by campaign pre-flight checks even if `active = 1`.
 4. **Active** — `installed = 1`, `active = 1`, plus any channel-specific "configured" requirement satisfied. Campaign actions can target this channel.
-5. **Suspended** — `installed = 1`, `active = 1`, but `suspended_by` is non-null. New sends are blocked. The campaign using this channel shows the banned-reason badge until the merchant fixes the underlying issue — see [[marketing-channels-cross-suspension]] for the four triggers.
+5. **Suspended** — the reputation sync switched the channel off (`active = 0`) and recorded a `suspended_by` reason. Campaigns are not touched; each later step on the channel drops itself, and campaign rows show the reason. It does not lift by itself — see [[marketing-channels-cross-suspension]] for the four triggers and staff recovery.
 
-### Deactivating a channel cascades to campaigns
+### Switching a channel off cascades to campaigns
 
-When the merchant toggles a channel OFF (or when the platform auto-suspends it via [[marketing-channels-cross-suspension]]), the platform searches for any [[marketing-campaigns|Campaign]] whose actions reference the channel and **automatically marks each one as stopped** (`active = 0`).
+When any campaign step uses the channel, switching it off asks for confirmation first. The modal is titled **Disable channel**, with **Confirm** and **Cancel**; its message names the **channel**, with no list of campaigns:
 
-The merchant-visible message before flipping:
+*"There are campaigns that are ":name". They will be automatically marked as stopped"* (BG: *„Има кампании които са ":name". Те ще бъдат автоматично маркирани като спрени“*)
 
-*"There are campaigns that are ':name'. They will be automatically marked as stopped"*
+On confirm, **every** [[marketing-campaigns|campaign]] with a step on that channel is set inactive (`active = 0`) — automated flows (e.g. abandoned cart), drafts (which become inactive and read-only) and archived ones included.
 
-After confirmation, the cascade runs in a single transaction together with the channel state change. The merchant is shown the list of campaign names that will be stopped on the confirm dialog.
+**Switching the channel back on reactivates nothing.** Automated campaigns can be switched on again one by one; Regular campaigns cannot be re-activated from the UI.
 
-**Re-activating the channel later does NOT auto-restart the stopped campaigns** — the merchant must turn each affected campaign back on manually. This is intentional: a channel may have been deactivated for cleanup reasons, and the merchant should review each campaign before resuming sends.
+Only this **manual** switch-off changes campaigns. Reputation auto-suspension, a rejected Email key ([[email-channel-reconnect]]), or reaching the plan cap do **not** change any campaign's state.
 
 Activating a channel never shows the confirm modal — only deactivation cascades.
 

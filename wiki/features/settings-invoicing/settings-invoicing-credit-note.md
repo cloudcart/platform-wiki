@@ -7,8 +7,8 @@ aliases: ["Credit note template", "credit_payment", "Credit note header rows", "
 tags: [settings, invoicing, credit-note, refunds]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-invoicing]]. See the hub for the other aspects (activation modes, numbering, issuer block, template editor, HTML templates, external systems).
@@ -56,7 +56,7 @@ The credit-note **prefix / suffix** fields are NOT duplicated there; they exist 
 
 ### Credit-note issuer defaults
 
-When `credit_issuer_name` / `credit_issuer_code` are empty, the platform auto-fills them the same way as invoice issuer fields — from the store owner's first/last name and admin user-ID padded to 7 digits. See [[settings-invoicing-issuer-block]] for the full default-issuer rule.
+A credit note prints its own name and code under *Съставил* / *Подпис: шифър* (Bulgarian-language notes only): `credit_issuer_name` / `credit_issuer_code`, not the invoice footer's **Issuer name**. This tab has no field for them. How they get filled, and how to set them, is on [[settings-invoicing-issuer-block]].
 
 ## Business rules
 

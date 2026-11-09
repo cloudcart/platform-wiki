@@ -7,8 +7,8 @@ aliases: ["Product status save side effects", "Status delete cascade", "Status n
 tags: [products, statuses, stock, customer-facing]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 # Product statuses — save / delete side effects, plan & permission
 
@@ -43,9 +43,9 @@ The platform normalises a few fields automatically when a status is saved, so th
 - If the operator is one of the special non-value operators (**Not tracked** / **Continue selling**), the Quantity field is forced to NULL.
 - If the Action type is NOT "Show as request" or "Show as subscribe for quantity", the Button text is forced to NULL.
 
-### Storefront cache flush on save
+### Status-list cache flush on save
 
-There is a 1-day cache of the entire status list (cache key `product.status.new.2`). On every status **save or delete**, this cache is flushed — the new rules apply on the next storefront page load. The merchant does not need to take any cache action manually.
+There is a 1-day cache of the entire status list (cache key `product.status.new.2`). On every status **save or delete**, this cache is flushed — the new rules apply to the next freshly rendered page; guests can keep a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]). The merchant does not need to take any cache action manually.
 
 ### Delete cascade — product references reset to NULL
 

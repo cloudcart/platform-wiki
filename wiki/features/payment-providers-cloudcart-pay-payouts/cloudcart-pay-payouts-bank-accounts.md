@@ -7,8 +7,8 @@ aliases: ["CloudCart Pay bank accounts", "Add bank account payouts", "Default pa
 tags: [paymentproviders, payment-providers, cloudcart-pay, payouts, bank-account, iban]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-10-06
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[payment-providers-cloudcart-pay-payouts]]. See the hub for the other aspects (payout status, schedule and limits).
@@ -52,7 +52,7 @@ Existing accounts cannot be edited or deleted here — see [[cloudcart-pay-payou
 |---|---|---|
 | **Account Holder Name** (Име на титуляря на сметката) | Yes | As registered with the bank; should match the company or the representative. Up to 255 characters. |
 | **Holder Type** (Тип титуляр) | Yes | **Company** or **Individual**; starts at Company. |
-| **Country** (Държава) | Yes | 30 European countries. |
+| **Country** (Държава) | Yes | 30 countries: the 27 EU members (Bulgaria and Romania listed first), Norway, Switzerland and the United Kingdom. It is the bank's country; CloudCart does not tie it to the account's country, and CloudCart Pay accepts or refuses the account (verify). |
 | **Currency** (Валута) | Yes | EUR, USD, DKK, SEK, NOK, GBP, CHF, CZK, HUF, PLN, RON; starts at EUR. |
 | **IBAN** | Yes | Up to 34 characters; spaces are removed. |
 | **BIC / SWIFT** | No | 8 or 11 characters. |
@@ -96,4 +96,4 @@ The form offers 11 currencies, the same as the **Supported Settlement Currencies
 
 ## Open questions
 
-- What happens to payouts in a currency that has no bank account in that currency.
+- What happens to payouts in a currency that has no bank account in that currency, and whether payments in one currency (e.g. RON) are converted for a payout in another (e.g. EUR), at what fee.

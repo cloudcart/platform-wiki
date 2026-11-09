@@ -5,8 +5,8 @@ aliases: ["System-page assignment", "Builder system pages", "home thank-you 404 
 tags: [design, modules, page-builder, plan-gates, concepts]
 plan_gates: ["storefront_builder", "video_slider_widget", "lookbook_widget"]
 created: 2026-06-10
-updated: 2026-10-21
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[widget-vs-page-builder-block]]. See the hub for the other aspects (module mechanics, block mechanics, shared template library, theme-switch behaviour).
@@ -33,7 +33,7 @@ Covered:
 
 Not covered:
 
-- The Static Pages list / **Assigned to** dropdown UI — see [[marketing-landing-pages]].
+- The Static Pages list / **System page** dropdown UI — see [[marketing-landing-pages]].
 - The Modules screen behaviour for the Video Slider module specifically — see [[design-modules]].
 - Generic plan-gate behaviour across the platform — see [[plan-gates]].
 - Block content storage — see [[widget-vs-pb-block-mechanics]].
@@ -47,14 +47,14 @@ Not covered:
 
 ## Where it applies
 
-- [[marketing-landing-pages]] — Static Pages screen; **Assigned to** dropdown.
+- [[marketing-landing-pages]] — Static Pages screen; **System page** dropdown.
 - [[plan-gates]] — `storefront_builder` + `video_slider_widget` definitions.
 - [[plan-features]] — plan-feature paywall surface.
 - [[design-modules]] — Video Slider module edit panel hits the `video_slider_widget` gate.
 
 ## System-page assignment
 
-On [[marketing-landing-pages]], a Dynamic page can be assigned via the **Assigned to** dropdown to one of these system slots:
+On [[marketing-landing-pages]], a Dynamic page can be assigned via the **System page** dropdown to one of these system slots:
 
 | System slot | What it replaces | Required block (if any) |
 |-------------|------------------|-------------------------|
@@ -64,7 +64,7 @@ On [[marketing-landing-pages]], a Dynamic page can be assigned via the **Assigne
 | `blog.list` | Theme's default blog index | **MUST include `blog-list` block**. |
 | `blog.view` | Theme's default blog-article page | **MUST include `blog-view` block**. |
 
-The two blog slots are currently switched off: the **Assigned to** dropdown and the builder's system-page links offer only `home`, `thank_you` and `error.404`, so no page can hold a blog slot today. Assigning a slot never runs the required-block check — only publishing does.
+The two blog slots are currently switched off: the **System page** dropdown and the builder's system-page links offer only `home`, `thank_you` and `error.404`, so no page can hold a blog slot today. Assigning a slot never runs the required-block check — only publishing does.
 
 When the merchant assigns a Dynamic page to a system slot:
 
@@ -92,8 +92,8 @@ For `home`, `thank_you`, `error.404`: **NO required-block rule is enforced**. Th
 
 The `storefront_builder` plan feature gates **Page Builder usage end-to-end**:
 
-- The **Dynamic** page-type card on **Marketing → Pages → New** is hidden / blocked for merchants whose plan doesn't include the feature. They cannot create new Dynamic pages.
-- For Dynamic pages created BEFORE the plan downgrade, the Page Builder can no longer be opened to edit them, but the storefront keeps rendering them — no plan check runs when a Dynamic page is served, including one assigned to the homepage.
+- The **Dynamic page** card in **Design → Static pages → Add page** shows on every plan, but without the feature the builder refuses to open.
+- For Dynamic pages created BEFORE the plan downgrade, the Page Builder can no longer be opened for them, but the storefront keeps rendering them — no plan check runs when a Dynamic page is served, including one assigned to the homepage.
 
 ## `video_slider_widget` — gates one module
 
@@ -110,16 +110,16 @@ The **Lookbook** module is gated the same way by its own plan feature (its edit 
 
 ## Example: assigning a Dynamic page to `home`
 
-1. Merchant picks the **Dynamic** page type on **Marketing → Pages → New**. (Requires `storefront_builder` OR site_id in the allowlist.)
+1. Merchant picks the **Dynamic page** card in **Design → Static pages → Add page**. (Requires `storefront_builder` OR site_id in the allowlist.)
 2. Drags a banner row + a product-showcase block in the Page Builder.
-3. Sets **Assigned to** = `home` → saves. No `PageRestriction` error fires.
+3. Sets **System page** = `home`. No `PageRestriction` error fires.
 4. The storefront `/` URL now serves this composition instead of the theme's default homepage.
 5. If the plan later drops `storefront_builder`, the page keeps rendering on the storefront, but the merchant cannot open it in the Page Builder until the plan is upgraded.
 
 ## Related
 
 - [[widget-vs-page-builder-block]] — hub.
-- [[marketing-landing-pages]] — Static Pages screen + **Assigned to** dropdown.
+- [[marketing-landing-pages]] — Static Pages screen + **System page** dropdown.
 - [[plan-gates]] — `storefront_builder` + `video_slider_widget` gate definitions.
 - [[plan-features]] — plan-feature paywall the merchant hits.
 - [[design-modules]] — Video Slider module surface.

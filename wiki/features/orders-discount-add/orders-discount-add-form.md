@@ -3,12 +3,12 @@ type: feature
 nav_path: "Orders → Order details → Discount → Add → Form"
 route_name: admin.orders.discount.add
 route_path: /admin/orders/action/discount/:order_id/add
-aliases: ["Add discount modal", "Add discount form", "Order discount form fields", "Choose discount dropdown", "discount_variant field"]
+aliases: ["Add discount modal", "Add discount form", "Order discount form fields", "Choose discount dropdown", "discount_variant field", "Избери отстъпка", "Съществуваща отстъпка", "Създай нова отстъпка"]
 tags: [orders, discount, smarty, form]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[orders-discount-add]]. See the hub for the other aspects (existing-discount eligibility, manual discounts, delete, recalculation, API).
@@ -25,7 +25,7 @@ The **field-level inventory of the Add Discount modal** — the single-form, pro
 
 ## What the merchant can do here
 
-- Pick **Existing discount** or **Manual discount** from the primary dropdown.
+- Pick an existing discount or a manual one from the primary dropdown (BG labels below).
 - Fill the revealed sub-form (a discount target for existing; a type + amount for manual).
 - Save → the form posts and the order summary, preview, and history panels reload.
 
@@ -35,7 +35,7 @@ The **field-level inventory of the Add Discount modal** — the single-form, pro
 
 | Field | Element | Default | Options |
 |-------|---------|---------|---------|
-| **Choose discount** | Select2 dropdown (name `discount_variant`) | empty | `existing` ("Existing discount"), `manual` ("Manual discount"). |
+| **Choose discount** (BG *Избери отстъпка*) | Select2 dropdown (name `discount_variant`) | empty | `existing`: *"This discount already exists"* (BG *Съществуваща отстъпка*); `manual`: *"Manual discount"* (BG *Създай нова отстъпка*). Help: BG *"Изберете дали искате да добавите съществуваща отстъпка или ръчно да създадете нова отстъпка."* |
 
 Picking an option reveals the matching sub-form below; picking nothing hides everything and disables all sub-form selects. The dropdown is `data-no-input="true"` (typeahead disabled).
 
@@ -43,18 +43,18 @@ Picking an option reveals the matching sub-form below; picking nothing hides eve
 
 | Field | Element | Default | Notes |
 |-------|---------|---------|-------|
-| **Choose target** | Select2 dropdown (name `discount_target_id`) | empty | Options come from the backend-pre-filtered `$discounts_targets` map keyed by `DiscountToTarget` id. Label format: discount name (+ code / barcode-prefix in parens when the discount has a code). |
+| **Choose target** (placeholder *"Choose discount target"*, BG *Отстъпки*; help BG *"Изберете отстъпка, която да се приложи"*) | Select2 dropdown (name `discount_target_id`) | empty | Options come from the backend-pre-filtered `$discounts_targets` map keyed by `DiscountToTarget` id. Label format: discount name (+ code / barcode-prefix in parens when the discount has a code). |
 
-If there are NO eligible existing discounts, an inline `alert-danger` shows instead of the dropdown: *"There are no discounts available."* (`order.err.no_discounts`). The eligibility filter that builds this list is documented on [[orders-discount-add-existing-eligibility]].
+If there are NO eligible existing discounts, an inline `alert-danger` shows instead of the dropdown: *"There are no discounts available."* (BG *"Няма налични отстъпки."*). The eligibility filter that builds this list is documented on [[orders-discount-add-existing-eligibility]].
 
 ### "Manual discount" sub-form (revealed when `discount_variant = manual`)
 
 | Field | Element | Default | Notes |
 |-------|---------|---------|-------|
-| **Discount type** | Select2 dropdown (name `type`, id `order_discount_type`) | **Percent** (selected) | Two options: `flat` ("Flat") OR `percent` ("Percent"). |
-| **Discount amount** | Text input (name `type_value`) | empty | Dynamic mask: when type = Percent, percent-mask + `%` affix on the right. When type = Flat, currency-mask + currency symbol (position before / after per the site's `currency.position` setting). Switches live via jQuery `switchClass` + `App.initAjaxInputMasks` on type change. |
+| **Discount type** (BG *Вид на отстъпка*) | Select2 dropdown (name `type`, id `order_discount_type`) | **Percent** (selected) | `flat`: *"Flat type"* (BG *Сума*); `percent`: *"Percent type"* (BG *Процент*). |
+| **Discount amount** (BG *Стойност на отстъпка*) | Text input (name `type_value`) | empty | Dynamic mask: when type = Percent, percent-mask + `%` affix on the right. When type = Flat, currency-mask + currency symbol (position before / after per the site's `currency.position` setting). Switches live via jQuery `switchClass` + `App.initAjaxInputMasks` on type change. |
 
-The default type is **Percent**, not Flat — the merchant must explicitly switch to Flat for currency-amount discounts. The manual-discount rules are on [[orders-discount-add-manual]].
+The sub-form is headed *"Manual discount settings"* (BG *"Създаване на нова отстъпка за тази поръчка"*). The default type is **Percent**, not Flat — the merchant must explicitly switch to Flat for currency-amount discounts. The manual-discount rules are on [[orders-discount-add-manual]].
 
 ### Submission validation
 

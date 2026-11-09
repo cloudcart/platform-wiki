@@ -5,8 +5,8 @@ aliases: ["Segment membership", "Manual hand-add", "Manual hand-remove", "Segmen
 tags: [entity, marketing, segments, subscribers, membership]
 plan_gates: ["segments"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[segment]]. See the hub for the other aspects (attributes schema, types, lifecycle, relationships, API access).
@@ -15,7 +15,7 @@ source_count: 4
 
 ## Identity
 
-A [[segment|Segment]]'s membership is the set of [[subscriber|Subscribers]] currently attached via the `segment_subscribers` pivot. Two kinds of rows coexist on the same pivot: **rule-matched** (auto-attached, auto-detached when the subscriber stops qualifying) and **manual** (hand-added by the merchant, never auto-detached). This page covers the manual hand-add / hand-remove behaviour, the critical asymmetry that a manual *remove* does NOT survive a rebuild, the rebuild log, and CSV export.
+A [[segment|Segment]]'s membership is the set of [[subscriber|Subscribers]] currently attached via the `segment_subscribers` pivot. Two kinds of rows coexist on the same pivot: **rule-matched** (auto-attached, auto-detached when the subscriber stops qualifying) and **manual** (hand-added by the merchant, never auto-detached). This page covers the manual hand-add / hand-remove behaviour, the critical asymmetry that a manual *remove* does NOT survive a rebuild, the rebuild log, and the absence of any export.
 
 ## Aliases
 
@@ -37,9 +37,9 @@ This is the most-misunderstood membership rule. If the merchant removes a subscr
 
 The rebuild log (on [[marketing-segments-log]]) captures only the fact of add / remove (segment ID, subscriber ID, action) — NOT the specific condition that started or stopped matching. To debug "why was this subscriber removed?", the merchant must inspect the current condition tree against the subscriber's current profile. The log is the first place to check for "why didn't this subscriber receive the campaign?" tickets.
 
-### CSV export of segment subscribers
+### No CSV export of segment subscribers
 
-The segment list row has a Generate CSV File action that exports the current membership as CSV — useful for one-off marketing exports to external tools, ESP imports, or compliance audits. The export reflects the membership at the moment of export (a snapshot), not a live feed.
+The admin has no way to export a segment's membership: the segment list row offers only **Log** and delete, and the per-segment subscriber list has no export either. The "Generate CSV file" label still exists as a translation string, but no screen or endpoint uses it, so it is not a plan or permission restriction. Subscribers have no file export at all; only Customers do ([[customers-export]]).
 
 ### Incremental vs full membership changes
 
@@ -51,7 +51,7 @@ The segment list row has a Generate CSV File action that exports the current mem
 
 - [[marketing-segments-subscribers]] — the per-segment subscriber list; Add / Remove Subscriber actions.
 - [[marketing-segments-log]] — the attach/detach audit trail.
-- [[marketing-segments]] — the Generate CSV File action and the `subscribers_count` link.
+- [[marketing-segments]] — the `subscribers_count` link (no export action).
 
 ## Related
 

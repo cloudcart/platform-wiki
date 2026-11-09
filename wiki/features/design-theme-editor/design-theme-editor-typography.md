@@ -7,8 +7,8 @@ aliases: ["Theme typography", "Theme fonts", "Google Fonts", "Font family picker
 tags: [design, theme, customization, fonts, typography, google-fonts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[design-theme-editor]]. See the hub for the other aspects (variables & types, colours, images, save & reset, CSS compile, live preview & deep-links).
@@ -114,7 +114,7 @@ The Typography sub-tab renders only if the active theme declares at least one `f
 
 ### Save bundles all chosen fonts into one URL
 
-Every save rebuilds `google_fonts_url` from scratch by walking every variable of `type: font-family` and including its chosen value with its associated weight(s). Fonts that aren't in any current variable are dropped from the URL — the storefront stops loading them on the next page render.
+Every save rebuilds `google_fonts_url` from scratch by walking every variable of `type: font-family` and including its chosen value with its associated weight(s). Fonts that aren't in any current variable are dropped from the URL — pages rendered afterwards stop loading them.
 
 ### Live preview lags by one save
 

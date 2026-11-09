@@ -5,8 +5,8 @@ aliases: ["Subscriber", "Marketing subscriber", "Newsletter subscriber", "Audien
 tags: [entity, marketing, subscribers, channels, audience, customers]
 plan_gates: ["subscribers"]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 
 # Subscriber
@@ -79,7 +79,7 @@ A marketing send is gated by **both layers** — Customer-level marketing flag (
 - [[notification-delivery]] — how the two-layer consent (Customer-level + per-channel) is applied when a marketing send is dispatched.
 - [[checkout-flow]] — where the marketing-consent checkbox at checkout decides whether a Subscriber row is auto-created with `marketing = yes` or `marketing = no`.
 - [[plan-gates]] — the `subscribers` plan cap.
-- [[abandoned-cart-recovery]] — the abandoned-cart email gates on Subscriber consent.
+- [[abandoned-cart-recovery]] — the abandoned-cart email gates on Subscriber consent for guest carts.
 
 ### Settings & webhooks
 

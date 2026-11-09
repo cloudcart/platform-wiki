@@ -4,8 +4,8 @@ nav_path: "Entity → Geo Zone → Operations"
 aliases: ["Geo Zone operations", "11 operation types", "OPERATION_ALL_IN_COUNTRY", "Zone rule operation IDs", "Country / region / city / polygon / distance / post-code operations"]
 tags: [entity, geo, zones, operations, settings]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 # Geo Zone — Operations
@@ -50,7 +50,8 @@ The 11 operations divide into four families:
 ### When to use which family
 
 - **Whole country** (typical for tax + international shipping) — operation 1.
-- **Everything except a list of restricted countries** (e.g., shipping worldwide except sanctions list) — operation 4, one rule per excluded country (rules within the zone are OR-combined, so each `NOT in country X` is its own rule).
+- **Everything except a list of restricted countries** (e.g., shipping worldwide except sanctions list) — operation 4, one rule per excluded country in the same zone. Operation-4 rules are checked together: the zone matches only an address in none of the listed countries, so two such rules mean "everywhere except A and B", not "A or B". See [[geo-zone-matching-rules]].
+- **A continent or world region** — there is no such operation. Add one operation-1 rule per country (or use operation 4 to exclude the rest).
 - **One administrative region** (e.g., a state within the US, a province within Bulgaria) — operation 2.
 - **One city** (e.g., same-day delivery zone for Sofia city) — operation 5.
 - **One city neighborhood** (very narrow same-day delivery) — operation 7. Coverage depends on whether CloudCart's bundled dataset has neighborhoods for that city.

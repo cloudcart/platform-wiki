@@ -5,8 +5,8 @@ route_path: /account
 themes_using: [all]
 tags: [storefront, customer, account, dashboard]
 created: 2026-06-08
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Customer account dashboard
@@ -43,7 +43,7 @@ Sidebar menu (`cc-account-sidebar` → `cc-account-navigation`). Items in render
 - **My files** → `site.account.files` (digital-download line items)
 - **Virtual wallet** → `site.account.wallet` *(when the store has a wallet product or the customer has wallet history, see [[customer-wallet]])*
 - **Gift cards** → `site.account.gift-cards` *(while the [[apps-gift-card]] app is active, see [[customer-gift-cards]])*
-- **Pages** → `site.account.pages` *(only when the platform code, see [[apps-membership]] — by-design merchant-facing)*
+- **Pages** → `site.account.pages` *(only with the [[apps-membership]] app; paging, order and expired rows: [[private-page]])*
 - **Favourites** → `site.account.wishlist` *(only when the platform code)*
 - **GDPR** → `site.account.gdpr` *(only when the platform code)*
 - Any custom links from `$links` (custom-integration-provided URLs)
@@ -94,7 +94,7 @@ Main column — "My details" form:
 
 - **By design**: the sidebar item for billing addresses disappears when `checkout_hide_billing_address` is on; existing billing addresses for that customer are still in the DB and still load on the checkout when needed.
 - **By design**: only Google has both a "Connect" CTA and a "connected profile" card. Facebook/Apple connect/disconnect routes exist (`provider` regex allows `facebook|google`) but no UI exposes Facebook on the dashboard. Apple is not in the route regex at all. (verify)
-- **By design**: the "Pages" tab is hidden unless the membership app is installed — even merchants who sell digital pages must install the app to surface the link.
+- **By design**: the "Pages" tab is hidden unless the membership app is installed, even for merchants who sell digital pages.
 - **Limitation**: there is no "delete account" / self-service deactivation button on the dashboard. Customers must file a GDPR forget-me request via [[apps-gdpr-requests]], which is an asynchronous flow.
 - **Limitation**: the customer cannot change their currency or language directly from the dashboard — those are driven by the language/currency switchers in the header. (verify if any setting persists language per customer)
 

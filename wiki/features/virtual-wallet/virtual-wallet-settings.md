@@ -7,8 +7,8 @@ aliases: ["Wallet settings", "Top-up amounts", "Wallet top-up amounts", "Refunde
 tags: [wallet, store-credit, settings, products]
 plan_gates: []
 created: 2026-11-03
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # Virtual Wallet — Settings tab
 
@@ -53,6 +53,10 @@ Sidebar → Products → **Virtual Wallet** (`Виртуален Портфей�
 Help text: *"Turn the wallet top-up on or off for your store. When off, customers can no longer load their wallet themselves — but credit added another way (refunds or third-party integrations) still works and can be spent, and existing balances are kept."*
 
 When it is off, the **Top-up product**, **Top-up amounts** and **Custom amount** boxes hide. **Payment method name**, **Refunded-funds expiry** and **Third-party credits** stay, because they apply either way.
+
+### No payment method to switch on
+
+The wallet's payment method is internal. It is not listed under Settings → Payment methods, and the merchant neither adds nor activates it. New stores get it at creation; older stores get it from a one-time platform run (verify). Checkout selects it by itself when the wallet covers the whole order ([[virtual-wallet-checkout]]); when the wallet covers only part, the customer pays the rest with a normal method. **Payment method name** above only renames it.
 
 ### Top-ups never expire
 

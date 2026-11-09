@@ -5,8 +5,8 @@ aliases: ["Subscriber channels", "SubscriberChannel", "Per-channel marketing", "
 tags: [customers, subscribers, marketing, channels, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[subscriber-vs-customer]]. See the hub for the other aspects (records, consent, linkage, privacy, plan limits, admin surfaces).
@@ -84,7 +84,7 @@ Because each channel is its own row with its own flags, **a Subscriber can be op
 
 ### Subscribed-from source — provenance of the channel row
 
-The Subscriber row carries a `subscriber_from` source explaining what creation path made the row. The 12 known sources include `subscribe_form`, `contacts_form`, `web_push`, `subscribe_from_missing_product`, `customer_creating`, `order_creating`, `customer_login`, `customer_address_add`, `subscriber_creating` (admin manual create), `subscriber_import`, `customer_import`, and "Mark as subscriber". The source is shown in the [[marketing-subscribers]] detail and is useful when investigating "why is this person on my list?" — see [[subscriber-vs-customer-privacy]] for the audit angle.
+The Subscriber row carries a `subscribed_from` source explaining what creation path made the row. The 12 known sources include `subscribe_form`, `contacts_form`, `web_push`, `subscribe_from_missing_product`, `customer_creating`, `order_creating`, `customer_login`, `customer_address_add`, `subscriber_creating` (admin manual create), `subscriber_import`, `customer_import`, and "Mark as subscriber". The source is shown in the [[marketing-subscribers]] detail and is useful when investigating "why is this person on my list?" — see [[subscriber-vs-customer-privacy]] for the audit angle.
 
 ### Default channel-marketing per creation path
 

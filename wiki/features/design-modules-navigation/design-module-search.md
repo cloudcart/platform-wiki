@@ -7,8 +7,8 @@ aliases: ["Search module", "search", "extra.search", "Storefront search bar", "H
 tags: [design, modules, navigation, search, header]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Storefront Modules — Search (`search`)
@@ -93,7 +93,7 @@ The dropdown is rendered by the theme's JavaScript and depends on the storefront
 
 ### Save, cache, and reset
 
-Save updates the module JSON and (for the two global toggles) the global settings; the storefront cache regenerates and the new behaviour applies on the next request. **Reset module** restores the module JSON to the defaults shown above but does NOT roll back the two global settings — those keep their prior value.
+Save updates the module JSON and (for the two global toggles) the global settings; the module cache renews and the new behaviour applies to pages rendered afterwards (guests within 20 minutes). **Reset module** restores the module JSON to the defaults shown above but does NOT roll back the two global settings — those keep their prior value.
 
 ### No plan-gating
 

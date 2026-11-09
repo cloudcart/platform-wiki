@@ -7,8 +7,8 @@ aliases: ["Navigation modules", "Header modules", "Footer modules", "Menu module
 tags: [design, modules, navigation, header, footer]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # Storefront Modules — Navigation
 
@@ -101,7 +101,7 @@ Every editable module panel has three buttons at the top:
 
 ### Per-instance settings are independent
 
-Each module instance's settings are saved under its own instance name (e.g., `navigationLinks`, `footerLinks2`, `buttonToTop`). Identical module TYPES under different INSTANCE names have completely independent settings. Save / Reset takes effect on the storefront on the very next request.
+Each module instance's settings are saved under its own instance name (e.g., `navigationLinks`, `footerLinks2`, `buttonToTop`). Identical module TYPES under different INSTANCE names have completely independent settings. Save / Reset takes effect on pages rendered afterwards; guests may get a cached page for up to 20 minutes.
 
 Navigation menu CONTENT (the links in the main and footer trees) is NOT saved by these module cards — it lives in a separate menu store managed under [[design-navigation]]. The navigation modules just render whichever menu is bound to `main` / `footer`.
 

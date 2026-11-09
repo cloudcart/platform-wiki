@@ -7,8 +7,8 @@ aliases: ["Subscribe forms limitations", "Subscribe forms missing features", "No
 tags: [marketing, subscribers, forms, known-issues, limitations, analytics, security, storefront]
 plan_gates: ["subscriber_forms"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-subscribers-subscribe-forms]]. See the hub for the other aspects (list view, builder, templates, layout, triggers, fields, submission flow, GDPR consent).
@@ -111,9 +111,9 @@ The 6 custom-field types (`text`, `textarea`, `phone`, `select`, `radio`, `check
 
 See [[marketing-subscribers-custom-fields]] for the full type catalogue.
 
-### Built-in slots cannot be reordered or renamed at the schema level
+### Built-in slots cannot be renamed at the schema level
 
-The four built-in slots (`email`, `phone`, `first_name`, `last_name`) are keyed by name and render in a fixed order. The `label` setting changes the visible text but not the key. To insert content between them, the merchant uses custom fields. See [[subscribe-forms-fields]].
+The four built-in slots are keyed by name; the caption changes the visible text, not the key. They can be hidden and drag-reordered in the **"Полета"** list. See [[subscribe-forms-fields]].
 
 ### Inverted `cookies_consent` semantic — by-design naming oddity
 

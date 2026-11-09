@@ -3,12 +3,12 @@ type: feature
 nav_path: "Settings → Payment methods → CloudCart Pay → Onboarding → Status → NRA declaration information"
 route_name: apps.cloudcart_pay.onboarding
 route_path: /admin/payment-providers/cloudcart_pay/onboarding
-aliases: ["NRA declaration information", "Electronic Store Declaration", "Appendix 33 Ordinance N-18", "Appendix №33", "MID and TID for NRA", "Virtual POS ID", "Декларация за НАП", "Приложение 33 Наредба Н-18", "Декларация за електронен магазин", "Данни за декларацията към НАП", "MID и TID за НАП"]
+aliases: ["NRA declaration information", "Electronic Store Declaration", "Appendix 33 Ordinance N-18", "Appendix №33", "MID and TID for NRA", "Virtual POS ID", "Декларация за НАП", "Приложение 33 Наредба Н-18", "Декларация за електронен магазин", "Данни за декларацията към НАП", "MID и TID за НАП", "Информация за деклариране пред НАП", "Merchant ID за Приложение 33 т. 7.3"]
 tags: [paymentproviders, payment-providers, cloudcart-pay, onboarding, n18, nra, compliance, bulgaria]
 plan_gates: []
 created: 2026-11-03
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (wizard flow, fields, people, documents, verification, bank, status, review and alerts).
@@ -17,7 +17,7 @@ source_count: 1
 
 ## Purpose
 
-A Bulgarian store files an Electronic Store Declaration (Appendix №33 to Ordinance Н-18) with the National Revenue Agency. This card gives the CloudCart Pay payment details that go into it: the payment service provider, the merchant and virtual POS IDs, the settlement type, the receiving bank account and the accepted agreement, with a PDF to download. The card's own intro: *"Payment details for the Electronic Store Declaration (Appendix №33 to Ordinance Н-18) that you file with the National Revenue Agency. CloudCart Pay does not submit the declaration — use this information when you or your accountant complete it."*
+A Bulgarian store files an Electronic Store Declaration (Appendix №33 to Ordinance Н-18) with the National Revenue Agency. This card gives the CloudCart Pay payment details for it, with a PDF to download. The card's own intro: *"Payment details for the Electronic Store Declaration (Appendix №33 to Ordinance Н-18) that you file with the National Revenue Agency. CloudCart Pay does not submit the declaration — use this information when you or your accountant complete it."*
 
 ## Where to find it
 
@@ -52,6 +52,22 @@ Below the blocks: *Prepared on {date}*.
 | **Information incomplete** | See the warning block on the card. |
 | **Failed** | The information could not be prepared. |
 
+A row with nothing to show reads "—". With no arrangement at all the card says *"No payment arrangement was found for your account yet."*
+
+### Which point of Appendix №33 each row fills
+
+Point 7 of Appendix №33 (Article 52р of the ordinance):
+
+| Appendix №33 | Card row |
+|---|---|
+| 7.1 payment methods | **Currency and payment methods** |
+| 7.2 payment service providers with a virtual POS contract | **Payment service provider** |
+| 7.3 merchant's unique ID at the provider (Merchant ID) | **Merchant ID (MID)** |
+| 7.4 accounts that receive the payments | **Receiving bank account** |
+| 7.6 or 7.7 virtual POS number | **Virtual POS ID (TID)**: 7.6 when **Settlement** reads *Directly to the merchant*, 7.7 when it reads *Through the payment service provider* (verify) |
+
+The Merchant ID for point 7.3 is the card's **Merchant ID (MID)**, not the connected account's ID (**Connected Account ID** in onboarding step 1, **Connected Account** on the Settings tab). That ID is the CloudCart Pay account's own reference; the MID is the merchant's ID at the payment service provider and can still be missing while the account ID exists. The card gives only the payment part: the rest of the declaration, including point 4 (platform or own e-shop), is completed by the merchant or their accountant.
+
 ## Business rules
 
 ### When the information is available
@@ -64,14 +80,22 @@ The first visit prepares the first copy on its own. **Update information** prepa
 
 ### Missing or unverified details
 
-The warning block *"Some information is missing or not yet verified"* lists what is wrong, for example:
+The warning block *"Some information is missing or not yet verified"* lists what is wrong. The full set of messages:
 
-- *"The merchant ID (MID) is not available yet."*
-- *"The virtual POS ID (TID) is not available yet."*
-- *"The accepted agreement could not be found."*
-- *"The bank account for payouts could not be found. Check it in the Bank Account step or contact our support team."*
+| Message | What it concerns |
+|---|---|
+| *"The merchant ID (MID) is not available yet."* / *"The virtual POS ID (TID) is not available yet."* | The IDs for points 7.3 and 7.6/7.7. |
+| *"The accepted agreement could not be found."* | The agreement ([[ccpay-onboarding-verification-attestation]]). |
+| *"The contracted payment service provider could not be determined. Contact our support team."* | Why **Payment service provider** can read "—". |
+| *"Some details of the contracting parties are missing. Contact our support team."* | Missing provider details, e.g. the registration number. |
+| *"Some details could not be confirmed. Contact our support team."* | Unconfirmed details. |
+| *"A reference from the card acquirer is missing. Contact our support team."* | A reference the arrangement needs from the card acquirer. |
+| *"One of your payment arrangements is not covered. Request its details from that provider."* | Another provider's arrangement: its details come from that provider. |
+| *"Your payout settings could not be confirmed. …"* / *"The bank account for payouts could not be found. …"* / *"… could not be determined. …"* / *"Some bank account details are missing. …"* | The receiving account: check it in the Bank Account step ([[ccpay-onboarding-bank-account]]) or contact support. |
+| *"The details of your bank account type cannot be included. Add them to the declaration yourself."* | An account type the card cannot show. |
+| *"The currency of your bank account could not be confirmed. Check that it accepts payouts in your store currency."* | The account's currency. |
 
-It ends with *"You can still download the document and complete the rest of the declaration yourself."* The bank account is on [[ccpay-onboarding-bank-account]], the agreement on [[ccpay-onboarding-verification-attestation]].
+An unknown problem shows *"Unrecognized issue: {code}"*. The block ends with *"You can still download the document and complete the rest of the declaration yourself."* Several problems need CloudCart's support team, not a setting. Once a detail is corrected, **Update information** prepares a copy with it.
 
 ### When preparing fails
 
@@ -95,4 +119,6 @@ This card covers the declaration's payment details. The monthly audit file the s
 
 ## Open questions
 
-- Bulgarian labels of the card (production translation table).
+- Bulgarian labels of the card and of **Update information** (production translation table).
+- The provider's legal name and registration number come from CloudCart Pay per account; no fixed value is held in the code.
+- Which option of point 4 of Appendix №33 (online platform or own/rented e-shop) fits a CloudCart store is a legal assessment the card does not make.

@@ -7,8 +7,8 @@ aliases: ["PAT scopes", "CLI token scopes", "Read Only token", "Full Access toke
 tags: [settings, security, tokens, scopes, permissions]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-pat-tokens]]. See the hub for related aspects (list view, create flow, restrictions, security, permissions, endpoints).
@@ -19,7 +19,7 @@ source_count: 3
 
 The **Permissions** section of the create / edit modal lets the merchant pick the token's authorisation surface. Backed by the `CliTokensScopeSelector.vue` component, it surfaces three Access Levels as large clickable cards (Read Only / Full Access / Custom Permissions) and translates the merchant's selections into the platform's two-tier scope model defined in the platform code.
 
-This page covers both the UX wizard and the underlying scope catalog — the values the API gateway uses to gate each request.
+It also lists the scope catalog.
 
 ## Where to find it
 
@@ -35,11 +35,11 @@ Inside the [[settings-pat-tokens-create-flow|Create / Edit modal]] → **Permiss
 | **Full Access** | none | *"Complete read and write access to all store resources. Best for CI/CD pipelines and full automation."* |
 | **Custom Permissions** | none | *"Select specific resources and permissions. Best for limited access scenarios."* |
 
-Selected card gets a blue ring + blue dot. Disabled state (e.g., after a successful create) shows cards at 50% opacity with `cursor-not-allowed`. Picking **Read Only** emits `['read-only']`; **Full Access** emits `['full-access']`; **Custom Permissions** opens an inline expansion below the cards.
+Picking **Read Only** emits `['read-only']`; **Full Access** emits `['full-access']`; **Custom Permissions** opens an inline expansion below the cards.
 
 ### Custom Permissions panel (visible only when Custom is selected)
 
-8 resource rows (one per scope family): Products, Orders, Customers, Inventory, Discounts, Blog, Settings, Webhooks — each with a description (*"Manage products and variants"*, *"View and manage orders"*, etc.) and a segmented control: **None** / **Read** / **Read & Write**. Selected is primary blue for None/Read, green for Read & Write.
+9 resource rows: Products, Orders, Customers, Inventory, Discounts, Blog, Settings, **Metaobjects** (*"Manage metaobject entries"*), Webhooks, each with a description and a **None** / **Read** / **Read & Write** control. **Read** is offered on every row, but Inventory and Discounts have no read-only scope: picking it there makes **Generate Token** fail with *"The given data was invalid."* and no field message ([[settings-pat-tokens-create-flow]]). Use **Read & Write** or **None** for those two.
 
 **Quick actions** at the bottom (ghost buttons): **Select all as Read**, **Select all as Read & Write**, **Clear all**.
 
@@ -73,8 +73,8 @@ A token with a primary scope behaves like a global key constrained by HTTP metho
 | `blog` | Blog (full) | `blog` | `blog:read` |
 | `webhooks` | Webhooks (full) | `webhooks` | `webhooks:read` |
 | `metaobjects` | Metaobjects | `metaobjects` | `metaobjects:read` |
-| `inventory` | Inventory | `inventory` | (no read-only variant — write-only feature) |
-| `discounts` | Discounts | `discounts` | (no read-only variant — write-only feature) |
+| `inventory` | Inventory | `inventory` | none |
+| `discounts` | Discounts | `discounts` | none |
 
 9 resource families, 7 with both read+write variants, 2 (`inventory`, `discounts`) with full-access only. A token can mix granular scopes (e.g., `orders:read + customers:read + products`) for narrow least-privilege automation.
 
@@ -105,7 +105,7 @@ The same scopes hold on `/api/gql`. There the scope follows the operation's perm
 - **At least one scope.** Empty arrays fail validation. The defensive fallback in `CliTokensScopeSelector` ensures the emitted array is never empty even when Custom mode has all resources set to None.
 - **Read-Only is the default.** The first card is pre-selected and tagged *"Recommended"* — CloudCart's design encourages minimum-privilege tokens.
 - **No owner-permission filter.** Earlier wiki text suggested moderators could only grant scopes they themselves have. This is **not** how the platform actually works — moderators cannot create tokens at all (see [[settings-pat-tokens-permissions]]). The owner can grant **any** scope from the full catalog.
-- **Write-only resources have no `:read` variant.** `inventory` and `discounts` exist only as full-access scopes — there is no `inventory:read` or `discounts:read`. If a CI token needs to read inventory, it must hold the full `inventory` scope.
+- **No `:read` variant for `inventory` and `discounts`.** A token that only reads stock or discounts still needs the full scope. The selector's **Read** on those rows is refused at save.
 
 ## Related
 

@@ -7,8 +7,8 @@ aliases: ["Text module", "extra.text", "Static text block", "Rich text module", 
 tags: [design, modules, content, text, tinymce, richtext]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Text module (`extra.text`)
@@ -23,7 +23,7 @@ Like every content module, the SAME module TYPE backs many INSTANCES — `homeTe
 
 ## Where to find it
 
-Sidebar → **Design** → **Modules** → **Others** tab → **Text fields** group on the left sidebar.
+Sidebar → **Design** → **Modules** → **Others** tab (*Други*) — in the **Text fields** group when the theme assigns it, otherwise outside any group.
 
 Each text instance has its own card. Common instances on default themes:
 
@@ -43,7 +43,7 @@ Each text instance has its own card. Common instances on default themes:
 | `checkoutPrice` | Price / delivery text on checkout | **Text for price and delivery when sending an order** |
 | `checkoutSideText` | Text in the cart sidebar during checkout | **Text in the sidebar of the cart** |
 | `checkoutSignInGuestText` / `checkoutSignInLoginText` / `checkoutSignInRegisterText` | Cart sign-in text per state | **Shopping cart text when Guest / Login / Register** |
-| `productText` | Text on the product-detail page | **Text in product details** |
+| `productText` | The same text on every product page ([[design-modules-content-text]]) | Named by the theme, e.g. **Product details page text** |
 | `buttonToTop` | "Up" / back-to-top button (enable toggle only, no body editor) | **Up button** |
 
 The exact list is theme-specific.
@@ -113,7 +113,7 @@ On render, the body runs through a "text variables replace" pass — placeholder
 
 ### Cache invalidation on save / reset
 
-Both **Save** and **Reset** regenerate the per-site cache key. The new text shows up on the next storefront request.
+Both **Save** and **Reset** regenerate the per-site cache key; pages rendered afterwards show the new text, while guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Multi-language bodies
 
@@ -121,7 +121,7 @@ Multi-language stores (with the `multylang` app) get a language switcher inside 
 
 ### Theme decides the instance catalogue
 
-Every theme uses text modules, but the INSTANCE list varies wildly — older themes ship a handful, newer marketing themes ship 15+. A theme can also override the body wrapper without breaking the merchant's saved content.
+The INSTANCE list varies by theme — a handful on older themes, 15+ on newer ones.
 
 ## Related
 

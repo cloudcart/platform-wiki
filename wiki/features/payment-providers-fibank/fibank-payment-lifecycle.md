@@ -7,8 +7,8 @@ aliases: ["Fibank payment flow", "Fibank redirect", "Fibank 3DS", "Fibank return
 tags: [paymentproviders, payment-providers, fibank, card-gateway, bulgaria, checkout]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Fibank — Payment lifecycle
 
@@ -39,14 +39,18 @@ Sidebar → **Payment Providers** → **Fibank**. Route: `/admin/payment-provide
 
 ### Payment flow (purchase → redirect → return → sync)
 
-1. **Purchase** — the platform calls Fibank's Ecomm `registerOrder` operation over XML/HTTPS with mutual TLS, sending the merchant's `orderId`, amount (in minor units), `currency` (numeric ISO from configuration — 975 or 978), description (`Order #<order_id> / <site_url>`), and `returnUrl`. Fibank responds with a `formUrl` and a `TRANSACTION_ID`.
-2. **Redirect** — the customer is sent to Fibank's `formUrl` to enter card details and complete 3DS on the bank's hosted page.
-3. **Return** — Fibank POSTs the customer back to `<cc_payments_domain>/return/provider/fibank?trans_id=<id>`. The platform reads the final `RESULT` (via `getOrderStatusExtended`) and updates the payment status.
+1. **Purchase** — the platform registers a transaction with Fibank's ECOMM merchant endpoint (a form POST over mutual TLS with the store's certificate), sending the amount (in minor units), `currency` (975 or 978 from configuration), description (`Order #<order_id> / <site_url>`), the shopper's IP address and `language=Default`. Fibank answers with a `TRANSACTION_ID`. No return URL is sent: the bank takes it from the terminal's own configuration.
+2. **Redirect** — the customer is sent to Fibank's payment page for that transaction to enter card details and complete 3DS.
+3. **Return** — Fibank sends the customer back to `<cc_payments_domain>/return/provider/fibank?trans_id=<id>`. The platform asks the bank for the transaction's `RESULT` and updates the payment status.
 4. **Sync** — Fibank's Ecomm protocol has **no separate webhook / IPN URL**. To catch missed returns (customer paid and closed the tab, network drop), a background check runs per payment, starting just after the bank's **10-minute** payment window and repeating every **5 minutes**. A payment still open at **180 minutes** is timed out. The `RESULT` is mapped per the table in [[fibank-refund-capture]].
 
 ### Retried checkout: no second charge
 
-A retried checkout first asks the bank about the transaction the payment already holds. Paid: the payment completes and the shopper goes to the success page. Still open on the bank page: the shopper returns to it. Dead (timeout, declined, reversed): a new transaction replaces it.
+A retried checkout first asks the bank about the transaction the payment already holds. Paid: the payment completes and the shopper goes to the success page. Still open on the bank page: the shopper returns to it. Dead (timeout, declined, reversed): a new transaction replaces it, and the payment keeps only the new transaction reference.
+
+### A charge with no payment record
+
+Before this check existed (October 2026), a retried checkout always opened a new transaction, so a shopper who had already paid the first one could be charged twice, and the first charge belongs to no payment record. The platform does not detect such duplicates, and the order's **Refund payment** button refunds only the transaction the payment holds. A charge that no payment points at is returned through Fibank, outside the platform (verify Fibank's procedure).
 
 ### 3-D Secure is mandatory
 
@@ -62,7 +66,7 @@ Visa, Mastercard, Maestro. (Amex / JCB / Diners are not typically activated on F
 <cc_payments_domain>/return/provider/fibank
 ```
 
-Shown read-only on the settings page as **Return URL**. The merchant tells Fibank to set this as the return URL on the terminal configuration. Fibank POSTs the customer back with `trans_id=<transaction_id>` after payment completes.
+Shown read-only on the settings page as **Return URL**. The merchant tells Fibank to set this as the return URL on the terminal configuration. It is one URL for both outcomes: when Fibank asks for an **OK URL** and a **Fail URL**, both get this address. The platform reads the result from the bank, not from which URL was called: a paid or still-open transaction sends the shopper to the order's thank-you page, a declined or expired one back to checkout with a cancelled-payment message.
 
 ### Order ID / transaction description format
 

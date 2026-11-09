@@ -7,8 +7,8 @@ aliases: ["XML Sync discontinued products", "XML Sync disable_missings", "XML Sy
 tags: [apps, imports, xml, sync, recurring, deactivation, discontinued]
 plan_gates: ["xml_sync_limit"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[apps-xml-sync]]. See the hub for the other aspects (job pipeline, update policy, fetch transport, side effects).
@@ -48,7 +48,7 @@ What the merchant **cannot** do here:
 
 ### `disable_missings` — opt-in deactivate, never delete
 
-When enabled, after each run the platform sweeps products whose `product_map` column value is **not** in the latest feed and **deactivates** them: the variant inventory is zeroed out and the parent product is flipped inactive (hidden from the storefront). When the flag is OFF, missing SKUs are **left untouched** in CloudCart. There is **no Delete outcome** — the choice is Deactivate (opt-in) or Keep (default). Each deactivation is a product save and carries the usual downstream cost — see [[apps-xml-sync-side-effects]] for the search index / storefront-lag implications.
+When enabled (Step 1 switch **Disable missing products**), after each successful run that found products the platform sweeps products whose `product_map` column value is **not** in the latest feed and **deactivates** them: the variant inventory is zeroed out and the parent product is flipped inactive (hidden from the storefront). A failed fetch, an empty feed or invalid XML never triggers the sweep. When the flag is OFF, missing SKUs are **left untouched** in CloudCart. There is **no Delete outcome** — the choice is Deactivate (opt-in) or Keep (default). Each deactivation is a product save and carries the usual downstream cost — see [[apps-xml-sync-side-effects]] for the search index / storefront-lag implications.
 
 ### Cross-feed scoping via `imports` / `imports_active`
 

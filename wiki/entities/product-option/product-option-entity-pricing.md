@@ -4,8 +4,8 @@ nav_path: "Entity → Product Option → Pricing"
 aliases: ["Product Option pricing", "Option price modifier", "Option surcharge", "Option amount type", "Option per-value modifier", "Option allow negative", "Option price impact"]
 tags: [catalog, products, options, pricing, entity]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[product-option]]. See the hub for the other aspects (attributes, order-line storage, scoping + edge cases).
@@ -21,7 +21,7 @@ How a Product Option modifies the line total at cart-calculation time. Most Opti
 - **Price impact** / **Option surcharge** — the merchant-facing term for the modifier.
 - **Amount type** (`amount_type`) — flat vs percent aggregation rule.
 - **Per-value modifier** — per-choice surcharge on Select / Radio / Checkbox.
-- **Allow negative** (`allow_negative`) — turning a surcharge into a credit.
+- **Allow negative** (`allow_negative`) — on length / square options, lets the customer order less than one price unit.
 
 ## Key Attributes
 
@@ -31,8 +31,8 @@ How a Product Option modifies the line total at cart-calculation time. Most Opti
 | **Amount type** (`amount_type`) | The aggregation rule applied when the Option carries a price modifier | One of: `flat` (fixed surcharge added once per cart line) or `percent` (percentage of the parent product's price). The `per_item = 1` flag flips the surcharge to a per-quantity multiplier when ON. |
 | **Per-value price modifier** | Per-row amount (Select / Radio / Checkbox types only) | Each discrete value can carry its own surcharge — e.g., "Standard font: +0", "Italic font: +2 BGN", "Calligraphy font: +5 BGN". |
 | **Apply over price type** (`apply_over_price_type`) | Whether the surcharge applies before or after discounts | Picks whether the Option modifier sees the discounted price or the original price as its base when computing percentage surcharges. Affects margin on discounted lines. |
-| **Allow negative** (`allow_negative`) | Whether the Option's amount can be a discount (negative surcharge) | When ON, the merchant can configure a NEGATIVE per-value modifier, e.g., "Skip warranty: -10 BGN". Treated as a per-line credit at cart calculation. |
-| **Min square** (`min_square`) | Floor value for the Square measurement type | Visible only on Square-type Options. The customer cannot enter a smaller area than this floor (prevents nuisance tiny orders). |
+| **Allow negative** (`allow_negative`) | Length / square only: the switch *Allow the purchase of a value less than the price of the product* | Lets the customer enter less than one price unit (e.g. 50 cm of a per-metre product). A negative per-value amount is accepted with or without it. |
+| **Min square** (`min_square`) | **Round to size** on length and square options | A smaller entered size is charged as this minimum; the customer is not stopped. |
 
 ## Calculation rules
 
@@ -46,7 +46,7 @@ Option price modifiers participate in tax computation using the **parent product
 
 ### Measurement types auto-force `per_item = 1`
 
-When the merchant saves an Option of type `length`, `weight`, or `square`, the platform silently sets `per_item = 1` regardless of the merchant's choice — measurement Options are always treated as per-unit charges (you can't say "1 BGN flat for any length", only "1 BGN per cm"). The merchant cannot override this.
+When the merchant saves an Option of type `length`, `weight`, or `square`, the platform sets `per_item = 1`. These Options carry no amount of their own: they scale the product's price by the entered size, per unit in the cart — see [[products-options-pricing]].
 
 ### Surcharges flow into the line total seen by discounts
 

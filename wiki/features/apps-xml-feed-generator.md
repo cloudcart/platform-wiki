@@ -7,8 +7,8 @@ aliases: ["XML Feed Generator", "Xml Feed Generator", "Outbound product feed", "
 tags: [apps, exports, xml, feed, plan-gated]
 plan_gates: ["xml_feed_generators", "xml_feed_generator_products"]
 created: 2026-05-22
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # XML Feed Generator (outbound product feeds)
 
@@ -56,10 +56,10 @@ Per feed definition:
 | `filter` + `filter_value` | Which products: `all`, or `category` / `vendor` / `tag` / `selection` / `product`. A value is required for every filter except `all` (*"Filter value is required"*). |
 | `manipulate_price` + `price_type` + `price_value` | Optional markup: `percent` (capped ±100) or `flat` (capped ±100000), applied to each feed price. |
 | `utm_source` / `utm_medium` / `utm_campaign` | UTM params appended to product links in the feed. |
-| `display_quantity` | Show numeric stock vs status-only. |
+| `display_quantity` | **Include Product's Stock Levels**: on = a `<quantity>` (summed over the chosen stores when a store filter is set); off = `<stock_status>` instead (below). |
 | `display_discounted_price` | Include the discounted price. |
 | `display_hidden_products` | Include hidden products. |
-| `all_products` | Include out-of-stock products (vs in-stock only). |
+| `all_products` | **Include Out of stock products**, off by default: when off, only products that can be sold are included. |
 | `password_protect` + `username` + `password` | Optional access protection on the feed URL — see Business rules. |
 | `stores` | Per-store product filter (when the multi-store app is installed). |
 
@@ -69,13 +69,17 @@ Per feed definition:
 
 Every feed uses the platform's single built-in XML format — no template picker, no visual schema editor, no hand-editing. Products appear as items, and `<id>` is always the plain product id; a product's variants are **nested** under a `<variants>` group inside the parent item. Image links point at CloudCart's CDN, so consumers crawl images directly.
 
+### `<stock_status>` follows "can be sold", not the status label
+
+With stock levels off, each product and variant gets `<stock_status>` *in stock* when it can be sold, otherwise *out of stock*. It can be sold when inventory tracking is off, when selling at zero stock is allowed, or when its quantity is at least the minimum order quantity. The manual out-of-stock status label is not read. So with **Include Out of stock products** off, every item reads *in stock*: a tracked product at zero is left out, while an untracked product is in the feed as *in stock* whatever its status label.
+
 ### Public feed URL + optional access protection
 
 Each feed is served at the public URL `/app/feed/{url_handle}` and is reachable by anyone with the link. When `password_protect` is on, the consumer must pass the credentials as URL query parameters (`?username=…&password=…`); wrong or missing credentials return **HTTP 401 — *"Access denied. Contact your key account!"***. This is lightweight URL-level protection, not standard HTTP Basic Auth. Appending `?action=download` to the URL forces a file download instead of an inline view.
 
 ### Background regeneration (~6 h)
 
-Feeds rebuild in the background, so the merchant never waits. A change-scan runs about **every 6 hours** and regenerates a feed only when the catalogue actually changed — so a feed refreshes at most every ~6 hours. There is no incremental "changed since" parameter: a consumer always fetches the full feed and diffs on its own side. Track in-progress regenerations on [[settings-queue-view]].
+Feeds rebuild in the background, so the merchant never waits. About **every 6 hours** every feed is rebuilt (up to the plan's feed count), whether or not anything changed; a stock change alone triggers nothing sooner. Saving a feed starts a rebuild of all feeds on the next queue pass. Each build is stored under a new random file name and the old file is deleted, so the file's own address changes every time; the stable `/app/feed/{url_handle}` address always serves the current file, redirecting to it when it is over 10 MB. There is no incremental "changed since" parameter: a consumer always fetches the full feed and diffs on its own side. Track in-progress regenerations on [[settings-queue-view]].
 
 ### Plan gates
 

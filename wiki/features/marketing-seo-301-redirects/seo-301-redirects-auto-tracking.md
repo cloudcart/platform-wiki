@@ -7,8 +7,8 @@ aliases: ["URL handle history", "30-day TTL on slug rename", "Auto-redirect on r
 tags: [marketing, seo, redirects, auto-tracking, cascade, lifecycle]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-seo-301-redirects]]. See the hub for the other aspects (types, validation, CSV import, middleware, wildcards, marketing pass-through).
@@ -36,7 +36,7 @@ Both mechanisms are invisible from the [[marketing-seo-301-redirects]] page — 
 
 ### What the merchant CANNOT do here
 
-- Extend the 30-day TTL on URL-handle-history (verify whether a config exists).
+- Extend the 30 days: the window is fixed in the platform, with no setting.
 - See the auto-tracked slug history from the admin UI — there is no "Old URLs for this product" panel on the product editor.
 - Recover a deleted entity's redirect rules after the cascade has run — the rows are gone, and re-creating the entity creates a new ID that the old rules wouldn't have pointed at anyway.
 - Disable the cascade per rule (e.g., "delete the product but keep the redirect pointing to its old URL").
@@ -81,6 +81,8 @@ The middleware on [[seo-301-redirects-middleware]] checks ONLY the explicit redi
 
 This ordering means an explicit rule on [[marketing-seo-301-redirects]] for the same `old_url` ALWAYS wins over the auto-tracked history — useful if the merchant wants to redirect an old slug to a different destination than the entity's new URL.
 
+The automatic 301 goes to the item's clean current address and drops the query string. An inactive product still answers 404 through its old address; a rule on [[marketing-seo-301-redirects]] for that old address fires regardless, because rules are checked before the product is looked up.
+
 ### Cascade is type-scoped — manual / external / section survive
 
 Only entity-typed rules cascade on entity delete. `manual`, `external`, and `section` rules live until the merchant removes them. A merchant who deletes a product but had a `manual` redirect from `/old-product-slug` to `/related-category` keeps the redirect.
@@ -106,6 +108,4 @@ URL-handle-history is per-store. Renaming a product on one store does NOT auto-r
 
 ## Open questions
 
-- ⏸️ **30-day TTL on URL-handle-history.** Auto-tracked old slugs expire 30 days after the slug change. After the TTL, the redirect stops working unless the merchant has explicitly added a permanent redirect entry on [[marketing-seo-301-redirects]]. No admin UI exists to extend the TTL.
 - Whether the cascade fires on soft-delete only, hard-delete only, or both (verify against the redirect trait's `deleted` callback).
-- Whether a config exists to change the 30-day TTL globally (verify).

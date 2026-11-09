@@ -4,8 +4,8 @@ nav_path: "Entity → SEO Meta → Per-entity overrides"
 aliases: ["Per-entity meta", "Per-product meta", "Per-category meta", "Per-vendor meta", "Per-CMS-page meta", "Per-blog-article meta", "Entity column meta", "Meta override on product"]
 tags: [entity, seo, marketing, meta-tags, per-entity]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[seo-meta]]. See the hub for the other aspects (fields, fallback chain, section defaults, multi-language storage, canonical / no-index).
@@ -28,19 +28,19 @@ There is **no dedicated "Meta" edit screen per entity** in the admin panel. The 
 
 The 5 entity types that carry per-entity meta and the fields each one exposes:
 
-| Entity | meta_title | meta_description | og_image | canonical_url | no_index_meta |
-|--------|------------|------------------|----------|---------------|---------------|
-| [[product]] | yes | yes | yes | — | — |
-| [[category]] | yes | yes | yes | — | — |
-| [[vendor]] | yes | yes | yes | — | — |
-| [[marketing-landing-pages|CMS Page]] | yes | yes | yes | yes | yes |
-| [[blog-article]] | yes | yes | yes | — | — |
+| Entity | meta_title | meta_description | og_image | canonical_url |
+|--------|------------|------------------|----------|---------------|
+| [[product]] | yes | yes | yes | — |
+| [[category]] | yes | yes | yes | — |
+| [[vendor]] | yes | yes | yes | — |
+| [[marketing-landing-pages|CMS Page]] | yes | yes | yes | yes |
+| [[blog-article]] | yes | yes | yes | — |
 
-Only [[marketing-landing-pages|CMS Pages]] carry `canonical_url` and `no_index_meta` — see [[seo-meta-canonical-noindex]] for why those two fields are CMS-page-only.
+Only [[marketing-landing-pages|CMS Pages]] carry `canonical_url`. No entity has a per-page noindex field — see [[seo-meta-canonical-noindex]].
 
 | Aspect | Behaviour |
 |--------|-----------|
-| **Storage** | Columns directly on the entity row (`meta_title`, `meta_description`, `og_image`, `canonical_url`, `no_index_meta` where applicable). NOT a separate Translation row — this is a different storage model from the per-section defaults — see [[seo-meta-multilang-storage]]. |
+| **Storage** | Columns directly on the entity row (`meta_title`, `meta_description`, `og_image`, `canonical_url` where applicable). NOT a separate Translation row — this is a different storage model from the per-section defaults — see [[seo-meta-multilang-storage]]. |
 | **Editor location** | Embedded in the entity's own admin editor as a "SEO" section / tab / accordion. There is no standalone "Meta" edit screen per entity. |
 | **Save mechanism** | Saves with the parent entity's main Save button. The merchant edits product fields + meta fields together and clicks Save once. No separate API call. |
 | **Per-language behaviour** | In multi-language stores, per-entity meta is typically also per-language — entity translations carry the localised `meta_title` / `meta_description` / `og_image` for each language. The language switcher on the entity editor exposes the multi-language meta fields. |
@@ -52,7 +52,7 @@ Only [[marketing-landing-pages|CMS Pages]] carry `canonical_url` and `no_index_m
 
 **Per-entity overrides win over section defaults** — even when the merchant has typed a section-default on [[marketing-seo-meta]], a per-entity value still overrides it. This is the cornerstone of the [[seo-meta-fallback-chain|fallback chain]].
 
-**Per-entity meta is NOT inherited** — setting `meta_title` on a Category does NOT propagate to products in that category. Each entity carries its own independent meta. Same applies to `no_index_meta` on Categories: it only affects the category listing page, not the products in it — see [[seo-meta-canonical-noindex]].
+**Per-entity meta is NOT inherited** — setting `meta_title` on a Category does NOT propagate to products in that category. Each entity carries its own independent meta.
 
 **Clearing a per-entity meta field** falls the storefront back to the section / language-file / English layer. There is no UNDO confirmation; the next page-load reflects the change after the translation cache flushes.
 
@@ -62,7 +62,7 @@ Only [[marketing-landing-pages|CMS Pages]] carry `canonical_url` and `no_index_m
 - **[[category]] editor** — same 3 fields.
 - **[[vendor]] editor** — same 3 fields.
 - **[[blog-article]] editor** — same 3 fields.
-- **[[marketing-landing-pages|CMS Page]] editor** — all 5 fields (meta_title, meta_description, og_image, canonical_url, no_index_meta).
+- **[[marketing-landing-pages|CMS Page]] editor** — all 4 fields (meta_title, meta_description, og_image, canonical_url).
 - **[[apps-seo-spinner]]** — bulk-writes per-product `meta_title` / `meta_description` from AI-generated variations using the `{$name}` and `{$price}` substitution variables.
 - The language switcher on each entity editor — exposes the per-language meta fields when the multi-language app is installed.
 

@@ -3,12 +3,12 @@ type: feature
 nav_path: "Marketing → Campaigns → Archived → Unarchive"
 route_name: campaigns-archived
 route_path: /admin/marketing/campaigns/archived
-aliases: ["Unarchive campaign", "Unarchive resurrects to inactive", "Restore archived campaign", "Restart completed campaign", "Clone to restart"]
+aliases: ["Unarchive campaign", "Unarchive restores previous status", "Restore archived campaign", "Restart completed campaign", "Clone to restart"]
 tags: [marketing, campaigns, archive, unarchive, restore]
 plan_gates: ["abandoned_orders", "campaigns"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-campaigns-archive]]. See the hub for the other aspects (the tab, actions, triggers, delete cascade).
@@ -17,35 +17,35 @@ source_count: 2
 
 ## Purpose
 
-Unarchiving is not a "restart" button. This page documents what state a campaign returns to when the merchant unarchives it — **Inactive, never Active** — why that's intentional, and the important caveat for Regular campaigns that auto-archived on completion: unarchiving them is mostly a viewing convenience, because the executor still treats them as completed.
+Unarchiving is not a "restart" button. This page documents what state a campaign returns to when the merchant unarchives it — **the status and progress it had when archived, unchanged** — why it sends nothing more, and the caveat for Regular campaigns that auto-archived on completion: unarchiving them is only a viewing convenience.
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Campaigns** → **Archived** tab → the **Unarchive** icon on a campaign row (see [[campaigns-archive-actions]] for the icon + endpoint). After unarchiving, find the campaign on the **Inactive** tab (see [[marketing-campaigns-draft]]).
+Sidebar → **Marketing** → **Campaigns** → **Archived** tab → the **Unarchive** icon on a campaign row (see [[campaigns-archive-actions]] for the icon + endpoint). After unarchiving, find the campaign on the tab its status points to — Active, Inactive (see [[marketing-campaigns-draft]]) or Draft.
 
 ## What the merchant can do here
 
-- **Unarchive** a campaign to bring it back into the rotation (it lands on the Inactive tab).
-- **Manually re-Activate** the unarchived campaign via the Status toggle on the Inactive tab to start sending again.
-- For an auto-completed Regular campaign, **Copy** it to send to a new audience rather than expecting unarchive to resume it.
+- **Unarchive** a campaign to bring it back into the list (it lands on the tab of its unchanged status).
+- Switch an unarchived **Automated** campaign on again from its Status switch, if it is off. A **Regular** campaign has no switch and cannot be re-activated from the UI.
+- For an auto-completed Regular campaign, **Copy** it to send to a new audience rather than expecting unarchive to resume it (see the duplicate-send caveat on [[campaigns-copy-state-and-quota]]).
 
 ## Settings & fields
 
-Unarchive clears `archived_at = NULL` and saves. It deliberately does **not** touch `active`, and it leaves `progress` and statistics untouched. The campaign's `active` value (0) is preserved, so it reappears on the Inactive tab.
+Unarchive clears `archived_at = NULL` and saves. It does **not** touch `active`, and it leaves `progress` and statistics untouched. The campaign's `active` value is preserved, so it reappears on the matching tab: `1` → Active, `0` → Inactive, `2` → Draft.
 
 ## Business rules
 
-### Unarchive resurrects to INACTIVE — not active
+### Archive stops the remaining sends; unarchive does not resume them
 
-Unarchiving clears `archived_at` but does NOT flip `active` back to 1. The campaign re-appears on the Inactive tab. The merchant must manually toggle it Active (via the Status switch on the Inactive tab) to start sending again.
+Archiving only sets the archive date, with no status check. Every later campaign job checks that flag and drops itself, so archiving stops the remaining sends (messages already queued to the email sender still go out).
 
-This is intentional — auto-resuming a campaign whose trigger segment may have changed or whose channels may have been suspended could send stale messages to the wrong audience. The Inactive-then-manual-Active path forces a deliberate restart.
+Unarchiving only clears the archive date — it changes neither `active` nor `progress`. The per-subscriber jobs dropped while archived are never re-created, so a campaign archived while executing returns to **Active, "Executing"** and sends nothing more.
 
 ### Unarchive restores `archived_at = null` but leaves `progress` and statistics untouched
 
-When a Regular campaign completed and auto-archived (`progress = completed`, `archived_at` set), unarchiving clears `archived_at` but leaves `progress = completed` in place. The campaign appears on the Inactive tab — but the executor knows it's already completed and will refuse to re-enrol anyone. The merchant must clone the campaign (Copy) to send to a new audience. Unarchiving a completed Regular campaign is therefore mostly a **viewing convenience** rather than a "restart" mechanism.
+When a Regular campaign completed and auto-archived (`progress = completed`, `archived_at` set), unarchiving clears `archived_at` but leaves `progress = completed` in place. A completed Regular campaign has `active = 1`, so it returns to the **Active** tab showing "Completed" — not to the Inactive tab — and nothing is re-sent. The merchant must clone the campaign (Copy) to send to a new audience. Unarchiving a completed Regular campaign is therefore only a **viewing convenience**, not a "restart" mechanism.
 
-Automated campaigns, by contrast, were never marked completed, so unarchiving + re-Activating them resumes normal trigger enrolment.
+Automated campaigns are never marked completed. Once unarchived and on, subscribers newly entering the trigger enrol again, but steps that came due while the campaign was archived are not re-created.
 
 ### The unarchive endpoint enforces the lifecycle
 
@@ -56,7 +56,7 @@ Unarchive requires the campaign to be archived (`archived_at IS NOT NULL`); the 
 - [[marketing-campaigns-archive]] — hub.
 - [[campaigns-archive-actions]] — the Unarchive icon + `archive/{id}/0` endpoint.
 - [[campaigns-archive-triggers]] — how the campaign got archived (manual vs auto-complete).
-- [[marketing-campaigns-draft]] — the Inactive tab the campaign returns to; re-Activate from there.
+- [[marketing-campaigns-draft]] — the Inactive / Draft tabs a campaign with that status returns to.
 - [[marketing-campaigns-copy]] — Copy a completed Regular campaign to send to a new audience.
 - [[marketing-campaigns]] — parent campaign list.
 - [[campaign]] — Campaign entity with `archived_at`, `active`, `progress`.

@@ -4,8 +4,8 @@ nav_path: "Entity → Cart Rule → Actions"
 aliases: ["Cart Rule actions", "Cart Rule action types", "Cart Rule messages", "Action value type"]
 tags: [entity, marketing, automation, discounts, rules-engine, actions]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # Cart Rule — Actions
@@ -30,7 +30,7 @@ Each row's action carries:
 - **`group`** — `cart` (whole-cart) vs `product` (per-line). Drives stacking — see [[cart-rule-stacking]].
 - **Value** — numeric percent / amount; ignored for `free_shipping`.
 - **Action-scoping filters** — `product_from_condition`, `product_not_from_condition`, `product_lowest_price`, `product_highest_price`. Narrow which lines receive the discount.
-- **Message** — optional customer-facing string surfaced in the cart's notification slot.
+- **Message** — optional customer-facing nudge toward a row not yet reached.
 
 ## Action is fixed to "discount"
 
@@ -59,17 +59,13 @@ Inside an action's own narrowing filters (NOT the row's triggers), the merchant 
 
 ## Custom message at checkout
 
-Each row has an optional **message** displayed on the cart / checkout when the row applies. The platform surfaces these via the cart's notification slot (the customer sees the message inline alongside the cart contents). The merchant uses this for:
-
-- **Transparency**: *"Loyal Customer 10% Discount Applied"*.
-- **Urgency**: *"Add 6 EUR more for free shipping"*.
-- **Education**: *"This cart qualifies for the Summer Bundle deal."*.
+Each row has an optional **message**. It shows while the shopper has **not** reached the row, never once the row applies, so it suits nudges (*"Add 6 EUR more for free shipping"*), not confirmations (*"10% applied"*). Exactly when it shows is on [[cart-rules-stacking]] § *Message-row precedence*.
 
 The customer sees the message; the merchant sees the firing stats (see [[cart-rule-evaluation]] for matches-vs-notifications semantics).
 
 ## Notifications carried by the cart
 
-When a row's message field is populated, the message becomes available on the cart object. The storefront's cart UI shows these messages in dedicated slots. There's no separate notification channel — Cart Rule messages are inline cart content, not emails or push notifications.
+The storefront shows each message as a dashed box in the cart drawer, the cart page and the checkout summary, joined by `Or` / `Или` when there are several. There is no other channel — no email or push.
 
 ## Where it appears
 

@@ -7,8 +7,8 @@ aliases: ["Customer mail template editor", "CampaignEmailTemplateScratchModal", 
 tags: [marketing, omnichannel, email, notifications, editor, unlayer]
 plan_gates: ["change_email_notifications", "test_mail"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-omnichannel-mails-list]]. See the hub for related aspects (mail labels, toggles & gating, variables, abandoned-cart, customisation limits).
@@ -74,7 +74,7 @@ Side-effects on save:
 
 ### Per-locale editing
 
-Each `Mail` has one or more `MailLanguage` rows — one per language the store supports. The editor opens the row matching `site('language')` (the admin's CP language). Editing only changes the currently-selected language version; switching admin language and re-opening edits a different `MailLanguage` row. See [[omnichannel-mails-customisation-limits]].
+The editor opens the template's version in the **store's language** (the storefront language in [[settings-general]]), or the English version when there is none — the same version every send uses. The admin panel's own language does not change which version opens. See [[omnichannel-mails-customisation-limits]].
 
 ## Business rules
 
@@ -82,9 +82,9 @@ Each `Mail` has one or more `MailLanguage` rows — one per language the store s
 
 The Vue component name is the same in both surfaces. The difference is whether `customerMailId` (this page) or `campaignId` ([[marketing-campaigns]] / [[marketing-campaigns-edit]]) is set. The **Save** action and **Variables legend** endpoint both branch on which prop is present. Saved-template mode is a third branch when neither is set.
 
-### Save is per-locale, not bulk
+### Save writes one language version
 
-A single Save persists ONE language version. To translate a template into all store languages, the merchant must switch admin language, re-open, edit, save — per language. There is no "translate all" or "copy from default locale" in the modal (verify).
+A Save writes the store-language version only. There is no language switch in the modal, and no "translate all" or "copy from another language".
 
 ### Send example does NOT require saving first
 
@@ -113,4 +113,3 @@ The variable list is fetched at modal-open via `GET /admin/api/core/marketing/cu
 ## Open questions
 
 - 📡 **Placeholder example values for Send example.** The exact substitution rules per variable (latest real order? made-up?) need verification per label.
-- 📡 **Per-locale Save batch.** Whether there is any UI affordance to copy a template across locales (verify).

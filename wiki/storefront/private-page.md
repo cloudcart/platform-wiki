@@ -5,8 +5,8 @@ route_path: /private-page/{slug}
 themes_using: [all]
 tags: [storefront, cms, membership, gated-content]
 created: 2026-06-08
-updated: 2026-06-08
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Private (membership-gated) page (storefront)
@@ -64,6 +64,16 @@ Same content type as a standard [[page]], but reachable only to logged-in custom
 ## Theme variations
 
 - Identical rendering pipeline to [[page]]; theme differences are limited to the styling of the `402` access-denied page (when shown).
+
+## The customer's list of paid pages (account → `/account/pages`)
+
+The account menu entry `site.account.pages` (default title *"Платено съдържание"*, EN *"Paid content"*) lists the customer's membership records, one row per record, with the columns *"Име на продукта"* (the product bought, linked to its page), *"Страница"*, *"Достъп до"* (the end date) and a *"Прегледай"* link to `/private-page/{slug}`. A store can rename these texts on [[settings-translations]], so a store may show its own wording (for example *"Моите курсове"*). The page exists only while the Membership app is installed; otherwise it returns 404.
+
+- **15 rows per page.** More than 15 records adds a numbered pager under the table; with 15 or fewer there is no pager. So a customer with, say, 6 records who sees only 5 is not hitting a limit: the missing record is hidden by the partial-return rule below, or is held by another customer account (the list shows only records of the logged-in account).
+- **No sort order is set.** Rows come in the database's own order, which in practice is the order the records were created, oldest first (verify). The newest purchase can therefore be on page 2.
+- **Expired records stay listed** with their past end date; nothing filters them out. A lifetime record shows an empty *"Достъп до"* cell.
+- **Partial returns hide rows.** Every record for a product the customer partially returned is left out, unless another paid or completed order of theirs still holds that product unreturned ([[apps-membership-renewal-revocation]]).
+- **Not cached.** The list is read from the records on every visit, so a change made under **Apps → Membership** shows on the next page load.
 
 ## Known issues / by-design vs bug
 

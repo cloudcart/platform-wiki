@@ -5,8 +5,8 @@ aliases: ["Payment provider checkout visibility", "Payment provider filtering", 
 tags: [payments, payment-providers, checkout, plan-gates, currency, concepts]
 plan_gates: [authorize_payment]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[payment-provider-mechanism]]. See the hub for the other aspects (configuration, integration patterns, tokenization & 3DS, refunds, confirmation).
@@ -15,7 +15,7 @@ source_count: 1
 
 ## Definition
 
-A payment provider being **Active** in [[settings-payment-providers]] is necessary but not sufficient for it to appear at checkout. Whether the customer actually SEES the provider as a payment-method row depends on a stack of filters: cart subtotal vs `min_price` / `max_price`, currency match, country allowlist, the selected shipping method's allowed-payments list, plan-feature gating (`authorize_payment` for manual-capture mode), and a few per-provider runtime checks. This aspect documents the full visibility chain — the canonical "why isn't my payment provider showing at checkout?" support topic.
+A payment provider being **Active** in [[settings-payment-providers]] is necessary but not sufficient for it to appear at checkout. Whether the customer actually SEES the provider as a payment-method row depends on a stack of filters: cart subtotal vs `min_price` / `max_price`, currency match, the selected shipping method's allowed-payments list, plan-feature gating (`authorize_payment` for manual-capture mode), and a few per-provider runtime checks. This aspect documents the full visibility chain — the canonical "why isn't my payment provider showing at checkout?" support topic.
 
 ## Scope
 
@@ -36,7 +36,7 @@ Not covered here:
 
 ## Contrasts
 
-- **Provider-level activation vs provider-method visibility at checkout** — the Active toggle on [[settings-payment-providers]] turns the WHOLE provider on/off. Whether it APPEARS at checkout also depends on `min_price` / `max_price`, country availability, currency match, and the selected shipping method's allowed-payments list.
+- **Provider-level activation vs provider-method visibility at checkout** — the Active toggle on [[settings-payment-providers]] turns the WHOLE provider on/off. Whether it APPEARS at checkout also depends on `min_price` / `max_price`, currency match, and the selected shipping method's allowed-payments list.
 - **Inactive vs filtered out** — inactive providers are excluded entirely (the customer just doesn't see them, no greyed-out option). Filtered-out providers are also invisible to the customer but for a different reason — cart doesn't match the filter criteria. Both look the same to the customer; the merchant tells them apart in admin.
 - **`authorize_payment` plan gate vs provider plan-gating** — `authorize_payment` is a feature gate on **the manual-capture flow** (a single mode on supported providers). Separately, **some providers themselves** (advanced BNPL) are restricted to higher plans.
 - **Storefront currency match vs gateway-side currency configuration** — CloudCart does NOT validate at save time that the provider supports the store's currency. Misconfiguration fails at the gateway (live transaction), not in admin.
@@ -50,7 +50,7 @@ The customer sees a provider at checkout only if ALL of the following pass:
 1. **Active = yes** in [[settings-payment-providers]].
 2. **Cart subtotal within `min_price` / `max_price`** range configured per-provider.
 3. **Currency match** — the cart's currency is in the provider's supported set.
-4. **Country allowed** — the customer's billing/shipping country is on the provider's allowed-countries list.
+4. **No country or geo-zone check** — a payment method takes no geo zone, and checkout does not filter methods by the customer's country (an individual integration's own check: verify). The verified filter order is on [[checkout-step-payment]].
 5. **Selected shipping method allows this payment** — the shipping method has an allowed-payments list; this provider must be on it.
 6. **Plan-gating passes** — for plan-gated providers / modes (see below).
 7. **Runtime credential check passes** — strict-validation providers (Stripe) may self-deactivate at runtime if credentials are invalid; see [[payment-provider-configuration]].
@@ -93,7 +93,7 @@ Most providers themselves are NOT plan-gated — any merchant on any plan can in
 - [[payment-provider-configuration]] — what makes a provider Active in the first place.
 - [[payment-provider-integration-patterns]] — what the customer experiences after they click the row.
 - [[checkout-flow]] — the cart-to-order transition where the payment-method picker renders.
-- [[settings-payment-providers]] — the Active toggle + `min_price` / `max_price` + allowed countries + storefront name + logo.
+- [[settings-payment-providers]] — the Active toggle + `min_price` / `max_price` + storefront name + logo.
 - [[shipping-provider-mechanism]] — the shipping method's allowed-payments list filters this list further.
 - [[plan-gates]] — `authorize_payment` and per-provider plan-tier flags.
 - [[multi-currency]] — BGN → EUR Convert action's effect on configured currency codes.

@@ -7,8 +7,8 @@ aliases: ["Cross-Sell vs Cart Rules", "Cross-Sell engine model", "Cross-Sell pla
 tags: [marketing, cross-sell, cart-rules, plan-gates, engine]
 plan_gates: ["cross_sells"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-cross-sell]]. See the hub for the other aspects (offer form, trigger events, display modes & discounts, filters & limits, view tracking).
@@ -35,7 +35,7 @@ Understand the constraints before building offers:
 | Gate | Type | Effect when not satisfied |
 |---|---|---|
 | `up_cross_sell` app | Gateway app (middleware `cc_apps_purchase:up_cross_sell`) | The Cross-Sell pages are blocked entirely until the app is installed. |
-| `cross_sells` | Numeric plan-feature (counts the platform code) | New offer creates blocked by the standard plan-limit error (`restrict.creating`); merchant redirected to [[plan-features]]. |
+| `cross_sells` | Numeric plan-feature (counts the platform code) | New offer creates blocked at the plan limit (`restrict.creating`). In the Vue admin the refusal shows as a generic "Unexpected error. Please try again later" (HTTP 400), with no upgrade link; see [[cross-sell-list-plan-budget]]. More slots: [[plan-features]]. |
 
 ## Business rules
 

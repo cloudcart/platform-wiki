@@ -7,8 +7,8 @@ aliases: ["Create PAT Token modal", "Edit PAT Token modal", "Token Created Succe
 tags: [settings, security, tokens, modal, create, edit]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[settings-pat-tokens]]. See the hub for related aspects (list view, scopes, restrictions, security, permissions, endpoints).
@@ -17,7 +17,7 @@ source_count: 2
 
 ## Purpose
 
-The right-side slide-out modal (`CliTokensCreateOrEdit.vue`) used to create a new PAT token or edit an existing one. The same component handles both modes; the only differences are which sections are visible, which fields are editable, and what the primary button does. It also hosts the **one-shot token reveal** — the green success card that appears immediately after a successful create.
+The right-side modal for creating a PAT token or editing one. The two modes differ only in the visible sections, the editable fields and the primary button. It also hosts the **one-shot token reveal**, the green card shown right after a create.
 
 ## Where to find it
 
@@ -28,7 +28,7 @@ The right-side slide-out modal (`CliTokensCreateOrEdit.vue`) used to create a ne
 
 ### Modal-level behaviour
 
-- The modal uses `modal-right` class, size `xl`, with `no-close-on-backdrop=true` — **backdrop click does NOT close it**. The merchant must explicitly click **Cancel** or **Done**.
+- **A click outside does NOT close it**; the merchant clicks **Cancel** or **Done**.
 - Header buttons (right-aligned, inline in header — no footer separator):
   - **Cancel** (secondary, disabled while saving).
   - **Generate Token** (create) / **Save** (edit) — primary; loading spinner while `isCreating || isUpdating`. HIDDEN once a token has just been generated in the same session (replaced with **Done**).
@@ -36,11 +36,11 @@ The right-side slide-out modal (`CliTokensCreateOrEdit.vue`) used to create a ne
 
 ### Body sections (`SettingsForm` with named slots)
 
-The body is a `SettingsForm` using `DefaultLayout` with slots `general` / `permissions` / `advanced` / `tokenInfo`. Each slot renders a `SettingsCard` panel:
+The body has four cards:
 
 #### Section 1 — Token Details (`SettingsCard "Token Details"`)
 
-- **Token Name** (`CcInput`) — required; placeholder *"e.g., CI Pipeline, Development"*; validation min 1, max 100 chars. Disabled after a token has been generated in the same modal session.
+- **Token Name** (`CcInput`) — required; placeholder *"e.g., CI Pipeline, Development"*; up to 100 characters, any characters allowed, spaces at the ends trimmed. Names need not be unique: two tokens may share one. Disabled after a token has been generated in the same modal session.
 - **Description** (`CcTextarea`) — optional; placeholder *"Optional description for this token..."*; max 500 chars. Disabled after generation.
 
 #### Section 2 — Permissions (`SettingsCard "Permissions"`)
@@ -66,13 +66,13 @@ Immediately after a successful create, the modal body inserts a **green success 
 - Sub-text: *"Copy your token now. You will not be able to see it again."*
 - A white code-box containing the full `cc_pat_<64-hex>` value, with a **Copy** button on the right.
 
-**Copy button**: clicking calls `navigator.clipboard.writeText`, shows toast *"Token copied to clipboard"*, then changes its own label to **Copied!** for 2 seconds before reverting. If the clipboard write fails (browser permission denied) it toasts *"Failed to copy token"*.
+**Copy** shows the toast *"Token copied to clipboard"*, then changes its own label to **Copied!** for 2 seconds before reverting. If the clipboard write fails (browser permission denied) it toasts *"Failed to copy token"*.
 
 Once the success card is shown:
 
 - All form fields become **disabled** (the modal body is locked).
 - The **Generate Token** button is replaced by **Done**, which simply closes the modal.
-- Closing the modal (either via Done or Cancel) resets `createdToken` to null — the value is GONE; the merchant cannot reopen the same modal to see it again. The new record now shows in the table with masked prefix only.
+- Closing the modal discards the value for good; the table shows the new token masked.
 
 ## Settings & fields
 
@@ -85,7 +85,7 @@ Once the success card is shown:
 | Token Validity | optional (defaults to "No expiration") | optional | Date must be `after:now` if set |
 | Active toggle | n/a (always on for new) | yes | Mirrors row toggle in [[settings-pat-tokens-list-view]] |
 
-The Create endpoint is `POST /admin/api/core/account/cli-tokens/` and returns the full token value in a `CliTokenCreateResponse` payload. The Edit endpoint is `PUT /admin/api/core/account/cli-tokens/{id}` (partial updates allowed). See [[settings-pat-tokens-endpoints]] for the full schema.
+Create and edit endpoints and payloads: [[settings-pat-tokens-endpoints]].
 
 ## Business rules
 
@@ -94,8 +94,23 @@ The Create endpoint is `POST /admin/api/core/account/cli-tokens/` and returns th
 - **Edit cannot mint a new value.** To rotate a token while keeping the same name / scopes / IPs / expiration, the merchant must DELETE the existing token and CREATE a fresh one. There is deliberately no "regenerate" button — rotating requires the merchant to acknowledge the destructive step.
 - **Owner-only at save time.** Even if the UI lets a moderator open the Create modal (legacy code paths), the save call returns HTTP 403 *"Only store owners can create CLI tokens"* — enforced at four layers. See [[settings-pat-tokens-permissions]].
 - **Cap-enforced disable.** The Create button on the parent screen is disabled when `meta.can_create=false` (i.e., 100 tokens already exist) — the modal is never opened in that state.
-- **Form locks on success.** Once `createdToken` is set, all inputs become read-only. This prevents the merchant from accidentally editing the new token before copying its value.
 - **No live-fire token test.** The modal does not include a "test this token now" path — the merchant verifies by invoking the CLI or GraphQL endpoint themselves.
+
+### When Generate Token fails: *"The given data was invalid."*
+
+Every rejected create shows this toast, in English. Where the cause belongs to a field, its own message also appears under that field; some causes give the toast alone.
+
+| Cause | Shown under a field |
+|---|---|
+| Name empty, or over 100 characters | Token Name: *"Token name is required"* / *"Token name must be 100 characters or less"* |
+| Description over 500 characters | Description |
+| **Read** picked for **Inventory** or **Discounts** under Custom Permissions | none: toast only. These two have no read-only scope ([[settings-pat-tokens-scopes]]); pick **Read & Write** or **None** |
+| An IP that is not an address or CIDR range | *"Invalid IP address or CIDR range"* under that IP, as it is typed |
+| More than 20 IPs | IP Restrictions: *"Maximum 20 IP addresses allowed"* |
+| End date not in the future | Token Validity: *"Expiration date must be in the future"* |
+| 100 tokens already exist (a page not refreshed still offers **Create Token**) | none: toast only. Delete unused tokens; inactive and expired ones count |
+
+A toast with no field message points at the scopes or the cap.
 
 ## Related
 

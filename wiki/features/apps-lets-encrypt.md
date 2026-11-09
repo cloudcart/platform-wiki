@@ -7,8 +7,8 @@ aliases: ["Let's Encrypt", "LetsEncrypt", "Free SSL", "HTTPS certificate", "no e
 tags: [apps, administration, ssl, security, infrastructure]
 plan_gates: ["ssl_certificate"]
 created: 2026-05-22
-updated: 2026-08-06
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # Let's Encrypt (free SSL certificates)
 
@@ -16,7 +16,7 @@ source_count: 1
 
 **Let's Encrypt** integration — automatically obtains and renews **free SSL/TLS certificates** for the merchant's custom storefront domains via the Let's Encrypt certificate authority. Required to serve the storefront over HTTPS (modern web mandatory; Google penalises HTTP).
 
-When installed and the merchant adds a custom domain via [[settings-domains]], Let's Encrypt verifies domain ownership, issues a certificate valid for 90 days, and auto-renews it before expiry. Free and auto-renewed — no merchant action after initial setup.
+Adding a domain issues nothing by itself: with the app installed, the merchant clicks **Install SSL** → **Automatic install** on the domain in [[settings-domains]], and Let's Encrypt verifies the domain and issues a certificate valid for 90 days. From then on it is renewed automatically ([[settings-domains-ssl]]).
 
 > **No on/off control — this app has no "active / inactive" state.** Once it is installed it simply works; there is no Enable / Disable button and no "Activate application" switch on its screen. So *"the app is disabled"* is never the explanation for it not working — check its own settings, credentials, or plan access instead, and use **Uninstall** if the merchant genuinely wants it off.
 

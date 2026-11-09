@@ -7,8 +7,8 @@ aliases: ["Subscribe form builder", "Form builder iframe", "Subscribe forms edit
 tags: [marketing, subscribers, forms, builder, popup, embedded, storefront]
 plan_gates: ["subscriber_forms"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-subscribers-subscribe-forms]]. See the hub for the other aspects (list, button & confirmation, templates, layout, triggers, fields, submission flow, GDPR consent, known issues).
@@ -81,8 +81,8 @@ Styling is exposed at every level — page background, form container, each inpu
 - **Borders** — `borderRadius`, border width/style.
 - **Spacing** — padding, margin.
 - **Typography** — `fontFamily` (~80 pre-loaded Google Fonts), `fontSize`, font weight/style.
-- **Background image** — `pages.form.media[<device>]` per device (success page has its own `media`).
-- **Dimensions** — the form's **width and height are pixel values** in the page `style` (the form page and the success page each carry their own). They are stored **free-form** — the settings request does not validate or clamp them — and applied by the builder's own render, so there is **no enforced min/max**: an over-large width or height can overflow narrow viewports. There is no auto-fit/auto-resize; the only responsiveness is the separate per-device `layoutPosition` (see [[subscribe-forms-layout]]), which changes *placement*, not *size*. Widening/heightening a form is therefore a manual px edit, and the merchant must check it on mobile themselves. (verify — the exact width/height input controls in the legacy iframe builder UI.)
+- **Image** — `pages.form.media[<device>]` per device (success page has its own `media`); size, fit and link rules on [[subscribe-forms-templates]].
+- **Dimensions** — the form's **width and height are pixel values** in the page `style` (form and success page each their own), seeded by the template variant ([[subscribe-forms-templates]]). They are stored **free-form**, with **no enforced min/max**, so an over-large size can overflow narrow viewports; Sidebar ignores the height and Fullscreen both. There is no auto-fit of the form itself; `layoutPosition` ([[subscribe-forms-layout]]) changes *placement*, not *size*, so the merchant checks mobile themselves. (verify — the exact width/height input controls.)
 
 ## Business rules
 

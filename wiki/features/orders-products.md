@@ -7,8 +7,8 @@ aliases: ["Order products", "Order line items", "Add product to order", "Edit pr
 tags: [orders, products, line-items, crud, smarty, hub]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 10
+updated: 2026-11-09
+source_count: 11
 ---
 
 # Order products (add / edit / remove on order)
@@ -42,7 +42,7 @@ From [[orders-details]] → **Products table** in the order summary section. Per
 
 ## Sub-pages (in this cluster)
 
-This feature is split into 7 aspect pages — drill into the aspect that matches the question, not the whole hub.
+This feature is split into 8 aspect pages — drill into the aspect that matches the question, not the whole hub.
 
 - [[orders-products-add]] — `+ Add product` flow, also the picker behind **Replace** ([[orders-details-products]]); picker + Add modal; `override_price` flag; fractional quantity; digital-product rules; `order_product_added` history entry.
 - [[orders-products-edit]] — Edit modal; price-on-edit (no `override_price` flag needed); per-item / per-order option editing; **no variant swap**; `order_product_edit` history entry.
@@ -51,6 +51,7 @@ This feature is split into 7 aspect pages — drill into the aspect that matches
 - [[orders-products-fulfillment-popover]] — Read-only popover on fulfilled lines (tracking URL + fulfillment date); the only per-line view that survives `order_fulfillment_id` being set; void waybill via [[orders-shipping-waybill]] to edit / delete.
 - [[orders-products-stock-effects]] — Tracked-snapshot rule on the line; add → decrement, edit → diff, delete → restore; `tracking` + `continue_selling` matrix; stock-locations app per-zone sum; search-index re-index + `product.updated` webhook ripple.
 - [[orders-products-side-effects]] — Recalculation cascade (totals + tax + shipping + discount); `cc.ajax.reload` panel chain; full history action-key map; `order.updated` webhook (drafts skip); customer-notify on add only; DB row lock.
+- [[orders-products-courier-requote]] — every line save re-quotes shipping; a courier error (e.g. *"Request cannot be modified after it has been sent!"*) rolls the save back; the order lock blocks opening, not saving.
 
 ## What the merchant can do here
 
@@ -95,9 +96,7 @@ Cluster-wide invariants — each aspect documents its share in detail.
 
 ## Programmatic access
 
-Order line items are exposed as the **read-only** [[api-order-products]] resource on JSON-API v2 — useful for fetching the contents of an order along with per-line price, quantity, variant, options, modifications, and digital-file references. The endpoint is part of the order's relationship graph (see [[api-orders]]).
-
-**Line-item CRUD is admin-panel-only.** JSON-API v2 does not allow mutation — see [[orders-products-side-effects]] for the rationale (every mutation triggers the full recalculation cascade + side-effects chain, which the platform requires to flow through validated admin paths).
+Order line items are the **read-only** [[api-order-products]] resource on JSON-API v2 (per-line price, quantity, variant, options, modifications, digital files), part of the order's relationship graph ([[api-orders]]). Line-item changes are admin-panel-only — see [[orders-products-side-effects]].
 
 ## Related
 

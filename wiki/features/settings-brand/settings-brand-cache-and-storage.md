@@ -7,8 +7,8 @@ aliases: ["Brand cache invalidation", "Brand boarding_settings flag", "Brand leg
 tags: [settings, brand, cache, storage, infrastructure]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-brand]]. See the hub for related aspects (slots, upload flow, OG image, favicon, errors, limitations).
@@ -27,7 +27,7 @@ The side-effects documented here fire automatically on every successful upload o
 
 The merchant doesn't directly control cache or storage behaviour. What they observe:
 
-- Uploaded logos appear in the storefront / admin immediately on the next page load (per-slot cache flush makes this feel "instant").
+- Uploaded logos show in the admin and on freshly rendered storefront pages at once; guests can keep a cached page with the old logo for up to 20 minutes, crawlers 1–2 days ([[storefront-arch-caching-invalidation]]).
 - The onboarding wizard's branding step gets marked complete after the first successful upload (the `boarding_settings` flag).
 - Favicons may take a hard refresh to appear due to browser-side caching (see [[settings-brand-favicon]]).
 - Deleted OG images may remain accessible at their original URL for some time before the background sweep removes them (see [[settings-brand-og-image]]).
@@ -36,7 +36,7 @@ The merchant doesn't directly control cache or storage behaviour. What they obse
 
 ### Per-slot cache flush
 
-Every successful logo save flushes ONLY the cache entry for that specific slot via a tagged-cache removal (`logo.<slot>`). Saving the main store logo does NOT bust the invoice logo cache. Each slot's cache is independent. This is what makes uploads feel "instant" — the storefront / admin sees the new logo on the next page load without waiting for any global cache invalidation cycle.
+Every successful logo save flushes ONLY the cache entry for that specific slot via a tagged-cache removal (`logo.<slot>`). Saving the main store logo does NOT bust the invoice logo cache. Each slot's cache is independent. The next freshly rendered page shows the new logo. This screen does not clear the storefront full-page cache; only a logo change through the Admin GraphQL API does.
 
 ### `boarding_settings` flag
 
@@ -97,9 +97,9 @@ Deleting:
 
 The card returns to the empty drop-zone state; the merchant can upload a replacement immediately. The per-slot cache is cleared on delete just as on save.
 
-### Storefront serves new asset on next page render
+### Storefront serves new asset on next fresh render
 
-Because the per-slot cache flush is synchronous with the save, the next storefront page render after a save pulls the fresh logo (cache miss → DB read → re-cache). No propagation delay — the merchant can save and immediately refresh the storefront to see the change. (Exception: the favicon, due to browser-side caching outside the platform's control — see [[settings-brand-favicon]].)
+Because the per-slot cache flush is synchronous with the save, the next freshly rendered page pulls the fresh logo (cache miss → DB read → re-cache). A merchant signed in to the admin sees it on refresh; guests can get a cached page with the old logo for up to 20 minutes. (Exception: the favicon, due to browser-side caching outside the platform's control — see [[settings-brand-favicon]].)
 
 ## Related
 

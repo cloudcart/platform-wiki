@@ -7,8 +7,8 @@ aliases: ["Back to top button", "buttonToTop", "Up button module", "Scroll-to-to
 tags: [design, modules, navigation, footer, utility]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Storefront Modules — Back-to-top button (`buttonToTop`)
@@ -88,7 +88,7 @@ Even when the merchant enables the module, the button only appears on themes who
 
 ### Cache invalidation
 
-Save / Reset regenerate the storefront cache key. The button appears / disappears on the next page load.
+Save / Reset regenerate the storefront cache key. The button appears / disappears on pages rendered afterwards (guests within 20 minutes).
 
 ### Reset behaviour
 

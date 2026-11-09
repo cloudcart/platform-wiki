@@ -3,8 +3,8 @@ type: entity
 aliases: ["Subscribe form model", "Subscribe form fields", "Popup vs embedded form", "Subscribe form storage", "Subscribe form counters", "Модел на форма за абонамент"]
 tags: [marketing, customers, entity]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Subscribe Form — Model & render modes
@@ -33,7 +33,7 @@ The **model** of a [[subscriber-form|Subscribe Form]] is the bundle of configura
 | **Type** (`type`) | Always `'form'` for storefront-rendered subscribe forms | The query layer filters `type = 'form'` — leaving room for non-storefront form types. |
 | **Embedded** (`embedded`) | False = popup, True = inline | Boolean. When `true`, the storefront only renders this form via the explicit embed JS snippet (or the Page Builder module) and the form auto-sets `startDisplaying = [{type: 'auto'}]`. When `false`, the form is bulk-fetched at storefront startup and shown per `layoutPosition` + visibility rules. |
 | **Pages** (`pages`) | Multi-page flow definition | JSON object with `form` (the input page) and `success` (the post-submit message). Drives the builder's tabbed editor. Includes `texts.title.text`, `texts.description.text`, `button.text`, `button.actionType` (submit/url), `button.actionUrl`, `markAsVerified`, `emailConfirm`, `custom_fields[]`, `includedUrls[]`, `excludedUrls[]`, and per-built-in-input flags (`email.is_visible`, `email.required`, `phone.is_visible`, etc.). |
-| **Layout** (`layout`) | Visual layout | JSON. Includes the chosen **template** (`modal`, `bar`, `panel`, `sidebar`, `fullscreen` — the five starter layouts the merchant picks at form-creation time), close-button styling, dimensions. See [[marketing-subscribers-subscribe-forms]] for the template catalogue. |
+| **Layout** (`layout`) | Visual layout | JSON. Includes the chosen **template** (`slide_in`, `bar`, `panel`, `sidebar`, `fullscreen`) and variant, close-button styling, dimensions. See [[subscribe-forms-templates]]. |
 | **Layout position** (`layoutPosition`) | Per-device anchor | JSON `{desktop: <key>, mobile: <key>}` — independent values per device. Enum: `topLeft`, `topCenter`, `topRight`, `topFull`, `centerLeft`, `centerCenter`, `centerRight`, `bottomLeft`, `bottomCenter`, `bottomRight`, `bottomFull`, `left`, `right`, `full`, `mobile`. The rendered position reads `layoutPosition[deviceType]` at storefront-render time. |
 | **Style** (`style`) | Visual styling | JSON. Colors, fonts (Google Fonts — `fontFamily` is mapped to the matching Google Font to load the CSS), button styling. |
 | **Terms** (`terms`) | Required/optional legal pages | Array of `{key, required, labelStyle}` referencing `Page` IDs. The marketing-policy page is one of the terms — ticking it is what flips the subscriber's `marketing` to `force-1`. See [[subscriber-form-submission]]. |
@@ -71,7 +71,7 @@ Forms live in a separate marketing data store from the main store database. Cons
 ## Where it appears
 
 - [[marketing-subscribers-subscribe-forms]] — admin list and visual builder where every attribute above is set.
-- [[marketing-subscribers]] — destination of new subscribers; "Subscribed by" column shows "Popup and Form builder" for form-originated subscribers.
+- [[marketing-subscribers]] — destination of new subscribers; "Subscribed from" column shows "Popup and Form builder" for form-originated subscribers.
 - [[marketing-subscribers-custom-fields]] — defines the custom fields a form's `pages.form.custom_fields[]` can include.
 
 ## Related

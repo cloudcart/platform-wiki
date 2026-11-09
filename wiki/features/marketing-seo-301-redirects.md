@@ -7,8 +7,8 @@ aliases: ["301 Redirects", "URL redirects", "Per-URL redirects", "SEO redirects"
 tags: [marketing, seo, redirects, migration, url-management]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 10
+updated: 2026-11-09
+source_count: 11
 ---
 
 # 301 Redirects (per-URL redirects manager)
@@ -44,14 +44,15 @@ Sidebar → Marketing → SEO → **301 redirects**. Route name `seo-301-redirec
 
 - Use 302 (temporary) redirects — every redirect is always 301.
 - Use regex; only literal `*` is supported as a wildcard. See [[seo-301-redirects-wildcards]].
-- Redirect from an external domain (use [[apps-domain-redirect]]).
-- Sort the table by any column other than the default `id desc`.
+- Forward a whole domain: attached domains auto-301 to the primary ([[settings-domains-primary]]); forwarding to an external domain is not native ([[seo-301-redirects-types]]).
+- Sort the table by any column other than the default `id desc`, or export the rules: the screen has no export button.
+- See renamed-item addresses here: a slug change keeps the old address in a hidden 30-day history, not as a row ([[seo-301-redirects-auto-tracking]]).
 - Edit the URL of the linked entity from this screen — the merchant changes URL slugs on the entity's own page; the redirect follows automatically (it references the entity, not a frozen URL).
 - Redirect physical files (`.pdf`, `.jpg`) — they bypass the redirect layer entirely. See [[seo-301-redirects-middleware]].
 
 ## Sub-pages (in this cluster)
 
-This feature is split into 7 aspect pages. The Assistant should drill into the aspect that matches the question, not read every page.
+This feature is split into 7 aspect pages; drill into the one that matches the question.
 
 - [[seo-301-redirects-types]] — the 9 redirect types (`manual`, `external`, `section`, `product`, `category`, `vendor`, `blog`, `article`, `page`); per-type "New URL" field shape; entity-typed rules follow the entity's current URL.
 - [[seo-301-redirects-validation]] — Create/Update validation rules, error messages and precedence, same-URL silent skip.
@@ -94,14 +95,12 @@ The full catalogue lives on the aspect pages. The most-impactful rules at a glan
 - [[marketing]] — parent navigation hub.
 - [[marketing-seo]] — Main SEO settings (canonical, robots.txt, sitemap, OG image, RSS).
 - [[marketing-seo-meta]] — per-section meta titles & descriptions.
-- [[apps-domain-redirect]] — whole-domain 301 forwarding (different mechanism: host-layer instead of URL-layer).
+- [[apps-domain-redirect]] — own-stores geo-routing (302, lands at the home page).
 - [[apps-domain-redirect-settings]] — Domain Redirect configuration screen.
 - [[apps-seo-spinner]] — AI content variation generator for products / categories / meta tags.
 - [[seo-redirect]] — the SEO Redirect entity hub (data-model view of these rules).
 - [[api-redirects]] — JSON-API v2 endpoint for programmatic management of redirect rules.
-- [[product]] — renaming a product slug here auto-tracks the old URL for 30 days (no manual redirect row needed for that window).
-- [[category]] — same auto-tracking on rename.
-- [[marketing-landing-pages]] — CMS Pages; same auto-tracking on rename.
+- [[product]] / [[category]] / [[marketing-landing-pages]] — a slug rename keeps the old URL for 30 days.
 - [[settings-domains]] — primary domain determines the host used for redirect target Location header.
 - [[settings-queue-view]] — the CSV-import background job runs on the `import` queue and is visible there.
 - [[background-queue-inventory]] — catalogue of all background processes; covers the async redirects-CSV import job and how to check whether it finished.
@@ -109,4 +108,4 @@ The full catalogue lives on the aspect pages. The most-impactful rules at a glan
 
 ## Open questions
 
-- ⏸️ **30-day TTL on URL-handle-history.** Auto-tracked old slugs expire 30 days after the slug change. After the TTL, the redirect stops working unless the merchant has explicitly added a permanent redirect entry on this page. See [[seo-301-redirects-auto-tracking]].
+None.

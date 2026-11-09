@@ -3,8 +3,8 @@ type: concept
 aliases: ["Notification delivery", "Email/SMS/webhook delivery", "Event-driven notifications"]
 tags: [notifications, events, webhooks, email, sms, concepts]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Notification delivery (email, SMS, webhook, admin-panel alert)
 
@@ -23,7 +23,7 @@ The Assistant should drill into the aspect that matches the question, not read e
 - [[notification-delivery-event-spine]] — the event → subscriber → queued job pattern; the four-channel fan-out table; the queue layout (`analytics2`, `order-events8`, `cc-system6`, mail, `campaigns-process`); per-order analytics delays.
 - [[notification-delivery-retry]] — the per-channel retry profiles; webhook 6-attempts-over-15-minutes timeline + auto-disable codes; analytics hourly auto-resume; email reap-and-retry.
 - [[notification-delivery-admin-alerts]] — the bell-icon Alerts feed; what raises an alert; in-panel alert vs. email escalation; no "mute the bell".
-- [[notification-delivery-email-inventory]] — the ~30 customer-facing transactional email labels; the three bypass labels; the `customer_email_notifications` master switch.
+- [[notification-delivery-email-inventory]] — the ~30 customer-facing transactional email labels; the Active switch, locked mails and the `customer_email_notifications` master switch.
 - [[notification-delivery-suppression]] — the per-order `notify_customer` flag; the absence of a merchant-facing global mute; the analytics-only ops kill switch; marketing vs. transactional suppression.
 
 ## Scope

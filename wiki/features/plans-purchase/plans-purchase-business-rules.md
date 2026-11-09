@@ -7,8 +7,8 @@ aliases: ["Plan purchase rules", "Plan purchase cart-reset", "Plan LTA override"
 tags: [plans, purchase, business-rules, lta, downgrade, proration]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[plans-purchase]]. See the hub for the other aspects (billing cycle, recommended add-ons, plan detail view, checkout panel, subscription outcomes, discount codes).
@@ -61,7 +61,7 @@ Every figure shown (price, original price, discount, period text, currency, VAT)
 
 ### Currency = invoicing-country default
 
-The currency sign + decimal formatting are determined by the merchant's invoicing setup, NOT by their store currency. So a merchant whose store sells in BGN but is invoiced by the BG entity sees plan prices in BGN; a DE-invoiced store sees EUR. See [[billing-invoicing]] for managing the invoicing country.
+The currency sign + decimal formatting are determined by the merchant's invoicing setup, NOT by their store currency. The Terms of Use put every CloudCart price, in the admin included, in EUR without VAT (§11.1, [[terms-of-use-billing-renewal]]), so a merchant invoiced by the Bulgarian entity sees EUR whatever currency the store sells in; a DE-invoiced store sees EUR too. See [[billing-invoicing]] for managing the invoicing country.
 
 ### Recommendations are centrally-flagged
 

@@ -3,8 +3,8 @@ type: entity
 aliases: ["Subscribe Form", "Subscriber Form", "Subscription form", "Newsletter popup", "Popup form", "Embedded subscribe form", "Форма за абонамент", "Поп-ъп форма"]
 tags: [marketing, customers]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # Subscribe Form
 
@@ -52,7 +52,7 @@ Key facts: a form is **popup or embedded** (the `embedded` flag picks the fetch 
 
 A Subscribe Form:
 
-- **Has many** [[subscriber|Subscribers]] indirectly — each subscriber created via this form carries `subscriber_from = 'subscribe_form'` AND `form_id = <this form's id>`. The `subscriber.from_form` [[segment]] condition lets the merchant filter by a specific form. See [[subscriber-form-submission]].
+- **Has many** [[subscriber|Subscribers]] indirectly — each subscriber created via this form carries `subscribed_from = 'subscribe_form'` AND `form_id = <this form's id>`. The `subscriber.from_form` [[segment]] condition lets the merchant filter by a specific form. See [[subscriber-form-submission]].
 - **References** [[marketing-subscribers-custom-fields|Subscriber Custom Fields]] via `pages.form.custom_fields[]` — picks which subscriber custom fields to expose. The field definitions live elsewhere; the form only carries the key + per-form display flags.
 - **References** `Page` rows via `terms[].key` — legal pages (marketing policy, privacy policy) attached for consent. The marketing-policy page identifies which checkbox flips the subscriber's marketing flag.
 - **Is the target of** the storefront module JS, which fetches it at page-load (bulk for popups, JSONP for embedded) and renders it per the [[subscriber-form-eligibility]] rules.
@@ -65,7 +65,7 @@ A Subscribe Form is NOT:
 ## Where it appears
 
 - [[marketing-subscribers-subscribe-forms]] — admin list and visual builder.
-- [[marketing-subscribers]] — destination of new subscribers; "Subscribed by" column shows "Popup and Form builder" for form-originated subscribers.
+- [[marketing-subscribers]] — destination of new subscribers; "Subscribed from" column shows "Popup and Form builder" for form-originated subscribers.
 - [[marketing-subscribers-custom-fields]] — defines the custom fields that forms can include.
 - [[marketing-segments]] / [[marketing-segments-editor]] — the `subscriber.from_form` condition filters segments by which form captured the subscriber.
 - [[marketing-campaigns]] — downstream consumer (campaigns reach subscribers captured via forms).

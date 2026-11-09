@@ -7,8 +7,8 @@ aliases: ["Online sales without cash register", "Онлайн продажби �
 tags: [bulgaria, fiscal, n18, cash-register, cod, econt, shipping, concepts]
 plan_gates: []
 created: 2026-06-11
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # Online sales without a cash register
 
@@ -18,7 +18,7 @@ source_count: 3
 
 It exists because, under **Наредба Н-18**, the obligation to issue a fiscal receipt is driven by **how the customer pays**, not by the sale itself. Card / bank-transfer payments are already exempt from a merchant-issued fiscal receipt; the hard case is **cash-on-delivery**, and this service solves it: the courier — as the entity actually collecting the cash — issues the fiscal document and the merchant receives only bank money, so the merchant never handles cash and never needs a cash register.
 
-> **In CloudCart this is documented in the Econt context.** The regime itself is general (any obliged postal operator can offer it), but the concrete service, the **"Онлайн продажби без касов апарат"** agreement, the agreement-number COD payout, the опис flow, the `department_agreement` toggle, and the e-Econt tracking described on this page are **Econt's** implementation (the only courier that exposes a CloudCart toggle for it today). Other couriers may offer a comparable contract through their own systems.
+> **In CloudCart this is documented in the Econt context.** The regime itself is general (any obliged postal operator can offer it), but the concrete service, the **"Онлайн продажби без касов апарат"** agreement, the agreement-number COD payout, the опис flow, the `department_agreement` toggle, and the e-Econt tracking described on this page are **Econt's** implementation. **DPD Bulgaria (Speedy)** has its own switch, **Add a Fiscal Receipt**, shown when the DPD contract allows a fiscal receipt for cash on delivery and the store has VAT set up; the waybill then sends the order's lines with their VAT groups for the receipt DPD issues (verify) — see [[apps-dpdbulgaria-speedy-waybill-price]]. Other couriers may offer a comparable contract through their own systems.
 
 ## Scope
 
@@ -64,4 +64,4 @@ Eligible: legal entities and physical persons obliged to issue a fiscal receipt 
 ## Open Questions
 
 - Exact Наредба Н-18 article references for the COD courier-receipt exemption (verify against [[apps-n18-audit]] resources / НАП).
-- Whether other integrated couriers (Speedy, etc.) expose an equivalent CloudCart toggle (verify).
+- Whether couriers other than Econt and DPD Bulgaria expose an equivalent CloudCart toggle (verify).

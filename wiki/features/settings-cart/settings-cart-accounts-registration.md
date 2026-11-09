@@ -7,8 +7,8 @@ aliases: ["Customer accounts settings", "Guest vs registered checkout", "Convert
 tags: [settings, cart, checkout, accounts, customers]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-cart]]. See the hub for the other aspects (abandoned reminder, payment/shipping defaults, limits, checkout fields, UI behavior, Google Maps, marketing consent).
@@ -55,13 +55,17 @@ Header label: *"Customer Accounts — Choose if you want to prompt your customer
 
 ## Business rules
 
+### A digital product or a subscription removes guest checkout
+
+Whatever **Customer profiles** says, a cart holding a digital product or a subscription line is offered no guest form: with `both` or `member` the shopper registers (with a password) or signs in; with `guest` the checkout shows only a notice (for a digital product *"Only registered customers can purchase digital products"*) and cannot be completed. See [[checkout-flow-guest-vs-registered]].
+
 ### "Convert guests into members" requires Customer profiles = `both`
 
 The dependField hides the switch when **Customer profiles** is set to `member` or `guest`. The auto-promotion behaviour also doesn't apply in those modes (there are no guests to promote in members-only mode, and no members to promote into in guests-only mode). The backend, however, will silently store any value the client sends — see [[settings-cart]] for the general "dependFields are cosmetic" rule.
 
 ### Guest-to-member promotion is a side-effect of order placement
 
-The actual conversion happens during the order-creation pipeline, not from this screen. When `guest_to_customer = yes` AND `checkout_customer_access = both` AND a guest places an order, the platform creates a Customer record, generates a password, and sends a notification email containing the credentials. See [[order-processing-pipeline]] (Stage 1, step 1) for the exact placement of this hook.
+The actual conversion happens during the order-creation pipeline, not from this screen. When `guest_to_customer = yes` AND `checkout_customer_access = both` AND a guest places an order, the guest's own Customer record (Guests group, created at checkout) becomes a registered Customer: default group, generated password, credentials emailed. Turning the switch on converts no earlier guests by itself. See [[order-processing-pipeline]] (Stage 1, step 1) for the exact placement of this hook.
 
 ### `unconfirmed_accounts_restrict` interacts with the verification-email subsystem
 

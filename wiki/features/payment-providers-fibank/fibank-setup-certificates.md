@@ -7,8 +7,8 @@ aliases: ["Fibank certificate", "Fibank PKCS12", "Fibank.p12", "Fibank test envi
 tags: [paymentproviders, payment-providers, fibank, card-gateway, bulgaria, certificate]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Fibank — Setup & certificates
 
@@ -63,11 +63,15 @@ The integration can also convert `.jks` (Java Keystore) → PKCS#12 → PEM if F
 
 ### Currency support
 
-Each Fibank Ecomm terminal is provisioned for **one currency** — **BGN (ISO 975)** or **EUR (ISO 978)**. The merchant picks the currency per environment. The platform reads `currency_test` / `currency_live` and sends it verbatim on every Fibank request. The amount is **NOT auto-converted** by the platform if the storefront currency differs from the terminal currency — the merchant must align them or implement a currency-conversion strategy at checkout level. See [[fibank-payment-lifecycle]] for how the currency is sent on `registerOrder`.
+Each Fibank Ecomm terminal is provisioned for **one currency** — **BGN (ISO 975)** or **EUR (ISO 978)**. The merchant picks the currency per environment. The platform reads `currency_test` / `currency_live` and sends it verbatim on every Fibank request. The amount is **NOT auto-converted** by the platform if the storefront currency differs from the terminal currency — the merchant must align them or implement a currency-conversion strategy at checkout level. See [[fibank-payment-lifecycle]] for what each transaction request carries.
 
 ### Mutual-TLS connection
 
 The stored PEM authenticates the merchant to Fibank's Ecomm endpoint over mutual TLS. Connections use a **5-second timeout** and **`ssl_verify=false`** — the PKCS#12 client-cert auth is treated as sufficient.
+
+### Test and Live environments
+
+**Test** mode talks to Fibank's test environment (`mdpay-test.fibank.bg`), **Live** to `mdpay.fibank.bg`, each with the certificate uploaded for that mode. CloudCart has no shared Fibank test terminal (unlike Borica's `V1800001`): testing needs the merchant's own test certificate from Fibank. Test card numbers come from Fibank (verify with the bank).
 
 ## UI mechanics (settings card pattern)
 

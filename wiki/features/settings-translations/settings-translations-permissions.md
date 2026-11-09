@@ -7,8 +7,8 @@ aliases: ["Translations permissions", "store.translations permission", "Storefro
 tags: [settings, translations, i18n, permissions, scope]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[settings-translations]]. See the hub for related aspects (toggle, table, filters, reset, scoping, side-effects).
@@ -53,7 +53,8 @@ The Translations route group is gated by the standard permission middleware. Mod
 
 | Surface | Translatable here? | Where to manage instead |
 |---------|--------------------|--------------------------|
-| **Storefront customer-facing labels** (buttons, validation, headings, email subjects sent to customers) | YES | This page. |
+| **Storefront customer-facing labels** (buttons, validation, headings) | YES | This page. |
+| **Customer email wording, subjects and product-list captions** | NO | [[marketing-omnichannel-mails-list]] templates; the product-list captions are fixed ([[omnichannel-mails-order-confirmation]]). |
 | **Admin-panel labels** (sidebar, buttons, modal titles inside the admin) | NO | Admin Panel Language picker in [[settings-general]] only — no per-row edit UI. |
 | **Order / shipping / payment status labels** | NO | [[settings-statuses]] — separate override mechanic. |
 | **Invoice template strings** | NO | [[settings-invoicing]] — separate templating system. |

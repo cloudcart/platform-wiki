@@ -8,8 +8,8 @@ aliases: ["Orders API", "JSON-API v2 orders", "API поръчки", "/orders", "
 tags: [api, json-api-v2, orders]
 plan_gates: []
 created: 2026-05-26
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Orders (JSON-API v2)
 
@@ -45,7 +45,7 @@ For per-order sub-resources, see the dedicated pages: [[api-order-products]], [[
 
 ## Attributes
 
-PATCH writes only four attributes — `status`, `invoice_number`, `invoice_date`, `usn` — and POST is blocked entirely so no attribute is ever writable on create. Everything else (customer snapshot, currency, totals, fulfillment status, timestamps) is read-only on PATCH but returned by GET. The full writable / read-only tables, the GET-visible money + timestamp fields, and the `?append[orders]=meta` sparse-field rule live on [[api-orders-attributes]].
+PATCH writes `status`, `invoice_number`, `invoice_date`, `usn`, `note_administrator` (replacing the whole note) and `notify_customer`; POST is blocked entirely. The customer snapshot, `note_customer`, currency and fulfillment status are read-only on PATCH but returned by GET. The full writable / read-only tables, the GET-visible money + timestamp fields, and the `?append[orders]=meta` sparse-field rule live on [[api-orders-attributes]].
 
 ## Relationships
 

@@ -7,8 +7,8 @@ aliases: ["Save module", "Reset module", "Cancel module", "Module save pipeline"
 tags: [design, modules, save, reset, validation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 # Storefront Modules — Save and reset
@@ -98,9 +98,9 @@ Reset deletes the saved row outright — there is no "trash" or "undo" surface. 
 
 The `widget_load` route only renders an empty-row partial. It does not copy settings from one instance to another. The merchant who wants to duplicate a banner row currently re-enters the fields manually.
 
-### Side effects: storefront cache regenerates immediately
+### Side effects: the module cache renews at once
 
-Both Save and Reset bump the per-site cache key, so storefront pickup is on the next request. Full pipeline in [[design-modules-cross-cache-invalidation]].
+Both Save and Reset bump the per-site cache key, so pages rendered afterwards use the new settings; guests may get a cached page for up to 20 minutes. Full pipeline in [[design-modules-cross-cache-invalidation]].
 
 ### Gating affects whether Save and Reset succeed
 

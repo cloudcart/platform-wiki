@@ -5,8 +5,8 @@ aliases: ["Segment", "Customer segment", "Subscriber segment", "Audience", "Mail
 tags: [entity, marketing, customers, segments, subscribers]
 plan_gates: ["segments"]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Segment
@@ -26,7 +26,7 @@ This entity is split into 6 aspect pages, each covering one well-scoped slice. T
 - [[segment-entity-attributes-schema]] — every key attribute the merchant configures (`name`, `title`, `type`, `conditions`, cached counts, `active`, `processing`, `inactive_errors`, `channel`, soft-delete) + the pivot row fields.
 - [[segment-entity-types-onetime-automated]] — One-time (`regular`) vs Automated; AND-only composition (OR disabled); the full Automated event-trigger list; the no-fixed-cron rule.
 - [[segment-entity-lifecycle]] — Created → Built → Building → Ready → Updated → Inactive → Deleted; rebuild on the `segments` queue in 500-row chunks; what Inactive does.
-- [[segment-entity-membership]] — manual hand-add / hand-remove; why a manual remove does NOT survive a rebuild; the rebuild log (add/remove only); CSV export of the membership.
+- [[segment-entity-membership]] — manual hand-add / hand-remove; why a manual remove does NOT survive a rebuild; the rebuild log (add/remove only); no CSV export of the membership.
 - [[segment-entity-relationships]] — Subscribers / Campaigns / Customers / Discounts; deletion blocked by attached campaigns; cached `subscribers_count` / `campaigns_count`; the `segments` plan cap.
 - [[segment-entity-api-access]] — JSON-API v2 read-only surface, the hidden rule-tree fields, and the tag-based workaround for programmatic audiences.
 
@@ -53,7 +53,7 @@ The merchant-controlled identity of a Segment — the minimum to make it targeta
 
 ## Where it appears
 
-- [[marketing-segments]] — the master list of segments (create, activate, delete, regenerate, export).
+- [[marketing-segments]] — the master list of segments (create, activate, delete, regenerate; no export).
 - [[marketing-segments-editor]] — the rule builder for the conditions tree.
 - [[marketing-segments-subscribers]] — the per-segment subscriber list (manual add/remove + view who matches).
 - [[marketing-segments-log]] — the per-segment audit log of attach/detach events.

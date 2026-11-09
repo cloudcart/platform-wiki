@@ -7,8 +7,8 @@ aliases: ["Merchant billing lifecycle", "How merchant subscription works", "Subs
 tags: [billing, subscription, plan, lifecycle, concepts]
 plan_gates: []
 created: 2026-06-06
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Merchant subscription lifecycle (hub)
@@ -62,6 +62,7 @@ Every paid recurring item on the merchant's CloudCart account uses this lifecycl
 ## Related
 
 ### Subscription state machine + lifecycle
+- [[platform-terms-of-use]] — the contract (Общи условия) behind billing, renewal, termination.
 - [[subscription-lifecycle]] — the canonical state machine that this hub references.
 - [[plan-vs-feature-pack]] — when to upgrade plan vs buy a pack.
 - [[plan-gates]] — how the platform enforces plan limits across the admin.

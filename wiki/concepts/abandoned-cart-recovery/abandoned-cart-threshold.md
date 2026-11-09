@@ -5,8 +5,8 @@ aliases: ["Abandoned cart threshold", "abandoned_remainder_interval", "Cart aban
 tags: [orders, cart, abandoned, recovery, threshold, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[abandoned-cart-recovery]]. See the hub for the other aspects (eligibility, restore link, channels, bulk send, attribution, plan quota).
@@ -67,15 +67,15 @@ A platform-wide scheduled job runs **every 180 seconds** on the system queue. Pe
 3. The per-site job **skips the store entirely** if any of these are true:
    - The site is plan-expired.
    - The site is in maintenance mode.
-   - The site doesn't have the `abandoned_notification` plan feature (see [[abandoned-cart-plan-quota]]).
+   - The plan doesn't include the `abandoned_orders` feature (abandoned carts).
    - The master `abandoned_remainder` switch is OFF.
-4. Otherwise: loads abandoned carts that haven't been emailed yet (`date_sent IS NULL`), runs each through the seven-check eligibility filter (see [[abandoned-cart-eligibility]]), generates a restore code, dispatches the recovery email, and stamps `date_sent`.
+4. Otherwise: loads abandoned carts that haven't been emailed yet (`date_sent IS NULL`); before each cart it checks the `abandoned_notification` allowance (see [[abandoned-cart-plan-quota]]), runs the cart through the seven-check eligibility filter (see [[abandoned-cart-eligibility]]), generates a restore code, dispatches the recovery email, and stamps `date_sent`.
 
 So the recovery email fires after `abandoned_remainder_interval` **plus up to 3 minutes** of sweep latency.
 
 ### Quota-exhaustion behaviour mid-sweep
 
-The auto-sweep job throws a a plan-restriction error exception when the `abandoned_notification` quota is exhausted mid-run — the job **aborts at the first failing cart**, so subsequent carts in the same batch are NOT processed even if some could have qualified. The next sweep tick re-attempts from scratch. This is invisible to the merchant; the only visible signal is `date_sent` stamps stalling out before all eligible carts are sent. (verify)
+When the `abandoned_notification` quota is exhausted mid-run, the auto-sweep job **aborts at the first failing cart**, so subsequent carts in the same batch are NOT processed even if some could have qualified. The next sweep tick re-attempts from scratch. Within 12 hours the platform switches **Abandoned cart reminder** off and posts an Important alert in [[notifications]] — see [[abandoned-cart-plan-quota]].
 
 ### Example: 60-min timer, customer recovers after 6 hours
 
@@ -99,7 +99,7 @@ Lower the threshold to catch more carts; raise it to reduce email volume and quo
 
 - [[abandoned-cart-recovery]] — hub.
 - [[abandoned-cart-eligibility]] — the seven-check filter that runs AFTER the threshold is crossed.
-- [[abandoned-cart-plan-quota]] — the plan-feature quota that gates whether the sweep runs.
+- [[abandoned-cart-plan-quota]] — the plan-feature quota checked before each send.
 - [[settings-cart]] — `abandoned_remainder` master switch + `abandoned_remainder_interval` timer.
 - [[cart]] — the cart entity whose `updated_at` drives the threshold.
 - [[orders-abandoned]] — the merchant-facing list of carts past the threshold.

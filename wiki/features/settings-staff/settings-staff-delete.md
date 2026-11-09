@@ -7,8 +7,8 @@ aliases: ["Delete moderator", "Remove staff", "Staff delete", "CcDeleteComponent
 tags: [settings, staff, delete, security]
 plan_gates: ["administrators"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[settings-staff]]. See the hub for the other aspects (roles & list, create, edit, permissions, 2FA, force sign out).
@@ -59,9 +59,16 @@ The DELETE endpoint blocks any row with `type='owner'` and returns **HTTP 422** 
 
 Deleting a moderator is a **hard delete**: the account and its permissions are removed and it cannot be restored. What stays is the admin-notification emails sent during the account's lifecycle (`new_admin_account`, `admin_account_changes`, `admin_account_password_change`).
 
-### No admin notification fires on delete
+### Deleting is silent and leaves no record
 
-Unlike create / edit / password-change events, **deleting a moderator does NOT fire an admin notification** — there is no `admin_account_deleted` notification type in [[settings-admin-notifications]]. The four lifecycle notifications cover create / edit / password-change / password-reset; delete is silent. (verify)
+No email is sent: there is no delete notification among those on [[settings-admin-notifications]]. The store's event log gets no entry either; it records staff sign-ins, not staff changes. So who deleted a moderator, and when, cannot be read back afterwards.
+
+### What deleting does and does not touch
+
+- **Removed with the account:** its profile and contacts, its permissions, its saved filters and searches, and any pending sign-in or password-reset links.
+- **Kept:** everything that belongs to the store: settings, apps, SEO settings, products, orders. The delete does not touch them.
+- **Product change history** keeps the name the moderator had when they made each change, because the name is stored with the entry.
+- **Records that pointed at the moderator** (an order's assigned moderator, an order-history entry, a blog post's author or a blog comment) stay, with the link to the account cleared. (verify how each then shows the name)
 
 ### Plan-seat count decreases on delete
 
@@ -83,4 +90,3 @@ To end a moderator's sign-in right away, use **Force sign out** ([[settings-staf
 ## Open questions
 
 - Does deleting a moderator wipe their stored login sessions automatically, or does the session persist until natural expiry? (verify)
-- Is there any `admin_account_deleted` notification in flight, or is delete intentionally silent? (verify)

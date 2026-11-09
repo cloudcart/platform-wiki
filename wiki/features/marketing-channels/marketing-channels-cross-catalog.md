@@ -7,8 +7,8 @@ aliases: ["Channel catalog", "Channel mapping table", "Channel registry", "Ка�
 tags: [marketing, channels, campaigns, catalog, mapping]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-channels]]. See the hub for related aspects (lifecycle, suspension, plan caps, pre-flight, magic vars, UI surfaces).
@@ -36,12 +36,14 @@ Sidebar → **Marketing** → **Channels** (dropdown) → **Channels setup**. Th
 | Mapping | Name | Group | Subscriber channel | Provider | Plan-gate feature key |
 |---------|------|-------|--------------------|----------|----------------------|
 | `email` | Email | `email` | `Email` | Elastic Email (CloudCart-managed sub-account per store) | `campaign.channel.email` |
-| `sms_msghub_message` | SMS Msg Hub | `phone` | `Phone` | Link Mobility / MsgHub Bulgaria | `campaign.channel.sms_msghub_message` |
+| `sms_msghub_message` | SMS Msg Hub (**retired** — see below) | `phone` | `Phone` | Link Mobility / MsgHub Bulgaria | `campaign.channel.sms_msghub_message` |
 | `sms_nth_message` | SMS | `phone` | `Phone` | NTH Mobile | `campaign.channel.sms_nth_message` |
 | `viber_message` | Viber | `phone` | `Phone` | InfoBip Viber Business Messages | `viber_messages` |
 | `web_push` | Web Push | `web_push` | `WebPush` | Browser native (VAPID) | `campaign.channel.web_push` |
 
 The `mapping` column is the **key** used everywhere — in campaign action types, in [[marketing-subscribers#Channels - Email, Phone, Messenger, WebPush|SubscriberChannel]] rows, in routes, in logs, and in the plan-feature lookup. The merchant rarely sees these keys directly — they are surfaced through the channel cards' display name.
+
+**SMS Msg Hub is retired:** in the current platform code its module is not registered, so it is not loaded; SMS campaigns go through NTH (verify on production).
 
 The catalog itself lives in a global table read by every store; merchants do not add new channel TYPES, only configure which they want active. Other channels (Messenger, Voice) exist in the catalog but are disabled (`status = 0`) — they do NOT show on the Channels setup page.
 
@@ -63,7 +65,7 @@ The "from" semantics differ per channel — the merchant doesn't pick this per c
 | Channel | Sender identity | Verified how |
 |---------|-----------------|--------------|
 | Email | Email address on a domain the merchant owns | DNS records (SPF, DKIM, Tracking CNAME, DMARC) |
-| SMS MsgHub | `LINK Test` short code / alphanumeric (per Link Mobility / MsgHub contract) | MsgHub side; CloudCart-shared sender |
+| SMS MsgHub (retired) | Short code 1917 (`LINK Test` is a Viber config value, not the SMS sender) | MsgHub side; CloudCart-shared sender |
 | SMS NTH | `CloudCart` alphanumeric sender | NTH side; CloudCart-shared sender |
 | Viber | `CloudCart` Viber Business sender ID (or merchant's own when self-credentials active) | InfoBip + Viber business registration |
 | Web Push | Domain origin (the storefront URL the customer subscribed from) | Browser-enforced via VAPID public key |

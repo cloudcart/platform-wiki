@@ -7,8 +7,8 @@ aliases: ["Total Sales order filter", "Total Sales counted statuses", "Total Sal
 tags: [analytics, ccanalytics, orders, total-sales]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 > Part of [[analytics-total-sales]]. See the hub for the other aspects (comparison math, industry-compare badge, Details drill-down).
 
@@ -56,9 +56,9 @@ The configured status list is expanded into a status-vs-fulfillment OR clause at
 
 ### Which money field is summed
 
-The pipeline sums `amount_without_shipping`. Despite the tooltip phrasing ("sales plus taxes and shipping"), the verified backend sums the **products + product-discounts + VAT** portion of each order — shipping amount and shipping discount are excluded from the headline number.
+The pipeline sums `amount_without_shipping`. Despite its name, this is the **order total** (products after discounts, VAT, fees and shipping) whenever the store charges the shipping (the sender pays). Only when the **receiver pays** the courier directly is the shipping, net of its discount, taken off. So the tooltip ("sales plus taxes and shipping") is right for sender-paid shipping.
 
-The full per-line breakdown shown in [[analytics-total-sales-details]] does separately list `shipping_amount`, `shipping_discount_amount`, `tax_amount`, `vat_amount`, `discount_amount`, and `products_discount_amount` — but the chart and the big amount are `amount_without_shipping` aggregations.
+The per-line breakdown in [[analytics-total-sales-details]] shows the shipping, fee, VAT and discount parts as their own rows; the chart and the big amount sum `amount_without_shipping`.
 
 ### Storage layout & performance
 
@@ -76,7 +76,7 @@ There is **no the application framework-level cache** of the response — the Da
 
 - [[analytics-total-sales]] — hub.
 - [[settings-statuses]] — the order-status taxonomy the analytics-counted list is drawn from.
-- [[analytics-total-sales-details]] — the per-line table that exposes the excluded shipping/tax fields separately.
+- [[analytics-total-sales-details]] — the per-line table showing shipping, fee, VAT and discount rows separately.
 - [[analytics-total-sales-industry-compare]] — uses a **hardcoded** status filter, not this configurable list.
 - [[order]] — entity backing every counted row.
 - [[order-status-workflow]] — how an order moves through statuses.

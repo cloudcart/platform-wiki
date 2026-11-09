@@ -4,8 +4,8 @@ nav_path: "Entity → Order → Programmatic access (JSON-API v2)"
 aliases: ["Order API", "JSON-API v2 orders", "Order PATCH", "Order fulfillment API", "api2 order writes", "Order sub-resources API"]
 tags: [entity, orders, api, json-api-v2, programmatic]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[order]]. See the hub for the other aspects (identifiers, lifecycle, money, side-effects).
@@ -14,7 +14,7 @@ source_count: 3
 
 ## Identity
 
-The Order entity is exposed via **JSON-API v2** at `/api/v2/orders` — see [[api-orders]] for the canonical endpoint page. The API is **read + limited mutation**: integrations can read the full order graph (and most sub-resources via `?include=`), PATCH a small set of order-level attributes (`status`, `note_administrator`, `notify_customer`), and create / delete `order-fulfillment` records. They CANNOT create new orders, hard-delete orders, mutate addresses / line items / discounts, or trigger payment lifecycle actions (mark-paid / capture / cancel / refund / manual-confirm — admin-panel only).
+The Order entity is exposed via **JSON-API v2** at `/api/v2/orders` — see [[api-orders]] for the canonical endpoint page. The API is **read + limited mutation**: integrations can read the full order graph (and most sub-resources via `?include=`), PATCH order-level attributes (`status`, `note_administrator`, `notify_customer`, invoice number / date, `usn`), and create / delete `order-fulfillment` records. They CANNOT create new orders, hard-delete orders, mutate addresses / line items / discounts, or trigger payment lifecycle actions (mark-paid / capture / cancel / refund / manual-confirm — admin-panel only).
 
 The defining principle of the API is the **same-side-effects rule** — any allowed mutation runs through the EXACT same model pipeline as the admin-panel action that does the same thing. PATCHing `status` through the API runs `validateChangeStatus`, fires the same webhooks, writes the same [[orders-history]] row (tagged `api2` as the acting namespace), runs the same auto-promotion, the same stock effects, the same discount-uses counter increment, the same customer email. See [[json-api-v2]] for the side-effects principle in full.
 
@@ -65,15 +65,16 @@ The Order's sub-resources hang off `/api/v2/orders/{id}/relationships/{name}`. T
 
 ### PATCH-able attributes
 
-The settable set is small. The verbatim list (verify against `api2/Modules/Orders/Order/Validators.php`):
+Verified in code; the full list with validation is on [[api-orders-attributes]]:
 
 | Attribute | Effect of writing |
 |-----------|-------------------|
 | `status` | Runs through `validateChangeStatus` (see [[order-entity-lifecycle]]) — gates apply. Fires the same webhooks + history rows as the admin pill. |
-| `note_administrator` | Edits the internal-only admin note. Fires `order.updated`. |
-| `notify_customer` | Toggles the per-order email-suppression flag. Fires `order.updated`. |
+| `note_administrator` | Replaces the whole internal admin note (no append). |
+| `invoice_number`, `invoice_date`, `usn` | Invoice number and USN are single-write and unique. |
+| `notify_customer` | Toggles the per-order email-suppression flag. |
 
-The verbatim list of API-settable order attributes is intentionally narrow — most order-level fields are read-only to integrations to avoid bypassing the admin's interactive flows (which run additional UI-side validation).
+Other fields the order record accepts are written unchecked, so integrations send only what they change.
 
 ### `validateChangeStatus` runs on PATCH
 
@@ -141,6 +142,5 @@ Common merchant-facing patterns:
 ## Open Questions
 
 - The exact verbatim path for fulfillment create/delete: `/api/v2/orders/{id}/relationships/fulfillment` (verify against `api2/Modules/Orders/OrderFulfillment/Schema.php`).
-- The verbatim list of PATCH-able attributes — current understanding is `status`, `note_administrator`, `notify_customer` (verify against `api2/Modules/Orders/Order/Validators.php`).
 - Whether `order-modification` is read-only or has a write surface (verify).
 - Whether the API can read archived orders by default or requires an explicit `filter[archived]` (verify against [[api-orders]]).

@@ -7,8 +7,8 @@ aliases: ["Subscribers", "Newsletter subscribers", "Audience", "Абонати",
 tags: [marketing, subscribers, channels, contacts]
 plan_gates: ["subscribers"]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 13
+updated: 2026-11-09
+source_count: 14
 ---
 # Subscribers
 
@@ -37,7 +37,7 @@ This feature is split into 7 aspect pages, each covering one well-scoped slice. 
 - [[subscribers-channels]] — the 4 channel constants (`Email` / `Phone` / `Messenger` / `WebPush`), channel-identifier uniqueness, the merge flow, identity resolution (channel → customer → uuid → parent) on the platform code.
 - [[subscribers-import]] — the 4-step CSV-import wizard (`SubscribersImportModal`), 2FA gate (`EXPORT_IMPORT_ACTION_IMPORT_SUBSCRIBERS`), 8 mappable fields, two-source tag stacking, plan-cap truncation.
 - [[subscribers-settings]] — `SubscribersSettingsModal` (GDPR marketing / Revenue statuses / Bestseller interval / RFM interval) + `SubscribersLimitsModal` + RFM bucket catalogue + the 12-hour `subscribers_rfm` recompute cadence.
-- [[subscribers-lifecycle]] — source taxonomy (`subscriber_from`), marketing-consent capture, email verification, webhooks (`subscriber.created` / `updated` / `deleted`), GDPR erasure cascade, permission gating, plan-tier subscriber cap.
+- [[subscribers-lifecycle]] — source taxonomy (`subscribed_from`), marketing-consent capture, email verification, webhooks (`subscriber.created` / `updated` / `deleted`), GDPR erasure cascade, permission gating, plan-tier subscriber cap.
 
 Custom fields and subscribe-forms each have their own existing clusters and are NOT duplicated here:
 

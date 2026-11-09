@@ -5,8 +5,8 @@ aliases: ["Tax vs fee", "vat flag fee", "vat=no fee", "VAT on fee", "Fee stackin
 tags: [taxes, vat, finance, fees, stacking, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[tax-computation]]. See the hub for the other aspects (rate selection, pricing models, overrides, OSS, address resolution, order snapshot).
@@ -68,21 +68,21 @@ Each matching fee appears as a **separate line** on the order total. Three fees 
 
 The country-only restriction is for VAT. **Fees use the full geo-zone scope** — all 11 zone-value operations (country, region, city, polygon, distance, post-code, neighbourhood, etc.) — so a fee can target *"Sofia city only"* and it will fire when the customer's address resolves to a Sofia-area cart. This is a subtle but important asymmetry: a zone that's useless for VAT can still be used to scope a fee. See [[tax-rate-selection]] for the VAT country-only restriction.
 
-## The `shipping` flag — `tax.before` vs `tax.after` bucketing
+## Fees before shipping, VAT after (`tax.before` / `tax.after`)
 
-**Important clarification.** Older wiki phrasing framed the `shipping` flag as *"controls whether the same tax rate also applies to the shipping cost line"*. **That is misleading.** The flag's actual job is to decide WHEN in the totals pipeline the rule fires:
+The buckets are fixed by the kind of rule, not by the `shipping` flag:
 
-- **`shipping = no`** — fires in the **`tax.before`** bucket (before shipping is calculated). Standard for ordinary VAT rules and most fees.
-- **`shipping = yes`** — fires in the **`tax.after`** bucket (after shipping is calculated). Used when the rule needs to see post-shipping totals.
+- **Fees** are always computed in the **`tax.before`** bucket, before shipping (fees are saved with `shipping = no`).
+- **VAT** is always computed in the **`tax.after`** bucket, after shipping, over goods, fees and shipping together. A VAT rule's `shipping` value is stored but not read.
 
-**Whether VAT applies to the shipping line itself is a SEPARATE mechanism** — driven by the shipping quote's own `allow_modify_vat` flag (set by each shipping provider integration), not by the Tax row's `shipping` flag. See [[shipping-calculation]]. For most merchants this distinction is invisible — domestic VAT rules use `shipping = no` (the default) and shipping is taxed via the provider's own VAT handling.
+**Whether VAT applies to the shipping line** is decided per quote (`allow_modify_vat`): only when the store charges the shipping (sender pays) and the courier integration supports it. See [[settings-taxes-pricing-display]].
 
 ## Contrasts
 
 - **Fees stack additively vs VAT picks one winner** — three fees all match → all three apply, three invoice lines. Three VAT rules all match → ONLY ONE applies. This asymmetry surprises merchants — the VAT picker is singular, the fee picker is additive.
 - **`vat = no` on a fee ≠ "fee is VAT-exempt"** — it just means "this row is a fee, not a VAT row". VAT is still computed against the fee amount and added on top (or extracted from inside the fee in GROSS stores — see [[tax-pricing-models]]).
 - **Fee's full-scope geo-zone vs VAT's country-only geo-zone** — fees can target city / polygon / post-code, VAT cannot.
-- **`shipping = yes`/`no` (bucketing) vs `allow_modify_vat` (VAT-on-shipping decision)** — two unrelated mechanisms. The `shipping` flag picks the pipeline bucket; `allow_modify_vat` decides whether the shipping line itself gets VAT.
+- **Rule kind (bucket) vs `allow_modify_vat` (VAT on shipping)** — fees go before shipping, VAT after; `allow_modify_vat` decides whether the shipping line gets VAT.
 
 ## Worked example — cash-on-delivery fee with VAT on top
 

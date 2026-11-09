@@ -7,8 +7,8 @@ aliases: ["SMS NTH DLR", "NTH webhook", "NTH delivery report", "NTH status mappi
 tags: [marketing, channels, sms, nth, dlr, webhook, status]
 plan_gates: ["campaign.channel.sms_nth_message"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 # SMS NTH — DLR webhook & status mapping
 
@@ -44,7 +44,7 @@ NTH's status nomenclature is richer than MsgHub's numeric HTTP codes. The channe
 
 | NTH status | CloudCart status |
 |------------|------------------|
-| `PENDING` | (null — keep current status; DOESN'T overwrite — let the next DLR transition update it) |
+| `PENDING` | (no status — it **does** overwrite the current status; the row shows "N/A") |
 | `ACCEPTED` | SENT |
 | `DELIVERED`, `DELIVRD`, `RECEIVED` | DELIVERED |
 | `SEEN` | SEEN |
@@ -56,13 +56,13 @@ NTH's status nomenclature is richer than MsgHub's numeric HTTP codes. The channe
 | (anything else uppercase) | the uppercase status string passes through as-is |
 | (null / empty) | NOT_SENT |
 
-These map to the canonical `STATUS_*` constants and surface in the per-channel Logs view.
+These map to the canonical `STATUS_*` constants and surface in the per-channel Logs view. An UNDELIVERED, UNDELIVERABLE, REJECTED or EXPIRED result marks the subscriber's phone bounced, so later SMS **and** Viber to it are skipped as „Спам“ — see [[marketing-channels]].
 
 ### Forgiving status handling (vs MsgHub's strict codes)
 
 Beyond the documented mappings, the platform is **deliberately forgiving**:
 
-- `PENDING` returns null — it does **not** overwrite the existing log status, so a transient PENDING never clobbers a real outcome.
+- `PENDING` maps to no status and **does** overwrite the existing log status, so the row shows "N/A".
 - Any **unknown uppercase** value passes through as-is (becomes the new status string), so new NTH statuses are still recorded for forensics even if CloudCart hasn't mapped them.
 - Empty / null status → `STATUS_NOT_SENT`.
 

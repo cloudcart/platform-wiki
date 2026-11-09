@@ -7,8 +7,8 @@ aliases: ["Smart Collections editor", "Smart Collections modal", "Smart Collecti
 tags: [products, collections, selections, editor, modal, seo]
 plan_gates: ["product_collections"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[products-smart-collections]]. See the hub for the other aspects (list view, rule builder, rule types, evaluation, storefront side-effects, rules and limits).
@@ -46,7 +46,7 @@ The Advanced card is rendered through the shared `SeoGooglePreview` block — th
 
 ### What the merchant cannot do from this modal
 
-- Manually pick specific products into the collection (the manual cross-sell list lives on each product's editor under Linked Products in [[products-products]]).
+- Keep a separate hand-picked list; specific products go in through a **Products** rule ([[smart-collections-rule-types]]). The cross-sell list is Linked Products in [[products-products]].
 - See / edit which discounts are linked to the collection (discount management is in the Discounts feature; the list view does surface the linked discount(s) per collection — see [[smart-collections-list-view]]).
 - Reorder products within a collection from this modal — product order on the storefront is governed by the product-field sort on the theme layer.
 

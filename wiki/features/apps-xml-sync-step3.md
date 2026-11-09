@@ -7,8 +7,8 @@ aliases: ["XML Sync Step 3", "XML Sync operations", "XML Sync rules"]
 tags: [apps, imports, xml, sync, operations, rules, wizard]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-10-21
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # XML Sync → Step 3 (Operations & Rules)
 
@@ -29,7 +29,7 @@ Sidebar → Apps → XML Sync → wizard → Step 3 (after Step 2). Route: `/adm
 ### Sticky controls
 
 - **Back** → returns to [[apps-xml-sync-step2]].
-- **Save job** primary button → persists the operations, takes the task out of draft and returns to the task list. An active task is picked up by the next sync run.
+- **Save job** primary button → persists the operations, takes the task out of draft and returns to the task list. A new task is active by default (the wizard has no inactive option; use the list switch) and is read on the next queue pass.
 - Loading spinner during save.
 
 ### Operations and Rules section
@@ -62,7 +62,7 @@ Step 3 has no option for products that disappear from the feed. Step 1 has two s
 
 ### Save job = task active for recurring sync
 
-Clicking "Save job" persists the operations and takes the task out of draft; an active task is picked up by the next sync run. The merchant returns to [[apps-xml-sync-settings]] / [[apps-xml-sync-status]] to monitor.
+Clicking "Save job" persists the operations and takes the task out of draft; an active task is read on the next queue pass. The merchant returns to [[apps-xml-sync-settings]] / [[apps-xml-sync-status]] to monitor.
 
 ### Step 3 references Step 2 mappings
 
@@ -100,7 +100,7 @@ Per the controller code: there is no preview endpoint that simulates a transform
 
 ### Save persists, next scheduled sync picks it up — Save toggle off+on triggers sooner
 
-Save wraps the Step 3 update in a DB transaction and returns success. **No immediate-run side-effect**. However, the task's update hook clears the feed hash and re-initialises the parser queue, so the next queue tick re-parses this task even if the 12h timer hasn't elapsed. For a faster trigger the merchant flips the task's Active switch off and on from [[apps-xml-sync-settings]].
+Save clears the task's last-read time and feed hash and starts the parser at once, so the task is read on the next queue pass (its own job follows about a minute later), not after the interval. Flipping the Active switch is not faster.
 
 ### Step 3 save is not validated — broken references silently no-op
 

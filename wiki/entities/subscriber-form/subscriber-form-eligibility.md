@@ -3,8 +3,8 @@ type: entity
 aliases: ["Subscribe form eligibility", "Subscribe form visibility", "When a subscribe form shows", "Popup display rules", "Subscribe form GDPR cookie gate", "Subscribe form dismissal cookie", "Видимост на форма за абонамент"]
 tags: [marketing, customers, gdpr, entity]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Subscribe Form — Eligibility & visibility
@@ -28,7 +28,7 @@ source_count: 4
 | Attribute | What the merchant controls | Notes |
 |-----------|----------------------------|-------|
 | **Display for all** (`displayForAll`) | Show even to already-subscribed visitors | Boolean (default false). When false, identified subscribers don't see the popup. When true, every page-load can render it. |
-| **Cookies consent** (`cookies_consent`) | **Inverted semantic.** | Boolean. When `true`, the form is treated as already-handling consent and is shown regardless of the GDPR `targeting` cookie group. When `false` (or null = unset, the default), the form is suppressed until the visitor accepts the `targeting` cookie group (see [[apps-gdpr-cookies]]). The storefront filter keeps only `cookies_consent = true OR null` while `targeting` is unaccepted. |
+| **Cookies consent** (`cookies_consent`) | **Inverted semantic.** | Boolean. When `true`, the form is treated as already-handling consent and is shown regardless of the GDPR `targeting` cookie group. When `false`, the form is suppressed until the visitor accepts the `targeting` cookie group (see [[apps-gdpr-cookies]]). The storefront filter keeps only `cookies_consent = true OR null` while `targeting` is unaccepted, so `null` behaves like `true`. Every save in the builder stores `true` or `false` (the checkbox *"Покажи формата дори още да не са приети политиките за Бисквитки"*, ticked = `true`), so `null` exists only on forms not saved since the field was added. |
 | **Dismissal cookie** (`popup-subscription-displayed_<form-id>`) | (auto, set by the visitor) | Browser cookie written `= false` when the visitor closes the popup; subsequent fetches exclude that form id. See below. |
 | **`includedUrls[]` / `excludedUrls[]`** | URL allow / block lists | Stored under `pages.form`; restrict the form to (or away from) specific storefront URLs. |
 
@@ -41,11 +41,11 @@ A popup-mode form (`embedded = false`) is included in the bulk `GET /subscribers
 3. `type = 'form'`.
 4. `embedded != true` (`false` or `null`).
 5. If the visitor is identified (already a known subscriber): `displayForAll = true`. Anonymous visitors get all eligible forms regardless.
-6. If GDPR `targeting` cookie group has NOT been accepted: only forms with `cookies_consent = false` (or null) are returned.
+6. If GDPR `targeting` cookie group has NOT been accepted: only forms with `cookies_consent = true` (or null) are returned.
 7. No `popup-subscription-displayed_<form-id> = 'false'` cookie is set for that form (dismissal cookie).
 8. Hard cap of **5 results**.
 
-> Note the inverted semantic in filter 6: a form left at the **default** `cookies_consent = null`/`false` is the one that is **suppressed** until the visitor accepts the `targeting` cookie group. To show a form before cookie consent, the merchant must explicitly set `cookies_consent = true`.
+> Note the inverted semantic in filter 6: a form saved with `cookies_consent = false` (checkbox unticked) is the one that is **suppressed** until the visitor accepts the `targeting` cookie group. To show a form before cookie consent, tick the checkbox (`true`).
 
 ## Embedded-mode shortcut
 
@@ -65,7 +65,7 @@ All public `/subscribers/forms/*` endpoints carry CORS middleware, because:
 ## Where it appears
 
 - [[marketing-subscribers-subscribe-forms]] — where `displayForAll`, `cookies_consent`, and URL include/exclude lists are configured.
-- [[apps-gdpr-cookies]] — the `targeting` cookie group whose acceptance gates `cookies_consent = false`/null forms.
+- [[apps-gdpr-cookies]] — the `targeting` cookie group whose acceptance gates `cookies_consent = false` forms.
 - [[marketing-subscribers]] — destination of subscribers who get past the eligibility gate and submit.
 
 ## Related

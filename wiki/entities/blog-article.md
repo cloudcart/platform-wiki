@@ -4,8 +4,8 @@ nav_path: "Entity → Blog Article"
 aliases: ["Blog Article", "Blog post", "Article", "Post", "News article", "Блог статия", "Статия", "Публикация"]
 tags: [entity, blog, marketing, content]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Blog Article
 
@@ -32,7 +32,7 @@ The article record carries a title, a unique `slug` / `url_handle`, a rich-text 
 Headline points:
 
 - **One article belongs to one [[blog-category|Blog Category]]** via `category_id`, required at publish — see [[blog-article-entity-business-rules]].
-- **Slug must be unique within the store**; renaming auto-creates a 301 redirect from the old slug.
+- **Slug must be unique within the store**; on a rename the old slug is kept in a hidden 30-day history, not as a row on the 301 Redirects screen ([[seo-301-redirects-auto-tracking]]).
 - **Title length caps differ by save path** — 191 chars in the modern admin form, 3,191 at the model level (legacy editor / CSV import / API). Keep under 191 for cross-path safety.
 - **The author is a store admin, not a customer** — `author_id` points at the `admins` table.
 - **Per-language translations** of `title`, `body`, `excerpt`, and SEO fields are independent copies.

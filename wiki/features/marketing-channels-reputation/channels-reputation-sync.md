@@ -7,8 +7,8 @@ aliases: ["Reputation sync", "Reputation sync cadence", "12-hour reputation sync
 tags: [marketing, channels, reputation, sync, background-job, email]
 plan_gates: ["campaign.channel.email"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-channels-reputation]]. See the hub for the other aspects (modal surface, metrics, auto-suspend).
@@ -70,11 +70,11 @@ On a cache miss the API performs a synchronous live call to Elastic Email and re
 
 ### Each sync feeds the auto-suspend check
 
-Immediately after writing the snapshot, the same background pass evaluates the just-synced metrics against the channel's thresholds and updates the suspend state. The full threshold logic, the 500-message floor, and the 99% exemption are on [[channels-reputation-auto-suspend]].
+Immediately after writing the snapshot, the same background pass evaluates the just-synced metrics against the channel's thresholds and updates the suspend state. **Only channels that are currently active are evaluated** — a channel that is off, including one already suspended, is skipped, so a suspension never lifts by itself. The full threshold logic, the 500-message floor, and the 99% exemption are on [[channels-reputation-auto-suspend]].
 
 ### API-key expiry deactivates instead of writing a row
 
-If the reputation fetch throws an "APIKey Expired" error (Elastic Email rejecting the stored key), the platform deactivates the channel without writing a reputation row, rather than recording a bad snapshot — the recovery path is on [[channels-reputation-auto-suspend]].
+If the reputation fetch throws an "APIKey Expired" error (Elastic Email rejecting the stored key), the platform deactivates the channel without writing a reputation row, rather than recording a bad snapshot — with no suspend reason and no alert. The recovery path is on [[channels-reputation-auto-suspend]] and [[email-channel-reconnect]].
 
 ## Related
 

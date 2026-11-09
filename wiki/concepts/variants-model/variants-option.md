@@ -5,8 +5,8 @@ aliases: ["Variant Option", "Parameter Option", "Option value", "Option entity",
 tags: [catalog, variants, parameters, options, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[variants-model]]. See the hub for the other aspects (Parameter, matrix generation, pricing, inventory link, image mapping, known issues).
@@ -57,14 +57,14 @@ Options surface on:
 | Field | Behaviour |
 |-------|-----------|
 | **Name** | "Red", "Blue", "S", "M", "L", … Renames propagate to every Variant's denormalised `v1` / `v2` / `v3` text label catalogue-wide. |
-| **Image** | Upload (Image sample type only). Stored under `parameter/images`. |
+| **Image** | Upload (Image sample type only): jpg, jpeg, jpe, gif, png, svg or webp, up to 30 MB. Shown on the storefront as a 150 × 150 px thumbnail. See [[products-variants-values]]. |
 | **Colour** | Hex code (Colour sample type only). Shown as a swatch on the storefront. |
-| **Width / Height** | Pixel dimensions for the swatch (2D schema and image-type only). Controls the rendered size. |
+| **Width / Height** | Not in the admin value form; the swatch size is not set per value. |
 | **Settings** | JSON blob — type-specific extras (image cropping coordinates, 2D-overlay positioning, etc.). |
 | **Sort order** | integer. Drag-reorder on the Values sub-page; controls the order on storefront pickers. |
 | **Active** (`visible`) | yes / no. When `no`, the Option is hidden from storefront pickers but Variants that already reference it keep their data. |
 
-The Option field set depends on the parent [[variants-parameter|Parameter]]'s display type — a Select-type Parameter shows only name; a Colour sample type shows name + hex code; an Image sample type shows name + image upload + width/height; a 2D schema type shows the overlay editor. The merchant cannot upload an image to a Select-type Option — the form simply doesn't expose that field. The **full per-type form + validation table** is on [[products-variants-types]] (also documents the storefront DOM each type renders on [[product-detail]]).
+The Option field set depends on the parent [[variants-parameter|Parameter]]'s display type — a Select-type Parameter shows only name; a Colour sample type shows name + hex code; an Image sample type shows name + image upload; a 2D schema type shows the overlay editor. The merchant cannot upload an image to a Select-type Option — the form simply doesn't expose that field. The **full per-type form + validation table** is on [[products-variants-types]] (also documents the storefront DOM each type renders on [[product-detail]]).
 
 ### Cascade rename — Option name propagates to every Variant
 

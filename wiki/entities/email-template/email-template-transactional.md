@@ -3,8 +3,8 @@ type: entity
 aliases: ["Transactional email template", "Mail template", "Customer notification template", "Per-event email", "Транзакционен имейл шаблон"]
 tags: [marketing, email, templates, transactional, entity]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[email-template]]. See the hub for the other aspects (campaign authoring, merge variables, channel delivery).
@@ -35,7 +35,7 @@ Each transactional template has a **per-event allowed-variable list** (e.g., `{$
 | **Subject** (`subject`) | Free-text per-language | The email subject line. May reference merge variables from the allowed list (e.g., *"Order #{$order_id} confirmed"*). Some events have **required subject variables** (order-related events require `{$order_id}`). Capped at `max:191`. |
 | **HTML body** (`message_html`) | Edited in the Unlayer editor | The rendered HTML the customer receives. Stored alongside `template_json` for re-editing. |
 | **Active flag** (`active`) | Per-template (in the editor) | When `active = 0` AND the global `customer_email_notifications` setting is `yes`, this specific event's email is suppressed but others still fire. Independent of the page-level global on/off toggle. |
-| **Language** (`MailLanguage` row) | Per language the store supports | Each transactional template has one row per active store language. The list shows the row matching the admin's CP language. Editing edits ONLY the currently-selected language version — switching language opens a different row. |
+| **Language** (`MailLanguage` row) | Per language the store supports | Each transactional template keeps one version per language. The list, the editor and every send use the version in the store's language (the storefront language), falling back to the English version when that language has none. The admin's own language and the shopper's language play no part. |
 | **Last edited** (`last_edited`) | n/a (auto-bumped on save) | Drives the **Last edited** column on [[marketing-omnichannel-mails-list]]. |
 
 Transactional templates are stored in the `mails` + `mails_language` tables.
@@ -67,4 +67,4 @@ Transactional sends are NOT subject to [[marketing-campaigns-policy]] (the anti-
 
 ## Open Questions
 
-- ⏸️ The fallback behaviour when the merchant has not localised a transactional template for one of the store's active languages — does the customer see the fallback language version silently, or is there a UI hint?
+No outstanding questions.

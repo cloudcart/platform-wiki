@@ -7,8 +7,8 @@ aliases: ["Landing pages by sales", "Top landing pages by sales", "Sales by land
 tags: [analytics, ccanalytics, orders, traffic, landing-pages-by-sales]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-06-10
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 # Landing pages by sales
 
@@ -42,7 +42,7 @@ The date picker only allows selection from **January 1, 2023 onwards** (`collect
 Each row is one landing page, sorted by revenue DESC, limit 5:
 
 - `name` — page title, or **"Home page"** for the home-page fallback row.
-- `aggregate` — total revenue from orders that started on this page (`amount_without_shipping` — **shipping excluded**, same as the Sales-by-Source boxes).
+- `aggregate` — revenue of orders that started here (`amount_without_shipping`, [[analytics-total-sales-order-filter]]).
 - `meta.row1` — orders count, formatted "Order X / Orders X" (BG: "Поръчка X / Поръчки X").
 - `device` — mobile / desktop order split.
 
@@ -74,7 +74,7 @@ The dashboard box itself shows no date / compare / group / export controls — t
 
 Each order initially records its landing page as empty. A background job (queued with a **1-hour delay**) then looks up the buyer's traffic-source events, finds the first page-view, and back-fills the landing page. **Until that job completes, the order is invisible to this box** — new orders typically appear ~1 hour after completing, later than the visit-side boxes.
 
-If the buyer has no recorded page-view events (cookie deleted, or tracking blocked), the job re-queues instead of writing an empty attribution. In effect, **orders from buyers with broken tracking never get attributed** — they appear in neither this box, nor [[analytics-sales-by-traffic-source]], nor [[analytics-orders-by-social-source]].
+If no arrival is recorded for the buyer's `uuid` by then (cookie deleted, tracking blocked), the job ends without retrying: the order **never gets a landing page** and is missing from this box only. [[analytics-sales-by-traffic-source]] and [[analytics-orders-by-social-source]] use the source stored on the order itself, so they still count it (as **Direct** when nothing was captured).
 
 ### Seven landing-page types
 
@@ -98,7 +98,7 @@ When no specific product / category page was recorded (`record_id == 0`), the ro
 
 ### Status filter — driven by Settings → Analytics → Order statuses
 
-The dashboard and Details views apply the merchant's status picker (unlike the by-sales Products / Bundles boxes). **ViewMore is asymmetric**: its per-date time-series ignores the status picker and shows **all** orders for that landing page, regardless of the selected statuses. Could be intentional (the full traffic story for one page) or a bug — flagged in Open questions.
+The dashboard and Details views apply the merchant's status picker (unlike the by-sales Products / Bundles boxes). **ViewMore is asymmetric**: its per-date time-series ignores the status picker and shows **all** orders for that landing page, regardless of the selected statuses. Flagged in Open questions.
 
 Unlike the Products / Bundles boxes, Details runs the full unbounded paginated list (no force-limit cap).
 

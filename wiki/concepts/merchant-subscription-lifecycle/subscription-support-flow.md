@@ -5,8 +5,8 @@ aliases: ["Subscription support flow", "Where do I see my subscription", "Profil
 tags: [billing, subscription, support, navigation, lifecycle, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[merchant-subscription-lifecycle]]. See the hub for the other aspects (states, renewal-retry, expiration, cancellation, feature packs, payment methods, invoices).
@@ -68,11 +68,11 @@ The numbering matches the canonical 12 questions covered across the cluster.
 
 6. **Where do I see my invoices?** → [[billing-invoicing]] (company info printed on invoices); `/admin/details/invoices` (issued PDFs); [[details-billing]] (transaction history + Download links). See [[subscription-invoices]].
 
-7. **How does renewal work?** → Daily pipeline + `subscription.upcoming.payment` webhook 7 days ahead + manual **Renew** on [[subscriptions]]. See [[subscription-renewal-retry]].
+7. **How does renewal work?** → Daily pipeline + a pre-billing e-mail 7 days ahead (promised by Terms §11.5) + manual **Renew** on [[subscriptions]]. See [[subscription-renewal-retry]].
 
 8. **What happens if my card fails?** → 5-attempt retry with 2 / 3 / 4 / 5 day gaps; 1-month grace; [[expired-subscription]] takeover on day ~30 for plan subscriptions. See [[subscription-renewal-retry]] + [[subscription-expiration]].
 
-9. **How do I cancel?** → [[subscriptions]] → **Cancel**. Soft — access kept until `next_billing_date`. No proration. See [[subscription-cancellation]].
+9. **How do I cancel?** → [[subscriptions]] → **Cancel**. Soft — access kept until `next_billing_date`. No proration, no refund (Terms §11.2, §11.13). See [[subscription-cancellation]]; for prices in EUR without VAT, refunds and the turnover rule see [[terms-of-use-billing-renewal]].
 
 10. **What happens when my plan expires?** → [[expired-subscription]] takeover; allowlist of accessible screens; recovery via Renew or new plan. See [[subscription-expiration]].
 

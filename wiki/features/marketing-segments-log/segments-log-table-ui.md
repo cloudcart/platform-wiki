@@ -7,8 +7,8 @@ aliases: ["Segment log table", "Segment log columns", "Segment log pagination", 
 tags: [marketing, segments, log, audit, ui]
 plan_gates: ["segments"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 > Part of [[marketing-segments-log]]. See the hub for the other aspects (the action vocabulary, the storage model, and batch rows).
 
@@ -33,7 +33,7 @@ The table fills the body of `/admin/marketing/segments/log/:id`, reached by clic
 The merchant **cannot**:
 
 - Filter the log by action type, channel, or date range — there are no filters on this page (the table renders with `:filters="false"`).
-- Export the log to CSV — no export action is available here. For subscriber-list export, see [[marketing-segments]] → "Generate CSV file".
+- Export the log to CSV — no export action is available here, and the segment's subscribers cannot be exported either (see [[marketing-segments]]).
 - Delete individual log entries — log rows are immutable (see [[segments-log-storage-model]]).
 - Edit the segment from here — the merchant must navigate back to [[marketing-segments]] to edit.
 

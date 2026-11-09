@@ -7,8 +7,8 @@ aliases: ["AI agent", "AI co-worker", "Connect your store to an AI agent", "Conn
 tags: [ai, agent, automation, bulk-edit, cli, mcp, concepts]
 plan_gates: []
 created: 2026-11-03
-updated: 2026-11-03
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # AI agent connected to the store
@@ -25,6 +25,8 @@ A merchant can connect their store to an **AI agent**: Claude, ChatGPT, Cursor o
 The merchant connects it with one sentence copied from the admin, see [[ai-agent-connect]]. The agent then sets itself up and asks only for what the merchant alone can give.
 
 The agent runs in its own app, on the merchant's computer or wherever that agent runs. It is not an app installed in the store and it has no screen in the admin. It reaches the store through the **Admin GraphQL API**, with a sign-in the merchant gave it.
+
+**Cost and plans.** Connecting needs no app, add-on or particular plan, and CloudCart charges nothing for the card, the toolkit or the token. The merchant pays only their AI provider, under their own subscription there. The agent's requests share the store's Admin GraphQL limit of 300 a minute, and stop with HTTP 402 while the store has unpaid subscriptions ([[admin-graphql-api]]).
 
 ## Scope
 

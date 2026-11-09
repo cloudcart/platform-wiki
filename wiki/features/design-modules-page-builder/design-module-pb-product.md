@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Dynamic Pages → Page-builder modules → Product"
+nav_path: "Design → Static pages → Dynamic page → Page-builder modules → Product"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["Product module", "Product detail block", "Single product block", "Модул продукт"]
 tags: [design, modules, page-builder, product, marketing]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Product block (`product`)

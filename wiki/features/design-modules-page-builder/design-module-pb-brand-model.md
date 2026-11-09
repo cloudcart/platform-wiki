@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Dynamic Pages → Page-builder modules → Brand + model"
+nav_path: "Design → Static pages → Dynamic page → Page-builder modules → Brand + model"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["Brand model module", "Car parts picker", "Brand model homepage filter", "Модул марка модел"]
 tags: [design, modules, page-builder, brand-model, car-parts, marketing]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Brand + model block (`brand-model`)

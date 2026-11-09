@@ -7,8 +7,8 @@ aliases: ["Review submission rules", "Verified-buyer mode", "max_days", "Review 
 tags: [marketing, apps, reviews, validation, storefront, verified-buyer]
 plan_gates: ["product_reviews_added_rating"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # Reviews — Submission rules (storefront-side validation)
@@ -77,7 +77,7 @@ The storefront's `getComments` endpoint paginates **10 reviews per page**. This 
 
 ### Subscriber-link review submission has its own flow
 
-When the merchant sends "Leave a review" links to subscribers (via a campaign with the review module — see [[marketing-campaigns]] and [[subscriber]]), the email contains an encrypted hash of `{subscriber_id, order_id}`. Submitting via that link uses a different endpoint that **doesn't require login** — and it deletes the link record on first submission, so the same email link only works once. Demo links (with `subscriber_id = 'demo-url'`) just load the 100 most recent orders' products as a preview, no real submission. This flow is used by campaign templates that solicit reviews after fulfilment.
+A campaign's `{$products_leave_feedback_url}` ([[apps-product-review-campaign-link]]) opens a page listing the subscriber's bought, unreviewed products; submitting from it **doesn't require login**. The link keeps working for the products not yet reviewed, and `max_days` applies there in **every** mode, counted from the order's creation date. Demo links (with `subscriber_id = 'demo-url'`) just load the 100 most recent orders' products as a preview, no real submission.
 
 ## Business rules
 
@@ -119,5 +119,4 @@ When [[apps-product-review]] is uninstalled then reinstalled, the install hook r
 
 ## Open questions
 
-- 📡 **Two-language stores and `max_days`.** Does the `max_days` window honour the order's `paid_at` or `date_added` exactly? The two can differ for delayed-payment methods. (verify)
 - 📡 **Re-review after refund.** If the order is refunded after the review is written, does the review stay published? (verify)

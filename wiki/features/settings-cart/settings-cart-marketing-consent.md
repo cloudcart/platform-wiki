@@ -7,8 +7,8 @@ aliases: ["Marketing checkbox", "I accept marketing", "hide_marketing", "Terms o
 tags: [settings, cart, checkout, marketing, gdpr, consent, terms-of-service]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-cart]]. See the hub for the other aspects (accounts, abandoned reminder, payment/shipping defaults, limits, checkout fields, UI behavior, Google Maps).
@@ -17,13 +17,13 @@ source_count: 3
 
 ## Purpose
 
-The box on the Cart and checkout page that controls the **storefront consent UI** at checkout — specifically the "I accept marketing" checkbox, the Terms of Service page link, and a list of additional consent pages (privacy policy, returns policy, etc.). This entire box is **only visible when CloudCart's GDPR app is NOT installed**. When the GDPR app is active, it provides its own consent UI and overrides everything in this box, so the screen hides it.
+The box on the Cart and checkout page that controls the **storefront consent UI** at checkout — specifically the "I accept marketing" checkbox, the Terms of Service page link, and a list of additional consent pages (privacy policy, returns policy, etc.). This entire box is **hidden while CloudCart's GDPR app is installed and switched on**. Then the app provides its own consent UI and overrides everything in this box.
 
 ## Where to find it
 
 Sidebar → Settings → **Cart and checkout** → box **Marketing and Terms of service** (`marketing`).
 
-This is the **eleventh** box on the page, appearing only when CloudCart's GDPR app is NOT installed. With the GDPR app active, the box is hidden entirely — see the "GDPR app overrides this box" rule below.
+This is the **eleventh** box on the page. It is hidden while the GDPR app is installed and switched on, and shown when the app is not installed or switched off — see the rule below.
 
 ## What the merchant can do here
 
@@ -57,12 +57,12 @@ Both transitions use `Vue3SlideUpDown` with **180 ms** duration. The selected pa
 
 ### GDPR app overrides this entire box
 
-When the GDPR app is installed and active, the **Marketing and Terms of service** box is hidden from the Cart and checkout page entirely — that app provides its own consent UI (with finer-grained controls and audit logging). If the merchant uninstalls the GDPR app, the box reappears on next page load and the previously-saved settings (if any) take effect again.
+When the GDPR app is installed and active, the **Marketing and Terms of service** box is hidden from the Cart and checkout page entirely — that app provides its own consent UI (with finer-grained controls and audit logging). If the merchant switches the GDPR app off, uninstalls it, or stops paying for it, the box's saved settings take effect on the storefront again at once, and the box shows again in the admin.
 
 So the merchant has two mutually-exclusive paths:
 
-1. **GDPR app installed** — consent UI is handled by the GDPR app. This box is invisible.
-2. **GDPR app NOT installed** — consent UI is handled by this box. The merchant configures the marketing checkbox + Terms of Service page + additional consent pages here.
+1. **GDPR app installed and switched on** — consent UI is handled by the GDPR app. This box is invisible.
+2. **Otherwise** — consent UI is handled by this box: the marketing checkbox, the Terms of Service page and the additional consent pages.
 
 ### `hide_marketing` is inverted
 
@@ -74,7 +74,7 @@ The save handler drops `checkout_other_pages` from the payload entirely if the m
 
 ### `meta.policies` source
 
-The dropdown options for both Terms of Service (`checkout_terms_page`) and the additional consent pages multi-select come from `meta.policies` — the merchant's CMS Pages collection. The merchant creates the pages first in the CMS (Sidebar → Web pages → Pages or equivalent) and then picks them here. Pages deleted from the CMS after being selected here remain referenced in the setting but render as broken links on the storefront — the merchant should re-save this box after deleting referenced pages.
+The dropdown options for both Terms of Service (`checkout_terms_page`) and the additional consent pages multi-select come from `meta.policies` — the merchant's CMS Pages collection. The merchant creates the pages first in the CMS (Sidebar → Web pages → Pages or equivalent) and then picks them here. A selected page that is later deleted or deactivated stays referenced in the setting, but its checkbox simply stops showing at checkout.
 
 ### Marketing consent vs newsletter subscribers
 
@@ -82,7 +82,7 @@ The "I accept marketing" checkbox at checkout is a **consent flag stored on the 
 
 ### Terms of Service link interaction with the checkout submit button
 
-The Terms of Service checkbox at checkout typically gates the submit button — the customer cannot complete the order until it's ticked. The exact gating logic is implemented at the storefront-checkout level (not in this settings page). The merchant should test that the chosen page renders correctly and that the link works.
+The Terms of Service checkbox and each additional page's checkbox read **I accept** / **Приемам** followed by the page's name, linking to the page. Each is required: an order is not submitted until every one is ticked. The "I accept marketing" checkbox is optional.
 
 ## Related
 

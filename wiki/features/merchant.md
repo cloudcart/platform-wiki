@@ -7,8 +7,8 @@ aliases: ["Merchant profile", "Account holder", "Billing contact"]
 tags: [base, merchant, owner-only]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-27
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # Merchant
 
@@ -23,7 +23,7 @@ Merchant (top-right profile / account area). URL: `/admin/merchant`.
 ## What the merchant can do here
 
 - Edit the account holder's first name, last name, email, phone, country, and preferred admin-panel language.
-- Review the invoicing identity (the legal entity CloudCart bills monthly).
+- Review the invoicing identity CloudCart bills: the invoice details of the **current store** ([[billing-invoicing]]); each store has its own.
 - See the default stored payment method and whether the invoicing record is flagged invalid.
 
 ## Settings & fields
@@ -47,8 +47,13 @@ Merchant (top-right profile / account area). URL: `/admin/merchant`.
 
 A CloudCart Merchant can own multiple stores. Editing the Merchant updates the account that owns the **current** store, and the change propagates to monthly billing receipts and to platform-level (account) communications. This is distinct from [[settings-staff]] (per-store admin users), [[settings-general]] (store-wide settings), and [[account]] (the signed-in admin's own profile).
 
+### The owner under the Terms of Use
+
+The Terms of Use treat as a store's owner the holder of the payment card that pays its plan (§5.8, §6.1). Only one card can be linked to an account, so paying for different stores with different cards needs separate accounts (§6.2). See [[terms-of-use-account-support]].
+
 ## Related
 
+- [[terms-of-use-account-support]] — the Terms' rules on the owner, the card and support.
 - [[account]] — the signed-in admin's own profile (a moderator's profile is not the account owner).
 - [[settings-staff]] — per-store admin users & permissions.
 - [[settings-general]] — store-wide settings.

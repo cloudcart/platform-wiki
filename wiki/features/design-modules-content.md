@@ -7,8 +7,8 @@ aliases: ["Content modules", "Banner module", "Carousel module", "Slider module"
 tags: [design, modules, content, banner, carousel, video]
 plan_gates: ["video_slider_widget", "storefront_builder", "static_pages"]
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 # Storefront Modules — Content
@@ -119,7 +119,7 @@ Only `videoSlider` is plan-gated at the module level (requires `video_slider_wid
 
 ### Cache invalidation is automatic
 
-Save and Reset both bump a per-site cache key, so merchants see changes on the very next storefront request — no manual cache clear. Full pipeline in [[design-modules-content-storage]].
+Save and Reset bump a per-site cache key; guests see the change within 20 minutes ([[storefront-arch-caching-invalidation]]). Full pipeline in [[design-modules-content-storage]].
 
 ## Related
 

@@ -7,8 +7,8 @@ aliases: ["Fixed discount product modal", "Common price vs Multiple price", "Add
 tags: [marketing, discounts, fixed, modal, ui]
 plan_gates: ["discount_fixed", "total_discounts"]
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-discounts-fixed]]. See the hub for the other aspects (validation rules, row writes, plan gates, API access, storefront display).
@@ -37,7 +37,7 @@ Route: `/admin/marketing/discounts/products/:id` (route name `discounts-products
   - **Active** — inline toggle; persists immediately via the discount-products status endpoint. Inactive products keep the discount row but the storefront skips it.
   - (actions) — a row **remove** action detaches the product from the discount.
 - Bulk **Set status active** / **Set status unactive** and bulk-delete via the table action bar.
-- Filter by **Active** (Yes / No), sort, and paginate using the standard grid.
+- Search by product name in the grid's **Search and Filter** box (a part of the name matches), filter by **Active** (Yes / No), sort by name, price or Active, and paginate.
 
 ### The per-product price modal flow
 

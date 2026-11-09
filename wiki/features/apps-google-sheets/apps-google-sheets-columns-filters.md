@@ -7,8 +7,8 @@ aliases: ["Google Sheets columns", "Sheets column picker", "Sheets product filte
 tags: [apps, google, sheets, columns, filter, settings]
 plan_gates: ["google_sheets"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 # Google Sheets → Columns & filters
 
@@ -55,7 +55,7 @@ The merchant picks any combination of these built-in columns:
 - Variations
 - Tags
 - Images
-- Url
+- Url — the product's full storefront address. It is written on Upload only: Download never reads it, so editing it in the sheet changes no product address and creates no redirect.
 - Discount (only when a `discount_id` is also chosen)
 
 **App-conditional columns** (only when the corresponding app is installed):
@@ -91,7 +91,7 @@ This is the key gotcha. The Settings save endpoint **accepts** `category`, `vend
 
 ### No column ordering or value transforms
 
-The column picker is a multi-select against the fixed catalogue above. There is no UI to reorder columns in the spreadsheet or to transform values (uppercase, regex-replace, etc.) — the platform writes whatever each column's value is. The `Variations` column packs each variant's SKU / price / quantity / parameters into one compact cell.
+The column picker is a multi-select against the fixed catalogue above. There is no UI to reorder columns in the spreadsheet or to transform values (uppercase, regex-replace, etc.) — the platform writes whatever each column's value is. Choosing **Variations** adds one row per variant, with Variant ID, SKU, Barcode, Variety 1–3 name and value, Price, Quantity, Minimum quantity and Weight columns. **Featured**, **Active**, **New** and **Hidden** are always added, whatever is picked.
 
 ## Related
 

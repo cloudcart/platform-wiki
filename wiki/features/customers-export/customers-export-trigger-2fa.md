@@ -7,8 +7,8 @@ aliases: ["Export customers button", "Customer export 2FA", "Export 2FA modal", 
 tags: [customers, export, 2fa, trigger]
 plan_gates: ["customer_export"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[customers-export]]. See the hub for the other aspects (filter scope, sync vs async, CSV schema, plan & permissions).
@@ -23,7 +23,7 @@ This aspect covers **how the merchant launches a customer export and the two-fac
 
 Sidebar → **Customers** → **Export customers** button in the page header (top-right, next to **Import** and **+ Add customer**).
 
-The button is rendered by the Customers list header. The working flow is the **legacy** header (`CustomersIndex`); in the modern variant (`CustomersMainPage`) the handler is currently a stub, so the legacy header is what actually launches the export.
+The button is in the header of the Customers list at `/admin/customers`; it opens the 2FA modal and sends the export with the list's current filters. **Import** beside it is a working button too.
 
 ## What the merchant can do here
 

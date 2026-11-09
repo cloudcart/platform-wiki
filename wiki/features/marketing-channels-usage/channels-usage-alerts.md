@@ -7,8 +7,8 @@ aliases: ["80% usage alert", "Channel cap warning", "Usage alert notification", 
 tags: [marketing, channels, usage, alert, notification, threshold]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-channels-usage]]. See the hub for the other aspects (metric cards, counter model, plan limit, engagement window, buy-credit flow).
@@ -17,9 +17,9 @@ source_count: 2
 
 ## Purpose
 
-When a channel's cumulative send count crosses **80%** of its plan cap, the platform fires an admin notification to the merchant. This page documents when the alert fires, what it says, where the merchant reads it, why it can fire from a send-job rather than the Usage modal, and the one case where it does NOT fire (Viber with self-credentials).
+Once a channel's cumulative send count is at or above **80%** of its plan cap, the platform raises an admin notification, checked before each dispatch. This page documents when the alert fires, what it says, where the merchant reads it, why it can fire from a send-job rather than the Usage modal, and the one case where it does NOT fire (Viber with self-credentials).
 
-The alert is the merchant's early-warning system between *"I have plenty of headroom"* and *"my next campaign got the You do not have enough credits error"*. Without it, the merchant only learns about the cap when a send fails.
+The alert is the merchant's early-warning system between *"I have plenty of headroom"* and *"my campaign steps are being dropped at the cap"*.
 
 ## Where to find it
 
@@ -38,7 +38,7 @@ The alert is the merchant's early-warning system between *"I have plenty of head
 
 - **Cannot change the 80% threshold** — it is hard-coded as `USAGE_ALERT_PERCENTAGE = 80` server-side.
 - **Cannot configure a per-channel different threshold** — one value applies to all channels.
-- **Cannot snooze or acknowledge** the alert in a way that suppresses re-firing — the alert is governed by the send job that crosses the threshold, not by a sticky flag.
+- **Cannot snooze or acknowledge** the alert — it is re-evaluated before every dispatch while usage stays at or above 80%.
 - **Cannot receive the alert** when self-credentials is enabled for the channel (currently only Viber — see Business rules).
 
 ## Settings & fields
@@ -49,8 +49,9 @@ The alert is the merchant's early-warning system between *"I have plenty of head
 |---------|-------|-------|
 | Threshold percentage | `USAGE_ALERT_PERCENTAGE = 80` | Hard-coded constant. Not merchant-configurable. |
 | Notification group | `campaign.channel.usage.{channel_mapping}` | One group per channel — `email`, `sms_nth_message`, `sms_msghub_message`, `viber_message`, `web_push`. |
-| Notification text | *"You have reached:percent of:total messages for your channel:channel limit"* | Translated into the admin CP language at write time. |
-| Trigger point | Per-channel send job, after each successful send | The job calls a `sendUsageAlert` check after `incrementSystemField`. |
+| Notification text | *"You have reached:percent of:total messages for your channel:channel limit"* (BG „Вие достигнахте:percent от:total съобщения от Вашия лимит за канал:channel“) | Translated into the admin CP language at write time. |
+| Trigger point | Before each dispatch, once usage is ≥ 80% | Not evaluated when the channel sends on own credentials. |
+| Repeats | One alert per channel, updated in place | The owner gets an email about it at most once per 24 hours. |
 | Suppression condition | `use_self_credentials = true` for the channel | Currently only meaningful for Viber. |
 
 ### Alert message variables
@@ -63,31 +64,34 @@ The alert is the merchant's early-warning system between *"I have plenty of head
 
 ## Business rules
 
-### The 80% threshold fires from the send job
+### The 80% threshold is checked before each dispatch
 
-Each per-channel send job calls `sendUsageAlert` after a successful send. The check compares the post-increment counter against the plan cap; if the new ratio crosses the 80% boundary and the alert has not yet been fired for this crossing, it fires. The Usage modal is read-only — opening it does **not** evaluate the threshold or fire an alert.
+Before each dispatch, the channel compares its cumulative counter with the plan cap; while usage is at or above 80%, the alert is raised again. It stays one alert per channel, updated in place, and the owner is emailed at most once per 24 hours. The Usage modal is read-only — opening it does **not** evaluate the threshold or fire an alert.
 
-Consequence: a merchant who never sends a campaign but watches Total sent grow from transactional traffic will still get the alert — any send-job success can trigger it.
+Consequence: a merchant whose Total sent grows only from transactional traffic still gets the alert — any dispatch can trigger it.
 
 ### The alert message uses the CP-language locale
 
-Verified: when the threshold is crossed, the notification message is built with `withLocale(site('language_cp'), ...)` — the notification text uses the admin CP-language locale, not the storefront language. So an admin reading the notification panel in English sees the EN message even if the storefront serves customers in Bulgarian.
+The notification text uses the admin CP-language locale, not the storefront language: an admin reading the panel in English sees the EN message even if the storefront serves Bulgarian.
 
 ### Self-credentials suppresses the alert (Viber only)
 
-If the channel has `use_self_credentials = true` — currently exposed only for Viber — the alert does **not** fire when the 80% threshold is crossed. This is consistent with the channel's broader self-credentials behaviour: sends are excluded from the counter (see [[channels-usage-counter-model]]), Remaining ≤ 0 does not flip the channel to banned, and the cap is effectively bypassed. There is no point alerting on a cap the merchant is not using.
+If the channel has `use_self_credentials = true` — Viber only, and only on specific stores CloudCart has enabled — the alert does **not** fire when the 80% threshold is crossed. This is consistent with the channel's broader self-credentials behaviour: sends are excluded from the counter (see [[channels-usage-counter-model]]), Remaining ≤ 0 does not flip the channel to banned, and the cap is effectively bypassed. There is no point alerting on a cap the merchant is not using.
 
 For Email, SMS MsgHub, SMS NTH, and Web Push, self-credentials are not currently exposed in the UI — the plan cap always applies and the alert always fires at 80%.
 
-### The 80% alert is independent of the feature-limit-reached ban
+### At the cap — separate from the 80% alert
 
-When Remaining drops to 0 or below, the channel's banned-reason flips to feature-limit-reached and the channel is suspended for new sends — see [[marketing-channels]] for the per-channel banned-reason mechanic. That ban is a separate event from the 80% alert and uses a different notification surface (channel-card status badge, not the admin notification panel).
+When Remaining drops to 0 or below, the channel's banned reason becomes feature-limit-reached (see [[campaigns-banned-channel-reasons]]) and sends stop:
+
+- **Email** — each campaign step is dropped with an admin alert: *"You have reached:feature limit. Your limit is:limit."* plus *"Purchase more credits"* (BG „Достигнахте ограничение на:feature. Вашият лимит е:limit.“ plus „Купи кредити“). No log row is written; the channel stays on and the campaign keeps showing as running.
+- **SMS, Viber, Web Push** — the send path also switches the channel OFF and raises an important alert (*"… Campaign channel:channel is deactivated."* / „Канал:channel е деактивиран.“) plus a store event. After that, steps drop silently.
 
 A merchant should expect:
 
 1. **80% notification** in the admin notifications panel — warning, no send block.
-2. **100% reached** — channel banned with feature-limit-reached reason, *"You do not have enough credits for:name"* error on campaigns.
-3. **Buy credit** → ban clears on the next page refresh.
+2. **At the cap** — steps dropped as above. *"You do not have enough credits for:name"* („Нямате достатъчно кредити за:name“) is a different error: it appears when **saving** a campaign whose channel's remaining allowance is below the number of segment members who have that channel.
+3. **Buy credit** → the banned reason clears, but buying does **not** re-activate a deactivated channel; the merchant must switch it back on.
 
 ### The alert does not fire for the unlimited case
 

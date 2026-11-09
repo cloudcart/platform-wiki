@@ -1,11 +1,11 @@
 ---
 type: entity
 nav_path: "Entity → Shipping Provider → Checkout filters"
-aliases: ["Shipping provider checkout filters", "Shipping method visibility", "Allowed payment methods filter", "Customer-group restrictions", "Geo zone scoping", "Default shipping selection", "Country-default shipping recommendations", "Cart rules shipping override"]
+aliases: ["Shipping provider checkout filters", "Shipping method visibility", "Allowed payment methods filter", "Customer-group restrictions", "Geo zone scoping", "Default shipping selection", "Country-default shipping recommendations", "Cart rules shipping override", "Define payment methods", "Payment providers per courier", "Ships to", "Set custom shipping regions"]
 tags: [entity, shipping, couriers, providers, checkout, filters, geo-zones, customer-groups, cart-rules]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[shipping-provider]]. See the hub for the other aspects (attributes, lifecycle, pricing models, COD, delivery channels & waybill).
@@ -30,13 +30,18 @@ At checkout, the platform takes the full list of installed shipping methods and 
 ### Geographic scope — Geo Zone vs carrier coverage
 
 - **Custom methods** are scoped by [[settings-geo-zones|Geo Zones]] — each Custom method has ONE geographic scope (the whole world OR one Geo Zone).
-- **Carrier-integration methods** rely on the carrier's API for coverage; the "Deliver to" column on [[settings-shipping]] shows *"Regions are determined by the provider"*. The merchant cannot edit the coverage list — Econt decides which postcodes Econt serves.
+- **Carrier-integration methods** can also be limited to one Geo Zone, on the courier's settings screen, box **Ships to** (switch **Set custom shipping regions**; not on Glovo). Addresses outside the zone get no such method, and its offices and lockers outside the zone are not listed. Within the zone, the carrier's API decides coverage: Econt decides which postcodes Econt serves. The "Deliver to" column on [[settings-shipping]] shows *"Regions are determined by the provider"* for every courier, zone or not ([[shipping-provider-mech-geo-routing]]).
 
 ### Allowed-payment-methods filter
 
-Each shipping method carries a multi-select of allowed payment methods. At checkout, if the customer's currently-selected payment method is NOT in a shipping method's allow-list, that shipping method is dropped from the candidate list.
+Each shipping method, custom or courier, can carry a list of allowed payment methods. On a courier it is the **Payment providers** box of its **Settings** tab: the switch **Define payment methods** reveals a multi-select. Rules:
 
-**Practical example**: a merchant runs "Cash on delivery" Econt and "Card on delivery" Econt as two separate rows — the first allows only COD, the second only card. The customer's payment selection filters which Econt row shows up.
+- **Switch off or list empty → every payment method is allowed.** Turning the switch off and saving empties the list.
+- **List set → once the customer picks that shipping method, the payment step offers only the listed methods.** The shipping method itself is not hidden by the payment choice. Same for draft-order payment links.
+- **A payment method installed later is not added** to any existing list; the merchant adds it, or checkout never offers it with that courier.
+- Cash on delivery is also removed when the courier has COD off or its quote does not allow COD.
+
+The courier's **Payments** tab (Econt, DPD Bulgaria) is something else: the log of the cash-on-delivery payout sync ([[orders-sync-cod]]).
 
 ### Customer-group restrictions
 

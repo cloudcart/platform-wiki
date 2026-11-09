@@ -5,8 +5,8 @@ aliases: ["Order recalculation", "Order totals recalculation", "recalculate_lock
 tags: [orders, lifecycle, recalculation, totals, payment, shipping, freeze, concepts]
 plan_gates: []
 created: 2026-06-13
-updated: 2026-06-13
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 > Part of [[order-processing-pipeline]]. See the hub for the other aspects (placement, status transitions, payment sync, fulfillment, manual edits, edge cases).
@@ -53,7 +53,7 @@ Not covered here:
 
 | Edit on [[orders-details]] | What is re-derived |
 |---|---|
-| Add / edit / remove a product line | line totals + order total (synchronous) — see [[order-pipeline-stage-5-edit]] |
+| Add / edit / remove a product line | line totals, order total, shipping re-quote (lock applies) — see [[orders-products-courier-requote]] |
 | Add / remove a discount | order total |
 | Change shipping method / address (`admin.orders.shipping.change`) | re-quotes shipping for the new method/address — subject to the lock |
 | **Change payment method (`admin.orders.payment.change`)** | re-derives every payment-inherited condition below + re-quotes shipping (subject to the lock) + recomputes totals |
@@ -74,7 +74,7 @@ Switching the payment method re-derives **all** of these from the *new* provider
 
 - **The tax rate** — snapshotted at placement; later tax-setting changes don't move historical orders ([[tax-order-snapshot]]).
 - **Shipping price on a paid order** — frozen by the lock until force-unlocked.
-- This snapshot discipline keeps historical orders accurate after the merchant later edits rates, fees, or shipping config.
+- This keeps historical orders accurate after later rate, fee or shipping changes.
 
 ### Why the visible effect of a payment-method change varies
 

@@ -7,8 +7,8 @@ aliases: ["XML Feed", "Predefined feed exports", "Price comparison feeds", "Pric
 tags: [apps, exports, xml, feed, marketplace, price-comparison]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # XML Feed (predefined marketplace feeds)
 
@@ -32,8 +32,8 @@ Sidebar → Apps → install → **XML Feed**.
 
 ## What the merchant can do here
 
-- Activate / deactivate specific sub-feeds.
-- Configure per-sub-feed settings (currency, category mapping, included product filter).
+- Start / stop each sub-feed on its Status tab ([[apps-xml-feed-status-tab]]).
+- Configure per-sub-feed settings (product filter, category mapping, UTM tags).
 - Copy the public feed URL to provide to the consumer (Google Merchant Center, Skroutz dashboard, etc.).
 
 ### What the merchant CANNOT do here
@@ -48,7 +48,7 @@ Each sub-feed has its own settings page; activation toggles per sub-feed; no glo
 - **`stock`** — `in_stock` (only in-stock products) vs all.
 - **`hidden_products`** — include / exclude hidden products.
 - **Category mapping** — appears **only for consumers that publish a target taxonomy** (Google product category, Glami, ShopZilla, etc.): a per-row mapping UI — left column = internal CloudCart category path, right column = the consumer's external category. Add / Edit / Delete per row; explicit per-category only (no pattern matching); the mapped-row count is returned as `total_mapped`. **Consumers WITHOUT a target taxonomy (Pazaruvaj, Compari, Arukereso, Sravni, ShopMania, …) have no mapping step — their feed sends the product's own store category *path* as a breadcrumb string, and nothing is excluded for being "unmapped."** Do not send a merchant to a category-mapping screen for those feeds — see e.g. [[apps-xml-feed-pazaruvaj]].
-- **Consumer-specific toggles** — each template declares its own fields the merchant fills in (e.g., Google AdWords exposes `username`, `utm_source`).
+- **Consumer-specific toggles** — each template declares its own fields the merchant fills in (e.g., Facebook's pixel and Conversions API token; Google AdWords has none).
 
 **Currency and language are NOT separate config knobs** — the feed uses the site's primary currency + locale. To publish in multiple currencies/languages, use separate sites (see [[apps-multilang]]). Free-form custom XML attributes are not supported here — use [[apps-xml-feed-generator]] for that.
 
@@ -56,12 +56,12 @@ Each sub-feed has its own settings page; activation toggles per sub-feed; no glo
 
 ### Each sub-feed is independent
 
-Activating Skroutz doesn't activate Glami. Each sub-feed has its own settings + activation state. The merchant picks which markets to target based on where they sell.
+Activating Skroutz doesn't activate Glami; each sub-feed has its own settings and Start/Stop state.
 
 ### Consumer-specific schema compliance
 
 Each sub-feed is engineered to match the consumer's EXACT XML requirements:
-- Google AdWords → Google Merchant Center format.
+- Google AdWords → Google Ads business-data CSV.
 - Facebook Pixel → Facebook Catalog format.
 - Skroutz → Skroutz's required tags.
 - (etc.)
@@ -82,20 +82,20 @@ Each consumer regenerates on a fixed interval the merchant cannot override:
 
 ### Variant representation (template default + the `parameter_type` setting)
 
-With `parameter_type` set to **"main" only**, a feed emits **one item per product**, and the same product id flows into the feed `<id>` and the post-order conversion scripts. Otherwise:
+`parameter_type` is CloudCart's own per-feed definition, with no field on any merchant screen. When it is **"main" only**, a feed emits **one item per product**, and the same product id flows into the feed `<id>` and the post-order conversion scripts. Otherwise:
 
 | Feed | Rows |
 |---|---|
 | TikTok, ChannelSight | One row per variant on **any plan**, with a per-variant id. |
 | Pazaruvaj | One row per variant, including options not shown in listings, with the `variants.listing` plan feature, since its conversion id must match the feed id. |
 | Emag, Glami, Skroutz, Trendo, Retargeting, CloudCart | One row per product; the template expands the variants, so none is emitted twice. |
-| Other feeds (Google, Facebook, …) | With the `variants.listing` plan feature, one row per combination of the options shown in listings, with `item_group_id` binding siblings. |
+| Other feeds (Google, Facebook, …) | One row per product when main-only, as CloudCart defines most of them (verify); otherwise, with `variants.listing`, one row per combination of the options shown in listings, with `item_group_id` binding siblings. |
 
 A one-row-per-product row carries the product's plain name.
 
 ### Per-sub-feed plan-gating
 
-Plan-gating is per consumer, not global: a given sub-feed may require a plan upgrade while another is unlocked on the same plan (e.g., a free-plan merchant might have Pazaruvaj unlocked but Google AdWords requiring an upgrade). The app surfaces a plan-feature meter only when the relevant plan feature applies.
+Plan-gating is per consumer, not global: a given sub-feed may require a plan upgrade while another is unlocked on the same plan. The app surfaces a plan-feature meter only when the relevant plan feature applies.
 
 ### Related to apps-google-shopping
 

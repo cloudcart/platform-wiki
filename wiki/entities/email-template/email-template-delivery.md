@@ -3,8 +3,8 @@ type: entity
 aliases: ["Email template delivery", "Elastic Email sending", "Email channel mechanics", "Webhook feedback", "Bounce suppression", "Sub-account credentials", "Доставка на имейл шаблон"]
 tags: [marketing, email, templates, delivery, elastic-email, entity]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[email-template]]. See the hub for the other aspects (transactional family, campaign authoring, merge variables).
@@ -13,7 +13,7 @@ source_count: 3
 
 ## Identity
 
-When an Email Template (transactional or campaign) is sent for real, it leaves through the configured **Email channel** — typically **Elastic Email** for both families (see [[marketing-channels-email]]). This page documents the channel-side mechanics that decide whether a send succeeds, how delivery feedback flows back into per-template / per-campaign stats, and how bad addresses get suppressed.
+A **campaign** template sent for real leaves through the **Email channel**, the store's own Elastic Email sub-account (see [[marketing-channels-email]]). A **transactional** template does not: it goes through the platform's notification mailer, From noreply@cloudcart.com with the store's name and Reply-To the store's email, or through the store's own server when the [[apps-smtp|SMTP app]] is set up. This page documents the channel-side mechanics that decide whether a send succeeds, how delivery feedback flows back into per-template / per-campaign stats, and how bad addresses get suppressed.
 
 (The Test/Demo send path is different — it uses the platform's transactional sender, not the merchant's Elastic Email sub-account. See [[email-template-campaign-authoring]].)
 
@@ -28,7 +28,7 @@ When an Email Template (transactional or campaign) is sent for real, it leaves t
 
 | Mechanic | What happens |
 |----------|--------------|
-| **Sub-account credentials are NOT merchant-supplied** | The platform provisions a per-store sub-account on CloudCart's master Elastic Email account; merchants don't see the API key. The account email follows the convention `{primary_host}@cloudcart.net` and the password is a 32-char random string. Credentials are persisted both in channel settings AND in `application_history` for recovery. |
+| **Sub-account credentials are NOT merchant-supplied** | The platform provisions a per-store sub-account on CloudCart's master Elastic Email account; merchants don't see the API key. The account email follows the convention `{service-name}@cloudcart.net`, from the store's `*.cloudcart.net` address and the password is a 32-char random string. Credentials are persisted both in channel settings AND in `application_history` for recovery. |
 | **Webhook auto-installed after domain verification** | After domain verification, the platform calls Elastic Email's `Account.AddWebhook`, enabling all 8 event types (sent, opened, clicked, unsubscribed, complaint, bounced, AbuseReport, error) — so subsequent template sends feed back into the per-template / per-campaign stats automatically. |
 | **Tracking CNAME auto-creation requires an active Cloudflare zone** | Only when the host's `cloudflare_zone_id` is set AND the zone status is "active" does the platform auto-create the `tracking.{domain}` → `api.elasticemail.com` CNAME via the Cloudflare API. For self-managed DNS, the merchant adds it manually. |
 | **Reset preserves two settings** | The Reset configuration option preserves the merchant's preferences for unverified-recipient sending and any support-granted override (`unconfirmed_send` and `manual_allowed_suspended`), even when wiping the rest of the channel's settings. |

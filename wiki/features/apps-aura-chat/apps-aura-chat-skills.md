@@ -7,8 +7,8 @@ aliases: ["Aura Chat skills", "Knowledge & Skills", "Finding products", "Advisin
 tags: [apps, ai, chat, skills, settings]
 plan_gates: ["aura-chat-credit"]
 created: 2026-09-23
-updated: 2026-09-23
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # Aura Chat — skills and the merchant's own instructions
@@ -72,7 +72,7 @@ The assistant sees the list of switched-on skills with the descriptions above an
 
 ### Product search uses the Aura Search product index
 
-Both product skills search the catalog by meaning, over the same product index as [[apps-advanced-search]]. A product code (SKU, article number, barcode) is always matched exactly. By design, meaning-based search is meant to be available only while the store may use Aura Search's semantic search. As of 2026-09-23 the platform does not yet answer that check, so the chat searches regardless (verify). When search is unavailable, the assistant tells the shopper it cannot look products up right now. It never mentions plans or billing. The chat's own searches do not use up the Aura Search monthly quota.
+Both product skills search the catalog by meaning only, over the [[apps-advanced-search]] product index; a product code (SKU, barcode) is matched exactly. Aura Search's searched fields, weights and **AI semantic search** switch do not apply. Without an Aura Search plan, searches left this month, or the app on, both skills are off with the reason and a fix button: see [[apps-aura-chat-setup]]. The chat's searches do not use the Aura Search quota.
 
 ### The merchant's instructions come after the platform's rules
 
@@ -97,4 +97,4 @@ The instructions, and the list of skills the assistant is told about, are set wh
 
 ## Open questions
 
-- Whether the Knowledge & Skills tab will warn when the catalog search is unavailable to the store, as it does for Aftercare (verify).
+- None known.

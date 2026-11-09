@@ -7,8 +7,8 @@ aliases: ["CloudCart Pay status dashboard", "CloudCart Pay account status", "Act
 tags: [paymentproviders, payment-providers, cloudcart-pay, onboarding, status, capabilities, compliance]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (wizard flow, fields, people, documents, verification, bank, review and alerts, connect/disconnect).
@@ -75,11 +75,17 @@ Each rejection carries the reviewer's reason when one was written; otherwise a s
 - A task with agreement documents says *"Agreement documents are reviewed and accepted in the Identity Verification step."*, lists the documents and has **Resolve** to step 5 ([[ccpay-onboarding-verification-attestation]]).
 - Other tasks list what they need, with ✓ for what is done.
 - Optional tasks (not required yet) are hidden, so an approved account does not show reminders it does not owe.
-- Known titles: **Activate card payments** (*"Submit your account details so card payments can be reviewed and activated."*), **Activate payouts**, **Three-party agreement**.
+- Tasks, their texts and the **Blocking** flag come from CloudCart Pay's review and are shown as received, except three reworded titles: **Activate card payments** (*"Submit your account details so card payments can be reviewed and activated."*), **Activate payouts**, **Three-party agreement**. Any other title (e.g. *Provide additional capability information*) is the review's wording.
+- The status badge is red for **Action Required**, green for **Completed**, amber otherwise.
+- A task's **Resolve** opens the step of its first requirement that has one, with the same mapping as rejected items: a person's details or documents → step 3, business details → step 2, documents → step 4, agreements → step 5, bank account → step 6. A task whose requirements match no step has no **Resolve**.
+
+### Blocking task with Payments and Payouts active
+
+CloudCart switches nothing off over a **Blocking** task: switching the method on, and the **Payments** card, depend only on the account's card-payment capability ([[cloudcart-pay-activation-gate]]). While **Payments** reads **Enabled**, the store takes cards whatever the task shows. What the review does if a blocking task stays open is not visible in CloudCart (verify), so the task should be completed.
 
 ### The step indicator turns red
 
-While anything is outstanding — requirements, items being verified, rejections or a required task — the **Status** step in the indicator is red.
+The **Status** step is red while anything is outstanding: requirements, items being verified, rejections (including one re-submitted and **waiting for review**) or a task neither completed nor optional. It stays red even when **Payments** and **Payouts** are both **Enabled**, and is not red only while step 7 itself is open.
 
 ### NRA declaration information
 
@@ -106,4 +112,5 @@ When the account is submitted and nothing is outstanding, or when card payments 
 
 ## Open questions
 
-- Bulgarian wording of the task status badges (e.g. **Action Required**), which the operator's list also shows in English.
+- Bulgarian wording of the task status badges (e.g. **Action Required**) and of **Active** / **Pending** / **Inactive**, **Enabled** / **Disabled** and **Submitted — waiting for review** (a merchant's screen showed "Изпратено — изчаква проверка"; production translation table).
+- Why CloudCart Pay's review raises a task such as *Provide additional capability information* on an account whose Payments and Payouts are already active.

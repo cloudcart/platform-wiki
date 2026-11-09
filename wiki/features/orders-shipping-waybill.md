@@ -7,8 +7,8 @@ aliases: ["Waybill", "Generate waybill", "Tracking number", "Shipping label", "�
 tags: [orders, shipping, waybill, courier, omniship, smarty]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-10-05
-source_count: 10
+updated: 2026-11-09
+source_count: 11
 ---
 
 # Shipping waybill (per order)
@@ -19,6 +19,8 @@ The merchant's flow for **generating, saving, removing, printing, and updating**
 
 The action has **six possible operations** — generate, save, print, remove (void), update insurance, change payer side — each with cascading side effects (stock decrement, invoice generation, payment auto-capture, webhook fires, customer notification). The merchant sees a roughly consistent UI across couriers, but the underlying API calls vary substantially.
 
+A waybill belongs to one order. There is no feature to merge or combine orders, in the admin or in either API, so two orders of the same customer get two waybills unless their products are put on one order ([[orders-products]]).
+
 ## Where to find it
 
 From [[orders-details]] → **Shipping action row** in the order summary. The visible buttons depend on the order's fulfillment state:
@@ -26,7 +28,7 @@ From [[orders-details]] → **Shipping action row** in the order summary. The vi
 | State | Visible buttons |
 |-------|-----------------|
 | **No waybill yet** (`status_fulfillment = not_fulfilled`, shipping provider set) | **Generate waybill** (opens form modal — see [[waybill-generate-flow]] / [[waybill-generic-modal]]). |
-| **Waybill generated** | **Print PDF** (see [[waybill-print-pdf]]), **Remove waybill** (see [[waybill-remove-void]]). Also: **Change side** dropdown (see [[waybill-payer-side]]), **Update insurance** in-place edit. |
+| **Waybill generated** | **Print** / *"Печат"* — the courier's label, or a generic PDF for the store's own methods (see [[waybill-print-pdf]]), **Remove waybill** (see [[waybill-remove-void]]). Also: **Change side** dropdown (see [[waybill-payer-side]]), **Update insurance** in-place edit. |
 
 The action area is hidden when the order has no shipping provider OR all products are digital.
 
@@ -40,7 +42,7 @@ The action area is hidden when the order has no shipping provider OR all product
 | `admin.eur.waybill` | GET | EUR-currency variant — currently throws hard-block error after 2026-01-01 (see [[waybill-generic-modal]]). |
 | `admin.internal.insurance` | POST | Update insurance amount on existing waybill. |
 | `admin.internal.change-side` | POST | Change payer side (see [[waybill-payer-side]]). |
-| `admin.internal.print_waybill` | GET | Render generic platform PDF (NOT the courier-formatted label — see [[waybill-print-pdf]]). |
+| `admin.internal.print_waybill` | GET | Render generic platform PDF for the store's own methods (NOT a courier label — see [[waybill-print-pdf]]). |
 | `admin.orders.shipping.change` | POST | Switch shipping provider on the order (pre-waybill). |
 
 ## Sub-pages (in this cluster)

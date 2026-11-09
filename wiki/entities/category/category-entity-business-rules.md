@@ -4,8 +4,8 @@ nav_path: "Entity → Category → Business rules"
 aliases: ["Category business rules", "Display subcategories", "Per-category payment shipping", "Category URL handle 301", "Category sibling uniqueness", "Make interval", "Category multi-language"]
 tags: [entity, catalog, categories, business-rules]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[category]]. See the hub for the other aspects (attributes, lifecycle, relationships, side effects and API).
@@ -14,24 +14,21 @@ source_count: 1
 
 ## Identity
 
-The non-obvious behaviours a merchant must understand to use [[category|Categories]] correctly — `display_child` recursive inclusion, **AND-combined** per-category payment / shipping restrictions across cart products, URL-handle 301 redirects, sibling-scoped name uniqueness, auto-assigned sort order, technological delivery time, multi-language scope, SEO defaults, and the manual-vs-import duplicate-handle divergence. The rules the AI Assistant cites when a merchant asks *"Why does my checkout show no payment methods?"* or *"Why did my deep `display_child = OFF` category still appear under its parent?"*.
+The non-obvious behaviours a merchant must understand to use [[category|Categories]] correctly — what **Display subcategories** really controls, **AND-combined** per-category payment / shipping restrictions across cart products, URL-handle 301 redirects, sibling-scoped name uniqueness, auto-assigned sort order, technological delivery time, multi-language scope, SEO defaults, and the manual-vs-import duplicate-handle divergence. The rules the AI Assistant cites when a merchant asks *"Why does my checkout show no payment methods?"* or *"Why does my parent category still list its subcategories' products?"*.
 
 ## Aliases
 
 - **Category business rules** — the catch-all term for the non-obvious behaviours.
-- **Display subcategories pitfall** — read-at-browsed-level, no descendant override.
+- **Display subcategories** — shows subcategory tiles; never changes which products are listed.
 - **Per-category payment / shipping AND-combine** — the cart-rule intersection across products.
 
 ## Key Attributes
 
-### Display-subcategories toggle controls product inheritance
+### A category page always lists its subcategories' products
 
-When a customer browses a parent category:
+A category page lists the products assigned to the category **and to all its subcategories, at every depth**. There is no setting to limit it to directly assigned products.
 
-- **`Display subcategories = ON`** — listing shows products directly in this category AND in any descendant subcategory (recursive). Typical for top levels like "Electronics".
-- **`Display subcategories = OFF`** — only products directly assigned to this category. Subcategory products hidden until the customer drills in.
-
-**No per-level override.** The toggle is read only at the level being browsed. Setting it ON at "Electronics" surfaces everything in Electronics → Phones → Smartphones regardless of each descendant's own toggle. A deep `display_child = OFF` does **NOT** block descendants from appearing in an ancestor's listing.
+**Display subcategories** (*Показване на подкатегориите*, `display_child`) does not change that. When ON, the category page also shows the category's direct subcategories as tiles or links above the products, on themes that draw them; most current themes do, a few older ones ignore the switch (verify per theme). It changes neither the product list nor the sidebar's Categories filter ([[design-module-product-filters-sidebar]]). On a headless storefront the switch is passed on as a flag for the storefront's own design to use.
 
 ### Per-category payment / shipping restrictions are AND-combined across cart products
 

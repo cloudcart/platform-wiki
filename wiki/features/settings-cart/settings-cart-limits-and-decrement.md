@@ -7,8 +7,8 @@ aliases: ["Min order amount", "Max order amount", "checkout_min_price", "checkou
 tags: [settings, cart, checkout, orders, inventory, limits]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-cart]]. See the hub for the other aspects (accounts, abandoned reminder, payment/shipping defaults, checkout fields, UI behavior, Google Maps, marketing consent).
@@ -43,7 +43,7 @@ Sidebar → Settings → **Cart and checkout** → box **Order and product quant
 | **Maximum products quantity of a kind per customer** (`cart_max_products`) | Hard cap on quantity of a single SKU per customer. | Integer. Blank = 0 = no cap. Form floors at 0 (client `min: 0`); no backend non-negative validation. |
 | **Maximum cart quantity of a kind per customer** (`cart_max_quantity`) | Hard cap on total items in the cart per customer. | Integer. Blank = 0 = no cap. Form floors at 0 (client `min: 0`); no backend non-negative validation. |
 | **When the total quantity of a product decreases, send me an email** (`product_threshold`) | Low-stock alert threshold. Triggers the `product_quantity_low` admin notification when a product's stock crosses below this value. Recipient is `site_email` (see [[settings-admin-notifications]]). | Integer ≥ 1. Backend-validated (nullable, integer ≥ 0). |
-| **I want to decrease product quantity when the status is** (`order_status_for_quantity_decrease`) | `paid` = stock decrements only when the order is paid AND fulfilled. `pending` = stock decrements when the order moves to pending AND fulfilled. | Affects whether oversells are possible while orders sit in the pending state. See [[inventory-decrement-timing]] for the deterministic decrement matrix. |
+| **I want to decrease product quantity when the status is** (`order_status_for_quantity_decrease`) | `paid` = stock comes off when the order is paid (or earlier, when fulfilled). `pending` = when the order is placed. New stores start with `pending`. | See [[inventory-decrement-timing]] for the matrix. |
 | **Order number** (`order_id_display`) | `id` = display the internal numeric system ID; `increment_hash` = display an alphanumeric hash that's shorter and customer-friendly. | Affects all places where order numbers appear: storefront, emails, invoices. |
 | **Automatic completion of the order** (`order_complete`) | When ON, orders auto-complete (no manual "mark as complete" step in the admin). | |
 
@@ -53,10 +53,10 @@ Sidebar → Settings → **Cart and checkout** → box **Order and product quant
 
 The `order_status_for_quantity_decrease` setting is one of the highest-impact toggles on the whole Cart and checkout page. The two values create very different inventory behaviours:
 
-- **`paid` (default)** — stock decrements only when the order is both **paid** and **fulfilled**. Customers who place orders that don't yet have payment do NOT block stock; two customers could race for the same last unit. Safest setting for stores where pending orders frequently abandon (e.g., Cash-on-delivery with high cancel rates).
-- **`pending`** — stock decrements when the order moves to **pending** AND **fulfilled** — so the cart "reserves" stock as soon as the order is submitted, even before payment clears. Eliminates the race condition above, but ties up stock on abandoned/unpaid orders.
+- **`paid`** — stock comes off when the order is paid (or authorized / completed), or earlier when it is marked fulfilled. Unpaid orders do not block stock, so two customers can race for the last unit.
+- **`pending`** — stock comes off when the order is placed, before payment; unpaid orders hold it until cancelled.
 
-See [[inventory-decrement-timing]] for the full decrement matrix and merchant-guidance-per-payment-mix.
+New stores are created with `pending`. A store that never saved the setting places orders with `paid` while the screen shows `pending` (verify). Carts reserve nothing. See [[inventory-decrement-timing]] for the matrix and the last-unit case.
 
 ### Stock auto-restore on cancel / refund / void
 

@@ -7,8 +7,8 @@ aliases: ["Segments list", "Segment table", "Segment list view"]
 tags: [marketing, segments, list, polling]
 plan_gates: ["segments"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[marketing-segments]]. See the hub for related aspects (create popup, types, conditions, rebuild mechanics, etc.).
@@ -29,7 +29,7 @@ Sidebar → **Marketing** → **Segments**. Route `/admin/marketing/segments`.
 - Click the **Subscribers** count to open [[marketing-segments-subscribers]].
 - Click the **Campaigns** count to drop a list of campaign names that target this segment.
 - Click the **Log** action to open [[marketing-segments-log]].
-- Click **Generate CSV file** per row to export the segment's subscribers.
+- (Cannot) export the segment's subscribers: the list has no CSV or other export action (see Per-row actions).
 - Click the segment name to open [[marketing-segments-editor]].
 - Click **Rename** to relabel the segment without opening the editor (see below).
 - Delete a segment via the trash action (blocked if a campaign references it — see [[marketing-segments]] § Business rules).
@@ -45,13 +45,12 @@ Sidebar → **Marketing** → **Segments**. Route `/admin/marketing/segments`.
 | Subscribers | Count of subscribers currently attached to this segment. | Clickable — opens the subscriber list. |
 | Campaigns | Count of campaigns using this segment as trigger. | Clickable — drops a list of campaign names. |
 | Last generated at | When the rule was last evaluated (or "Not generated yet"). | Automated segments update on every qualifying event. |
-| Generate CSV file | Per-row export action. | Generates a CSV of the current subscribers. |
 | Active | On/Off switch. | Inactive segments aren't recalculated. |
 | Log | Link to the segment's audit log. | Preserves the full added/removed history. |
 
 ### Per-row actions
 
-Each segment row exposes two actions on the right edge:
+Each segment row exposes two actions on the right edge, and no others (there is no **Generate CSV file** export; that label survives only as an unused translation string):
 
 - **Log** button (with a chart-bar icon and the label "Log") — routes to `/admin/marketing/segments/log/:id` (see [[marketing-segments-log]]). The Log query param is pre-populated with `page=1&perpage=25` so the URL is canonical from the start.
 - **Delete** button — with the confirmation copy *"Delete row?"*. Clicking confirms and removes the segment. On success the row disappears (optimistic remove). When any campaign uses the segment as its trigger, drafts and archived included, the toast surfaces *"You cannot delete a segment that has a campaign attached to it. To delete a segment, you must first delete a campaign"* (BG: *"Не може да изтриете сегмент, към които има прикачена кампания. За да изтриете сегмент е нужно първо да изтриете кампания"*). Bulk delete refuses the whole selection if one segment is used: *"You cannot delete segments that have campaigns attached to them. To delete segments, you must first delete a campaign"* (BG: *"Не може да изтриете сегменти, към които има прикачени кампании. За да изтриете сегменти е нужно първо да изтриете кампания"*).

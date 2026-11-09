@@ -4,8 +4,8 @@ nav_path: "Entity → SEO 301 Redirect → Marketing parameter passthrough"
 aliases: ["Redirect UTM passthrough", "gclid passthrough", "fbclid passthrough", "Marketing tracking on redirect", "Query parameter whitelist on 301"]
 tags: [entity, seo, marketing, redirects, analytics, tracking]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[seo-redirect]]. See the hub for the other aspects (types, lookup and cache, CSV import, auto-tracking, validation and UI).
@@ -93,7 +93,7 @@ Merchants running paid-search campaigns with keyword-level UTM tagging will lose
 - [[seo-redirect-lookup-and-cache]] — the passthrough is the last step of the redirect-fire sequence.
 - [[seo-redirect-types]] — applies to every type (free-form and entity).
 - [[marketing-seo-301-redirects]] — the manager screen where rules are created (no UI hint about the passthrough behaviour).
-- [[apps-domain-redirect]] — whole-domain redirects also preserve marketing parameters (separate mechanism, similar intent).
+- [[apps-domain-redirect]] — does NOT carry marketing parameters: its 302 lands on the target store's home page with neither the original path nor the query string.
 - [[storefront-architecture]] — analytics integration sits downstream of the storefront.
 
 ## Related
@@ -101,7 +101,7 @@ Merchants running paid-search campaigns with keyword-level UTM tagging will lose
 - [[seo-redirect]] — hub.
 - [[seo-redirect-lookup-and-cache]] — the redirect-fire sequence within which this passthrough runs.
 - [[seo-redirect-types]] — destination resolution that happens before the parameter append.
-- [[apps-domain-redirect]] — parallel passthrough on whole-domain forwarding (verify the exact parameter list there).
+- [[apps-domain-redirect]] — own-stores geo-routing; no parameter passthrough (path and query are dropped).
 
 ## Open Questions
 

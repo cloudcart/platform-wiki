@@ -7,8 +7,8 @@ aliases: ["Buttons settings module", "Buttons layout", "Button border radius", "
 tags: [design, modules, layout, buttons]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Buttons settings module (`layout.button`)
@@ -23,7 +23,7 @@ The **Buttons settings** module (`buttonsConfiguration` — instance of `layout.
 
 Sidebar → **Design** → **Modules** → **Layout** tab → **Buttons settings** card.
 
-The route is `/admin/storefront/widgets/buttonsConfiguration`. Changes apply to every button on the storefront on the next request.
+The route is `/admin/storefront/widgets/buttonsConfiguration`. Changes apply to every button on pages rendered after the save (guests within 20 minutes).
 
 ## What the merchant can do here
 
@@ -83,7 +83,7 @@ The radii apply to EVERY button on the storefront (Add-to-cart, Buy now, Sign-in
 
 ### Cache invalidation
 
-Save and Reset bump the per-site cache key — the new radii are live on the next storefront request.
+Save and Reset bump the per-site cache key — pages rendered afterwards use the new radii; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ## Related
 

@@ -5,8 +5,8 @@ aliases: ["Geo zone routing", "Shipping geo gating", "Multi-currency carrier con
 tags: [shipping, couriers, providers, geo, multi-currency, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[shipping-provider-mechanism]]. See the hub for the other aspects (configuration, pricing models, pickup points, waybill, COD, status tracking).
@@ -17,7 +17,7 @@ source_count: 1
 
 **Geo routing** is the per-method filter that decides whether a shipping option is even shown to a particular customer based on their delivery address. **Multi-currency conversion** is the per-API-call FX step that translates monetary amounts into whatever currency the carrier bills in. Both are *gating* concerns — they decide before pricing whether a method participates in the customer's checkout, and they ensure the carrier receives amounts in a currency it understands.
 
-For custom methods, the merchant picks a Geo Zone per method. For carrier-integration methods, the carrier's API decides coverage. For multi-currency stores, the platform converts COD / insurance / subtotal amounts on the fly when calling carriers like Speedy (BGN) or Cargus (RON).
+For custom methods, the merchant picks a Geo Zone per method. For carrier-integration methods, the carrier's API decides coverage, within an optional Geo Zone the merchant sets on the courier's **Ships to** box. For multi-currency stores, the platform converts COD / insurance / subtotal amounts on the fly when calling carriers like Speedy (BGN) or Cargus (RON).
 
 ## Scope
 
@@ -38,7 +38,7 @@ Not covered:
 
 ## Contrasts
 
-- **Custom method (one geo zone) vs. carrier integration (carrier-API decides)**: a custom method has ONE geographic scope picked by the merchant; the platform locally checks whether the customer's address matches the zone. An integration method has no merchant-set zone — the carrier's API receives the destination and decides whether to return a quote. If the carrier rejects, the method silently disappears from checkout.
+- **Custom method vs. carrier integration**: both can have ONE Geo Zone picked by the merchant, checked locally against the customer's address. An integration method then also needs the carrier's API to return a quote for the destination; if it rejects, the method silently disappears from checkout.
 - **Geo gating (filter) vs. shipping pricing (arithmetic)**: gating decides whether a method is a candidate at all. Pricing decides what the candidate costs once it is. The cascade runs gating first, then pricing — see [[shipping-calc-cascade]].
 - **Store currency (display) vs. carrier billing currency (API)**: the order is *stored* in the store's currency (snapshotted at checkout per [[multi-currency]]). The carrier API call uses the carrier's *billing* currency. The conversion is one-way and transparent — merchants don't see the converted amount in the admin UI.
 
@@ -55,9 +55,9 @@ A method that doesn't match the customer's shipping address is excluded from the
 
 ### Carrier-API coverage for integration methods
 
-For carrier-integration methods, the carrier's API decides coverage — the method appears for any address the carrier supports. The platform sends the destination to the carrier's `getQuotes` API; if the carrier returns one or more service options, the method is a candidate. If the carrier rejects the address (out of service area, embargoed country, locker not in range, etc.), the method is **silently dropped** at checkout for that customer.
+For carrier-integration methods, the courier's settings screen has a **Ships to** box (all couriers except Glovo): the switch **Set custom shipping regions** off means everywhere; on, a Geo Zone is picked and the method appears only for addresses in that zone, and offices and lockers outside the zone are hidden from the pickup list. Within that, the carrier's API decides coverage. The platform sends the destination to the carrier's `getQuotes` API; if the carrier returns one or more service options, the method is a candidate. If the carrier rejects the address (out of service area, embargoed country, locker not in range, etc.), the method is **silently dropped** at checkout for that customer.
 
-This is why the "Deliver to" column in [[settings-shipping]] reads *"Regions are determined by the provider"* for integration methods — there's no Geo Zone for the merchant to edit; the carrier owns the coverage decision.
+The "Deliver to" column in [[settings-shipping]] still reads *"Regions are determined by the provider"* for every integration method, even one limited by a **Ships to** zone; the zone is edited on the courier's own screen.
 
 ### Multi-currency conversions at carrier-API call time
 
@@ -79,7 +79,7 @@ The COD cap (10,000 BGN for Bulgarian carriers, documented in [[shipping-provide
 A method is excluded from the checkout candidate list when:
 
 - **Custom method**: the customer's address doesn't match the assigned Geo Zone.
-- **Integration method**: the carrier's API rejects the destination (silent drop).
+- **Integration method**: the address is outside its **Ships to** zone, or the carrier's API rejects the destination (silent drop).
 - **Either**: Cart Rules ([[apps-cart-rules]]) explicitly hide it; the customer's [[customers-custom-groups|customer group]] isn't in the allowed list; the method is toggled Inactive in [[settings-shipping]].
 
 See [[shipping-calc-cascade]] for the full filter sequence the cart runs through.

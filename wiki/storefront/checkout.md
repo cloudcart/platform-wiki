@@ -5,8 +5,8 @@ route_path: /checkout
 themes_using: [all]
 tags: [storefront, checkout, conversion, payment, shipping, discount]
 created: 2026-06-08
-updated: 2026-11-03
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 
 # Checkout
@@ -25,6 +25,7 @@ This is the most error-prone page on the platform (payment failures, shipping mi
 - [[checkout-code-popup]] — the code popup for a guest who types a registered email.
 - [[checkout-step-shipping]] — shipping channel picker (address / office / locker / marketplace).
 - [[checkout-step-shipping-address]] — to-address sub-flow; saved addresses vs inline form; Google Maps gating.
+- [[checkout-step-billing-address]] — the billing address for the invoice; when it shows, its fields, company fields, invoices without it.
 - [[checkout-step-shipping-pickup]] — to-office / to-locker; typeahead + Google-Maps-vs-no-Maps fallback; carrier-merged autocomplete; the must-document fallback for support tickets.
 - [[checkout-step-shipping-method]] — provider × service radio; COD/POP-allowance flag flow; re-quote triggers.
 - [[checkout-step-time-slots]] — date + time-slot grid (when `apps-shipping-hours` is active).

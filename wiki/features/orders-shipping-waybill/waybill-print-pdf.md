@@ -3,12 +3,12 @@ type: feature
 nav_path: "Orders → Order details → Shipping → Waybill → Print PDF"
 route_name: admin.internal.print_waybill
 route_path: /admin/orders/action/shipping/:order_id/print_waybill
-aliases: ["Print waybill PDF", "Print shipping label", "Packing slip", "Dispatch summary", "Print PDF", "Принтиране на товарителница"]
+aliases: ["Print waybill PDF", "Print shipping label", "Packing slip", "Dispatch summary", "Print PDF", "Принтиране на товарителница", "Печат", "Print labels"]
 tags: [orders, shipping, waybill, pdf, print, label]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-10-05
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[orders-shipping-waybill]]. See the hub for other aspects (generate flow, courier specifics, payer side, remove/void, generic modal, API path).
@@ -17,7 +17,7 @@ source_count: 2
 
 ## Purpose
 
-The flow for **rendering a printable PDF** of an active waybill. Two distinct PDFs exist depending on which button the merchant clicks — and only ONE of them is the actual courier-formatted barcode label.
+The flow for **rendering a printable PDF** of an active waybill. Which PDF the order page's **Print** gives depends on how the order is shipped: a courier's own label, or a generic platform PDF for the store's own (non-courier) methods.
 
 ## Where to find it
 
@@ -25,13 +25,15 @@ Two entry points:
 
 | Button | Route | Output |
 |--------|-------|--------|
-| **Print PDF** (in the order's shipping action row on [[orders-details]]) | `admin.internal.print_waybill` | Generic platform PDF template (the platform code) — a packing slip / dispatch summary listing the order's products. |
-| **Print waybill** (inside the courier-specific app — e.g., [[apps-econt]] → order action) | per-courier `apps.<courier>.print_waybill` | Courier-formatted thermal label (100×150mm) with the courier's barcodes, addresses, COD info, and tracking glyphs. |
+| **Print** / *"Печат"* on [[orders-details]], order shipped by a **courier** (shown once the waybill exists) | the courier app's print route | The courier's own label PDF. Some couriers first ask for the format: DPD Bulgaria opens a small print-format window, then fetches the PDF from DPD. |
+| **Print** / *"Печат"* on [[orders-details]], order shipped by the store's **own method** | `admin.internal.print_waybill` | Generic platform PDF (the platform code) — a packing slip / dispatch summary listing the order's products. |
+| The courier app's **Shipments** tab (DPD Bulgaria, BoxNow, Econt) | per-courier | A print icon on each row (one label) and **Print labels** on the toolbar (several). A format window opens, except on DPD when its **Print paper size** is A4 or A6. |
+| Admin GraphQL `getShippingWaybillPdf` | — | The same courier label, for scripts ([[waybill-api-fulfillment]]). |
 
 ## What the merchant can do here
 
-- Click Print PDF → opens the generic platform PDF in a new tab (`target="_blank"`).
-- Click Print waybill (from the courier's app) → downloads the actual courier label suitable for thermal label printers.
+- Click **Print** on the order → the courier's label, or the generic PDF for an own method, in a new tab.
+- Print one or several labels from the courier app's **Shipments** tab.
 
 ## Settings & fields
 
@@ -39,11 +41,9 @@ The generic PDF has no configurable fields — it renders whatever the order cur
 
 ## Business rules
 
-### Platform-side print PDF is GENERIC, not courier-formatted
+### The generic PDF is only for the store's own methods
 
-The platform's `admin.internal.print_waybill` route renders a generic PDF template with the order's products listed — it's NOT the courier-formatted label with barcodes and tracking info. The actual courier label (with thermal-printer barcode) is downloaded SEPARATELY from each courier's app — e.g., Econt's "Print waybill" action gets the courier's PDF.
-
-The platform-side print-PDF is more like a packing-slip / dispatch summary than a courier label. A merchant clicking the generic "Print PDF" from the waybill area on the order details should NOT expect a thermal-label-formatted output.
+The platform's `admin.internal.print_waybill` route renders a generic PDF with the order's products listed, not a courier label with barcodes. It is what **Print** opens for an order shipped with the store's own (non-courier) method; a courier order's **Print** opens the courier's label.
 
 ### Thermal-label print is per-courier
 
@@ -51,7 +51,7 @@ For real shipping-label print (barcodes + tracking number + courier's brand mark
 
 - [[apps-econt]] → Print waybill (Econt's PDF endpoint).
 - [[apps-boxnow]] → Print locker label.
-- Speedy → Print label (Speedy's PDF endpoint).
+- [[apps-dpdbulgaria-speedy|DPD Bulgaria (Speedy)]] → print-format window, then DPD's PDF.
 - Other couriers: each app exposes its own print action through their own PDF endpoint.
 
 ### PDF includes only non-digital products

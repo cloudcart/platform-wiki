@@ -7,8 +7,8 @@ aliases: ["Code PRO checkout", "Code PRO active scope", "Code PRO uses counter",
 tags: [marketing, discounts, code-pro, checkout, redemption]
 plan_gates: ["discount-code-pro"]
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-discounts-code-pro]]. See the hub for the other aspects (overview, form, fields, business rules, endpoints).
@@ -93,7 +93,7 @@ This is symmetric with the [[inventory-restock]] flow on the stock side.
 
 The active-scope evaluation lives in the cart-discount-lookup pipeline. Each order-status change recounts `uses` at once and queues a second recount about 10 seconds later as a safety net.
 
-The same active-scope rules apply whether the code comes from a customer typing into the cart UI or from a campaign template substituting `{triggered_dynamic_discount}` (see [[marketing-campaigns]]) — the lookup pipeline doesn't care about the entry surface.
+The same active-scope rules apply whether the code comes from a customer typing into the cart UI or from a campaign message's `{$dynamic_discount_code}` (see [[message-template-merge-tags]]) — the lookup pipeline doesn't care about the entry surface.
 
 ## Related
 
@@ -104,7 +104,7 @@ The same active-scope rules apply whether the code comes from a customer typing 
 - [[marketing-discounts-codes]] — Container codes (the alternative for stacking multiple codes in one cart).
 - [[settings-statuses]] — `discounts_used_statuses` setting drives the counted-status set.
 - [[cart-vs-order-lifecycle]] — cart-stage vs order-stage handoff that the lookup runs in.
-- [[marketing-campaigns]] — `{triggered_dynamic_discount}` replacement that issues dynamic Code PRO codes.
+- [[marketing-campaigns]] — `{$dynamic_discount_code}` issues one new Code PRO code per recipient.
 - [[marketing-segments]] — segment conditions referencing Code PRO usage.
 - [[geo-zone]] — region restriction reads this entity.
 - [[customers-custom-groups]] — customer-group restriction reads this entity.

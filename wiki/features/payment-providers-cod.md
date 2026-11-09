@@ -7,8 +7,8 @@ aliases: ["Cash on delivery", "COD", "Pay on delivery", "Cash on delivery to cou
 tags: [paymentproviders, payment-providers, cod, cash, offline, bulgaria]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-10-05
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 # Cash on delivery
 
@@ -16,7 +16,7 @@ source_count: 0
 
 A configuration screen for the **Cash on delivery (COD)** payment method — the customer pays the courier in cash (or by card on the courier's POS) when the package is handed over. This is **the dominant payment method on the Bulgarian e-commerce market** and the simplest provider to enable: no API credentials, no merchant account, no test mode.
 
-COD is an **offline payment** in CloudCart terminology — no money flows through the platform during checkout. The order is created in payment status `pending` and the merchant marks it Paid manually after receiving the cash payout from the courier (see [[orders-payment-mark-paid]], and [[orders-sync-cod]] for courier-driven automatic sync from BoxNow, Speedy, Econt, etc.).
+COD is an **offline payment** in CloudCart terminology — no money flows through the platform during checkout. The order is created with order status `pending` (its payment record `requested`) and the merchant marks it Paid manually after receiving the cash payout from the courier (see [[orders-payment-mark-paid]], and [[orders-sync-cod]] for courier-driven automatic sync from BoxNow, Speedy, Econt, etc.).
 
 ## Where to find it
 
@@ -51,14 +51,14 @@ There are **no API credentials, no test mode, no webhook URL, no certificate upl
 
 COD is tagged `offline` in the provider's `type` field:
 
-- The order is created with payment status **`pending`** (not `completed`) right after checkout. No money has moved.
-- The merchant manually marks the order **Paid** when the courier remits the cash — typically once a week after settlement.
-- For couriers with API integration (BoxNow, Speedy, Econt, ACS, Cargus, etc.), the [[orders-sync-cod]] sync pulls the courier's "paid by recipient" flag and auto-marks the order Paid.
+- After checkout the **order** status is **`pending`** and the **payment record** is **`requested`** (shown as „Заявена“ / *Requested*); there is no separate COD `pending` payment state.
+- The merchant clicks **Mark as paid** when the courier remits the cash: the payment becomes `completed` and the order `paid` (or `completed` if already fulfilled and *Automatic completion of the order* is on).
+- With a courier's [[orders-sync-cod]] sync, a collected COD sets the payment `completed` and the order straight to **`completed`**, never `paid` ([[orders-sync-cod-status-flip]]).
 - COD is **excluded** from [[settings-cart]]'s "online payment" group — e.g., "Reserve stock only after successful online payment" doesn't apply to COD orders.
 
 ### Purchase is a no-op
 
-On checkout submission with COD selected, the platform sets the payment row's status to `requested` and returns — no redirect, no popup, no external call. The order commits immediately and the customer sees the order-success page. This is why COD is the most reliable method: no external API, webhook, or signature to fail.
+On checkout submission with COD selected, the payment record is set to `requested`, with no redirect, popup or external call; the order commits at once and the customer sees the success page. No external API, webhook or signature can fail.
 
 ### The customer-facing description appears AFTER the order is placed
 
@@ -72,7 +72,7 @@ The `discount` row attached to the provider (see [[discount]]) is the standard m
 
 ### Bulgarian market context
 
-COD is the highest-share payment method in BG e-commerce — frequently 50-80% of order volume for general-merchandise stores. It is preselected by default in many themes, and the courier integrations (BoxNow, Speedy, Econt, Rapido, ACS) all support COD as a first-class shipping option. Some couriers (Speedy, Econt) also offer **"card payment at delivery"** via a POS terminal. This is STILL the same COD provider; the payment goes through the courier's POS, not CloudCart, so no separate setup is needed.
+COD is the highest-share payment method in BG e-commerce. It is preselected by default in many themes, and the courier integrations (BoxNow, Speedy, Econt, Rapido, ACS) all support COD as a first-class shipping option. Some couriers (Speedy, Econt) also offer **"card payment at delivery"** via a POS terminal. This is STILL the same COD provider; the payment goes through the courier's POS, not CloudCart, so no separate setup is needed.
 
 ### Seller pays shipping is FALSE for COD
 

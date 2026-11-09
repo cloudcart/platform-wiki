@@ -4,8 +4,8 @@ nav_path: "Entity → Category → Key attributes"
 aliases: ["Category attributes", "Category fields", "Category record fields"]
 tags: [entity, catalog, categories, attributes]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[category]]. See the hub for the other aspects (lifecycle, relationships, business rules, side effects and API).
@@ -28,7 +28,7 @@ The full per-field schema for the [[category|Category]] record — every attribu
 | **Name** | Display name | Required. The label everywhere — list, edit header, storefront breadcrumbs, search facets. Free text. Must be unique among direct siblings — see [[category-entity-business-rules]]. |
 | **Parent category** (`parent_id`) | The category one level up in the tree | Optional. Empty = top-level category. Searchable dropdown of all other categories on the edit form. Subject to the 6-level depth cap — see [[category-entity-lifecycle]]. |
 | **Description** | Long-form HTML | Rich-text. Shown on the storefront category landing page (top of the product list). |
-| **Display subcategories** (`display_child`) | yes / no toggle | When ON, the storefront category page shows products from this category AND all descendant subcategories (recursive). When OFF, only products directly assigned to this category. See [[category-entity-business-rules]]. |
+| **Display subcategories** (`display_child`) | yes / no toggle | When ON, the category page shows tiles of its direct subcategories (theme permitting). Products of all subcategories are listed either way. See [[category-entity-business-rules]]. |
 | **Category image** | Single image upload | Drag-or-click. Shown on category cards in storefront listings and in some marketing surfaces. Stored in [[settings-files]]. Protected from mass-assignment — uploads go through the dedicated upload pipeline on the edit modal, not via bulk-edit / API patches. |
 | **Google Product Taxonomy** (`taxonomy_id`) | FK to `google_product_category` node | Optional. Picks a node from Google's official Product Taxonomy (~5,500 entries, e.g. "Apparel & Accessories > Clothing > Dresses"). Read by Google Shopping, Meta / Facebook Catalog, Criteo and the storefront search index. Informational only — does NOT restrict products. **Products inherit this from their category** — they have no `taxonomy_id` of their own. See [[products-categories-taxonomy]]. |
 | **Define custom payment methods** | yes / no toggle | When ON, only the merchant-picked payment methods are offered at checkout for orders containing a product from this category. When OFF, all installed methods work. |

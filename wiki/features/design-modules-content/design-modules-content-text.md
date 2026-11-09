@@ -3,12 +3,12 @@ type: feature
 nav_path: "Design → Modules → Content → Text"
 route_name: admin.storefront.widgets
 route_path: /admin/storefront/widgets
-aliases: ["Text module", "Text block module", "TinyMCE module", "Static text module", "homeText module", "footerText module", "cartText module", "checkoutText module", "headerText module", "Text carousel module", "Rotating text module", "Testimonials module", "Модул текст", "Модул текстов карусел"]
+aliases: ["Text module", "Text block module", "TinyMCE module", "Static text module", "homeText module", "footerText module", "cartText module", "checkoutText module", "headerText module", "Text carousel module", "Rotating text module", "Testimonials module", "Модул текст", "Модул текстов карусел", "Текстова кутийка", "Текстова кутийка - подсказка", "Текст на началната страница - фон"]
 tags: [design, modules, content, text, tinymce, testimonials]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Content modules — Text blocks + Text carousel
@@ -27,14 +27,14 @@ Both module types are backed by the same underlying maps (`extra.text` and `extr
 
 Sidebar → **Design** → **Modules** → **Others** tab:
 
-- **Text fields** group — every `extra.text` instance the active theme ships.
+- **Text fields** group — the `extra.text` instances the theme assigns to it; the others sit in the tab outside any group (`productText` does on every built-in theme).
 - **Slider** group — the `textCarousel` instance(s).
 
 Click the card to open the edit panel.
 
 ## What the merchant can do here
 
-- Edit the rich-text body of each text instance (TinyMCE, up to 30 000 chars).
+- Edit the rich-text body of each text instance (TinyMCE, up to 300 000 chars).
 - Set the optional title heading shown above the text.
 - For `textCarousel`, configure 1-20 rotating slides with HTML body, captions, schedule.
 - Save / Reset / Cancel — full pipeline in [[design-modules-content-storage]].
@@ -49,7 +49,7 @@ The merchant CANNOT add a NEW text instance — only instances declared by the a
 |-------|------|--------------------------|---------|
 | `enabled` | toggle | Master on/off | on |
 | `title` | text (0-250 chars) | Optional heading shown above the text content | "Example title" |
-| `text` | rich text (TinyMCE, 1-30000 chars) | The block's main content — supports headings, lists, images, links, basic HTML | "Example text" |
+| `text` | rich text (TinyMCE, 1-300000 chars) | The block's main content — supports headings, lists, images, links, basic HTML | "Example text" |
 
 For the `buttonToTop` INSTANCE (also internally an `extra.text` module), the title and text fields are HIDDEN — only the enable toggle is shown. See the back-to-top module in [[design-modules-navigation]].
 
@@ -64,7 +64,8 @@ The instance name is the slot identifier. The active theme decides which ones ex
 - `footerText` / `footerContent` / `footerContacts` — text in the footer.
 - `cartText` / `checkoutText` / `checkoutPrice` / `checkoutSideText` — text on the cart / checkout pages.
 - `checkoutSignInGuestText` / `checkoutSignInLoginText` / `checkoutSignInRegisterText` — text shown during checkout based on the customer's sign-in state.
-- `productText` — text shown on the product-detail page.
+- `productText` — one store-wide text shown on **every** product page, in the side column under the buy button, after the labels' and banners' texts and before the category properties and the wishlist / compare actions (verify per theme). It cannot differ per product: per-product text goes in the product's description tabs ([[products-editor]]). The theme names its card: *Product details page text* / *Текст в детайлната страница* (Knowledge, Motivation, Summer, Jobs, Technoarena) or *Product details text* / *Текст в детайлите на продукта* (Flair, Echappe, MDL).
+- `textbox1`–`textbox4` (**Текстова кутийка 1–4**) and `textbox1_tooltip`–`textbox4_tooltip` (**Текстова кутийка N - подсказка**) — `knowledge`, `motivation`, `jobs`, `summer` and `technoarena` themes: a row of up to four boxes on the homepage (on `knowledge`, after the second homepage text section; position varies per theme, verify). A box shows when its main card is on; its **- подсказка** card holds a pop-up shown above the box when a mouse hovers it (none on touch screens). On these themes `text1`–`text3` (**Текст на началната страница 1–3**) are full-width homepage text sections whose background image is the matching **Текст на началната страница N - фон** card ([[design-module-background-image]]). None of these cards has a group: they show under **Покажи всички**.
 - `homeTopBanner` / `homeTopTextAfterCategoryShowcase` — text at specific homepage anchors.
 - `homeVideoText` — text overlaid on the homepage video section.
 
@@ -98,11 +99,11 @@ The instance name is the slot identifier. The active theme decides which ones ex
 
 ### Each instance is independent
 
-`homeText1`, `homeText2`, `homeText3` are three SEPARATE rows of stored JSON — saving copy into `homeText1` does not propagate to the others. The instance name tells the merchant which slot it fills; the module type (`extra.text`) tells the platform how to render it.
+`homeText1`, `homeText2`, `homeText3` are separate stored instances; saving one does not change the others.
 
 ### Slot semantics from the name
 
-The naming convention is the merchant's only signal of WHERE the text renders — `cartText` shows in the cart, `footerText` in the footer, `homeText1` in the first homepage slot. Hovering the card description reveals theme-specific guidance.
+The instance name signals where the text renders: `cartText` in the cart, `footerText` in the footer.
 
 ### Inline images are supported
 
@@ -110,7 +111,7 @@ TinyMCE allows inline images uploaded to the file manager and referenced inline.
 
 ### When to use a Static page instead
 
-For long-form content (about-us, policy text, terms), use a Static page in [[marketing-landing-pages]] and link to it from a text module. Text modules are best for short, prominent messaging — when the content runs past a few paragraphs, it belongs on its own page.
+Long-form content (about-us, terms) belongs on a Static page in [[marketing-landing-pages]], linked from a text module.
 
 ### Text carousel — pairs with testimonials
 
@@ -126,8 +127,6 @@ When the `multylang` app is installed, the body field stores per-language sub-ke
 
 ## Tips
 
-- The TinyMCE editor supports keyboard shortcuts (Ctrl-B, Ctrl-I, Ctrl-K for link) — faster than the toolbar.
-- For testimonials, embed the customer's photo via inline image upload — much more compelling than text-only quotes.
 - Use the per-slide schedule on `textCarousel` to time-limit post-event feedback (e.g., trade-show quotes from last month).
 - The `title` field is optional — leave it blank if the slot doesn't have a heading.
 

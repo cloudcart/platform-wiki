@@ -7,8 +7,8 @@ aliases: ["Preserve UTM on redirect", "fbclid gclid passthrough", "Marketing tra
 tags: [marketing, seo, redirects, utm, tracking, analytics]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-seo-301-redirects]]. See the hub for the other aspects (types, validation, CSV import, middleware, wildcards, auto-tracking).
@@ -30,7 +30,7 @@ Both behaviours run automatically — no UI. The pass-through happens at request
 
 ## What the merchant can do here
 
-- Type a paid-ad URL like `https://merchant.com/old?gclid=ABC123` into a browser and watch the 301 redirect arrive with `?gclid=ABC123` appended — so Google Ads analytics still attribute the click.
+- Type a paid-ad URL like `https://merchant.com/old?gclid=ABC123` into a browser and watch the 301 redirect arrive with `?gclid=ABC123` appended — so Google Ads analytics still attribute the click. This needs a rule that matches the address with its query, such as `/old*`: a rule for plain `/old` does not match `/old?gclid=…` ([[seo-301-redirects-wildcards]]).
 - Paste a full URL on the store's own host into a `manual` redirect (e.g., `https://merchant.com/contacts`) and have the platform store the relative `/contacts` so the rule survives an HTTP→HTTPS migration.
 - Type an external destination without a scheme (`external-site.com/foo`) into an `external` rule and have the platform auto-prepend `http://`.
 

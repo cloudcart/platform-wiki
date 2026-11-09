@@ -1,11 +1,11 @@
 ---
 type: entity
 nav_path: "Entity → Product Status → Actions & Buy button"
-aliases: ["Product Status actions", "Show buy button", "Hide buy button", "Show as request", "Show as subscribe", "Back-in-stock subscribe", "Request app dependency"]
+aliases: ["Product Status actions", "Show buy button", "Hide buy button", "Show as request", "Show as subscribe", "Back-in-stock subscribe", "Request Offer", "Product request form", "Запитване относно продукт"]
 tags: [entity, catalog, products, statuses, buy-button, customer-facing]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 # Product Status — Actions and Buy button
@@ -31,14 +31,18 @@ The Product Status **action type** dictates what the storefront renders **in pla
 |--------|----------------------|---------------------|
 | **Show "Buy" Button** | Normal: Buy / Add to cart button is visible. Customer can place an order. | `in_stock` |
 | **Hide "Buy" Button** | Status badge shown, no Buy button. Customer can view the product but not order. | `out_stock` |
-| **Show as request** | Buy button replaced with a *"Request"* button. Triggers a request / quote form. Custom CTA text comes from the `button_text` field. | `request` |
+| **Show as request** | Buy button replaced with a request button that opens the built-in product-request form. Its label is the **Button text**, or the status name when that is empty. | `request` |
 | **Show as subscribe for quantity** | Buy button replaced with a *"Notify me when in stock"* subscription button. Customer enters their email and gets notified when stock returns. | `subscribe` |
 
-### *"Show as request"* depends on the Request app
+### *"Show as request"* opens the built-in product-request form
 
-The *"Show as request"* action requires the Request app (or any inquiry-form app that listens on the same submission endpoint) to be installed. Without it, the button submits to the platform's default contact form OR shows an error. The merchant cannot wire a custom contact form per Status — the wiring is global via the Request app.
+No app is involved (the Request an App screen, [[apps-request]], is unrelated). The button opens the store's contact form in a popup (`/contacts/<product URL>`), with the product and the chosen variant attached:
 
-Typical use case: bespoke / quote-on-demand items where the merchant needs a custom inquiry instead of a checkout flow.
+- **Fields** are fixed: first name, last name, email, phone (a signed-in customer's own details are used), **Subject** prefilled *Request for "<product>"* (*Запитване относно продукт "<product>"*), **Message** prefilled with the product name and address, the store's privacy consents, and reCAPTCHA. No custom fields and **no file upload**; option values picked on the product page are not sent.
+- **Delivery**: one notification email to the store's main email ([[design-module-contact-form]]), sent in the shopper's name. Nothing is stored in the admin. The shopper is also added as a subscriber, with marketing consent only if they ticked it.
+- The standard themes have no separate "ask about this product" link; this button is the product inquiry.
+
+Typical use case: quote-on-demand items that should not go through checkout.
 
 ### *"Show as subscribe"* connects to back-in-stock email
 
@@ -68,7 +72,7 @@ Without a Status that uses this operator + action combination, customers see no 
 
 - [[products-statuses]] — the Add / Edit modal where each action type is picked.
 - [[products-missing-product]] — back-in-stock subscriber list captured by the *"Show as subscribe"* action.
-- [[apps-request]] — Request app that handles *"Show as request"* submissions (verify).
+- [[design-module-contact-form]] — the contact form the request button opens.
 - Storefront product card + detail — where each action's substitute UI renders.
 
 ## Related
@@ -82,4 +86,4 @@ Without a Status that uses this operator + action combination, customers see no 
 
 ## Open Questions
 
-- ⏸️ **Request app identification** — verify the exact app slug used for *"Show as request"* submissions and the fallback behaviour when no inquiry app is installed.
+None.

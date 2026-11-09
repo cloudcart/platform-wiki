@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Dynamic Pages → Page-builder modules → Order details"
+nav_path: "Design → Static pages → Dynamic page → Page-builder modules → Order details"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["Order details module", "Thank-you page receipt", "Receipt block", "Модул детайли поръчка"]
 tags: [design, modules, page-builder, order, thank-you, marketing]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Order details block (`order-details`)

@@ -7,8 +7,8 @@ aliases: ["Sales by traffic source", "Sales by traffic source (referral)", "Sale
 tags: [analytics, ccanalytics, orders, traffic, sales-by-traffic-source]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-06-10
-source_count: 11
+updated: 2026-11-09
+source_count: 12
 ---
 # Sales by traffic source (referral)
 
@@ -42,13 +42,14 @@ For the full interaction catalogue see [[analytics-sales-traffic-source-ui]].
 
 ## Settings & fields
 
-The only merchant-facing control is **Settings → Analytics → Order statuses**, which decides which orders count toward revenue (default: Paid / Completed / Pending / Authorized / Fulfilled). There is no per-box override. The Vue config (box `key = sales-by-traffic-source`, `type = table`, `viewMore`, `hasDetails`, `hasViewMoreChart`, `navigationSort = 21`) and the referer-group dictionary are documented on [[analytics-sales-traffic-source-ui]]. The status-filter and amount rules are on [[analytics-sales-traffic-source-data]].
+The only merchant-facing control is **Order statuses that will be included in the analyses**, in the panel the **Settings** button (cog icon) opens on the Analytics dashboard ([[analytics-overview-settings]]). It decides which orders count toward revenue (default: Paid / Completed / Pending / Authorized / Fulfilled). There is no per-box override. The Vue config (box `key = sales-by-traffic-source`, `type = table`, `viewMore`, `hasDetails`, `hasViewMoreChart`, `navigationSort = 21`) and the referer-group dictionary are documented on [[analytics-sales-traffic-source-ui]]. The status-filter and amount rules are on [[analytics-sales-traffic-source-data]].
 
 ## Business rules
 
-- **Revenue excludes shipping.** Amounts sum `amount_without_shipping` — only the goods portion counts. See [[analytics-sales-traffic-source-data]].
-- **Status filter follows Settings → Analytics.** The orders counted are exactly the statuses the merchant chose there; no per-box override. See [[analytics-sales-traffic-source-data]].
-- **First-touch session attribution.** A referer is captured on the buyer's first visit and attached to whatever order they eventually place — not the visit on which checkout completed. See [[analytics-sales-traffic-source-attribution]].
+- **Receiver-paid shipping is left out.** Amounts sum `amount_without_shipping`: shipping the store charged counts. See [[analytics-sales-traffic-source-data]].
+- **Status filter follows the dashboard's Settings panel.** The orders counted are exactly the statuses the merchant chose there; no per-box override. See [[analytics-sales-traffic-source-data]].
+- **First-touch session attribution.** A referer is captured on the first non-checkout request of the buyer's session (kept up to 7 days without a visit, cleared after each order) and attached to the order — not the visit on which checkout completed. See [[analytics-sales-traffic-source-attribution]].
+- **Views and conversion come from the visits side.** Rows for ad clicks (Google Ads, Meta Ads, TikTok Ads) and CloudCart campaigns always show 0 views and 0.00% conversion. See [[analytics-sales-traffic-source-data]].
 - **"Direct" never shows a group chip.** Orders with no referer land in the Direct bucket, whose group label is forced to `null`. See [[analytics-sales-traffic-source-attribution]].
 - **Platform-wide, no overrides.** Same status filter, same index hint, same shipping-excluded amount rule for every store. See [[analytics-sales-traffic-source-data]].
 

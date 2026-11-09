@@ -4,19 +4,19 @@ nav_path: "Apps → FGO"
 route_name: apps.fgo.overview
 route_path: /admin/apps/fgo
 aliases: ["FGO", "FGO invoicing", "FGO accounting", "Българско счетоводство FGO", "enable disable button", "app active toggle"]
-tags: [apps, erp, invoicing, bulgaria, accounting]
+tags: [apps, erp, invoicing, romania, accounting]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-08-06
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
-# FGO (Bulgarian invoicing)
+# FGO (Romanian invoicing)
 
 ## Purpose
 
-**FGO** integration — Bulgarian online invoicing platform. When activated, FGO becomes the platform's active invoicing provider for Bulgarian merchants (alongside [[apps-szamlazz]] for Hungary, [[apps-smart-bill]] for Romania, and [[apps-flix-facts]] for other markets).
+**FGO** integration — FGO is a Romanian online invoicing service (`api.fgo.ro`). The app sends an order to FGO, which issues **its own document** with its own series and number; the link is kept on the order. It does **not** change the store's invoicing provider or switch off the platform's own invoices (unlike [[apps-szamlazz]]).
 
-Handles invoice generation, cancellation with audit trail, PDF retrieval, and tax-compliant numbering per Bulgarian tax law.
+Handles document generation, cancellation and the PDF link.
 
 > **Has an on/off control.** The app screen carries an **Enable / Disable** button, so the merchant can switch it off without uninstalling it. A disabled app stops working while keeping its settings — so *"the app is disabled"* IS a valid explanation to check here.
 
@@ -28,12 +28,10 @@ Sidebar → Apps → install → **FGO**.
 
 - See app status + configuration health.
 - Configure FGO API credentials in Settings ([[apps-fgo-settings]]).
-- Activate to make FGO the active invoicing provider.
 - Generate documents per order through orders-details / orders-invoice flow.
 
 ### What the merchant CANNOT do here
 - Use FGO without a paid FGO subscription.
-- Run FGO alongside another active invoicing provider (one at a time).
 
 ## Settings & fields
 
@@ -45,17 +43,17 @@ The Manager exposes:
 - `cancelDocument(Order $order, $number, $seria)` — Cancels a previously-issued document by FGO number + series identifier.
 - Geographic lookups: `getCountryByCode(iso2)`, `getStateByCode(iso2)`, `getCityCode`.
 
-FGO uses a **number + series** identification model (legacy Bulgarian accounting practice), unlike Szamlazz's single-number approach.
+FGO uses a **number + series** identification model, unlike Szamlazz's single-number approach.
 
 ## Business rules
 
-### Bulgarian tax compliance
+### Compliance is FGO's
 
-FGO handles requirements of Bulgarian National Revenue Agency (NAP) — sequential numbering per series, document retention, cancellation audit.
+Numbering, retention and reporting of the documents FGO issues follow FGO's own rules, not CloudCart's.
 
 ### Series structure
 
-The Bulgarian invoice has both a `series` (prefix identifier, e.g., "A") and a `number` (sequential within the series). The merchant typically uses one series for normal invoices and another for credit notes.
+An FGO document has both a `series` (prefix identifier, e.g., "A") and a `number` (sequential within the series). The merchant typically uses one series for normal invoices and another for credit notes.
 
 ### the configured check gate
 
@@ -63,7 +61,7 @@ Before issuing documents, the platform calls the configured check to verify cred
 
 ### Side effects
 
-Activation sets `invoicing_provider = fgo`. Document generation stores metadata on order meta.
+Activation does not touch `invoicing_provider`. Document generation stores FGO's number, series, type and link on the order.
 
 ### Permission
 

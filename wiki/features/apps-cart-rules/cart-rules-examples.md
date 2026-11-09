@@ -7,8 +7,8 @@ aliases: ["Cart rule examples", "Cart rule recipes", "Cart rule worked scenarios
 tags: [apps, cart-rules, marketing, promotions, examples, recipes]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[apps-cart-rules]]. See the hub for the other aspects (conditions, actions, scoping, stacking, cooldowns, known issues).
@@ -47,13 +47,13 @@ The classic BOGO pattern. Row triggers identify *that* the customer qualifies (5
 
 - **1 row.**
 - **Row trigger 1:** `condition_type=product`, `filter_type=vendor`, `record_type=vendor`, `operator=in`, `records=[<Brand X id>]`.
-- **Row trigger 2:** `filter_type=product_quantity`, `value_type=gte`, `value=5` (scoped to Brand X items in practice).
+- **Row trigger 2 (after trigger 1):** `condition_type=cart`, `filter_type=cart_quantity`, `value_type=gte`, `value=5` — placed after the vendor trigger, it sums the units of all Brand X lines ([[cart-rules-conditions]]). `product_quantity` would instead need 5 of one product.
 - **Action:** `value_type=percent`, `value=100`.
 - **Action trigger:** `filter_type=product_lowest_price` within Brand X scope (combine with `product_from_condition` to chain the row trigger's vendor constraint into the action's targeting — see [[cart-rules-actions]]).
-- **Scope:** product-level (action targets a specific line) → discount accumulates with other product-level matches on the same line.
+- **Scope:** product-level; the cheapest line is freed whole, once per cart.
 - **Suggested title:** *"Buy 5 Brand X items, the cheapest is free"*.
 
-Variant — *"Buy any 3, get the cheapest free"*: drop trigger 1 (vendor filter), keep trigger 2 (`product_quantity gte 3`), drop the vendor scope on the action — `product_lowest_price` then targets the cheapest line of the whole cart.
+Variant — *"Buy any 3, get the cheapest free"*: drop trigger 1, set trigger 2 to `cart_quantity gte 3`, drop the vendor scope on the action — `product_lowest_price` then targets the cheapest line of the whole cart.
 
 ### Example 3 — "Free shipping for VIP customers all summer"
 
@@ -102,11 +102,11 @@ Customer-aggregate trigger. Uses the `order_count` aggregate that reads `custome
 - **Scope:** cart-level (no action triggers).
 - **Suggested title:** *"Loyalty 10% off — thanks for being a returning customer!"*.
 
-**Caveat:** the customer aggregate `completed_orders` is updated when an order reaches `paid` / `completed` — it does NOT include `pending` orders. A customer with 5 pending unpaid orders will still match `order_count gte 3` as `false` until at least 3 of them clear. There is also no *"customer's last order was within N days"* filter; the only customer-level numeric aggregates exposed are `order_count` and `order_amount` (both lifetime totals).
+**Caveat:** `order_count` counts paid or completed orders, not `pending` ones, so 5 unpaid orders do not meet `order_count gte 3`. There is also no *"customer's last order was within N days"* filter; the only customer-level numeric aggregates exposed are `order_count` and `order_amount` (both lifetime totals).
 
 ## Business rules
 
-These examples assume the default behaviour described on the hub. Each is fully verified against the matcher source. Two cross-cutting rules to remember when adapting them:
+Two cross-cutting rules to remember when adapting these examples:
 
 - **Provide human values; the save helper stores them ×100.** Money: send `50` for 50 EUR (stored `5000` cents). Percent: send the whole percent — `10` for 10% (stored `1000`). Quantity/count: plain integers (`2` = 2). Free shipping's `value=null`. See [[cart-rules-conditions]] → *Value scale*.
 - **Multi-row rules are an OR-fallback ladder, not accumulating.** Only ONE row per rule fires. To stack effects, use multiple rules — and remember that products are consumed across rules in `sort_order DESC`. See [[cart-rules-stacking]].

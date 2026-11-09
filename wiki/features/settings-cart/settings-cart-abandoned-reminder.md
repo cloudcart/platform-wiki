@@ -7,8 +7,8 @@ aliases: ["Abandoned cart reminder", "Abandoned cart email", "Abandoned reminder
 tags: [settings, cart, checkout, abandoned-cart, email, background-jobs]
 plan_gates: ["abandoned_orders"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-cart]]. See the hub for the other aspects (accounts, payment/shipping defaults, limits, checkout fields, UI behavior, Google Maps, marketing consent).
@@ -70,7 +70,7 @@ Anonymous, never-identified visitors are NOT eligible — the platform has no wa
 
 ### Plan-tier double-check
 
-Even with abandoned-cart reminders enabled, an additional plan check gates whether the email is actually sent. If the merchant exhausts the plan's monthly abandoned-notification quota, sending fails silently and the cart stays unemailed. The merchant won't see an error in the admin — only the absence of expected delivery.
+Even with abandoned-cart reminders enabled, each e-mail also needs room in the plan's `abandoned_notification` allowance, which counts sends per plan year (not per month) — see [[abandoned-cart-plan-quota]]. Once it is used up, sending stops. Within 12 hours the platform switches **Abandoned cart reminder** OFF and posts an Important alert in [[notifications]]. The switch stays off until the merchant turns it on again, even after the allowance is restored.
 
 ### Only the Email channel is active
 
@@ -88,6 +88,7 @@ The sweep job is dispatched onto the `system` queue and is the same scheduler th
 
 - [[settings-cart]] — hub.
 - [[plan-gates]] — `abandoned_orders` plan feature gates this pipeline.
+- [[abandoned-cart-plan-quota]] — the per-plan-year send allowance and the automatic switch-off at the cap.
 - [[background-queue-inventory]] — the every-3-minute sweep job; the hourly cart-cleanup that ages out stale carts.
 - [[notification-delivery]] — the email-delivery layer this pipeline uses.
 - [[cart-vs-order-lifecycle]] — concept page on cart-stage vs order-stage semantics, including the "abandoned" state.

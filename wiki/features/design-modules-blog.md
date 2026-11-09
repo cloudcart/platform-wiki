@@ -7,8 +7,8 @@ aliases: ["Blog modules", "Blog module", "Recent articles module", "Recent comme
 tags: [design, modules, blog, content]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # Storefront Modules — Blog
 
@@ -51,7 +51,7 @@ The remaining blog modules do NOT have a card here:
 
 Common actions for the three editable cards (exact messages in the Save / Reset / Cancel table under Business rules):
 
-- **Save module** — persists settings; storefront cache regenerates and new settings are live on the next page load.
+- **Save module** — persists settings; pages rendered afterwards use them, while guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 - **Reset module** — wipes the merchant's saved settings and reverts to theme-shipped defaults.
 - **Cancel** — closes the panel without saving.
 - **Enable / disable** — every form has a master toggle. When OFF, the module is hidden on the storefront.
@@ -92,7 +92,7 @@ Which of the three editable cards appear on the Modules screen depends on the ac
 
 ### Cache invalidation on save
 
-Save and Reset both regenerate the storefront cache — new settings appear on the next request, no manual cache-clear needed. New articles published in [[marketing-blog-articles]] surface immediately without any module save.
+Save and Reset both renew the module cache — pages rendered afterwards use the new settings; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]). New articles published in [[marketing-blog-articles]] appear without any module save, on the same terms.
 
 ### Plan gating
 

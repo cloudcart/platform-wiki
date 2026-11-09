@@ -7,8 +7,8 @@ aliases: ["Product", "Catalog item", "Catalog product", "SKU parent", "Прод�
 tags: [entity, catalog, products, core]
 plan_gates: ["products", "bundles"]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 # Product
@@ -33,7 +33,7 @@ Products are plan-gated — the merchant's plan caps how many **non-bundle** pro
 The Product is a multi-faceted record split across **five well-scoped aspects**. The AI Assistant should drill into the aspect that matches the question, not read every page.
 
 - [[product-entity-attributes]] — the full per-field schema (identity, publish flags, FK references, p1 / p2 / p3 parameter slots, computed price range, descriptions, SEO, import provenance, tags, validation caps — 191-char `name`, 250,000-char `description`, max 100 tags, max 3 parameters, max 500 variants).
-- [[product-entity-lifecycle]] — the eight named states (Draft, Scheduled, Visible, Hidden, Expired, Out of stock, Soft-deleted, Hard-deleted), save-time transitions, the 10-day soft-delete window, "Save and publish" flow, duplicate-to-Draft behaviour, URL-handle 301 redirects.
+- [[product-entity-lifecycle]] — the eight named states (Draft, Scheduled, Visible, Hidden, Expired, Out of stock, Soft-deleted, Hard-deleted), save-time transitions, delete (no retention window), "Save and publish" flow, duplicate-to-Draft behaviour, URL-handle 301 redirects.
 - [[product-entity-relationships]] — variants, categories, vendor, tags, images, file assets, SEO meta, smart collections, discounts, banners-and-labels, linked products, bundle child-products, order line items, customer favorites, back-in-stock waitlists; FK-cleanup behaviour (`ON DELETE SET NULL`).
 - [[product-entity-business-rules]] — variants own SKU / barcode / price / quantity (not the Product); publish requires a category; Hidden vs Draft; publish window in store timezone; oversell + threshold gating on `tracking`; bundle auto-deactivation; `physically` filter alias; legacy `sale` field; plan-gated `products` vs `bundles` counts.
 - [[product-entity-side-effects-and-api]] — save side effects (search re-index, `product.updated` chattiness, smart-collection re-evaluation, cache invalidation, change-log entry); `product.created` / `product.updated` / `product.deleted` webhooks; JSON-API v2 access via [[api-products]] / [[api-variants]]; hard-delete cascade; webhook caveat (admin-only fires).
@@ -46,7 +46,7 @@ The Product record is where **catalog identity, publish state, inventory configu
 - **Hidden ≠ Draft.** Hidden is published-but-unlisted (direct URL works). Draft is unpublished (direct URL returns 404). Merchants conflate the two often. See [[product-entity-business-rules]].
 - **Publish requires a category, and bundles silently auto-deactivate when a child deactivates.** The reverse direction (re-activating the child) does NOT auto-re-activate the bundle. See [[product-entity-business-rules]].
 - **`product.updated` is chatty.** Any field change — including post-order stock decrements — fires the webhook. Receivers must be idempotent. See [[product-entity-side-effects-and-api]].
-- **Soft-delete holds for 10 days, then hard-purges silently.** The merchant gets one tooltip warning during the window and no follow-up notification on hard-purge. See [[product-entity-lifecycle]].
+- **Delete is permanent, with no trash.** The product is hidden at once and removed by a background task; only a backup restore brings it back, without images. The 10-day auto-delete is for temporary products only. See [[product-entity-lifecycle]].
 
 ## Where it appears
 

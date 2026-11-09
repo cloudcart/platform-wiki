@@ -7,14 +7,14 @@ aliases: ["Product modules", "Product showcase module", "Related products module
 tags: [design, modules, products]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # Storefront Modules — Products
 
 ## Purpose
 
-The **Products** tab on the [[design-modules]] screen groups every module that DRIVES product discovery on the storefront — the product-detail field controls, the related / linked / last-viewed product rows, the homepage / category showcase rows, the brand showcase, the bundle blocks, and the static product-details text block. Tuning these modules is how the merchant decides which information appears on the product page, what kinds of recommendations the shopper sees, and how the homepage product strips are sourced.
+The **Products** tab on the [[design-modules]] screen groups every module that DRIVES product discovery on the storefront — the product-detail field controls, the related / linked / last-viewed product rows, the homepage / category showcase rows, the brand showcase and the bundle blocks. The product-page text block (`productText`) is not here: it is a text module on the **Others** tab, see [[design-modules-content-text]]. Tuning these modules is how the merchant decides which information appears on the product page, what kinds of recommendations the shopper sees, and how the homepage product strips are sourced.
 
 The module catalogue on this tab is controlled by the **active theme** ([[design-themes]]) — switching themes can swap which product-module instances appear. The module TYPES are platform-wide; the named INSTANCES vary per theme.
 
@@ -22,7 +22,9 @@ This page is the navigation hub. Drill into the aspect page that matches the que
 
 ## Sub-pages (in this cluster)
 
-- [[design-module-product-filters]] — `filters` instance / `product.filters`. The **Product Catalog Settings** card — master settings module for EVERY product-listing page (per-page, per-row, sort, filter chips, price ranges, out-of-stock, card visuals).
+- [[design-module-product-filters]] — `filters` / `product.filters`. The **Product Catalog Settings** card for EVERY listing page (per-page, per-row, price ranges, out-of-stock, card visuals).
+  - [[design-module-product-filters-sorting]] — default sort, shopper sort options, when the Sort number counts.
+  - [[design-module-product-filters-sidebar]] — filter blocks, hiding the sidebar, which categories the Categories block lists.
 - [[design-module-product-listing]] — `productsListing` instance / `product.listing`. Legacy sibling of `filters` — sort + per-page + price range; older themes only.
 - [[design-module-product-details-info]] — `productsDetails` instance / `product.productsDetails`. Master product-detail-page field visibility (price, BUY, status, SKU, brand, category, characteristics, gallery, compare, wishlist, quantity, description).
 - [[design-module-product-showcase]] — `showcaseProducts*` instances / `product.productShowcase`. Homepage product rows (Featured / Bestsellers / Promotions / Smart-collection / hand-picked).
@@ -37,9 +39,9 @@ This page is the navigation hub. Drill into the aspect page that matches the que
 
 ## Where to find it
 
-Sidebar → **Design** → **Modules** → **Products** tab.
+Sidebar → **Design** → **Modules** → **Products** tab (*Продукти*).
 
-Each card on the Products tab opens an edit panel with three buttons at the top: **Save module**, **Reset module** (confirmation: *"Are you sure you want to reset this module?"*), and **Cancel**. Saves regenerate the storefront cache automatically — the new settings are live on the next request. Success messages: *"Module successfully edited"* / *"Module successfully reset"*.
+Each card opens an edit panel with **Save module**, **Reset module** (confirmation: *"Are you sure you want to reset this module?"*) and **Cancel**. Success messages: *"Module successfully edited"* / *"Module successfully reset"*.
 
 ## What the merchant can do here
 
@@ -79,15 +81,11 @@ Five module groups share defaults across all their instances on Reset: `product.
 
 ### Cache invalidation is automatic
 
-Save and Reset bump the per-site cache key — storefront sees changes on the next request. No manual cache clear is needed.
+Save and Reset bump the per-site cache key, so pages rendered afterwards show the change; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
-### Disabled cards return 404
+### Disabled cards return 404; unknown fields are dropped
 
-A module the theme flags `editable: no` does not appear on the tab, and opening its edit URL directly returns HTTP 404.
-
-### Unknown fields are silently dropped
-
-Save validates the submitted form against the module's declared field schema. Any field not in that schema is silently discarded rather than stored.
+A module the theme flags `editable: no` is not on the tab, and its edit URL returns HTTP 404. Save discards any field not in the module's declared schema.
 
 ### Plan gating
 
@@ -95,7 +93,7 @@ None of the product modules are plan-gated at the module level (only `extra.vide
 
 ### Localization
 
-Module text fields (`title`, `header`, `text` on `productText`) are stored as a single string per instance by default. Per-language storage requires the multi-language app — see [[apps-multilang-settings]].
+Module text fields (`title`, `header`) are stored as a single string per instance by default. Per-language storage requires the multi-language app — see [[apps-multilang-settings]].
 
 ## Related
 
@@ -114,5 +112,5 @@ Module text fields (`title`, `header`, `text` on `productText`) are stored as a 
 
 ## Open questions
 
-- 📡 **Per-language text fields.** With `multylang`, showcase `title` / `header` and `productText` accept per-language entries via the language switcher.
+- 📡 **Per-language text fields.** With `multylang`, showcase `title` / `header` accept per-language entries via the language switcher.
 - 📡 **Bundle module app key.** `product.bundleShowcase` and `product.productInBundles` require the Bundles app installed; without it, the picker is empty and the row stays hidden.

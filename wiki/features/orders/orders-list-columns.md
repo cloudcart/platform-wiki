@@ -7,8 +7,8 @@ aliases: ["Orders list columns", "Order list grid columns", "Orders header actio
 tags: [orders, list, columns, sortable, header-actions, smarty]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-10-05
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[orders]]. See the hub for the other aspects (filters, bulk actions, status taxonomy, default visibility, export, locking).
@@ -27,7 +27,7 @@ Sidebar → **Orders**. The header buttons sit above the filter bar; the column 
 
 ### Header actions
 
-- **+ Add order** — opens a slide-in panel (the manual-order creation flow). Clicking the header button opens the manual-order side-panel inline (via `data-ajax-panel` with class `wide order-preview`). See [[orders-add]] for the full panel contents, fields, and validation.
+- **+ Add order** — opens the manual-order side panel; see [[orders-add]].
 - **Export** — opens the export flow, which first asks for a **two-factor confirmation code**. The full mechanics (what it contains, inline vs emailed delivery) live on [[orders-list-export]]. The whole header region — including this button — is omitted on a store with no orders at all.
 - **Enable Bulk print** (Включи Масов печат) — shown only while the **Bulk print** app is installed. It opens the separate Bulk print screen at `/admin/orders/bulk-print`, for printing order slips, generating waybills and printing labels for many orders at once ([[apps-bulk-print-mode]]).
 
@@ -35,7 +35,7 @@ Sidebar → **Orders**. The header buttons sit above the filter bar; the column 
 
 | Column | Width | Notes |
 |--------|-------|-------|
-| **Order** (`number`) | 250 | Order number + key badges (Draft / Fast order / Archived). Sortable. |
+| **Order** (`number`) | 250 | Order number + key badges (Draft / Fast order / Archived), and the *"От <customer> (N)"* line. Sortable. |
 | **Address** | 400 | **City on the first line, country on the second** — no recipient name. Not sortable. |
 | **Date** (`date_added`) | 120 | When the order was placed. Sortable. Displayed via `date_added_formatted`. |
 | **Fulfillment** | 200 | The shipping provider / courier (Econt / DPD / etc.). Sortable (by the date the order was fulfilled). |
@@ -47,11 +47,19 @@ Sidebar → **Orders**. The header buttons sit above the filter bar; the column 
 
 ### Sortable columns — five (six with Shipping Hours)
 
-Sortable: **Order** (`number`), **Date** (`date_added`), **Fulfillment**, **Receiving**, **Total** (`price_total`) — plus **Shipping date** when the Shipping Hours app is installed. Sorting by **Fulfillment** orders by the date the order was fulfilled; sorting by **Receiving** orders by the recorded delivery date. Both are useful for "what went out first / what lands first" reviews.
+Sortable: **Order**, **Date**, **Fulfillment** (by fulfilment date), **Receiving** (by recorded delivery date), **Total**, plus **Shipping date** with the Shipping Hours app.
 
 Only **Address**, **Status** and **Comment** are display-only. Status is colour-coded but cannot be sorted — to group by status the merchant applies a Status filter (see [[orders-list-filters]]).
 
 The default sort is by order ID descending (newest orders first) — see [[orders-list-default-visibility]] for default-sort details.
+
+### The "От <customer> (N)" line under the order number
+
+When the order is linked to a customer record, the Order cell adds *"От"* (EN *"From"*) with the customer's name as stored on the order, and a number in brackets:
+
+- **The name** opens that customer's profile ([[customers-details]]).
+- **N** is the customer's total number of orders in the store, **every status** (cancelled, voided and archived included), not only the visible ones. It is kept on the customer and refreshed in the background after order changes, so it can lag briefly (verify).
+- **Clicking N** opens this list filtered to that customer (`/admin/orders?filters[customer]=<customer id>`). Any filter switches off the default hiding of cancelled, voided and archived orders ([[orders-list-default-visibility]]), so all N orders show.
 
 ### Comment icon
 

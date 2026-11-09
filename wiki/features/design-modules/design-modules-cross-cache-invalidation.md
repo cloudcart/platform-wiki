@@ -7,8 +7,8 @@ aliases: ["Module cache", "Module cache invalidation", "Per-site cache key", "St
 tags: [design, modules, cache, storefront]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 # Storefront Modules — Cache invalidation
@@ -17,19 +17,17 @@ source_count: 1
 
 ## Purpose
 
-How module changes propagate from the admin Save / Reset action to the live storefront — and why merchants typically see their changes on the very next storefront request without any manual cache clear. This aspect documents the cache stack and the per-site cache-key bump.
+How module changes propagate from the admin Save / Reset action to the live storefront — and why a guest can still get the old page for up to 20 minutes after a save. This aspect documents the cache stack and the per-site cache-key bump.
 
 Use this aspect when investigating: *"I clicked Save but the storefront still shows the old banner"*, *"how long does it take for module changes to appear?"*, *"is there a Clear cache button I'm missing?"*, *"the staging copy of the store hasn't picked up the module edit"*.
 
 ## Where to find it
 
-The cache layer is **invisible** to the merchant — no admin screen manages it directly. Through the [[admin-graphql-api]], `purgeStorefrontCache` clears the store's cached pages so the next visit renders fresh; it needs the **My store** or My store → **Themes** staff permission. Without it, visitors get cached pages for up to about 20 minutes after a theme, custom code, page or menu change, and crawlers for longer. This page documents it for support-investigation purposes. Save and Reset on `/admin/storefront/widgets/{mapping}` are the only merchant-driven cache busts — see [[design-modules-cross-save-reset]].
+The cache layer is **invisible** to the merchant — no admin screen manages it directly. Through the [[admin-graphql-api]], `purgeStorefrontCache` clears the store's cached pages so the next visit renders fresh; it needs the `store`, `store.templates` or `store.builder` staff permission. Without it, guests get cached pages for up to 20 minutes after any change (module, theme, custom code, page, menu) and crawlers for 1–2 days. Save and Reset renew the module data, not the cached pages — see [[design-modules-cross-save-reset]].
 
 ## What the merchant can do here
 
-- **Save** any editable module — automatically bumps the per-site cache key. Storefront picks up the change on the next request.
-- **Reset** any editable module — same effect: per-site cache key bumps, storefront picks up the change on the next request.
-- See changes immediately after refresh on the storefront.
+- **Save** or **Reset** a module — renews the module data at once. A browser signed in to the admin, and signed-in customers, see the change on the next page load; guests within 20 minutes, crawlers within 1–2 days ([[storefront-arch-caching-invalidation]]).
 
 The merchant CANNOT:
 
@@ -57,7 +55,7 @@ Both Save and Reset call into a single per-site cache-key regenerator:
 2. Write a new microtime + site_id value into the per-site cache tag.
 3. Return success — *"Module successfully edited"* or *"Module successfully reset"*.
 
-On the next storefront request:
+On the next request that renders a page (not one served from the full-page cache):
 
 1. The storefront looks up the current per-site cache stamp.
 2. The previously cached `widgetsNew:<...>` entry was keyed off the OLD stamp — so the lookup misses.
@@ -73,23 +71,23 @@ The `theme-settings.<template>` cache is keyed by template name, not by the per-
 
 ### Save and Reset both bump the cache key
 
-There is no "save without bust" mode. Every successful Save and every successful Reset bumps the per-site cache key. So the merchant always sees changes on the next storefront request.
+There is no "save without bust" mode. Every successful Save and every successful Reset bumps the per-site cache key, so every page rendered after it uses the new settings. Pages already held in the full-page cache are not rendered again until their copy expires.
 
 ### No manual cache-clear surface for modules
 
-There is no admin "Clear module cache" button — the bump is automatic and reliable enough that one isn't needed. If a merchant reports stale modules despite saving, the investigation path is upstream: did the Save actually succeed (check the success message), did the storefront request hit a CDN / browser cache (different layer entirely), did the theme JSON get out of sync (different cache). (verify CDN behaviour)
+There is no admin "Clear cache" button for modules or pages. If a merchant reports stale modules despite saving, check in order: did the Save succeed (the success message); does the page answer `X-Cache: HIT` with an `X-Cache-Expires` time still ahead (the full-page cache — the change shows after that time); did the theme JSON get out of sync (a different cache).
 
-### Pickup latency is one storefront request
+### Pickup latency
 
-The pickup is effectively immediate — the next storefront request after a successful Save rebuilds the cache and renders with the new settings. There is no propagation delay across services or queues. (verify, especially for multi-region deployments)
+A page rendered after the save shows the new settings at once, and the admin and signed-in customers always get a freshly rendered page. A guest gets one when the cached copy expires (20 minutes at most; the page's `X-Cache-Expires` header gives the time), a crawler within 1–2 days.
 
 ### Theme deploys flush the theme-settings cache separately
 
 When CloudCart deploys a new theme version (or the merchant switches themes), the `theme-settings.<template>` cache is wiped by the deploy / theme-switch path — not by module Save. This is why a deploy can change module defaults globally without the merchant doing anything, and why the per-instance overlay layer is still respected after the deploy (the merchant's saved row wins per-field over the new theme default — see [[design-modules-cross-storage]]).
 
-### CDN / edge caches are out of scope
+### The full-page cache is separate
 
-The per-site cache key only flushes the application-level module cache. CDN-level page caches (if any) are flushed by a separate edge-purge path — not documented here. (verify)
+The per-site cache key renews the module cache only. The platform's full-page cache is keyed without it, so a save never empties it; only the Admin GraphQL `purgeStorefrontCache` (or CloudCart staff) does — see [[storefront-arch-caching-invalidation]].
 
 ## Related
 
@@ -102,5 +100,5 @@ The per-site cache key only flushes the application-level module cache. CDN-leve
 ## Open questions
 
 - 📡 **Exact cache-key names.** The `theme-settings.<template>` and `widgetsNew:<md5>` key shapes are documented from prior verification — re-confirm against current code. (verify)
-- ⏸️ **CDN propagation.** Whether CloudCart's CDN layer (if configured) requires a separate purge for module changes is unclear. (verify)
+- ✅ Resolved: module saves do not clear the full-page cache; guests get the change within 20 minutes.
 - 📡 **Multi-region pickup.** In a multi-region deployment, whether the cache-key bump is synchronously visible across regions is unclear. (verify)

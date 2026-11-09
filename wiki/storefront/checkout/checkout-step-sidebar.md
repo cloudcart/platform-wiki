@@ -8,8 +8,8 @@ aliases: ["Checkout sidebar", "Order summary panel", "Right-column checkout", "C
 tags: [storefront, checkout, sidebar, summary, totals, app-injection]
 plan_gates: []
 created: 2026-06-12
-updated: 2026-11-04
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[checkout]]. The summary is the live mirror of the cart while the customer fills in the left-column steps; see [[checkout-step-shipping-method]] and [[checkout-step-payment]] for the steps that change totals.
@@ -49,12 +49,12 @@ Plus 2 optional **custom text blocks** rendered AFTER the summary include, in th
 
 | Block | When shown |
 |---|---|
-| `checkoutText` widget | When the merchant has enabled the `checkoutText` widget — see [[design-modules]]. |
-| `checkoutSideText` widget | When the merchant has enabled the `checkoutSideText` widget — separate slot configurable in the Theme Editor side-text section. |
+| `checkoutText` widget | When enabled on the Widgets screen ([[design-modules]]), **Text fields** group: `Checkout text` / `Завършване на поръчка - текст` in most themes (a few name it differently). Not in Theme Editor or on the cart settings. |
+| `checkoutSideText` widget | A second slot of the same kind, only in some themes. |
 
-Plus an **app-injection** affordance for the `bumper_offer` app (currently commented out in `express.tpl` but documented in code) — bumper-products appear in the sidebar on the cart page; in checkout it surfaces only inside the per-step accordions.
+[[apps-bumpcart|Bump Cart]] products render in the totals block: on `/cart` at every width, on checkout only on large screens (smaller screens get them inside the steps).
 
-Plus a **BGN-to-EUR conversion message** placeholder (`<div class="bgn2eur-convertion-message-checkout">`) injected by the [[apps-bgn2eur]] app during the BG-to-EUR transition (currently hidden by default).
+Plus a **BGN-to-EUR conversion message** placeholder (`<div class="bgn2eur-convertion-message-checkout">`) from the [[apps-bgn2eur]] app (hidden by default).
 
 ## How sub-sections reload
 
@@ -92,9 +92,9 @@ Verified locations where third-party / first-party apps can inject content in th
 
 | App | Mechanism |
 |---|---|
-| Custom text widgets `checkoutText` + `checkoutSideText` | Two named widget slots merchants can fill via Theme Editor / [[design-modules]]. |
+| Custom text widgets `checkoutText` + `checkoutSideText` | Widget slots filled on [[design-modules]]. |
 | **BGN-to-EUR** | Pre-positioned `<div class="bgn2eur-convertion-message-checkout">` placeholder filled by the app's JS. |
-| **Cart Rules** ([[apps-cart-rules]]) | Surfaces effect lines inside the totals (e.g. *"5 EUR discount: Buy 2 get 1"*) via the cart's `messages` collection. |
+| **Cart Rules** ([[apps-cart-rules]]) | The discount appears in the totals; a rule's row message appears in the Messages block as a dashed box, several joined by `Or` / `Или` ([[cart-rules-stacking]]). Only Cart Rules write these boxes. |
 | **Marketing discounts** | Same path — surfaces inside the messages block and the discount-code applied list. |
 | **Subscriptions** ([[apps-subscriptions-plans]]) | A notice in the messages block when a line-level code is withheld from a subscription line: *"Subscriptions do not combine with other discounts — the discount code does not apply to the subscription."* / *"Абонаментът не се комбинира с други отстъпки — кодът за отстъпка не се прилага за абонамента."* |
 | **Cross-sell / Up-sell modules** ([[marketing-cross-sell-list]] / [[marketing-up-sell-list]]) | Render inside step accordions on the left, NOT in the sidebar — they need product-list context the sidebar doesn't expose. |
@@ -144,4 +144,4 @@ None recorded for this section.
 
 ## Open questions
 
-None — sidebar composition, reload semantics, and app-injection points verified against `express.tpl` + `summary.tpl` + the platform code reload arrays on 2026-06-12.
+None.

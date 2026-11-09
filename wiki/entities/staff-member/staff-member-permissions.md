@@ -3,14 +3,14 @@ type: entity
 aliases: ["Staff member permissions", "Moderator permissions", "Permission tree", "Permission section IDs", "Permission delegation", "Subset delegation", "Права на модератор"]
 tags: [settings, access, staff, permissions, admin, entity]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 # Staff Member — Permissions
 
 ## Identity
 
-A Moderator's access to the admin panel is defined by a **flat array of permission section IDs** stored on the [[staff-member|Staff-Member]] record. Each ID maps to an admin-panel area or action — e.g. `settings`, `settings.admins.all`, `settings.admins.create`, `store.admins`, `backups`, `orders`, `products`, `marketing.discounts`. The checkbox tree shown in the Add / Edit modal is **UI sugar**; the saved payload is a flat list. The Owner is not stored with permissions at all — it holds every permission implicitly and bypasses this whole model.
+A Moderator's access to the admin panel is defined by a **flat array of permission section IDs** stored on the [[staff-member|Staff-Member]] record. Each ID maps to an admin-panel area or action — e.g. `settings`, `settings.admins.all`, `settings.backups`, `orders`, `orders.returns`, `credit_notes.all`, `products`, `marketing.discounts`. The checkbox tree shown in the Add / Edit modal is **UI sugar**; the saved payload is a flat list. The Owner is not stored with permissions at all — it holds every permission implicitly and bypasses this whole model.
 
 > Part of [[staff-member]]. See the hub for the other aspects (roles & types, lifecycle, 2FA, sessions & notifications, profile fields).
 
@@ -45,11 +45,11 @@ Three transformations happen before the permission tree reaches the frontend:
 
 ### Permission middleware gates the staff API itself
 
-Every endpoint under `/admin/api/core/settings/account/admins` is wrapped in `hasApiPermission:settings,settings.admins.all,store.admins`. A Moderator without at least one of those three permissions cannot even list the Staff table. The Owner holds all permissions implicitly. The "Add moderator" button shows to the Owner only.
+Every endpoint under `/admin/api/core/settings/account/admins` is wrapped in `hasApiPermission:settings,settings.admins.all,store.admins`. A Moderator without at least one of those three permissions cannot even list the Staff table. The Owner holds all permissions implicitly. The "Add moderator" button shows to the Owner only, and the server refuses a create from anyone else (*"This is a restricted area!"*).
 
-### The permission section catalog is dynamic — no exportable manifest
+### The tree is a fixed list
 
-The full permission tree is built dynamically at request time from registered admin-panel navigation items and the active plan's plan-features. There is **no exportable manifest** — the tree is only knowable from the Add modal as rendered for the current store + current plan. New feature releases extend the tree automatically when new sidebar items / API endpoints register their permission IDs.
+The tree is a fixed list of about 96 rows built into the platform. Only the Backups row depends on the store: it is removed when the plan lacks Backups. A release can add rows; existing Moderators do not receive them automatically. The Orders rows, and the two boxes that Returns and Credit notes need, are on [[settings-staff-permissions-tree]].
 
 ### Owner bypasses the permission model entirely
 

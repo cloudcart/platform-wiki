@@ -7,8 +7,8 @@ aliases: ["PAT Tokens list", "CLI Tokens table", "PAT empty state"]
 tags: [settings, security, tokens, list-view]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[settings-pat-tokens]]. See the hub for related aspects (create flow, scopes, restrictions, security, permissions, endpoints).
@@ -17,7 +17,7 @@ source_count: 2
 
 ## Purpose
 
-The default state of the PAT Tokens screen — a table of the store's existing tokens with row-level actions (Edit, Delete, Active toggle) and a header chip showing how many of the cap (10) are in use. The merchant uses this view to identify dormant tokens (via `Last used at`), enable / disable without deleting, and decide when to rotate or revoke.
+The default state of the PAT Tokens screen — a table of the store's existing tokens with row-level actions (Edit, Delete, Active toggle) and a header chip showing how many of the cap (100) are in use. The merchant uses this view to identify dormant tokens (via `Last used at`), enable / disable without deleting, and decide when to rotate or revoke.
 
 ## Where to find it
 

@@ -7,8 +7,8 @@ aliases: ["Orders default visibility", "Orders default sort", "Hidden by default
 tags: [orders, list, default-visibility, sort, hidden-orders, support-tickets]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[orders]]. See the hub for the other aspects (columns, filters, bulk actions, status taxonomy, export, locking).
@@ -21,7 +21,7 @@ When the merchant first opens **Orders** with NO filters applied, the list silen
 
 ## Where to find it
 
-`/admin/orders` on first load (no `filters[...]` in the URL). The "missing" orders only reappear when the merchant adds a Status or Archived filter.
+`/admin/orders` on first load (no `filters[...]` in the URL). The "missing" orders reappear as soon as any filter is applied (see below).
 
 ## What the merchant can do here
 

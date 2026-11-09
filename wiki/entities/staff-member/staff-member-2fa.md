@@ -3,8 +3,8 @@ type: entity
 aliases: ["Staff member 2FA", "Two-factor authentication", "Authenticator app", "Email two factor", "2FA gating", "Двуфакторна автентикация на персонал"]
 tags: [settings, access, staff, permissions, admin, 2fa, entity]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 # Staff Member — Two-Factor Authentication
 
@@ -12,14 +12,14 @@ source_count: 0
 
 Every [[staff-member|Staff Member]] has two-factor protection on sensitive actions. There are two channels:
 
-- **Email channel** — always on for every staff member, cannot be turned off. CloudCart sends `two_factor_action` codes to the staff member's email whenever a sensitive action requires verification.
+- **Email channel** — follows a platform switch (`2fa_email`) that CloudCart sets for all stores or for one store; the merchant cannot change it. While it is on, sign-in and sensitive actions send a code to the staff member's email (`two_factor_action` for actions). The code ships with the switch off; whether it is on for a given store is not in the wiki (verify).
 - **Authenticator-app channel** — opt-in per account. Once a TOTP secret is configured, future 2FA gates prefer the authenticator code over the email code.
 
 > Part of [[staff-member]]. See the hub for the other aspects (roles & types, permissions, lifecycle, sessions & notifications, profile fields).
 
 ## Aliases
 
-- "Email two factor authentication" — the always-on email-code channel; the Edit modal shows the permanent indicator *"Email two factor authentication is active"*.
+- "Email two factor authentication" — the email-code channel; the Edit modal shows *"Email two factor authentication is active"* on your own account whatever the switch.
 - "Authenticator app" — the opt-in TOTP channel.
 - "`two_factor_action`" — the notification key for the emailed verification code.
 - "`create_moderator`" — the 2FA action name for the Add-moderator gate.
@@ -28,7 +28,7 @@ Every [[staff-member|Staff Member]] has two-factor protection on sensitive actio
 
 | Attribute | What the merchant controls | Notes |
 |-----------|----------------------------|-------|
-| **2FA email channel** | Always on; cannot be disabled | Fires `two_factor_action` emails per [[settings-admin-notifications]] when sensitive actions require verification. |
+| **2FA email channel** | Not the merchant's: a CloudCart platform switch | While on, sends codes by email to anyone without an authenticator app, at sign-in and for sensitive actions. |
 | **2FA authenticator secret** | Opt-in per account via the Edit modal's "Use authenticator app for faster login" | Optional. Scan the QR with Google Authenticator / Authy / 1Password / etc. to enable TOTP. |
 
 ## Where it appears
@@ -40,9 +40,9 @@ Every [[staff-member|Staff Member]] has two-factor protection on sensitive actio
 
 ## Business rules
 
-### Email is always on, authenticator app is opt-in per account
+### Email codes follow the platform switch; the authenticator app is opt-in per account
 
-Every Staff Member implicitly has the email-based 2FA channel enabled. The authenticator-app TOTP channel is opt-in per account: the staff member opens their own Edit modal, clicks **Configure** under "Use authenticator app for faster login," and scans the QR with their authenticator app. Once the secret is saved, future 2FA gates prefer the authenticator code over the email code. Recovery codes for the TOTP secret are managed on [[account-cc2fa-codes]].
+Email codes are sent only while CloudCart's email sign-in switch is on, and never to someone with an authenticator app set up. The authenticator-app TOTP channel is opt-in per account: the staff member opens their own Edit modal, clicks **Configure** under "Use authenticator app for faster login," and scans the QR with their authenticator app. Once the secret is saved, future 2FA gates prefer the authenticator code over the email code. Recovery codes for the TOTP secret are managed on [[account-cc2fa-codes]].
 
 ### Two-factor gating on edit varies by actor and target
 

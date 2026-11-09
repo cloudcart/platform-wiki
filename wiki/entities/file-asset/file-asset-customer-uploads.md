@@ -1,11 +1,11 @@
 ---
 type: entity
 nav_path: "Entity → File / Asset → Customer uploads"
-aliases: ["Customer uploads", "User files", "Customer-attached files", "Order file upload", "File-type product option", "Files download link", "Uploaded design", "Потребителски файлове", "Клиентски файлове", "Прикачен файл към поръчка"]
+aliases: ["Customer uploads", "User files", "Customer-attached files", "Order file upload", "File-type product option", "Uploaded design", "Потребителски файлове", "Клиентски файлове", "Прикачен файл към поръчка"]
 tags: [entity, orders, media, storage, files, customer-uploads, checkout]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 > Part of [[file-asset]]. See the hub for the other aspects (storage model, quota, lifecycle, CDN transforms, image pickers).
@@ -21,7 +21,7 @@ source_count: 0
 - **Customer uploads** / **user files** — the customer-attached files.
 - **Customer-attached files** / **order file upload** — phrasing on the order surface.
 - **File-type product option** — the mechanism that captures the upload.
-- **Files download link** — the post-checkout email link.
+- **Upload link** — the link to the file in the order's product list (not the *Files download link* email, which is for [[digital-products]] only).
 - **Потребителски файлове** / **Клиентски файлове** / **Прикачен файл към поръчка** — Bulgarian equivalents.
 
 ## Key Attributes
@@ -32,14 +32,14 @@ source_count: 0
 | **Product name** | The product the file-type option belongs to | Shown alongside the Order ID. |
 | **Option label** | The merchant-facing option name (e.g., *"Upload your design"*) | Part of the composite "File" cell on [[orders-user-files]]. |
 | **`total_orders` counter** | Count of `orders_products` rows referencing the file | Drives delete protection — see [[file-asset-lifecycle]]. |
-| **Customer download link** | The URL emailed to the customer after checkout | Breaks (404) if the merchant deletes the file. |
+| **Customer link** | The link next to the option in the order's product list (thank-you page, account order, order emails) | Breaks (404) if the merchant deletes the file. |
 
 ## Relationships
 
 Customer uploads are the order-bound subset of [[file-asset]]:
 
 - **[[order|Order]]** — each customer upload is attached to a line item on an order via a file-type product-option.
-- **[[customer|Customer]]** — the customer who uploaded the file; they receive the download-link email.
+- **[[customer|Customer]]** — the customer who uploaded the file; they see it linked on their order.
 - **[[file-asset-quota]]** — customer uploads consume the same shared quota and are the usual cause of unexpected quota growth.
 - **[[file-asset-lifecycle]]** — the `orders_products` (`total_orders`) counter is the delete-guard that blocks removing an in-use customer file.
 
@@ -53,12 +53,12 @@ Customer uploads are the order-bound subset of [[file-asset]]:
 
 - **Created** — the customer uploads at checkout via a file-type product-option (part of [[checkout-flow]]).
 - **Persists with the order** — lives indefinitely under the merchant's quota even after the order is completed / cancelled / archived. **There is NO auto-purge** after the order ships.
-- **Customer download link** — the platform automatically emails the customer a *"Files download link for order #X in <store>"* email with the file URLs after checkout. The customer can re-download from this email link at any time.
+- **Customer link** — the upload shows as a link next to its option on the thank-you page, the order in the customer's account and order emails carrying the product list. No dedicated email is sent: the *Files download link* email is for digital products only.
 - **Deleted** — the merchant deletes from the User files tab OR uses the per-order admin action ("Remove uploaded file") that NULLs the file reference on the line item but keeps the order history.
 
-### Customer download link breaks if the merchant deletes the file
+### Customer link breaks if the merchant deletes the file
 
-When the merchant deletes a customer-uploaded file from the User files tab, the customer's email download link returns **404** — the storage blob is gone. The order history retains the option name but no longer has a downloadable file attached. The merchant should warn the customer before deleting if the customer might still need the file.
+When the merchant deletes a customer-uploaded file from the User files tab, the link on the customer's order returns **404** — the storage blob is gone. The order history retains the option name but no longer has a downloadable file attached. The merchant should warn the customer before deleting if the customer might still need the file.
 
 ### Customer uploads persist indefinitely (no auto-purge)
 

@@ -7,14 +7,14 @@ aliases: ["Video Slider", "Video Slider Module", "Video carousel", "Video block"
 tags: [apps, marketing, content, landing-pages, plan-gated]
 plan_gates: ["video_slider_widget"]
 created: 2026-05-22
-updated: 2026-10-05
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # Video Slider Module
 
 ## Purpose
 
-**Video Slider Module** — a landing-page module that displays a slider/carousel of videos (typically product demos, customer testimonials, marketing reels). When the module is enabled and the merchant adds it via the **Marketing → Pages** page builder, the storefront renders a video carousel that customers can browse / play inline.
+**Video Slider Module** — a landing-page module that displays a slider/carousel of videos (typically product demos, customer testimonials, marketing reels). When the module is enabled and the merchant adds it via the page builder (**Design → Static pages**), the storefront renders a video carousel that customers can browse / play inline.
 
 Used by merchants who:
 - Sell products that benefit from video demonstrations (fashion, cosmetics, electronics).
@@ -42,7 +42,7 @@ The settings page is a STATUS / GUIDANCE page (not configuration):
 
 - **Active status indicator** — large icon + heading: "Video Slider app is active" (play icon, purple) OR "Video Slider app is not active" (pause icon, gray).
 - **Guidance text**:
-  - When ACTIVE: *"You can now add and configure the Video Slider module from any landing page in the page builder."* + link to `/admin/marketing/pages`.
+  - When ACTIVE: *"You can now add and configure the Video Slider module from any landing page in the page builder."* + link to `/admin/design/pages`.
   - When INACTIVE: *"Activate the app from the Overview tab to enable the Video Slider module across your landing pages."*
 - **Action button**:
   - When ACTIVE: "Open landing pages" → routes to page builder.
@@ -53,7 +53,7 @@ The settings page is a STATUS / GUIDANCE page (not configuration):
 Install / activate / deactivate. App description.
 
 ### Page builder integration
-After activation, the merchant goes to **Marketing → Pages**, picks a landing page (or creates one), and **adds the Video Slider module block** from the page builder. The module block is configured INSIDE the page builder, not on this Settings page — fields like video URLs, autoplay, transition speed, etc.
+After activation, the merchant goes to **Design → Static pages**, picks a landing page (or creates one), and **adds the Video Slider module block** from the page builder. The module block (**Слайдър с видео**) is configured INSIDE the page builder, not on this Settings page: video addresses, autoplay, heights and slides. Its fields, how the video fits the frame and which files play are on [[design-module-video-slider]].
 
 ### What the merchant CANNOT do here
 - Configure individual videos / playlists on the app's Settings page — that's the page builder's job.
@@ -98,10 +98,10 @@ The slides cycle as a carousel that customers can browse / play inline.
 When the merchant purchases the `video_slider_widget` plan feature pack, the app is **automatically installed and activated** by the platform's `postSubscription` hook — the merchant does not need to manually install after paying. The module block then becomes available in the storefront editor.
 
 ### Per-page configuration in the storefront editor
-The Settings tab of the app itself only acts as a status / guidance page. Actual module setup happens in **Marketing → Pages** (the storefront editor) — the merchant adds a Video Slider module block to a specific page and configures the videos, overlays, and CTAs there. Each page can carry its own slider with different videos.
+The Settings tab of the app itself only acts as a status / guidance page. Actual module setup happens in **Design → Static pages** (the storefront editor) — the merchant adds a Video Slider module block to a specific page and configures the videos, overlays, and CTAs there. Each page can carry its own slider with different videos.
 
 ### Storefront editor link from Settings
-- When the app is **active**, the Settings tab shows *"You can now add and configure the Video Slider module from any landing page in the page builder"* and an **Open landing pages** button that takes the merchant directly to `/admin/marketing/pages`.
+- When the app is **active**, the Settings tab shows *"You can now add and configure the Video Slider module from any landing page in the page builder"* and an **Open landing pages** button that takes the merchant directly to `/admin/design/pages`.
 - When the app is **inactive**, the Settings tab shows *"Activate the app from the Overview tab to enable the Video Slider module across your landing pages"* and an **Enable Module** button.
 
 ### `isConfigured` always returns true
@@ -116,6 +116,7 @@ The Manager implements `MoreRecordsSubscription` — after the merchant purchase
 ## Related
 
 - [[apps]] — App Store.
+- [[design-module-video-slider]] — the block's fields, video fit and formats.
 - [[plan-gates]] — concept page on plan-based feature gating.
 - [[apps-social-feed]] — shows the latest posts from a connected Instagram, Facebook or TikTok account.
 

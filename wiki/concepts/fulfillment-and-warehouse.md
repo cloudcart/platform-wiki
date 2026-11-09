@@ -3,12 +3,12 @@ type: concept
 nav_path: "Apps → Fulfillment & warehouse"
 route_name: (none)
 route_path: (none)
-aliases: ["Fulfillment integrations", "Warehouse integrations", "Order fulfillment", "3PL", "Pick and pack", "Dropshipping", "Фулфилмънт", "Изпълнение на поръчки", "Складова логистика", "Warehouse & fulfillment"]
+aliases: ["Fulfillment integrations", "Warehouse integrations", "Order fulfillment", "3PL", "Pick and pack", "Dropshipping", "Фулфилмънт", "Изпълнение на поръчки", "Складова логистика", "Warehouse & fulfillment", "Big Arena", "Fulfilment centre via webhooks"]
 tags: [fulfillment, warehouse, 3pl, logistics, apps, integrations, concepts, hub]
 plan_gates: []
 created: 2026-06-11
-updated: 2026-08-06
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # Fulfillment & warehouse
 
@@ -24,6 +24,7 @@ The supported models:
 - **Outsourced 3PL** — [[apps-frisbo]] hands fulfilment to the Frisbo third-party logistics network; orders are routed to Frisbo for storage + shipping (see [[apps-frisbo-orders]], [[apps-frisbo-settings]]).
 - **Dropshipping** — [[apps-drop-shipping]] lets suppliers ship products directly to the customer, so the merchant holds no stock.
 - **Suppliers** — [[apps-suppliers]] manages supplier catalogues feeding the store (see [[apps-suppliers-overview]]).
+- **Fulfilment centres without a CloudCart app** (Big Arena, for example) — CloudCart has no app for them. They receive orders through the store's own webhooks (`order.created` / `order.updated`, set up in [[settings-hooks]]) or read them through the API. What the order payload carries for shipping, VAT and totals is on [[settings-hooks-events]]; how the centre turns that into its own lines, VAT or totals is decided on its side.
 
 For the *physical hand-off to a courier* once a parcel is packed, see [[shipping]] (the courier directory). For stock counts, see [[inventory-tracking]].
 

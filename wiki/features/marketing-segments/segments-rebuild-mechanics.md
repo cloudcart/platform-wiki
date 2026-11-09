@@ -7,8 +7,8 @@ aliases: ["Segment rebuild", "Segment cadence", "set_subscriber_to_segment", "se
 tags: [marketing, segments, background-jobs, queues, events]
 plan_gates: ["segments", "subscribers"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[marketing-segments]]. See the hub for related aspects (list page, types, conditions, inactive errors).
@@ -51,6 +51,10 @@ When the merchant saves an edited segment (Create or Update), the API also dispa
 ### Subscriber attach is anti-duplication-aware
 
 The attach step will NOT re-add a subscriber that is already in the segment with `manual = 0` AND `resend = 0` — only new (or `resend = 1`) subscribers go through. Attach is also batched in **500-subscriber chunks**, and the `SubscribersAddedToSegment` event fires once per chunk with the IDs that were actually added (not all that were attempted).
+
+### Membership counts any marketable channel
+
+A subscriber is a member when at least one channel of any type (Email, Phone, Web Push, Messenger) is marketable: marketing on, not bounced, not unsubscribed. So a segment can count people an Email campaign cannot reach: phone-only people (an order adds its phone as a Phone channel), or people whose email bounced or was unsubscribed but whose phone is marketable (unsubscribing from an email marks only the Email channel). Campaigns enrol only members reachable on their channel — see [[campaigns-subscribers-enrolment]].
 
 ### Pause-on-import — auto-restart with delay
 

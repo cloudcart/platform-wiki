@@ -7,8 +7,8 @@ aliases: ["Borica Merchant ID", "Borica MID", "Borica EGW_SECURITY", "Borica MAC
 tags: [paymentproviders, payment-providers, borica-way4, settings, fields, currency]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[payment-providers-borica-way4]]. See the hub for related aspects (setup/CSR, payment lifecycle, authorize/capture, save card, refund/sync).
@@ -82,7 +82,7 @@ The provider itself has no plan gate — any plan that allows installing payment
 When the merchant's bank registers the terminal, Borica asks for the return URL where the customer is POSTed back after payment and the "TERM_GROUP" identifying which transaction-type group this terminal uses. The merchant copy-pastes both values from this screen:
 
 - **Return URL**: `<cc_payments_domain>/return/provider/borica_way4`. Same URL used for both customer-redirect-back and IPN — see [[borica-way4-payment-lifecycle]].
-- **EGW_TERM_GROUP**: `SAVE_TOKEN` when **Save Customer Card** is ON, otherwise `SALE`. Toggling Save Customer Card flips this value and the merchant must re-submit it to Borica if changed.
+- **EGW_TERM_GROUP**: `SAVE_TOKEN` when **Save Customer Card** is ON, otherwise `SALE`. Toggling Save Customer Card flips it; re-submit it to Borica. It is set on the bank's terminal only: the platform sends no term group with any payment.
 
 ### Field-card visual mode indication
 

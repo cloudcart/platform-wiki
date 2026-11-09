@@ -7,8 +7,8 @@ aliases: ["CSV Import", "Csv Import", "Bulk product import", "Spreadsheet import
 tags: [apps, imports, csv, products, plan-gated]
 plan_gates: ["csv_import"]
 created: 2026-05-22
-updated: 2026-08-06
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # CSV Import
@@ -64,7 +64,7 @@ This feature is split into 7 aspect pages, each covering one well-scoped slice. 
 - Upload a CSV / TXT file (drag-and-drop or file picker) — see [[apps-csv-import-wizard]].
 - Map CSV columns to CloudCart product / variant / customer / subscriber / redirect / blog fields — see [[apps-csv-import-mapping-fields]].
 - Configure per-task publish defaults (active / featured / new / shipping / tracking / continue-sell) — see [[apps-csv-import-wizard]].
-- Set a per-task **import key** and a **category delimiter** — see [[apps-csv-import-wizard]]. (There is **no** "update strategy" / create-vs-update choice — every task creates products; see the callout above.)
+- Set a **category delimiter** and a **Task ID number** ([[apps-csv-import-wizard]]); the Task ID only labels the "Imported with" filter, and reusing it updates nothing. There is **no** create-vs-update choice.
 - Track import progress with live per-row counts and a 5-second polling cadence — see [[apps-csv-import-task-detail]].
 - Cancel a running task mid-flight via the **Cancel import** button — see [[apps-csv-import-task-detail]].
 - See per-row failures (first error summarised on the task; full list queryable from the failed-records table) — see [[apps-csv-import-final-statuses]].

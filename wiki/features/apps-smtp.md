@@ -7,8 +7,8 @@ aliases: ["SMTP", "Custom SMTP", "Mail server", "Email sending", "enable disable
 tags: [apps, administration, email, infrastructure, deliverability]
 plan_gates: ["smtp"]
 created: 2026-05-22
-updated: 2026-08-06
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # SMTP (custom email sending)
 
@@ -31,8 +31,7 @@ Sidebar → Apps → install → **SMTP**. See [[apps-smtp-settings]] for config
 ## What the merchant can do here
 
 - Configure SMTP credentials: host, port, username, password, encryption (TLS / SSL / none).
-- Set sender address + display name.
-- Test sending (Test Email button typically).
+- Nothing about the sender: there is no From address, sender name or Reply-To field, and no test-send button (the connection is checked on save).
 
 ### What the merchant CANNOT do here
 - Receive emails (outbound only).
@@ -48,13 +47,12 @@ Typical SMTP fields:
 - **Port** (587 for TLS, 465 for SSL, 25 for unencrypted).
 - **Username** + **Password**.
 - **Encryption** (TLS / SSL / None).
-- **From address** + **From name**.
 
 ## Business rules
 
 ### Outbound only
 
-The integration handles outbound transactional emails (order confirmations, password resets, etc.). Inbound (customer replies) goes to the merchant's actual mailbox — CloudCart doesn't fetch.
+The app carries what the store's notification mailer sends: order and account notifications to customers, admin notifications, bulk e-mails to customers and campaign test sends. It never carries campaign mails or the subscriber confirmation, which always go through the [[marketing-channels-email|Email channel]], nor two-factor login codes, which go through CloudCart's own account. A customer notification goes From the store's email ([[settings-general-store-details]]) with the store's name, and Reply-To the same address. Inbound (customer replies) goes to the merchant's actual mailbox — CloudCart doesn't fetch.
 
 ### Per-domain deliverability prerequisites
 
@@ -63,7 +61,7 @@ For best deliverability:
 - DKIM signature (from the SMTP provider).
 - DMARC policy.
 
-The merchant configures DNS at their domain provider, not in CloudCart. CloudCart just routes through the configured server.
+The merchant adds the sender's DNS records wherever the domain's DNS is hosted: in **Manage DNS** ([[settings-domains-dns-cloudflare]]) when the domain uses CloudCart's nameservers, otherwise at their DNS provider. CloudCart just routes through the configured server.
 
 ### Permission
 
@@ -85,7 +83,7 @@ Behaviour: lower plans cannot install the app. Existing installs continue workin
 - [[apps-smtp-settings]] — settings sub-page.
 - [[apps-google-workspace]] — alternative Google-specific SMTP integration.
 - [[settings-domains]] — sender domain DNS configuration.
-- [[marketing-campaigns]] — campaign emails (may use SMTP OR external services like Mailgun separately).
+- [[marketing-campaigns]] — campaign emails; they go through the Email channel, never through this app.
 
 ## How it works (verified against backend)
 
@@ -102,7 +100,7 @@ All 5 must be non-empty for the integration to be considered configured. Missing
 
 ### Single-server design
 
-The Manager is intentionally MINIMAL — just credentials + isConfigured check. No multi-server fallback, no rate-limit tracking, no test-send method exposed. SMTP integration is purely a transport-replacement: the platform uses this SMTP server INSTEAD of the default mail transport for all outbound emails.
+The Manager is intentionally MINIMAL — just credentials + isConfigured check. No multi-server fallback, no rate-limit tracking, no test-send method exposed. SMTP integration is purely a transport-replacement: the platform uses this SMTP server INSTEAD of CloudCart's shared sending account for the notification mailer's emails (see Outbound only above).
 
 ### Live connection test before save
 
@@ -120,7 +118,7 @@ The Manager stores exactly one set of credentials and one host. The platform doe
 
 ### Outbound only — no inbound parsing
 
-Customer replies to platform emails land in whatever inbox the merchant's `From` address points to (typically their mail provider's mailbox). CloudCart does not connect IMAP / POP to read replies. Order-related replies are managed in the merchant's own mail client.
+Customer replies to platform emails land in the inbox of the store's email, the From and Reply-To address (typically their mail provider's mailbox). CloudCart does not connect IMAP / POP to read replies. Order-related replies are managed in the merchant's own mail client.
 
 ### Per-store SMTP
 

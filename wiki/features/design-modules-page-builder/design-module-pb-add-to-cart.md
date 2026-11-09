@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Dynamic Pages → Page-builder modules → Add to cart"
+nav_path: "Design → Static pages → Dynamic page → Page-builder modules → Add to cart"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["Add to cart module", "Add-to-cart block", "Buy button block", "Модул добави в количка"]
 tags: [design, modules, page-builder, add-to-cart, marketing]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Add to cart block (`add-to-cart`)

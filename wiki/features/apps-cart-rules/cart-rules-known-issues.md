@@ -7,8 +7,8 @@ aliases: ["Cart rule known issues", "Cart rule bugs", "Cart rule gotchas", "Cart
 tags: [apps, cart-rules, marketing, promotions, known-issues, edge-cases]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-11
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[apps-cart-rules]]. See the hub for the other aspects (conditions, actions, scoping, stacking, cooldowns, examples).
@@ -52,15 +52,15 @@ The lifecycle is binary at the merchant level: **Active / Inactive**. A third "D
 
 ### By-design — Soft-deleted rules are not restorable through the UI
 
-Deleting a rule preserves its data, but there is **no Restore button or UI path** to bring it back, and the rules list hides deleted rules. Recovery requires **direct database access** by CloudCart support — so deletion is effectively permanent. Use `status=Inactive` for temporary suspension, Delete only for "truly gone".
+Deleting keeps the data, but there is **no Restore** in the UI and the list hides deleted rules; recovery needs CloudCart support with database access. Use Inactive for a pause, Delete only for "truly gone".
 
 ### Bug — Empty row-triggers allow a row to fire
 
 A row with **zero row-triggers** but at least one action-trigger still fires — matching every product in the cart (gated only by the action-trigger filters), because the skip-empty-rows guard is broken and save-time validation doesn't require a row trigger. Only reachable via the GraphQL API (`/api/gql`); the admin UI enforces a row trigger, so panel-created rules are unaffected. Via the API, add at least one always-true row trigger (e.g., `cart_amount gt 0`) to every row.
 
-### By-design — Multiple rows per rule only for tiered cart-amount ranges
+### By-design — Extra rows (ranges) only with a "between" condition
 
-By default a rule may have only **one row**. The 20-rows-per-rule cap from the plan limit `cart_rules_range` applies only when a row trigger uses `condition_type=cart` with `value_type=between` (the "tiered cart-amount range" pattern). Otherwise multi-row submissions are rejected even on plans that allow them. For non-tiered patterns, model each "deal" as its own cart rule, not a multi-row rule.
+The editor offers **Add amount range** (more rows) only while the first row has a **between** condition on a numeric filter (cart, product or customer amount, quantity or count). Removing that condition drops every row but the first from the form. Later ranges copy the first row's conditions and change only the values, and a range's lower bound may not be below the previous range's upper bound. The server itself does not require a between: up to `cart_rules_range` rows (20 when the plan sets none) are accepted through the API. For unrelated deals, use separate rules.
 
 ### By-design — Identical `sort_order` ties are non-deterministic
 
@@ -68,7 +68,7 @@ Two active rules with the same `sort_order` have **no tiebreaker** — they eval
 
 ### By-design — A/B testing not supported
 
-There is **no split-traffic mechanism** — no *"show rule A to 50%, rule B to 50%"*. Two rules with overlapping triggers both **evaluate**; whether both **apply** depends on the stacking rules (see [[cart-rules-stacking]]). Workaround: define rules narrowly via `customer_group` triggers and split the audience using [[customers-custom-groups]].
+There is **no split-traffic mechanism**. Overlapping rules both evaluate; whether both apply follows [[cart-rules-stacking]]. Workaround: split the audience into [[customers-custom-groups]] and condition each rule on its group.
 
 ### By-design — Defensive guard on amount-off (silent drop)
 
@@ -76,7 +76,7 @@ Product-level amount-off is **silently dropped** on a line if it would push that
 
 ### By-design — No audit log of edits
 
-The platform records **only** when a rule was created, updated, and deleted — no actor identity, no diff history, no revision log. With multiple admins, *"Who disabled this yesterday?"* and *"What was the discount before 5%?"* are unanswerable, and restoring a prior configuration is impossible.
+Only created / updated / deleted times are kept — no actor, no diff, no revision history — so *"who disabled this?"* is unanswerable and a prior configuration cannot be restored.
 
 **Mitigation:** merchants needing an audit trail must keep their own change log outside the platform. See [[cart-rules-cooldowns]] for the permission model that makes this worse on multi-admin plans (every admin can edit cart rules — no per-role restriction).
 

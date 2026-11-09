@@ -7,8 +7,8 @@ aliases: ["Webhook events", "Hook events", "Supported events", "Event catalogue"
 tags: [settings, webhooks, events, integrations]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[settings-hooks]]. See the hub for the other aspects (delivery, retry, auto-disable, modal, activity log, auth & headers).
@@ -40,7 +40,7 @@ Sidebar → Settings → **Webhooks** → **+ Add webhook** → **Event** dropdo
 | **Product** | `product.created`, `product.updated`, `product.deleted` | A product changes. (Stock-only changes also fire `product.updated` — see [[inventory-tracking]].) |
 | **Discount** | `discount.created`, `discount.updated`, `discount.deleted` | A discount rule changes. |
 | **Customer** | `customer.created`, `customer.updated`, `customer.deleted` | A customer account changes. |
-| **Order** | `order.created`, `order.updated` (both support the v2 payload shape via `new_version`); **`order.deleted` is disabled — picker does NOT show it** | An order is placed or modified. Order deletion is currently not webhookable. |
+| **Order** | `order.created`, `order.updated` (both support the v2 payload shape via `new_version`); **`order.deleted` is disabled — picker does NOT show it** | An order is placed or modified. |
 | **Subscriber** | `subscriber.created`, `subscriber.updated`, `subscriber.deleted` | A newsletter subscriber record changes. |
 
 ### `order.deleted` quirk
@@ -72,13 +72,18 @@ Body:
 - **Money** — `order_subtotal`, `order_total`, `currency`, plus the arrays `discounts[]`, `tax_vat[]`, `fees[]`.
 - **Nested entities** — `customer` (includes its custom fields + geo-IP), `products[]` (each with its line `options`), `shipping[]`, `shipping_address`, `billing_address`, `payments[]` + the primary `payment`, and `weight`.
 
-Each nested section has its own serialiser, so the shape is stable across both order events. Null fields are stripped before sending. **Non-order entity events** (product / customer / category / vendor / discount / subscriber) have **no custom builder** — they serialise the entity through the public API model, so the payload matches that resource's [[json-api-v2|JSON-API v2]] shape.
+Each nested section has its own serialiser, so the shape is stable across both order events. Null fields are stripped before sending.
+
+**Shipping, VAT and totals** (what a fulfilment centre or ERP reads):
+
+- `shipping[]` holds one entry. `provider_amount` is the shipping charged on the order; `amount_with_vat` is true when it includes VAT (shipping taxed, prices with VAT, customer charged VAT). When the **receiver pays** the courier, `provider_amount` is `0`.
+- `tax_vat[]` has one entry per VAT rule; its `amount` is the VAT on goods, fees and shipping together, with no separate shipping VAT line. Each product carries its own `tax_vat` and `unit_line_price`.
+- `order_total` is what the customer pays; `wallet_amount` is any wallet tender, already deducted from `payment.amount`. **Non-order entity events** (product / customer / category / vendor / discount / subscriber) have **no custom builder** — they serialise the entity through the public API model, so the payload matches that resource's [[json-api-v2|JSON-API v2]] shape.
 
 ### v2 vs legacy v1 — the `new_version` toggle
 
 - The **"It is used on a new structure"** switch only **appears in the UI** for `order.created` / `order.updated`.
 - For all other event types the backend persists `new_version = 1` by default, but the field is **ignored at delivery time** (only order events read it).
-- If CloudCart later extends the v2 schema to other event types, existing webhooks would auto-opt-in. Merchants who want guaranteed v1 should pre-set `new_version = 0` via JSON-API v2 (see [[api-webhooks]]) when creating the subscription. (verify)
 
 ### Metafields in the payload
 
@@ -86,7 +91,7 @@ Product, customer, category and order events carry metafield values: see [[metaf
 
 ### Subscriber events use distinct translation keys
 
-`subscriber.created` / `subscriber.updated` / `subscriber.deleted` use translation keys like `hooks.action.subscriber.created` (not `subscriber.created`) for the human-readable label in the picker — but the actual event string sent to receivers is still `subscriber.created` etc. This is a cosmetic quirk in the picker only.
+The picker labels subscriber events through keys like `hooks.action.subscriber.created`; receivers still get `subscriber.created` etc.
 
 ## Business rules
 

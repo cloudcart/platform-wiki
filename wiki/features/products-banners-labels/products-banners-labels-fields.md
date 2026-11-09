@@ -7,8 +7,8 @@ aliases: ["Create banner", "Edit banner", "Create label", "Edit label", "Banner 
 tags: [marketing, products, banners-labels]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 10
+updated: 2026-11-09
+source_count: 11
 ---
 
 > Part of [[products-banners-labels]]. See the hub for the other aspects (targeting / auto-population, scheduling / lifecycle).
@@ -22,7 +22,7 @@ The create / edit forms for the two badge types on the [[products-banners-labels
 The distinction in one line:
 
 - **Banner** = a small **image** overlay placed in a corner of the product card / detail page. The `Name` is an internal reference only — customers see only the image.
-- **Label** = a coloured **text pill** (e.g., "SALE", "BESTSELLER", "-20%"). Here the `Name` **is** the visible badge text shown on the storefront.
+- **Label** = a coloured **text pill** (e.g., "SALE", "BESTSELLER", "-20%"). Here the `Name` **is** the visible badge text shown on the storefront, on product cards and, on the standard themes, over the main image of the product page (verify per theme).
 
 ## Where to find it
 
@@ -50,7 +50,7 @@ Editing reuses the same form. The distinct routes within this feature:
 Fields:
 
 - **Name** — required, max 191 chars; the merchant's reference. **NOT shown to customers** — only the image renders.
-- **Description** — optional, max 64,000 chars; internal notes.
+- **Description** — optional, max 64,000 chars. Not internal: on the standard themes it shows as a text box in the product page's side column, under the buy button (verify per theme).
 - **Image** — required; the actual badge image (PNG / JPG, transparency supported). Min / max size depends on theme.
 - **Position** — required; one of `tl` / `tr` / `bl` / `br` — decides which corner of the product card the banner overlays.
 - **Active from** / **Active to** — optional scheduling dates (see [[products-banners-labels-scheduling]]).
@@ -62,7 +62,7 @@ Fields:
 Fields:
 
 - **Name** — required, max 191 chars; **this IS the badge text shown on the storefront**.
-- **Description** — optional, max 64,000 chars; internal notes.
+- **Description** — optional, max 64,000 chars. Not internal: on the standard themes it shows as a text box in the product page's side column, under the buy button (verify per theme).
 - **Color** — background colour, validated as `#RRGGBB` hex.
 - **Text color** — text colour, validated as `#RRGGBB` hex.
 - **Position** — same `tl` / `tr` / `bl` / `br` choices.
@@ -87,7 +87,16 @@ Fields:
 | `bl` | bottom-left |
 | `br` | bottom-right (default) |
 
-If two badges land on the same corner of the same product, the theme stacks them visually — but the merchant should arrange positions so they don't collide (e.g., put "Sale" top-left and "Free shipping" top-right). See the open question on [[products-banners-labels]] about stacking order.
+**Banners** (images) are placed in the chosen corner. For **text labels** the corner is stored, but the shared listing template does not use it: text labels sit together in the theme's ribbon area, one after another (verify per theme).
+
+### Several labels on one product — order and markup
+
+On listing cards (shared template; themes can override) the ribbons come in this page order, inside one ribbon holder: New, On sale, the discount ribbon, Featured, free delivery, then the merchant's text labels, then the sold-out ribbon when the store marks sold-out products ([[design-module-product-filters]]). Banner images follow, outside that holder.
+
+- Text label: a `span` with the classes `_product-ribbon _product-ribbon-custom` and its colours inline.
+- Banner: a `span` with the class `_product-ribbon-banner` plus its corner class, holding the image.
+
+Among several text labels no order is defined, so custom code should not rely on one (verify).
 
 ### Field reference
 

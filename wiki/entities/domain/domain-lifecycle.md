@@ -3,8 +3,8 @@ type: entity
 aliases: ["Domain lifecycle", "Domain phases", "Domain attach flow", "Domain activation", "Domain removal", "Add domain flow"]
 tags: [settings, apps, domains, ssl, dns, entity, lifecycle]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 > Part of [[domain]]. See the hub for the other aspects (attributes, relationships, SSL, DNS / Cloudflare, primary + plan gates).
@@ -25,13 +25,15 @@ The end-to-end phases a [[domain|Domain]] moves through, from the moment the mer
 
 A Domain moves through these phases:
 
-1. **Attached (pending DNS)** — the merchant added the Domain via "Add existing domain" on [[settings-domains]]. The Domain row exists; DNS status is `pending`. The merchant must complete the nameserver change at their registrar to activate. CloudCart-purchased domains skip this step because the platform owns the nameservers from the start.
+1. **Attached** — the merchant added the Domain via "Add existing domain" on [[settings-domains]]. The row exists with no DNS method yet; the merchant picks CloudCart's nameservers (the zone is created then and stays `pending` until the nameserver change) or **Manage with CNAME** ([[settings-domains-external-dns]]). CloudCart-purchased domains get their zone and nameservers at purchase.
 2. **Active (custom DNS in place)** — Cloudflare detects nameserver propagation; DNS status flips to `active`. The DNS records table unlocks for editing. The merchant can now configure A / AAAA / CNAME / MX / TXT / NS records — see [[domain-dns-cloudflare]].
-3. **SSL provisioning** — when the Domain is added, the platform attempts to provision a free Let's Encrypt SSL certificate automatically (if the Let's Encrypt Manager app is installed). For manual SSL, the merchant goes through the CSR + install flow on [[settings-ssl]]. SSL status walks `pending` → `active`. See [[domain-ssl]] for the two modes.
+3. **SSL provisioning** — nothing is issued when the Domain is added. The merchant clicks **Install SSL**: **Automatic install** issues a free Let's Encrypt certificate (needs the Let's Encrypt Manager app), **Manual install** takes an external one ([[settings-ssl]]). See [[domain-ssl]] for the two modes.
 4. **Designated as primary** (optional) — when the merchant clicks "Set as primary" on a non-primary Domain, the platform checks three verification gates (DNS pointing correctly, SSL provisioned, external-domain "Powered-by" header). On pass, the previous primary is auto-unset and this Domain becomes primary. The admin SPA hard-redirects to the new URL. See [[domain-primary-and-plan-gates]] for the gate details.
-5. **Renewal warning (CloudCart-purchased only)** — 30 days before the domain registration expires, the row shows a renewal warning. Renewal is billed through the merchant's plan subscription. Renewal price may differ from the initial purchase price (reflects current registrar pricing). External-source domains do not show this warning — the merchant manages registration at their original registrar.
+5. **Renewal (CloudCart-purchased only)** — the row's **Renew** link works at any date and is the only thing that renews the registration (charged to the plan's card). A daily admin alert warns from one month before to one month after expiry. See [[settings-domains-add-flow]]. Domains registered elsewhere are renewed at their own registrar.
 6. **SSL expiry → admin alert + automatic fallback** — a daily platform-wide sweep finds expired SSL certs. If the expired Domain was the Site's primary, the platform switches the primary back to `<handle>.cloudcart.net` and deactivates the custom Domain — the storefront keeps serving (no HTTPS warnings) on the CloudCart subdomain. If non-primary, the Domain is just deactivated. The merchant gets an alert: *"The SSL certificate for domain X is expired. Switched to main host: {mystore.cloudcart.net}."* OR *"The SSL certificate for domain X is expired. Domain is deactivated."* See [[domain-ssl]] for the full alert + fallback rule.
-7. **Removed** — the merchant clicks the remove button on a non-primary Domain. The platform: (a) removes the Cloudflare DNS records, (b) removes the Cloudflare Custom Hostname binding, (c) deletes the SSL certificate record, (d) removes the Domain row. Cloudflare cleanup failures are swallowed silently — the local row is removed regardless. Re-adding the same Domain later starts from scratch (no DNS history preserved).
+
+   **Pointed away.** When the nameservers or the A record are moved to another host, visitors reach that host and CloudCart no longer serves the storefront on the Domain. The status the row shows is the Cloudflare zone's own, and the DNS records table is offered only while that zone is active. Records kept in CloudCart's zone (for example the Email channel's tracking CNAME) stop counting once the nameservers leave ([[email-channel-dns-changes]]). Renewal of a free certificate can then be blocked, which leads to the expiry fallback above.
+7. **Removed** — the merchant clicks the remove button on a non-primary Domain. The platform removes the Cloudflare Custom Hostname binding (if any), the SSL certificate record and the Domain row. The Domain's own Cloudflare zone is not deleted: it stays in CloudCart's account with its records, and re-adding the Domain reuses it.
 
 ## The CloudCart subdomain is always present
 
@@ -41,12 +43,12 @@ The `<handle>.cloudcart.net` Domain skips the lifecycle entirely — it is assig
 
 Removing a non-subdomain Domain from [[settings-domains]] triggers:
 
-- Cloudflare DNS records removal (failures swallowed silently).
+- No zone removal: the zone and its records stay in CloudCart's Cloudflare account.
 - Cloudflare Custom Hostname binding removal (when applicable — see [[domain-dns-cloudflare]] for which Cloudflare mode applies).
 - SSL certificate record deletion.
 - Domain row deletion.
 
-Re-adding the same Domain later starts from scratch — no DNS history preserved. If the merchant has custom DNS records they want to keep, they should export / record them before removing the Domain.
+Re-adding the same Domain later reuses its zone, so its records come back. Neither plan expiry nor deleting the store deletes the zone either.
 
 **The primary Domain cannot be removed.** To remove the current primary, the merchant must first promote another Domain to primary — see [[domain-primary-and-plan-gates]].
 

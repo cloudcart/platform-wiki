@@ -7,8 +7,8 @@ aliases: ["Install theme", "Change theme", "Theme switch", "Apply theme"]
 tags: [design, themes, templates, install]
 plan_gates: ["change_theme"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Themes — Install action
@@ -19,7 +19,7 @@ source_count: 4
 
 This aspect documents the **Install** action that switches the merchant's active storefront theme — what runs in the install transaction, the side effects (CSS recompile, translation regen, demo-data reseeding, dual-write to gate + routing site records), the confirmation prompt, and the AJAX response shape.
 
-The install itself is a single click + confirmation, but it is a **big, store-wide visual change** — every page on the storefront immediately switches to the new theme.
+The install itself is a single click + confirmation, but it is a **big, store-wide visual change** — every storefront page switches to the new theme (guests once their cached copy expires, up to 20 minutes; [[storefront-arch-caching-invalidation]]).
 
 ## Where to find it
 
@@ -72,6 +72,8 @@ On a successful install, CloudCart runs:
 3. **Regenerates translations** (`db:translation` artisan command) so theme-specific translation strings are loaded into the storefront's `data.js` bundle.
 4. **Re-runs the theme's demo landing pages installer** — for each landing page the theme defines (`pages.json` in the theme resources), CloudCart either updates an existing matching page or seeds a new one. Existing pages assigned to the same system slot (home / thank-you / 404) are **unassigned** in favour of the new theme's defaults — see [[design-themes-switch-effects]] for the full reseed semantics.
 5. **Clears the `unpaid_template` flag** if set, and regenerates the platform cache.
+
+**No demo products or images.** Installing a theme adds only its demo landing pages; it never adds demo products, categories or product images, and never removes the store's own. Demo catalogue content is loaded only when a store is first created on one of a small set of themes with demo content requested.
 
 A theme switch is not instant on the merchant's perception — there is a brief delay (typically a few seconds) while CSS recompilation and translation regeneration finish, after which the storefront serves the new theme.
 

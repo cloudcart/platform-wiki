@@ -7,14 +7,14 @@ aliases: ["Missing products", "Back in stock subscribers", "Expected products", 
 tags: [products, missing, subscribers, restock, insights]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 # Missing products
 
 ## Purpose
 
-A read-only **insight page** showing products with **back-in-stock subscribers** — customers who clicked the "Notify me when in stock" button on a product whose status was set to "Show as subscribe for quantity" (see [[products-statuses]]). Each row shows how many subscribers are waiting, the current stock, and what action to take. It is the merchant's queue of **unmet customer demand** — use it to spot **restock priority**, since many subscribers means confirmed buying intent. Notification is NOT automatic; see the two button states below.
+A read-only **insight page** showing products with **back-in-stock subscribers** — customers who clicked the "Notify me when in stock" button on a product whose status was set to "Show as subscribe for quantity" (see [[products-statuses]]). Each row shows how many subscribers are waiting, the current stock, and what action to take: a queue of **unmet demand** for **restock priority**. Notification is NOT automatic; see the two button states below.
 
 ## Where to find it
 
@@ -27,7 +27,7 @@ Sidebar → Products → **Missing products**. Route `/admin/products/missing-pr
 - Click the per-row action button — see the two states below.
 
 ### What the merchant CANNOT do here
-- See WHICH specific customers are subscribed (privacy-preserving aggregate only).
+- See the subscribers on this page itself: the **Subscribers** button opens them in [[marketing-subscribers]].
 - Reset / clear subscriber lists — they clear when the campaign is sent.
 
 ### Action button — two states, NO modal on this page
@@ -35,7 +35,7 @@ Sidebar → Products → **Missing products**. Route `/admin/products/missing-pr
 The per-row Actions column renders the same button used on [[products-favorite-products]]. No modal opens — both states are navigations, and which one shows depends on the Variant's current stock:
 
 - **Variant quantity 0 / NULL (out of stock)** — ghost button *"Subscribers ({count})"* opens `/admin/subscribers?filters[subscribe_for_missing_product]={variant_id}` in a new tab — the merchant lands in [[marketing-subscribers]] filtered to that variant's pending subscribers. No inline popover.
-- **Variant quantity > 0, or NULL = unlimited (restocked)** — primary button *"Create a campaign ({count})"* navigates to `/admin/campaigns` to build the back-in-stock email campaign by hand. The email is NOT auto-dispatched (see Business rules).
+- **Variant quantity > 0, or NULL = unlimited (restocked)** — primary button *"Create a campaign ({count})"* opens the new-campaign dialog; choosing a Regular campaign creates a draft with that variant's back-in-stock segment already picked (an existing one is reused, otherwise a One-time segment is created). Nothing is sent automatically (see Business rules).
 
 ## Settings & fields
 
@@ -52,25 +52,23 @@ The per-row Actions column renders the same button used on [[products-favorite-p
 
 ### Subscribers are collected automatically when products show the subscribe button
 
-When a product's status falls into the "Show as subscribe for quantity" rule (from [[products-statuses]]), customers see a "Notify me when in stock" button on the storefront product page. Clicking it requires them to enter their email — the email is added to the product's subscriber list and they appear in the count here. The subscriber need not be a registered customer; guests can subscribe just by providing an email.
+When a product's status falls into the "Show as subscribe for quantity" rule (from [[products-statuses]]), the storefront shows a "Notify me when in stock" button; the visitor leaves an email (guests included) and appears in the count here. The form opens as a popup, or as its own page when its URL is opened directly; there is no inline variant ([[storefront-notifications]]).
 
 ### Back-in-stock dispatch is merchant-triggered via a campaign (NOT automatic)
 
 This is the single biggest gotcha on this page. When a subscribed Variant's stock rises above zero (or the merchant changes its tracking so the Variant becomes always-in-stock), the row flips its action button to **"Create a campaign"**. The merchant must click it and finish the campaign to send the back-in-stock email. There is NO background job that auto-detects "stock just became positive, fire emails" — the platform only marks the subscribers as eligible; the send is a deliberate marketing action through the segments + campaigns funnel. If the merchant restocks but never launches the campaign, the subscribers stay queued indefinitely. The "automatic email" workflow in older docs is incorrect.
 
+To notify on every restock without a click, build an **Automated** campaign (trigger *Gets in segment*) on an Automated segment with the condition *"Subscribed for product availability, and which are already available"*. Automated segments are re-evaluated every 5 minutes ([[segments-rebuild-mechanics]]), so each restocked variant's subscribers then get the message.
+
 Once a campaign sends, the platform records each subscriber-notification pair in `subscriber_notifications_send` — and the page's `doesntHave('notifications')` filter excludes those rows. So after the campaign, the row drops off the page.
 
-### Read-only customer privacy
+### Signups are verified; marketing consent depends on the popup
 
-The merchant sees the count but not the individual subscriber emails. This is by design — subscribers may include guests whose emails were collected without account creation, and exposing them would create privacy/GDPR risk. To target subscribers with broader marketing, the merchant uses the campaigns / segments feature, which queries subscriber relationships at scale without exposing individual identities.
+A back-in-stock signup stores the email as **verified**, with no confirmation email. **Marketing consent** is set only when the GDPR app is active and the visitor ticks its marketing consent in the popup; otherwise a new address is stored without it (an address the store already had keeps its consent). Campaigns skip an address without marketing consent (log *"Not accepts marketing"*), and the back-in-stock campaign is no exception.
 
-### Email content
+### Message content
 
-The back-in-stock email is templated through the platform's transactional email system, customised via the email-template feature (separate from this page).
-
-### Permission
-
-This page sits under the standard products permission scope. Viewing the list is purely read — it triggers no queue.
+The message is the campaign's own, on whichever channel the campaign uses. There is no back-in-stock notification template among the [[marketing-omnichannel-mails-list|Email notifications]].
 
 ## Related
 
@@ -90,11 +88,7 @@ Per the `subscribe_for_missing_product` table fields (`subscriber_id`, `product_
 
 ### Subscribers are merged with the Subscribers table
 
-The `subscriber_id` foreign key points at the platform's general Subscribers entity — the same table that holds newsletter and abandoned-cart subscribers. A subscriber can be a registered customer OR a guest whose email was collected at the back-in-stock prompt without account creation.
-
-### Updated_at acts as created_at
-
-The table has no separate created_at column — `updated_at` holds the time the subscription was created (bumped only on re-subscribe), so it is effectively a creation timestamp.
+Each subscription belongs to a general Subscriber — a registered customer or a guest who only left an email.
 
 ### Page list rule: subscribers grouped per Variant, not per Product
 
@@ -119,6 +113,6 @@ When an already-notified subscriber clicks "Notify me when in stock" again (e.g.
 ### What this page does NOT do
 
 - It does NOT include subscriber-less out-of-stock products. Only Variants with at least one outstanding subscriber appear.
-- It does NOT support restock from this screen — the merchant clicks the product name or goes to [[products-inventory]] to change `quantity`.
+- It does NOT restock: change `quantity` in [[products-inventory]].
 
 ## Open questions

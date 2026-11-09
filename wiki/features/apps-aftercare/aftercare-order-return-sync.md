@@ -7,8 +7,8 @@ aliases: ["Aftercare order return sync", "auto_create_return", "withdrawal core 
 tags: [apps, aftercare, orders, returns, withdrawal, pro]
 plan_gates: ["aftercare_pro"]
 created: 2026-07-24
-updated: 2026-07-24
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[apps-aftercare]]. See the hub for the other aspects (compliance, admin inbox, settings, free-vs-Pro, storefront flow).
@@ -59,6 +59,14 @@ The withdrawal record itself does **not** restock inventory or move money — th
 - **`card`** — a refund back to the original gateway, **executed from the core return's "refund to card" button** via the provider's API: a **full** return issues a **full refund**, a **partial** return issues a **partial refund**. This works for providers that support the matching capability — **partial refunds are live for Stripe, PayPal, Revolut, and CloudCart Pay** (Mollie / PayU / Mokka / Klear and others are full-only or unsupported). Card is therefore offered **per scope**: on a partial withdrawal the `card` option only appears when the gateway supports partial refunds; otherwise the customer is steered to `bank`. See [[orders-payment-refund-partial-refunds]].
 
 Any credit note is issued through the normal order / return flow ([[orders-credit]]); the Aftercare request links it via `credit_note_id`.
+
+### The order's own status
+
+Aftercare never changes the order's status: confirming, approving or closing a request (Free or Pro) moves only the request.
+
+- **Partial withdrawal.** **Receive** on its return restocks the lines and marks the return `returned`; the order keeps its status, like any partial return.
+- **Whole-order withdrawal.** The order is reversed through its status, by the merchant: an **Issue return** for the whole order moves it to `refunded` when it was paid or completed, otherwise to `cancelled`; the merchant can also set that status directly, and a full card refund moves it to `refunded` ([[orders-returns-lifecycle]], [[order-status-action-gates]]).
+- A full reversal cancels any return still `pending` on the order. If the withdrawal's own return is still pending at that moment, it is cancelled and the request follows it to `cancelled`, which sends the customer the request's status email (verify).
 
 ## Related
 

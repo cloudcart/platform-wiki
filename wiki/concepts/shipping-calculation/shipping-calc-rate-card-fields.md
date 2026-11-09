@@ -5,8 +5,8 @@ aliases: ["Delivery price calculation fields", "Rate card fields", "Courier pric
 tags: [shipping, carriers, omniship, rate-card, pricing, concepts]
 plan_gates: []
 created: 2026-06-26
-updated: 2026-06-26
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[shipping-calculation]]. See the hub for the other aspects (rate models, geo gating, the checkout cascade, COD surcharge, discounts + Cart Rules, persistence).
@@ -42,7 +42,9 @@ Couriers that quote **several services** add, under the minimum-order-value fiel
 
 ## Fallback price — calculator types only
 
-For `calculator`, `calculator_fixed`, and `free`, the card also shows a **"Fallback price for `<channel>` delivery"** switch. When ON it reveals a **price + weight rate table** the platform uses **only when the live quote can't return a price** (carrier API error, address out of coverage) — so the channel still offers *something* instead of silently disappearing at checkout. The `fixed_*` types have **no** fallback switch — their table already *is* the price.
+For `calculator`, `calculator_fixed`, and `free`, the card also shows a **"Fallback price for `<channel>` delivery"** switch. When ON it reveals a **price + weight rate table** used **only when the live quote returns no price** (an API error, or none of the selected services priced for the address) — so the channel still offers *something* instead of disappearing at checkout. The `fixed_*` types have **no** fallback switch — their table already *is* the price.
+
+**Only some couriers apply it:** [[apps-econt|Econt]], [[apps-dhl|DHL]], [[apps-eushipment|EuShipment]], ACS Courier and the retired Rapido. Every other courier, including [[apps-dpdbulgaria-speedy|DPD Bulgaria]], [[apps-dpdromania|DPD Romania]], [[apps-sameday|Sameday]] and [[apps-cargus|Cargus]], shows the switch but ignores it: with no live price the channel is not offered.
 
 ## Category-condition sub-table — every type
 

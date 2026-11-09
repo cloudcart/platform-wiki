@@ -7,8 +7,8 @@ aliases: ["Econt pallet", "Econt palletized shipping", "Палетно изпр�
 tags: [apps, shipping, courier, bulgaria, econt, pallet, settings]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[apps-econt]]. See the hub for the other aspects (Settings, addresses, shipments, waybill mapping, COD / insurance, coverage / caches).
@@ -68,6 +68,8 @@ The merchant's Pallet config drives whether a SPECIFIC order ships as a pallet. 
 ```
 
 This **answers the pallet-eligibility question**: when the merchant configured "shoes" category but no shoes in the order, the platform falls back to REGULAR shipping (not pallet).
+
+**The delivery channel is not part of the decision.** The same check runs for the checkout price and for the waybill, for address, office and Econtomat orders alike, so an office order that meets the triggers is also priced and sent as a pallet. Whether Econt accepts a pallet for that office is Econt's rule (verify).
 
 ### Pallet dimensions default to 60×60×60 cm
 

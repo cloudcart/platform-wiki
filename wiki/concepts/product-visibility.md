@@ -5,8 +5,8 @@ aliases: ["Product visibility", "Why isn't my product showing", "Why is my produ
 tags: [products, visibility, storefront, catalogue, stock, geo, concepts]
 plan_gates: []
 created: 2026-06-13
-updated: 2026-06-13
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Product visibility — why a product appears (or doesn't) on the storefront
@@ -26,6 +26,7 @@ Not covered: search relevance / ranking ([[storefront-search-new]]); the stock m
 - **Draft vs inactive vs hidden** — three different "not in listings" reasons: **draft** = never published (work-in-progress); **inactive** (`active = no`) = pulled from sale entirely; **hidden** (`is_hidden = yes`) = published and sellable but **link-only** — excluded from listings / search / category navigation, yet still reachable by its **direct product URL**. So "hidden" means *unlisted*, not *off*.
 - **Out-of-window vs inactive** — a product before its `publish_date` or after its `active_to` is auto-hidden by schedule while the Active toggle is still ON — so it can look "off" without being inactive. Unlike *hidden*, an out-of-window product returns 404 even by direct URL (the publish window is enforced on the product-detail page too, verified).
 - **Out of stock vs hidden** — an out-of-stock product disappears only when the store hides out-of-stock items AND the product isn't oversell-enabled; otherwise it stays visible (usually with an "Out of stock" label).
+- **Out of stock vs inactive** — stock reaching 0 never deactivates a product and never redirects its page: the product stays Active, its page still opens (200) with its stock status, and listings drop it only under the store's out-of-stock switch on [[design-module-product-filters]] (applied by the indexed engine). Restocking needs no action; it reappears once the index catches up.
 
 ## Where it applies — the visibility checklist
 
@@ -38,6 +39,8 @@ A product appears on the storefront only when **every** condition holds:
 5. **Sellable for the stock rule** — when the store hides out-of-stock products, a product / variant at 0 stock with `continue_selling = no` is dropped; with `continue_selling = yes` it stays sellable (oversell). See [[inventory-oversell]]; the customer-facing label comes from [[products-statuses]].
 6. **In the customer's geo-zone** — geo-targeting can scope a product to specific zones; a shopper outside the allowed zone doesn't see it. See [[geo-targeting]].
 7. **Reachable via a category** — products surface in category navigation through their (visible) categories; a product with no visible category may still be found by search but is absent from category browsing. See [[products-categories]].
+
+**The all-products page `/products`** follows the same checklist as category pages (hidden and, under the store's switch, sold-out products are left out). It exists on standard themes only; on new-engine (Liquid) themes `/products` returns 404.
 
 **Index-sync delay (new engine):** storefront listings + search read from an index, so a just-saved change (new product, status flip, restock) may take until the next sync to appear — not always instant. See [[apps-listing-engine]] / [[storefront-search-new]].
 

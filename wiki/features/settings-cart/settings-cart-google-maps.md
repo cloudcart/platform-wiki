@@ -7,8 +7,8 @@ aliases: ["Google Maps API key", "google_map_api_key", "google_map_api_version",
 tags: [settings, cart, checkout, google-maps, integration]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-cart]]. See the hub for the other aspects (accounts, abandoned reminder, payment/shipping defaults, limits, checkout fields, UI behavior, marketing consent).
@@ -41,7 +41,7 @@ The Google Maps API key is required for storefront map modules used during check
 
 | Field / Control | What it does | Notes |
 |-----------------|--------------|-------|
-| **Google Maps API key** (`google_map_api_key`) | The merchant's own Google Maps API key. Saved through a separate `/google-map-key` endpoint that validates the key before persisting. | Plus an embedded validation module (`SettingsCartLegacyGoogleKey`) that warns if the key is still on the legacy Google Maps version (`google_map_api_version='legacy'`). Backend-validated (nullable, max 50 chars; live-validated against Google's endpoint when non-empty). |
+| **Google Maps API key** (`google_map_api_key`) | The merchant's own Google Maps API key, saved with the page after a live check. | Plus an embedded validation module (`SettingsCartLegacyGoogleKey`) that warns if the key is still on the legacy Google Maps version (`google_map_api_version='legacy'`). Backend-validated (nullable, max 50 chars; live-validated against Google's endpoint when non-empty). |
 | **Show Google Map** (`show_google_map`) | Switch, on by default. Help text: *"When off, the store works as if no Google Maps API key is set: no map and no address suggestions in checkout, even with your key or on a trial store"*. | Overrides the merchant's key and the platform key trial stores use. The storefront, the admin and the Storefront API's checkout settings all follow it. |
 | **Show Google map in addresses** (`checkout_hide_address_map`) | Switch (inverted) — when ON the map IS shown on the address step. | Disabled when no API key is set. |
 | **Show Google map in Office Delivery Method** (`checkout_hide_office_map`) | Same (inverted) — when ON the map IS shown on office-delivery selection. | Disabled when no API key is set. |
@@ -53,9 +53,11 @@ The box also shows a warning when the stored key is on the legacy Google Maps ve
 
 ### Key validation happens live at save-time
 
-When the merchant submits a Google Maps API key, the backend calls Google's API to test it. On success, the version (`legacy` vs `new`) is detected from the response and stored alongside the key as `google_map_api_version`. On failure, the validation error message from Google is surfaced to the merchant inline. Empty / null clears the key and resets the version to `new`.
+Saving the page with a key checks it first: 20–50 allowed characters, then a live test sent as coming from the store's address, **Places API (New)** first and the legacy Places API as fallback. The version that answers is stored as `google_map_api_version`. A failing key is **not saved**: the save fails with *"Invalid Google Maps API key: …"* and Google's reason. Empty clears the key and resets the version to `new`.
 
-The validation runs through a **separate endpoint** (`/google-map-key`) rather than the main Cart settings save handler — so the merchant can re-validate the same key without re-submitting the entire Cart and checkout page.
+On a legacy key, the warning's **Validate** button (`/google-map-key`) tests **Places API (New) only**: success stores `new` and clears the warning; otherwise *"Places API (New) is disabled. Enable it by visiting Google Cloud Console then retry."* or Google's own error.
+
+**Which key the storefront uses:** none when **Show Google Map** is off; on a store not yet live, the merchant's key, or without one the platform's own key but only on the store's cloudcart.com / cloudcart.net address; on a live store, only the merchant's key. The storefront loads Google's Maps JavaScript API with the Places and Marker libraries; which further APIs or key restrictions Google requires is Google's side (verify).
 
 ### Validation cache is cleared on save
 
@@ -65,20 +67,18 @@ Saving the Google Maps API key clears the related validation cache (`google_map_
 
 The three "Show Google map in …" switches have `disabled: !hasGoogleApiKey.value` — when no key is saved, all three are visually greyed out and unclickable. As soon as the merchant pastes a valid key and saves, the disabled state is lifted.
 
-Saving an **invalid** key still persists the key but the validation cache is cleared so the storefront will retry validation on next request. The merchant should expect maps not to render until a valid key is in place.
-
 ### Inverted-switch semantics on all three map toggles
 
-All three map switches use `trueValue: false, falseValue: true`, meaning the UI's "ON" position stores literal `false` in the underlying setting (i.e., "Show map" = the `*_hide_*_map` key stores `false`). Practical merchant-facing wording is positive ("Show Google map in …") but storage is inverted. A support agent looking at a raw API dump should mentally invert these three keys. See the hub [[settings-cart]] for the cross-cutting list of inverted switches.
+All three map switches use `trueValue: false, falseValue: true`: the UI's "ON" ("Show Google map in …") stores `false` in the `*_hide_*_map` key. Invert these three keys when reading a raw API dump. See the hub [[settings-cart]] for the cross-cutting list of inverted switches.
 
 ### Legacy version detection and merchant migration
 
-Google has migrated from the original Google Maps JavaScript API to the new Google Maps Platform. CloudCart detects which one the merchant's key is bound to:
+CloudCart detects which Places API the merchant's key works with:
 
 - **`legacy`** — the key works against the older API. `SettingsCartLegacyGoogleKey` warning surfaces, asking the merchant to migrate. CloudCart still renders maps using the legacy API.
 - **`new`** (default for empty/new keys) — the key works against the modern Google Maps Platform.
 
-If the merchant migrates their key from legacy to new (or vice versa) on Google's side, they should re-save the key here so the platform re-detects the version. The version is stored in `google_map_api_version`.
+After enabling Places API (New) on Google's side, the merchant clicks **Validate** in the warning.
 
 ### What the maps do at checkout
 

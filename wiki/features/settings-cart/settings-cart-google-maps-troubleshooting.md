@@ -7,8 +7,8 @@ aliases: ["Google Maps key not working", "Google autocomplete not working at che
 tags: [settings, cart, checkout, google-maps, troubleshooting, integration]
 plan_gates: []
 created: 2026-06-26
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[settings-cart]]. The Google Maps key box itself (field, map switches, legacy warning) is on [[settings-cart-google-maps]].
@@ -41,7 +41,7 @@ The store's Google Maps API key is on the **legacy Places API**, which Google ha
 ### Fix
 
 1. In the **Google Cloud Console**, enable **Places API (New)** for the same API key. This is done on **Google's side** — CloudCart cannot enable it for the merchant.
-2. Return to **Settings → Cart and checkout → Google Maps** and **re-validate** the key (re-save it / use the validation control). The platform re-probes Google and, on success, stores `google_map_api_version = new` and clears the legacy warning.
+2. Return to **Settings → Cart and checkout → Google Maps** and click **Validate** in the legacy warning. It tests **Places API (New) only**; on success it stores `google_map_api_version = new` and clears the warning. While the new API is still off it answers *"Places API (New) is disabled. Enable it by visiting Google Cloud Console then retry."*
 3. The checkout address autocomplete works again.
 
 Until the key is migrated and re-validated, the workaround is to **clear the Google Maps key** or switch **Show Google Map** off, which switches checkout to the **manual country / city dropdown form** (no autocomplete) — see [[shipping-calc-geo-gating]] for that non-Google fallback.
@@ -50,15 +50,17 @@ Until the key is migrated and re-validated, the workaround is to **clear the Goo
 
 - `google_map_api_key` — the merchant's key; live-validated at save-time (full field detail on [[settings-cart-google-maps]]).
 - `google_map_api_version` — the **detected** version stored alongside the key: **`legacy`** or **`new`**. Drives the inline migration warning.
-- Validation runs through the separate `/google-map-key` endpoint, so the merchant can **re-validate the same key** without re-submitting the whole Cart and checkout page.
+- **Validate** (in the legacy warning) runs through the separate `/google-map-key` endpoint, so the same key is re-tested without re-saving the whole page.
 
 ## Business rules
 
 ### How validation detects the version (live probe)
 
-When a key is validated, the platform runs a **live probe** against Google: it **first tries the new Places API**, and only if that fails **falls back to the legacy Places API**. The version that responds successfully is stored as `google_map_api_version`. So a key that works only on legacy is stored `legacy` (+ warning); a key with Places API New enabled is stored `new`. Empty / cleared key resets the version to `new`.
+When the page is saved with a key (and in the staff diagnostic below), the platform runs a **live probe** against Google, sent as coming from the store's address: it **first tries the new Places API**, and only if that fails **falls back to the legacy Places API**. The version that responds successfully is stored as `google_map_api_version`. So a key that works only on legacy is stored `legacy` (+ warning); a key with Places API New enabled is stored `new`. Empty / cleared key resets the version to `new`.
 
-The probe also enforces basic key format (minimum 20 / maximum 50 characters, allowed character set) before the network test, and surfaces Google's failure reason (e.g. `REQUEST_DENIED`) inline when the test fails.
+The probe also enforces basic key format (minimum 20 / maximum 50 characters, allowed character set) before the network test. When it fails, the key is not saved and the error *"Invalid Google Maps API key: …"* carries Google's reason (e.g. `REQUEST_DENIED`). The **Validate** button skips the legacy fallback (step 2 above).
+
+Messages after *"Invalid Google Maps API key: "*: *"API key is too short (minimum 20 characters)"*, *"API key is too long (maximum 50 characters)"*, *"API key contains invalid characters"*, and from Google *"API key is invalid or request was denied"* or *"API key has exceeded quota limits"*. The legacy warning reads: *"Your Google Maps API key is currently using the legacy Places API. … enable the new Places API (New) by visiting the Google Cloud Console and activating it for your project. After activation, click the validation button."*
 
 ## Related
 

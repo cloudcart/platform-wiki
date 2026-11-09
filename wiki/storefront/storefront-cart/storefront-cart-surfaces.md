@@ -5,8 +5,8 @@ route_path: /cart/{cart_key}
 themes_using: [all]
 tags: [storefront, cart, drawer, compact, rendering]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 > Part of [[storefront-cart]]. See the hub for the other aspects (cart actions / mutations, merchant customisation + known issues).
@@ -32,9 +32,9 @@ The render (GET) routes for the three surfaces:
 ## How it loads
 
 1. The bare `/cart` route immediately redirects to `/cart/{freshKey}` so the customer's browser holds a stable URL.
-2. The cart instance resolves the current cart — for guests by the `_cart_key` cookie, for logged-in customers by their account. If both exist they are merged (see [[cart-vs-order-lifecycle]]).
+2. The cart instance resolves the current cart — for guests by the cart key kept in the store session (there is no cart cookie), for logged-in customers by their account. If both exist they are merged (see [[cart-vs-order-lifecycle]]).
 3. If the customer arrived from a **shared cart link** (the `{key}` in the URL differs from the resolved instance key), the controller merges that cart and redirects to the resolved cart's canonical URL.
-4. The Smarty template `cart.full` renders — under `flair`, this is the theme templates, which captures the cart HTML and (in non-AJAX mode) wraps it in the layout + breadcrumb. In AJAX mode it returns the fragment only.
+4. The template `cart.full` renders the cart HTML, wrapped in the layout and breadcrumb except in AJAX mode, which returns the fragment only.
 5. **The three AJAX wrappers** (the canonical refresh selectors the storefront AJAX pipeline uses to repopulate cart HTML after any mutation):
    - Full-page wrapper: `data-ajax-box="{route('cart.list', $cc_cart_key)}" data-module="cart" data-effect="populate"`.
    - Drawer wrapper: `js-cc-cart-panel data-ajax-box="{route('cart.panel', $cc_cart_key)}" data-module="cart" data-effect="replace"`.
@@ -50,7 +50,7 @@ The render (GET) routes for the three surfaces:
 - Right column (col-md-4, `_cart-sidebar js-checkout-sidebar`):
   - **Cart totals** — subtotal, applied discounts, applied cart-rule modifications, free-shipping-amount-left message, total.
   - **Submit button** — the theme templates ("Continue to checkout" or equivalent).
-  - **Optional text module** (`checkoutText` — Theme Editor) below the summary.
+  - **Optional text module** (`checkoutText` widget, **Text fields** group on the Widgets screen) below the summary.
 - **Empty state** — `sf.module.cart.nfy.cart_is_empty` notice + nothing else.
 
 ### Each cart line (from the theme templates and `panel.tpl`)
@@ -107,8 +107,8 @@ The surfaces respond to several settings (full detail on [[storefront-cart-custo
 
 - `show_cart` — global kill-switch for the header cart bubble; when `no`, no cart UI shows anywhere.
 - `compact_cart_panel` — clicking the header bubble opens the drawer instead of navigating to `/cart`.
-- `action_after_add_to_cart` — whether Add-to-cart opens the drawer, redirects to `/cart`, or stays silent.
-- Theme Editor → Cart module → "Checkout text" (`checkoutText`) — free-form HTML below the totals summary.
+- `action_after_add_to_cart` — `show_popup` (default) / `go_to_cart` / `checkout_redirect` / `stay_on_page` ([[settings-cart-ui-behavior]]).
+- Widgets screen ([[design-modules]]) → **Text fields** group → the `checkoutText` widget (name varies by theme, e.g. "Checkout summary text") — free-form HTML below the totals summary.
 
 ## Theme variations
 

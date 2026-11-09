@@ -7,8 +7,8 @@ aliases: ["Campaigns", "Email campaigns", "Marketing automation", "Кампан�
 tags: [marketing, campaigns, automation, email, sms, viber, web-push]
 plan_gates: ["abandoned_orders", "campaigns"]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Campaigns
@@ -27,7 +27,7 @@ The base route `/admin/marketing/campaigns` redirects to `/admin/marketing/campa
 
 ## Sub-pages (in this cluster)
 
-Drill into the aspect page that matches the question rather than reading every page.
+Drill into the aspect page that matches the question.
 
 - [[campaigns-list-tabs-and-filters]] — the four status tabs, the cross-tab channel filter row, the table columns, the status enum, and the progress enum.
 - [[campaigns-list-create-modal]] — the **+ Create campaign** modal: Regular vs Automated tabs, the predefined-automation catalogue, and loading / error / close behaviour.
@@ -58,7 +58,7 @@ Drill into the aspect page that matches the question rather than reading every p
 - Switch between status tabs (Active / Inactive / Archived / Draft) and filter by channel (All / Email / SMS / Viber / Web push) via the bottom tab row — see [[campaigns-list-tabs-and-filters]].
 - Click **+ Create campaign** (Regular vs Automated modal) or **AI Assistant** (suggestion drawer).
 - Click a row to open the editor (`campaigns-edit/{type}/{id}`) — see [[marketing-campaigns-edit]].
-- Toggle a campaign's Active/Inactive switch inline; archive/unarchive, copy, or delete — see [[campaigns-list-row-actions]].
+- Switch an **Automated** campaign on/off inline (Regular campaigns have no pause control); copy, archive, or unarchive / delete (Archived tab only) — see [[campaigns-list-row-actions]].
 - Drill into per-campaign **Statistics**, **Subscribers**, and **Logs**.
 - Filter by Type / Progress / Has subscribers / Subscribers / Segment; search by title; sort by ID / title / subscribers count.
 
@@ -78,10 +78,10 @@ The hub catalogues the list-page surface only; column meanings, modal layout, an
 The full catalogue is on [[campaigns-list-rules]]. Highlights that apply cluster-wide:
 
 - **Anti-spam policy gate.** Every campaign endpoint and the `campaigns-channels` / `campaigns-email-saved-templates` routes require `campaigns.anti_spam_policy_accepted = true`. Until accepted, the merchant is bounced to [[marketing-campaigns-policy]].
-- **Draft-only edits.** Saving a non-Draft campaign is rejected with *"Campaign has status {status}! You can only edit draft campaigns!"*. To change a running campaign's trigger segment or steps, the merchant copies it (a new Draft) and launches the copy.
+- **Draft-only edits.** Saving a non-Draft campaign is rejected with *"Campaign has status {status}! You can only edit draft campaigns!"*. To change a running campaign's trigger segment or steps, the merchant copies it (a new Draft) and launches the copy — first making the original inactive or archived, or its audience receives it twice ([[campaigns-copy-state-and-quota]]).
 - **Title uniqueness across all non-deleted rows.** Archived and Inactive campaigns still hold their title; only deleted titles are reusable.
 - **Plan quota fires on every create path.** Manual create, predefined clone, row copy, and AI-from-suggestion all hit the plan limit; over-quota triggers a 402 / upgrade redirect after the click (no preflight grey-out).
-- **Channel guards.** Sending checks `channel.installed`, `status`, and (for credit channels) `plan_remaining` vs the segment's deliverable count. Suspended channels block the campaign with one of `suspended_by.spam` / `suspended_by.bounced` / `suspended_by.open` / `suspended_by.cc_denied` and the merchant fixes the channel first.
+- **Channel guards.** Sending checks `channel.installed`, `status`, and (for credit channels) `plan_remaining` vs the segment's deliverable count. On a suspended channel (`suspended_by.spam` / `.bounced` / `.open` / `.cc_denied`) each step drops itself; only CloudCart staff can lift it — see [[channels-reputation-auto-suspend]].
 - **Step caps.** Regular campaigns max **1** action step; Automated campaigns max **5**.
 - **Statistics aggregation lag.** The `reached` / `orders` / `turnover` columns reflect the hourly statistics aggregation, not live state (tooltip: *"Statistical information is updated every hour."*). See [[campaigns-list-execution-internals]].
 - **Last-touch attribution.** The `?cc_campaign=...` link parameter is held for the session; later campaign clicks overwrite it, so the order is stamped with the most-recently-clicked campaign. No first-touch / multi-touch model. See [[marketing-campaigns-statistics-full]].
@@ -103,7 +103,7 @@ The full catalogue is on [[campaigns-list-rules]]. Highlights that apply cluster
 - [[marketing-segments]] — segments — every campaign needs a segment as audience.
 - [[marketing-subscribers]] — subscriber CRM — the campaigns target subscribers.
 - [[marketing-omnichannel-mails-list]] — transactional emails (separate from these promotional campaigns).
-- [[marketing-discounts]] — discounts — campaigns can include dynamically-generated discount codes via the `{$dynamic_discount_code}` and `{$generate_discount_code:10%}` placeholders.
+- [[marketing-discounts]] — discounts — `{$discount_code:CODE}` links to the cart with that discount applied; `{$dynamic_discount_code}` generates one code per recipient (see [[message-template-merge-tags]]).
 - [[campaign]] — Campaign entity.
 - [[channel]] — Channel entity (the delivery medium).
 - [[segment]] — Segment entity.
@@ -111,7 +111,7 @@ The full catalogue is on [[campaigns-list-rules]]. Highlights that apply cluster
 - [[email-template]] — Email template entity.
 - [[notification-delivery]] — outbound delivery internals.
 - [[plan-gates]] — `campaigns.*` plan limits, channel-credit limits.
-- [[background-queue-inventory]] — catalogue of all background processes; covers campaign-send fan-out timing and how to track in-flight sends on Queue View.
+- [[background-queue-inventory]] — background-process catalogue, including campaign-send fan-out timing.
 - [[marketing-campaigns-select]] — the Regular-vs-Automated type picker shown when creating a campaign.
 
 ## Open questions

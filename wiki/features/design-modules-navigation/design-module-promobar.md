@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Design → Modules → Top bar (Горна част) → Promo bar (Промо лента)"
+nav_path: "Design → Modules → Others (Други) → Top bar (Горна част) → Promo bar (Промо лента)"
 route_name: admin.storefront.widgets
 route_path: /admin/storefront/widgets
 aliases: ["Promo bar module", "Promobar module", "htmlLine", "extra.htmlLine", "HTML line module", "Top bar module", "Промо лента", "Модул промо лента"]
 tags: [design, modules, navigation, header, promo, marketing]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-25
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 # Storefront Modules — Promo bar (`htmlLine`)
@@ -26,17 +26,17 @@ The bar can be SCHEDULED via `From` / `To` dates, so the merchant can pre-config
 | Surface | Location |
 |---------|----------|
 | Storefront slot | Top of the page (above header) by default; bottom on themes using `header-two` template (configurable) |
-| Admin edit card | Sidebar → **Дизайн → Модули** (Design → Modules, `/admin/storefront/widgets`) → the **Горна част** / **Top bar** (`top_bar`) group → **Промо лента** / **Promo bar** card |
+| Admin edit card | Sidebar → **Дизайн → Модули** (`/admin/storefront/widgets`) → tab **Други** (Others) → group **Горна част** (Top bar) → card **Промо лента** |
 
 The module key is `extra.htmlLine`; the instance name is `htmlLine`. There is one instance per store.
 
-**Which group/tab it appears under is theme-defined.** Each theme's config assigns `htmlLine` to a widget group — across the built-in themes (e.g. a theme that ships it, `knowledge-freedom`) it sits in the **`top_bar`** group, rendered as **"Горна част"** (Top bar), alongside the other top-of-page widgets (navigation links, etc.). So the merchant looks for it under the theme's top-bar / "Горна част" section, not a generic "Others" list.
+Every built-in theme that has the bar puts it in the **Горна част** group of the **Други** tab, beside the other top-of-page modules (see [[design-modules-cross-tabs-groups]]).
 
 ## What the merchant can do here
 
 - **Master enable / disable** the bar.
 - **Schedule a display window** via `From` / `To` datetime fields (optional; both blank = always-on once enabled).
-- **Write the message** in a rich-text TinyMCE editor — supports inline HTML, links, basic formatting.
+- **Write the message** in the rich-text editor: formatting, links, and an image button that inserts a picture from the store's files ([[settings-files]], up to 1024 MB per file); its code view also takes HTML such as an image tag.
 - **Optionally show a CTA button** next to the message:
   - Pick left / right side.
   - Set the button text (e.g., "Shop now").
@@ -46,15 +46,13 @@ The module key is `extra.htmlLine`; the instance name is `htmlLine`. There is on
 
 What the merchant CANNOT do:
 
-- Add a CLOSE / dismiss button — not exposed in the merchant form. Available via custom rollout from CloudCart support.
 - Run multiple promo bars at once — single instance per store.
-- Per-page targeting (homepage but not product pages) — not supported here. Use [[marketing-landing-pages]] Dynamic pages with an HTML block instead.
-- Per-segment targeting (only to logged-in customers) — not supported.
-- A cart-total-driven **"spend X more for free shipping" progress bar** — not a native feature; the free-shipping line here is **static text** the merchant writes, not a threshold meter tied to the cart total.
+- Target pages or customer segments — the bar shows on every page to everyone. For one page, use a [[marketing-landing-pages]] Dynamic page instead.
+- A cart-driven **"spend X more for free shipping"** meter in the bar — its line is **static text**. The live hint exists only in the checkout summary ([[checkout-page-steps]]) and Bump Cart ([[apps-bumpcart]]).
 
 ### This is the only announcement / free-shipping bar — no App Store app provides one
 
-The top-of-storefront promo / announcement strip (including a *"Free shipping over X"* line) is a **native theme module**: this `htmlLine` Promo bar, plus the static `extra.text` header / home text blocks ([[design-modules-content-text]]) and the banner family ([[design-modules-content-banners]]). **No installable App Store app** renders a dedicated announcement or free-shipping bar — the marketing apps surface offers *inside* product / cart pages ([[apps-up-cross-sell]] recommendations, in-cart offer goals, lookbook / video-slider content), not a top-of-page strip. So a *"where is my free-shipping / announcement bar configured"* ticket resolves to this module (or a [[marketing-landing-pages]] Dynamic-page HTML block), never to an app.
+The top-of-storefront announcement strip (including a *"Free shipping over X"* line) is this native module, besides the static text blocks ([[design-modules-content-text]]) and banners ([[design-modules-content-banners]]). **No App Store app** renders an announcement or free-shipping bar; the marketing apps place offers inside product and cart pages ([[apps-up-cross-sell]]). So a *"where is my announcement bar configured"* ticket resolves to this module, never to an app.
 
 ## Settings & fields
 
@@ -99,7 +97,7 @@ The bar force-hides itself for Lighthouse / pagespeed test requests. Intentional
 
 ### Auto-hide when text is empty
 
-If `text` is blank or contains only whitespace / HTML tags, the bar is force-hidden. To fully turn it off, disable the master toggle or clear the text.
+If `text` has no visible text (blank, whitespace or tags only), the bar is force-hidden. An image counts as a tag, so an **image-only bar never shows**: keep at least one character of text beside the image. The platform sets no recommended image size; the picture shows at the size its HTML gives, within the theme's bar styling.
 
 ### Datetime conversion to UTC
 
@@ -107,7 +105,7 @@ The merchant enters `period.from` / `period.to` in store-local time using the st
 
 ### Cookie name auto-rotated on every save
 
-`cookie_name` is regenerated on every save. If a custom rollout exposes the dismiss button, this ensures dismissals don't persist across promo updates — a customer who dismissed last week's promo sees the new one.
+The shared bar template carries a close control, handled by each theme's script (verify per theme). Closing sets a cookie named after `cookie_name`, which is regenerated on every save, so a customer who closed last week's promo sees the new one.
 
 ### Button text auto-hides when empty
 
@@ -115,7 +113,7 @@ Even with `button.enabled = true`, clearing the button text force-hides the butt
 
 ### Cache invalidation
 
-Save / Reset regenerate the storefront cache key. The new bar applies on the next request — no manual cache clear.
+Save / Reset regenerate the storefront cache key. Guests see it within 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### No plan-gating
 
@@ -135,6 +133,5 @@ With `multylang` installed, `text` and `button.text` accept per-language entries
 
 ## Open questions
 
-- 📡 **Dismiss button availability.** Currently a custom-rollout feature. Confirm whether a given store's promo bar renders a close button.
 - 📡 **Per-language text.** With `multylang` installed, per-language entries are stored. Confirm the `multylang` app is installed for the store.
 - ⏸️ **Lighthouse detection method.** Confirm which audit bots are caught (PageSpeed, GTmetrix, etc.).

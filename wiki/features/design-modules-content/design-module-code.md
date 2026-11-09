@@ -7,8 +7,8 @@ aliases: ["Code module", "Raw HTML module", "HTML/JS module", "Custom code modul
 tags: [design, modules, content, code, html, javascript, page-builder]
 plan_gates: ["storefront_builder"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Code module (`extra.code`)
@@ -39,7 +39,7 @@ What the merchant CANNOT do here:
 
 - Have CloudCart sanitise the code — it is rendered exactly as pasted.
 - Embed `<script>` tags that reach the parent DOM directly when rendered inside the page-builder's `<iframe srcdoc>` container — the iframe sandboxing prevents direct DOM access. To send messages out, the script must use `postMessage`.
-- Use this module to drop in store-wide analytics tags. For that, use [[design-custom-assets]] — those live in `<head>` / `<body>` boilerplate and persist across all pages.
+- Use this module to drop in store-wide analytics tags. For that, use [[design-custom-assets]] — that code goes into the `<head>` of every page.
 
 ## Settings & fields
 
@@ -77,7 +77,7 @@ Like [[design-module-text]], the Code module runs the body through a text-variab
 
 ### Use [[design-custom-assets]] for store-wide tracking
 
-Google Analytics, Facebook Pixel, and similar tracking tags belong in the [[design-custom-assets]] custom-head / custom-body snippets, NOT in a Code module on a single page. Tracking tags inside an iframe-sandboxed Code block will not fire on the parent page.
+Google Analytics, Facebook Pixel, and similar tracking tags belong in their apps or in the single head snippet of [[design-custom-assets]], NOT in a Code module on a single page. Tracking tags inside an iframe-sandboxed Code block will not fire on the parent page.
 
 ### 3 MB code cap
 
@@ -93,14 +93,14 @@ Both **Save** and **Reset** regenerate the per-site cache key + the page-builder
 - **`code` page-builder block** renders inside `<iframe srcdoc>` with auto-height. The iframe sandboxing is theme-agnostic — set by the page-builder rendering pass, not the theme.
 - **For raw HTML in a standalone module surface** outside the page builder, use:
   - [[design-module-banner]] `type=script` slot — a 6-row textarea per banner, renders inline (no iframe sandbox). For small embed scripts.
-  - [[design-custom-assets]] — for `<head>` / `<body>` boilerplate that should apply to every page.
+  - [[design-custom-assets]] — for `<head>` code that should apply to every page (there is no body placement).
 
 ## Related
 
 - [[design-modules-content]] — hub.
 - [[design-modules]] — parent module catalogue.
 - [[marketing-landing-pages]] — Dynamic page builder; this is where the Code block primarily lives.
-- [[design-custom-assets]] — store-wide custom `<head>` / `<body>` snippets (the correct place for analytics tags).
+- [[design-custom-assets]] — the store-wide custom `<head>` snippet (one field, head only).
 - [[design-module-banner]] — the `script` slot on banners is the inline (non-iframe) alternative for small HTML snippets.
 - [[plan-gates]] — `storefront_builder` plan feature gates the Page Builder.
 

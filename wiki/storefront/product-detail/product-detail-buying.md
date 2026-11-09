@@ -5,8 +5,8 @@ route_path: /product/{slug}/{cart_key?}
 themes_using: [all]
 tags: [storefront, product, add-to-cart, stock, conversion, tracking]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 > Part of [[product-detail]]. See the hub for the other aspects (routing & load, on-page layout, JavaScript hooks & customisation).
@@ -42,7 +42,7 @@ A "Choose a variant first" notice appears if the customer clicks Add-to-cart bef
 - **Variant selection** — the variant picker dispatches per-parameter changes that the variant-picker module hooks. As soon as a unique variant is identified, the JS pushes the matching variant's `price`, `SKU`, stock state and gallery main image into the existing DOM (`price-new-js`, `price-old-js`, `price-discount-js`, `variant-sku-js`, `js-status-bar`).
 - **Add to cart** — the entire sidebar + main is wrapped in a `<form class="add-to-cart-form-js js-form-submit-ajax" action="{route('cart.add')}" method="POST">`. Submitting goes through the AJAX form-submit pipeline (see [[storefront-architecture]]) which POSTs to `cart.add` (`/cart/add`), and on success:
   - Fires `cc.cart.product.updated` on `document`.
-  - Opens the cart drawer ([[storefront-cart]]) — controlled by the `action_after_add_to_cart` setting ([[settings-cart]]): `panel` (drawer), `redirect` (jump to `/cart`), or `none` (silent).
+  - Follows the `action_after_add_to_cart` setting ([[settings-cart-ui-behavior]]): `show_popup` (default), `go_to_cart` (cart page or [[storefront-cart]] side panel), `checkout_redirect`, or `stay_on_page`.
   - If a cross-sell rule fires (a Cross-Sell with the `add_to_cart` trigger event — see [[cross-sell-trigger-events]]), the cross-sell modal opens (the platform code, route `site.crossSell.view`).
   - If an up-sell rule fires, the up-sell modal opens (the platform code, route `site.upSell.*`) — this is the **Marketing UpSell** system ([[marketing-up-sell-list]]), distinct from the [[apps-bumpcart|BumpCart]] checkout-bump app.
 - **Stock states**:
@@ -64,7 +64,7 @@ The buying flow is driven by `.add-to-cart-form-js` / `.js-form-submit-ajax` (th
 
 Settings that change the buying flow:
 
-- `action_after_add_to_cart` — `panel` / `redirect` / `none` ([[settings-cart]]).
+- `action_after_add_to_cart` — `show_popup` / `go_to_cart` / `checkout_redirect` / `stay_on_page` ([[settings-cart]]).
 - `cart_max_products` — per-variant cap (also enforced at add-to-cart time).
 - `cart_max_quantity` — total-cart cap.
 - `show_price` (productsDetails module) — when off, no price and no Add-to-cart render (B2B catalogue mode).
@@ -75,11 +75,12 @@ The complete module-toggle list and per-product authoring options are on [[produ
 ## Theme variations
 
 - The buying flow is functionally identical across themes — same `cart.add` POST, same stock-state logic.
-- Theme-visible differences: `motion` keeps a permanent "Add to cart" footer bar; `properties` replaces the whole flow with a "Make an enquiry" form; some themes redirect to `/cart` rather than opening the drawer (driven by `action_after_add_to_cart`, not the theme). See [[product-detail-layout]] for the theme catalogue.
+- Theme-visible differences: `motion` keeps a permanent "Add to cart" footer bar; `properties` uses the same add-to-cart form (its theme code has no separate enquiry form; an enquiry button there comes from a **Show as request** status, see [[product-status-actions-buy-button]]); some themes redirect to `/cart` rather than opening the drawer (driven by `action_after_add_to_cart`, not the theme). See [[product-detail-layout]] for the theme catalogue.
 
 ## Known issues / by-design vs bug
 
 - **Price block can be entirely hidden** — when the platform code is off OR `showPriceForUser` returns false (e.g. price-on-login, B2B group rules). Customers see the product but no price or Add-to-cart, which can confuse staff who don't know about the B2B switch.
+- **A price of 0.00 shows as "Безплатно" / "Free"** (storefront label) on this page and on listing cards, and the product stays buyable; no zero-price block was found (verify). No per-product "hide price" flag exists; the native price-on-request routes are the **Show as request** status, `show_price` above (listing cards have their own price and buy switches, [[design-module-product-filters]]) and prices for logged-in customers only ([[settings-cart-accounts-registration]]).
 - **`continue_selling=yes` keeps Add-to-cart enabled at zero stock** — by design; the product is sellable as a backorder. Stock clamps at 0 and never goes negative — see [[inventory-oversell]].
 - **Two customers can race for the last unit** — under `paid`-timing decrement, stock is not reserved at add-to-cart, so simultaneous buyers can both add the last unit; the loser is caught at order time. See [[inventory-decrement-timing]].
 

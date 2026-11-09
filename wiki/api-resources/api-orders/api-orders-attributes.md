@@ -8,8 +8,8 @@ aliases: ["Orders API attributes", "orders writable fields", "orders read-only f
 tags: [api, json-api-v2, orders]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Orders API — attributes, relationships & querying
 
@@ -33,6 +33,10 @@ This aspect describes the payload shape for `GET /api/v2/orders`, `GET /api/v2/o
 | `invoice_number` | string | optional | unique across orders; **can only be set once per order** | Subsequent PATCH attempts to overwrite return 422 *"You can set invoice number only once."* When set, also auto-stamps `invoice_date` to `now` if it was empty. |
 | `invoice_date` | datetime (`Y-m-d H:i:s`) | optional | `date_format:Y-m-d H:i:s` | Manual invoice date override. |
 | `usn` | string | optional | min 1, unique across orders; **can only be set once per order** | Merchant-defined external reference (accounting systems use this). Subsequent PATCH attempts to overwrite return 422 *"You can set USN only once."* |
+| `note_administrator` | string | optional | none | The internal admin note. The value sent **replaces** the whole note; there is no append. |
+| `notify_customer` | yes/no | optional | none | Per-order switch for customer emails ([[orders-notify-customer]]). |
+
+The validator checks only the fields above and the read-only list below. Other order fields the order record accepts are also written as sent, unchecked, so an integration sends only the fields it means to change. The Admin GraphQL `updateOrderNotes` mutation also replaces each note it is given and leaves an omitted one alone; a personal access token needs the `orders` scope (Read & Write) or Full Access for it ([[admin-graphql-api]]).
 
 **Read-only on PATCH** (returned by GET, validator rejects them in the payload):
 
@@ -44,7 +48,6 @@ These are snapshotted at order creation time (per [[cart-vs-order-lifecycle]]) o
 
 - `id`, `date_added`, `updated_at`, `date_archived` — lifecycle timestamps.
 - `total`, `subtotal`, `tax`, `discount`, `shipping_price` — money fields (in store currency minor units).
-- `notify_customer` — per-order toggle that gates customer notification emails (see [[orders-notify-customer]]).
 - `status_fulfillment` — `not_fulfilled` / `partial` / `fulfilled`.
 - `shipping_from`, `shipping_to`, `shipping_date` — date fields cast to the site's local timezone (ISO 8601) by the schema.
 - `desired_delivery_date` — appended accessor for the customer's requested delivery date.
@@ -65,7 +68,7 @@ These are snapshotted at order creation time (per [[cart-vs-order-lifecycle]]) o
 | `shipping-address` | hasOne | order-shipping-address | Recipient address snapshot. See [[api-order-shipping-address]]. |
 | `billing-address` | hasOne | order-billing-address | Invoice address snapshot. See [[api-order-billing-address]]. |
 
-**Allowed include paths:** `products`, `payment`, `discounts`, `modifications`, `totals`, `taxes`, `shipping.provider`, `shipping-address`, `billing-address`. Nested includes beyond `shipping.provider` are NOT permitted; the framework returns 400 if an unlisted path is requested. Note that `products.options` is reachable through the framework's auto-merged schema relationships (the schema declares it) even though the validator doesn't list it explicitly — verify in integration if needed.
+**Allowed include paths:** `products`, `payment`, `discounts`, `modifications`, `totals`, `taxes`, `shipping.provider`, `shipping-address`, `billing-address`. Nested includes beyond `shipping.provider` are NOT permitted; the framework returns 400 if an unlisted path is requested. `products.options` may also work because the schema declares it (verify).
 
 ## Filtering & sorting
 
@@ -83,11 +86,11 @@ These are snapshotted at order creation time (per [[cart-vs-order-lifecycle]]) o
 
 **Pagination:** standard JSON:API `page[number]` (1-based) and `page[size]` (1–100, default 20). See [[json-api-v2]] for full pagination semantics.
 
-For bulk-fetch loops, prefer `filter[start_date]` / `filter[end_date]` over synthesising column filters — they carry the forced index hint and are the only date-range mechanism (there are no comparison operators). Worked queries: see [[api-orders-examples]].
+For bulk-fetch loops, use `filter[start_date]` / `filter[end_date]`. Worked queries: [[api-orders-examples]].
 
 ## Side effects
 
-Reads (`GET`) have no side effects. The four writable attributes each carry write-time behaviour: `status` runs the transition pipeline, `invoice_number` / `usn` are single-write with uniqueness checks, and `invoice_number` auto-stamps `invoice_date`. The full cascade and failure catalogue are on [[api-orders-side-effects]].
+Reads have no side effects. `status` runs the transition pipeline, `invoice_number` / `usn` are single-write and unique, and `invoice_number` stamps `invoice_date`. Cascade and failures: [[api-orders-side-effects]].
 
 ## Equivalent UI
 
@@ -103,7 +106,6 @@ Reads (`GET`) have no side effects. The four writable attributes each carry writ
 - [[cart-vs-order-lifecycle]] — when `currency` + customer-snapshot fields freeze.
 - [[order]] — full order entity attribute reference.
 - [[abandoned-cart-recovery]] — the `abandoned` flag.
-- [[orders-notify-customer]] — the `notify_customer` per-order toggle.
 - [[api-order-products]], [[api-order-payment]], [[api-order-shipping]], [[api-order-total]], [[api-order-tax]], [[api-order-discount]], [[api-order-modification]], [[api-order-shipping-address]], [[api-order-billing-address]] — included sub-resources.
 
 ## Open questions

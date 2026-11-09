@@ -7,8 +7,8 @@ aliases: ["Multi-language", "Multilingual storefront", "Multilingual store", "Mu
 tags: [i18n, multi-language, storefront, admin, concepts]
 plan_gates: [multilang_product_translate, multilang_product_copy]
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Multi-language
@@ -22,7 +22,7 @@ source_count: 3
 The system has **three distinct layers**, often confused with each other:
 
 1. **Admin panel language** — set per staff account (or store-wide default in [[settings-general]]). Drives the language of the admin UI. Free.
-2. **Storefront UI labels** — overrideable via [[settings-translations]]. Customisations override the platform's built-in storefront strings ("Add to cart", validation messages, headings, email subjects). Free. Override pool is scoped to `(locale, theme)`.
+2. **Storefront UI labels** — overrideable via [[settings-translations]]. Customisations override the platform's built-in storefront strings ("Add to cart", validation messages, headings). Free. Override pool is scoped to `(locale, theme)`.
 3. **Storefront content translation** — handled by [[apps-multilang]]. Translates the actual catalog content (product names, descriptions, categories, blog articles, CMS pages). Plan-gated by `multilang_product_translate` + `multilang_product_copy` quotas.
 
 For full details on each layer, the customer/order locale model, the translation engine, sister-site independence, sync rules, and SEO surfaces — drill into the aspect pages below.
@@ -32,7 +32,7 @@ For full details on each layer, the customer/order locale model, the translation
 Split into 7 aspect pages, each covering one well-scoped slice. Drill into the aspect that matches the question, not every page.
 
 - [[multi-language-layers]] — the three independent layers (admin language / storefront UI labels via [[settings-translations]] / storefront content via [[apps-multilang]]); per-staff vs store-wide admin language; the `(locale, theme)` override-scope rule.
-- [[multi-language-customer-order-locale]] — Customer.`locale` (mutable) vs Order.`locale` (snapshotted at creation, immutable); what drives transactional email language; historical-orders-keep-their-language rule.
+- [[multi-language-customer-order-locale]] — the order's `locale` (store language at creation; drives its PDFs); emails follow the store's language; no per-customer language.
 - [[multi-language-multilang-app]] — Multilang app overview; "sister = fully-independent CloudCart site" rule + billing impact; site relationship map; cross-site admin SSO via one-time login codes; auto-bundled prerequisite apps; uninstall cascade behaviour on master vs sister.
 - [[multi-language-translation-engine]] — Google Cloud Translation API v3 (NOT Cloudio / OpenAI); `multilang_product_translate` vs `multilang_product_copy` queue tasks; plan-feature quota exhaustion; no review workflow (translations land live).
 - [[multi-language-sister-site-model]] — per-sister independence on pricing / payment providers / shipping providers / tax rules / themes / currency / URL handles (slugs); the currency-language independence rule; why "I changed the price but the EN site shows the old price" is almost always master-vs-sister confusion.
@@ -47,12 +47,12 @@ Multi-language is the **gating system for reaching markets beyond the store's pr
 - **Sister-site sync is master → sister, one-way; re-translation OVERWRITES sister-side polish.** Treating the sister as a parallel canonical edit surface is the most common Multilang misconception.
 - **Per-sister commercial settings are independent of master.** Pricing, payment providers, shipping, tax, currency — all configured per sister; price changes on the master do NOT propagate.
 - **Multi-language is NOT free for the catalog layer.** UI labels free; content translation is plan-gated.
-- **Order language is frozen at creation.** A customer who placed an order in English keeps getting English emails for that order even after they switch their preferred language.
+- **Emails follow the store's language.** Customers have no language of their own; each sister site sends in its own language.
 - **Hreflang + language switcher are auto-generated** from the master/sister relationship map.
 
 ## Scope
 
-This concept covers (across the 7 sub-pages): the three-layer model (admin vs storefront UI vs storefront content); customer and order locale fields + the immutable-on-order rule; the Multilang app + master/sister site model; translation engine + plan quotas; per-sister independence on commercial settings + currency-language independence; one-way sync, re-translation overwrite, and no-runtime-fallback rules; SEO hreflang + language switcher module.
+This concept covers (across the 7 sub-pages): the three-layer model (admin vs storefront UI vs storefront content); the order locale and email language; the Multilang app + master/sister site model; translation engine + plan quotas; per-sister independence on commercial settings + currency-language independence; one-way sync, re-translation overwrite, and no-runtime-fallback rules; SEO hreflang + language switcher module.
 
 What it does NOT cover:
 
@@ -64,10 +64,10 @@ What it does NOT cover:
 
 ## Contrasts
 
-- **Multilang vs [[apps-stores]]** — Multilang is "one catalog, many languages" (shared content with translations); Stores is "many catalogs / many businesses" (independent catalogs). See [[multi-language-multilang-app]].
+- **Multilang vs [[apps-stores]]** — Multilang is "one source catalog, many languages" (each sister holds a copy); Stores is "many catalogs / many businesses". See [[multi-language-multilang-app]].
 - **Multilang vs [[apps-cloudio-overview]] (Cloudio AI)** — Multilang uses Google Cloud Translation API v3; Cloudio uses OpenAI. Separate plan-features, separate token balances. See [[multi-language-translation-engine]].
 - **Admin language vs storefront language** — independent layers. See [[multi-language-layers]].
-- **Customer locale (mutable) vs order locale (immutable)** — see [[multi-language-customer-order-locale]].
+- **Order locale vs email language** — see [[multi-language-customer-order-locale]].
 - **Master site (content canonical) vs sister site (commercial settings canonical)** — see [[multi-language-sister-site-model]].
 - **Translate task vs Copy task** — translate runs Google's API; copy preserves source-language text. See [[multi-language-translation-engine]].
 
@@ -75,7 +75,7 @@ What it does NOT cover:
 
 The multi-language system spans admin settings, app screens, customer / order data, SEO surfaces, and downstream notifications. Each sub-page documents its own surface. Cross-cutting consequences:
 
-- **Transactional emails respect the order's / customer's `locale`** — [[multi-language-customer-order-locale]] + [[notification-delivery]].
+- **Transactional emails use the store's language** (English fallback) — [[multi-language-customer-order-locale]].
 - **Storefront catalog rendering is per-sister** — each sister's listing pages, product pages, and search results reflect only that sister's translated entities; missing-translation = 404. [[multi-language-sync-fallback]].
 - **SEO hreflang tags emitted per page on every sister** — [[multi-language-seo-and-switcher]].
 - **Plan-gate exhaustion halts new translations** — [[multi-language-translation-engine]] + [[plan-gates]].
@@ -86,10 +86,10 @@ The multi-language system spans admin settings, app screens, customer / order da
 - [[apps-multilang]] / [[apps-multilang-settings]] / [[apps-multilang-stores]] / [[apps-multilang-products]] / [[apps-multilang-create-step]] / [[apps-multilang-progress]] — Multilang app surfaces.
 - [[multi-currency]] — currency is independent of language.
 - [[seo-handling]] — hreflang and per-site SEO.
-- [[customer]] / [[order]] — `locale` fields (mutable vs snapshotted).
+- [[customer]] / [[order]] — only the order has a `locale`.
 - [[product]] / [[category]] — translated copies on sister sites.
-- [[checkout-flow]] — order's `locale` set at submit.
-- [[notification-delivery]] — transactional emails respect `locale`.
+- [[checkout-flow]] — order creation.
+- [[notification-delivery]] — transactional email sending.
 - [[plan-gates]] — translation quotas.
 - [[apps-stores]] — distinct multi-storefront feature for multiple businesses.
 - [[apps-cloudio-overview]] — Cloudio AI (separate from Multilang).

@@ -7,8 +7,8 @@ aliases: ["Abandoned carts", "Abandoned orders", "Cart recovery", "Abandoned car
 tags: [orders, abandoned, cart-recovery, smarty]
 plan_gates: ["abandoned_orders", "abandoned_orders_info", "abandoned_notification"]
 created: 2026-05-23
-updated: 2026-11-03
-source_count: 9
+updated: 2026-11-09
+source_count: 10
 ---
 
 # Abandoned carts
@@ -56,7 +56,7 @@ The cluster involves three store-level settings (all on [[settings-cart]] / stor
 
 - `abandoned_remainder` (yes / no) — master switch for the automated 3-minute recovery job. When OFF, only manual sends from this page fire. See [[orders-abandoned-auto-recovery]].
 - `abandoned_remainder_interval` (minutes, default `60`, effective floor `30`) — inactivity threshold before a cart appears in the list. See [[orders-abandoned-cart-lifecycle]].
-- `cart.lifetime` (days, default `7`) — global cart-record lifetime; sent + unsent carts age out via the hourly `clear_all_old_carts` cleanup.
+- `cart.lifetime` (days, `7`) — the platform-wide cart lifetime, not a merchant setting; sent and unsent carts age out via the hourly `clear_all_old_carts` cleanup.
 
 Plus three plan-feature keys: `abandoned_orders`, `abandoned_orders_info`, `abandoned_notification`. See [[orders-abandoned-plan-gates]].
 
@@ -78,7 +78,7 @@ Three plan-features control this cluster (see [[plan-gates]] / [[plan-vs-feature
 |---|---|---|
 | `abandoned_orders` | Access gate | Blocks `/admin/abandoned` route entirely. Sidebar entry hidden. Direct URL → redirected to [[plan-features]] upsell. |
 | `abandoned_orders_info` | Boolean (dashboard tile) | Controls the abandoned-orders dashboard tile only — does NOT affect this list. |
-| `abandoned_notification` | Numeric cap (sends per plan year) | Blocks the per-cart Send action and the auto-job once the counter hits the cap. |
+| `abandoned_notification` | Numeric cap (sends per plan year) | Blocks the per-cart Send action and the auto-job once the counter hits the cap; the 12-hourly plan check then switches **Abandoned cart reminder** off until the merchant turns it on again. |
 
 Plus the `test_mail` plan feature gates the per-cart Send button on the detail view and acts as a store-wide outbound-email suppression. Full details — including the disabled-state landing template and counter persistence semantics — on [[orders-abandoned-plan-gates]].
 
@@ -90,7 +90,7 @@ Plus the `test_mail` plan feature gates the per-cart Send button on the detail v
 - [[marketing-discounts]] — recovery discount codes appended to restore-link URLs.
 - [[analytics-abandoned-carts]] — analytics view of abandoned-cart trends.
 - [[analytics-abandoned-checkout]] — checkout abandonment analytics (one step further down the funnel).
-- [[settings-cart]] — `abandoned_remainder`, `abandoned_remainder_interval`, `cart.lifetime`.
+- [[settings-cart]] — `abandoned_remainder`, `abandoned_remainder_interval`.
 - [[settings-admin-notifications]] — adjacent admin-notification configuration.
 - [[cart]] — entity page (the abandoned cart is the same underlying cart entity).
 - [[customer]] — entity page (cart owner).

@@ -7,8 +7,8 @@ aliases: ["Copy campaign action", "Copy campaign mechanics", "Duplicate campaign
 tags: [marketing, campaigns, copy, duplicate]
 plan_gates: ["abandoned_orders", "campaigns"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Copy campaign — action flow
 
@@ -22,7 +22,7 @@ The Copy action is **non-destructive on the source** and resolves into a single 
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Campaigns** → any non-archived tab (Active / Inactive / Draft) → the **Copy** icon (a stack-of-papers `fa-light fa-copy` in a small round button with a *"Copy campaign"* tooltip) in each row's [[campaigns-list-row-actions|Actions column]].
+Sidebar → **Marketing** → **Campaigns** → any tab (Active / Inactive / Archived / Draft) → the **Copy** icon (a stack-of-papers `fa-light fa-copy` in a small round button with a *"Copy campaign"* tooltip) in each row's [[campaigns-list-row-actions|Actions column]].
 
 The action is wired to the `apiMarketingCampaigns.copy` mutation:
 
@@ -41,7 +41,7 @@ Clicking the Copy icon on a row:
 3. **On success:** toasts *"Campaign copied successfully."*, the current tab refetches (so the new row appears on the Draft tab), then opens [[marketing-campaigns-edit]] for the new copy with `?edit=1`.
 4. **On failure:** the row's loading state clears and an error toast surfaces (`error.message` if present, otherwise *"Error copying campaign."*).
 
-Once on the editor the merchant can rename the copy, pick a different trigger segment, adjust step delays, edit message templates, set a new start delay, and click **Start campaign**.
+Once on the editor the merchant can rename the copy, pick a different trigger segment, adjust step delays, edit message templates, set a new start delay, and click **Start campaign**. Starting a copy enrolls the whole eligible segment again, so make sure the original is inactive or archived first — see [[campaigns-copy-state-and-quota]].
 
 ## Settings & fields
 

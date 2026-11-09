@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Landing Pages → List"
+nav_path: "Design → Static pages → List"
 route_name: admin.pages.list
-route_path: /admin/marketing/pages
-aliases: ["Pages list", "Landing pages list", "Pages table", "All pages", "Списък със страници"]
+route_path: /admin/design/pages
+aliases: ["Pages list", "Static pages list", "Landing pages list", "Pages table", "All pages", "System page", "Assigned to", "Списък със страници"]
 tags: [marketing, content, pages, list, filters, bulk-actions]
 plan_gates: ["static_pages"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-landing-pages]]. See the hub for the other aspects (page types, editor, system slots, FAQ editor, builder rules, plan gates).
@@ -17,28 +17,23 @@ source_count: 2
 
 ## Purpose
 
-The **list view** is the landing-pages catalogue. The merchant sees every page they've created (across all four types — `regular`, `faq`, `landing`, `builder`), can filter and search, can toggle active state and assign system slots inline (no form submit), can launch bulk actions, and can click **+ Add new page** to open the type picker — see [[landing-pages-types]].
-
-The "(N)" counter next to **+ Add new page** is the remaining-pages allowance under the `static_pages` plan feature — see [[landing-pages-plan-gates]].
+The **list view** is the pages catalogue. The merchant sees every page of all four types (`regular`, `faq`, `landing`, `builder`), can filter and search, can switch **Published** and pick a **System page** inline (no form submit), can launch bulk actions, and can click **Add page** to open the type picker — see [[landing-pages-types]].
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Pages** (Pages may appear under the Marketing dropdown as "Landing pages" depending on store).
+Sidebar → **Design** → **Static pages** (under the **Pages** heading). Breadcrumb: *Design → Static pages*.
 
-The route is `/admin/marketing/pages` (route name `admin.pages.list`). The breadcrumb reads "Landing pages" (label key: `page.header.pages`).
+The address is `/admin/design/pages` (route name `admin.pages.list`). The old `/admin/marketing/pages` is retired and opens the admin's 404 page, so it is never the link to give.
 
 ## What the merchant can do here
 
-- See a counter next to **+ Add new page** showing the remaining-pages-on-plan allowance (e.g., *Add new page (12)*).
-- Click **+ Add new page** to open the **Choose page type** modal — see [[landing-pages-types]].
-- See a table of all pages with **Name** (icon + name + external-link icon to view on storefront), **URL handler** (the `/page/<slug>`), **Assigned to** dropdown (system-page slot), and **Active** toggle.
-- Filter the table by **Active** (Yes / No), **System Page** (homepage / thank-you / error.404 / none), and **Page Type** (`regular`, `faq`, `landing`, `builder`).
-- Search pages by name.
-- Click any row's name to open the **edit** form — see [[landing-pages-editor]]. Click the external-link icon to open the page on the storefront in a new tab.
-- Toggle a page's **Active** status inline (no save dialog).
-- Bulk-select rows for bulk Activate / Deactivate / Delete / Duplicate.
-- Assign a page to a **system slot** via the inline **Assigned to** dropdown — see [[landing-pages-system-slots]] (instant; no save needed).
-- Click **Hire expert** to be routed to the [[services]] catalogue for help with content / SEO writing (button label key: `adorimo.help.hire_expert_btn`).
+- Click **Add page** to open the **Choose page type** modal — see [[landing-pages-types]].
+- See a table of all pages: **Name**, **System page**, **Published**, and a delete action.
+- Filter by **Active** (Yes / No), **Type** (Regular / FAQ / External / Page builder) and **System page**; search by name.
+- Click a name to open the page: the edit form ([[landing-pages-editor]]), or the page builder for a Dynamic page. The arrow icon opens the page on the storefront in a new tab.
+- Switch **Published** on a row (instant, no save dialog).
+- Pick a **System page** on a row (instant) — see [[landing-pages-system-slots]].
+- Bulk-select rows for **Publish**, **Unpublish**, **Duplicate** or delete.
 
 ## Settings & fields
 
@@ -46,63 +41,63 @@ The route is `/admin/marketing/pages` (route name `admin.pages.list`). The bread
 
 | Column | Content | Inline edit? |
 |--------|---------|--------------|
-| Icon | Type icon (palette / newspaper / stream / link, matching the page type). | No. |
-| Name | The page's `name` field + an external-link chip linking to `/page/<url_handle>` on the storefront. | No (click opens edit). |
-| URL handler | The literal `/page/<url_handle>` (or `/private-page/<url_handle>` for Private). | No. |
-| Assigned to | Dropdown — `Static Page` / `Home Page` / `Thank You Page` / `Error 404 Page`. | Yes — instant, no save. |
-| Active | Toggle — `yes` / `no`. | Yes — instant, no save. |
+| Name | Type icon, the page name and, under it, the system page the page holds. An arrow icon opens the page on the storefront (`/page/<url_handle>`, or `/private-page/<url_handle>` for a Private page). | No (click opens it). |
+| System page | Dropdown of the system pages; empty (placeholder *Regular page*) means none. An External page shows "—" and can't hold one. | Yes — instant, no save. |
+| Published | Switch, `yes` / `no`. | Yes — instant, no save. |
+| (delete) | Removes the page. | — |
 
-### Filters dropdown (cascading select-pair)
+### System page options and their Bulgarian labels
 
-The list-page filter module is a cascading select-pair (legacy Smarty `filters.tpl` partial):
+The options come from the server in the admin's language, from the platform's own language files, so these labels are exact:
 
-- **Outer filter dropdown** — "All / Active / System / Page Type".
-- **Active sub-dropdown** — All / Active yes / Active no.
-- **System sub-dropdown** — All / Error 404 / Homepage / Thank-you page.
-- **Page Type sub-dropdown** — All / Static / Page Builder.
+| Key | English | Bulgarian |
+|-----|---------|-----------|
+| `home` | Home Page | Начална страница |
+| `thank_you` | Thank You Page | Страница при успешна поръчка |
+| `error.404` | Error 404 Page | Страница "Грешка 404" |
 
-Note: the legacy filter module only lists **`regular`** and **`builder`** as page types in the dropdown — `faq` and `landing` are NOT filter options on the dropdown (limitation of the legacy filter partial; the URL query string still accepts those types if hand-edited).
+The **System page** filter and the line under a page's name use the same labels. The column title (*System page*) and the empty placeholder (*Regular page*) come from the admin's translations; their Bulgarian wording is not recorded here. The retired list called this column *Assigned to* (*Назначена към*).
 
-### Bulk-action dropdown
+### There is no "hidden" switch
+
+The merchant controls two flags: **Published** (here and in the editor) and **Private** (paid access, see [[apps-membership]]; in the editor). The platform also keeps an internal hidden mark the admin never shows. It is set only on a Dynamic page created in the builder (or started from the Homepage / Thank you / Error 404 entries) until it is first published from the builder; every save from the editor and every builder publish clears it, while this list's **Published** switch and **Publish** action do not. A hidden page stays out of the sitemap ([[marketing-seo-sitemap]]) and out of the page lists in subscribe-form settings. Whether its own address opens depends on **Published** alone.
+
+### Bulk actions
 
 | Action | Effect |
 |--------|--------|
-| **Activate** | Sets `active = yes` on all selected pages. |
-| **Deactivate** | Sets `active = no` on all selected pages. |
-| **Delete** | Confirms with *"page.confirm.delete"* (translated), then bulk-deletes. Pages assigned to a system slot lose the assignment — the slot becomes empty until reassigned (no protection). |
-| **Duplicate** | Copies each selected page — the duplicate's `name` and `url_handle` get a `--{unix-timestamp}` suffix. System-page assignments are dropped on the copy. |
+| **Publish** | Sets Published on all selected pages. |
+| **Unpublish** | Clears Published on all selected pages. |
+| **Duplicate** | Copies each selected page — the copy's `name` and `url_handle` get a `-{unix-timestamp}` suffix; its system page is dropped. |
+| Delete | Deletes the selected pages with their FAQ rows and builder history. |
 
 ## Business rules
 
-### Inline Active toggle ALSO flushes the 404 cache
+### Inline System page change is instant
 
-Even outside `system_page` changes, the inline Active toggle flushes the `error404` storefront cache — because deactivating the page currently assigned to the 404 slot would change which page resolves at 404 time. The flush is via the platform code (verify).
+Picking a value saves at once, without a page reload. The page that held that system page before loses it in the same DB transaction — see [[landing-pages-system-slots]].
 
-### Inline Assigned-to dropdown is instant
+### Bulk Copy adds a Unix-timestamp suffix
 
-Changing the **Assigned to** value on a row instantly calls `admin.pages.assign` and returns `{status: 'success'}` without a page reload. The previously-assigned page for that slot is automatically unassigned in the same DB transaction — see [[landing-pages-system-slots]].
+`about-us` becomes `about-us-1762700000`, so the address stays unique; the name gets the same suffix, so the merchant renames the copy for a clean title. Each copy is an ordinary page with no system page. A Dynamic page's copy keeps only its latest builder version.
 
-### Bulk Copy adds Unix-timestamp suffix to slug
+### Deleting a system page frees the slot but does not protect
 
-The bulk Copy action duplicates each selected page with a timestamp suffix added to both the `name` and the `url_handle` (e.g., `about-us` becomes `about-us--1684500000`). This guarantees URL-handle uniqueness without merchant intervention. The `name` field gets the same timestamp suffix — so the merchant must rename the copy if they want a clean title. System-page assignments are dropped on the copy (each copy is a normal static page). Page history is copied with the latest snapshot only.
+There is no "this is your homepage — are you sure?" guard. Deleting the page that holds `home` / `thank_you` / `error.404` simply frees the slot; the storefront falls back to the platform default until the merchant assigns another page.
 
-### Bulk Delete on system pages frees the slot but does not protect
+### No remaining-pages counter
 
-There is no confirm-cascade or "this is your homepage — are you sure?" guard. Deleting the page currently assigned to `home` / `thank_you` / `error.404` simply frees the slot. The storefront falls back to the platform default for the freed slot until the merchant reassigns.
-
-### The "(N)" counter is fetched async
-
-The remaining-pages counter next to **+ Add new page** is fetched via `data-box-ajax="{route('admin.common.remaining', 'page')}"` — the endpoint reads the merchant's plan-feature cap minus the current count of pages. On first render the counter may briefly show "(...)" until the AJAX resolves. See [[landing-pages-plan-gates]] for the `static_pages` mapping.
+The retired list showed the `static_pages` allowance as "(N)" next to its add button. The current list shows no counter — see [[landing-pages-plan-gates]] for the cap.
 
 ## Related
 
 - [[marketing-landing-pages]] — hub.
-- [[landing-pages-types]] — the **Choose page type** modal opened by **+ Add new page**.
+- [[landing-pages-types]] — the **Choose page type** modal opened by **Add page**.
 - [[landing-pages-editor]] — the Add / Edit form opened from row click.
-- [[landing-pages-system-slots]] — the **Assigned to** dropdown semantics.
-- [[landing-pages-plan-gates]] — the `static_pages` counter source.
+- [[landing-pages-system-slots]] — what the **System page** dropdown does.
+- [[landing-pages-plan-gates]] — the `static_pages` cap.
 - [[plan-features]] — upsell page the merchant is redirected to when over the cap.
 
 ## Open questions
 
-- 📡 **Filter dropdown will eventually be rewritten in Vue** — the current cascading select-pair is the legacy Smarty `filters.tpl` partial. When migrated to Vue, the `faq` / `landing` type filters should appear. (verify)
+- Bulgarian wording of the column title and the empty placeholder (admin translations).

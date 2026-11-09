@@ -3,8 +3,8 @@ type: entity
 aliases: ["Blog Category", "Blog section", "Blog", "Category (blog)", "Категория на блог", "Блог категория", "Блог"]
 tags: [blog, marketing, content, taxonomy, entity]
 created: 2026-05-21
-updated: 2026-05-26
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # Blog Category
 
@@ -28,7 +28,7 @@ A Blog Category is **distinct from a Product Category** ([[products-categories]]
 | **Title** (`name`) | Required free text, 3–191 chars | Errors: *"Name is required"* / *"Name is too long"* / *"Name is too short"*. Drives the category page heading and breadcrumbs. |
 | **Comments policy** (`comments`) | Required — one of `no`, `moderator`, `automatic` | Drives every Article inside this Category at submission time. See Lifecycle / Comment policy below. Errors: *"Comments is required"* / *"Invalid comments type. Types: no,moderator,automatic"*. |
 | **Cover image** (`image`) | Optional file upload | Hero banner on `/blog/category/<slug>` storefront page; thumbnail next to the title in the admin list (rendered `150x150`); optionally serves as the OG share image. Removable separately. |
-| **URL handle** (`url_handle`) | Auto-derived from title at create; manually editable on edit | Storefront URL: `/blog/category/<url_handle>`. Renaming on an existing Category auto-creates a 301 redirect from the old slug (see [[marketing-seo-301-redirects]]). |
+| **URL handle** (`url_handle`) | Auto-derived from title at create; manually editable on edit | Storefront URL: `/blog/category/<url_handle>`. A rename makes the old address 301 to the new one for 30 days ([[seo-301-redirects-auto-tracking]]); no rule row is added. |
 | **SEO title** (`seo_title`) | Optional, max 191 chars | `<title>` on the category page. Falls back to the Category name when empty. |
 | **SEO description** (`seo_description`) | Optional, max 191 chars | `<meta name="description">` on the category page. Falls back to the Category name when empty. |
 | **Created at** | n/a (auto) | Shown as a sortable column on the list. |
@@ -59,7 +59,7 @@ The **500-article cap per Category** is hard-enforced at Article-creation time w
 
 ## Programmatic access
 
-A Blog Category can be managed via **JSON-API v2** at [[api-blogs]] (resource named `blogs`). Use it to mirror a content taxonomy from an external CMS, pre-create Categories before bulk-importing Articles via [[api-posts]], or maintain SEO metadata. A POST / PATCH runs the **same pipeline as the admin modal** — auto-slug, 301-redirect on `url_handle` rename, SEO fallback at save, the `blog_categories` plan cap, and the same unassign-not-block behaviour on delete (attached Articles survive unassigned, not deleted). API-specific: there is **no webhook event** for Blog Category CRUD, so integrations must poll. See [[json-api-v2]] for authentication and rate limits.
+A Blog Category can be managed via **JSON-API v2** at [[api-blogs]] (resource named `blogs`). Use it to mirror a taxonomy or pre-create Categories before importing Articles via [[api-posts]]. A POST / PATCH runs the **same pipeline as the admin modal** — auto-slug, 301-redirect on `url_handle` rename, SEO fallback at save, the `blog_categories` plan cap, and the same unassign-not-block behaviour on delete (attached Articles survive unassigned, not deleted). API-specific: there is **no webhook event** for Blog Category CRUD, so integrations must poll. See [[json-api-v2]] for authentication and rate limits.
 
 ## Related
 
@@ -68,7 +68,7 @@ A Blog Category can be managed via **JSON-API v2** at [[api-blogs]] (resource na
 - [[blog-comment]] — comments inherit the parent Blog Category's `comments` policy.
 - [[category]] — **distinct** product category entity (hierarchical), not to be confused with this.
 - [[file-asset]] — the cover image is referenced as a file asset.
-- [[seo-redirect]] — URL handle changes auto-create a 301 redirect from the old slug.
+- [[seo-redirect]] — permanent 301 rules; a handle change only keeps the old slug for 30 days.
 - [[seo-meta]] — per-category SEO title + description.
 - [[seo-handling]] — concept page on URL handles, redirects, and meta tags.
 - [[multi-language]] — per-language storefront rendering; Blog Categories localise their `name` / SEO fields in multilang stores.

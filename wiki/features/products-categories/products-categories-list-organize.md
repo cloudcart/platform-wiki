@@ -7,8 +7,8 @@ aliases: ["Categories list", "Categories organize", "Category tree view", "Drag-
 tags: [products, categories, taxonomy, navigation, tree]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[products-categories]]. See the hub for the other aspects (edit modal, hierarchy rules, cart restrictions, SEO/taxonomy, deletion rules, JSON-API/validation).
@@ -89,7 +89,7 @@ Switching tabs does not change the route — `/admin/products/categories` covers
 Every drop fires a single backend call. If validation fails (depth > 6, dropped onto self / own descendant, sibling name clash, etc.), the visual move is **reverted** and an inline error surfaces on the affected row. See [[products-categories-hierarchy-rules]] for the full validation catalogue.
 
 ### Sibling renumbering after every drop
-On a successful drop, the platform **renumbers all siblings** of both the source and destination parent so `order` values stay contiguous (1, 2, 3, ...) — no gaps after many drops. (verify exact behaviour on partial failures.)
+On a successful drop, the platform **renumbers all siblings** of both the source and destination parent so `order` values stay contiguous (1, 2, 3, ...) — no gaps after many drops. (verify exact behaviour on partial failures.) The numbering restarts under each parent; the homepage category showcase sorts its tiles by it, so tiles from different parents interleave ([[design-module-product-showcase-categories]]).
 
 ### "Categories were modified" flag triggers tree refetch
 Saving from the edit modal sets a flag that the Organize tab's tree-reorder reload uses to know when to refetch — so re-opening the Organize tab after an edit shows the latest tree (verify).

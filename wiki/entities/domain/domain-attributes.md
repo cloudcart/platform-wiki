@@ -3,8 +3,8 @@ type: entity
 aliases: ["Domain attributes", "Domain fields", "Hostname attributes", "Domain key attributes", "SSL fields", "DNS fields"]
 tags: [settings, apps, domains, ssl, dns, entity, attributes]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 > Part of [[domain]]. See the hub for the other aspects (relationships, lifecycle, SSL, DNS / Cloudflare, primary + plan gates).
@@ -32,7 +32,7 @@ The full per-field schema for the [[domain|Domain]] record — every attribute t
 | **SSL status** | n/a (auto, depending on certificate state) | `active` (cert valid) / `pending` (issuance in progress) / `failed` (issuance / renewal failed — error visible in the SSL modal). |
 | **SSL mode** (`free` flag on the cert) | Picked at install time (Automatic vs Manual tab on [[settings-ssl]]) | `free=1` — Let's Encrypt (auto-renewed). `free=0` — external manual cert (merchant renews). See [[domain-ssl]]. |
 | **SSL expiry date** | n/a (parsed from the cert) | Visible in the SSL modal. For external certs, the merchant must replace before this date or the storefront breaks. |
-| **Expiry date** (domain registration) | n/a (CloudCart-purchased domains only) | When the domain registration itself expires (separate from SSL). Renewal warning is shown 30 days before. External-source domains don't show this — the merchant manages registration at their original registrar. |
+| **Expiry date** (domain registration) | n/a (CloudCart-purchased domains only) | When the domain registration itself expires (separate from SSL). A **Renew** link is shown at any date, and a daily admin alert warns from one month before to one month after expiry ([[settings-domains-add-flow]]). Domains registered elsewhere are renewed at their own registrar. |
 | **DNS records** (A, AAAA, CNAME, MX, TXT, NS, etc.) | Per-record edit / add / delete in the DNS modal | Available only once Cloudflare zone is `active`. Each record has a per-record Cloudflare **Proxy toggle** (orange cloud = CDN + DDoS protection enabled, grey cloud = DNS-only). See [[domain-dns-cloudflare]]. |
 | **Cloudflare zone ID** / **Cloudflare custom-hostname ID** | n/a (set by the integration) | The platform uses one of two Cloudflare modes per Domain — standard zone (the merchant's whole zone is hosted on Cloudflare) OR Cloudflare-for-SaaS Custom Hostname (only this single hostname is attached as a custom hostname under CloudCart's own zone). The mode is platform-chosen based on the add path — see [[domain-dns-cloudflare]]. |
 | **WHOIS contact info** | Editable for CloudCart-purchased domains only | Registrant name, address, email, phone (required by ICANN). External-source domains' WHOIS is managed at the original registrar. WHOIS Privacy is automatically enabled on CloudCart-purchased domains. |

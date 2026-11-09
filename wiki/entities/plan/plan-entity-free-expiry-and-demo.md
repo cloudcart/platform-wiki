@@ -5,8 +5,8 @@ aliases: ["Free plan expiry", "Start Up auto-expiry", "Plan inactivity", "Sandbo
 tags: [entity, billing, plans, free-plan, demo, sandbox, lifecycle]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 > Part of [[plan]]. See the hub for the other aspects (catalog structure, billing cycles, feature restrictions, lifecycle, LTA + partner overrides).
@@ -29,7 +29,7 @@ This page also captures the legacy `trial` slug (no longer issued).
 - **Free plan** / **Start Up** — the global free-entry plan (`startup` slug).
 - **14-Tage-Test (Starter)** — the DE re-label of the free plan (see [[plan-entity-catalog-structure]]).
 - **Auto-expiry** — the inactivity / sandbox time-out.
-- **Sandbox mode** — Site-level toggle that suspends storefront for production traffic; one trigger of free-plan expiry.
+- **Sandbox mode** — the test environment a new store starts in until Go live (checkout takes only the owner's email); one trigger of free-plan expiry.
 - **Demo plan** / **`cc-demo`** — the gate-resolves-as-Enterprise slug.
 - **Trial** — legacy slug; not actively issued today.
 
@@ -56,7 +56,7 @@ The free *Start Up* plan auto-expires when the site has been inactive:
 
 Before expiry, the platform sends graduated warning notifications at thirds of the threshold (notification at 1/3, 2/3, then full expiry). After expiry, the site status flips to *Expired* and the merchant is redirected to [[expired-subscription]] until they log in (resetting the timer) or switch to a paid plan.
 
-Either trigger fires expiry — "no admin login for the window" AND "sandbox-disabled for the window" are independent conditions. Logging into the admin panel resets the no-login timer; turning sandbox back on (re-enabling production traffic) resets the sandbox timer.
+Either trigger fires expiry — "no admin login for the window" AND "sandbox-disabled for the window" are independent conditions. Logging into the admin panel resets the no-login timer; the sandbox one stops only with Go live, which cannot be undone.
 
 ### Paid plans don't expire on inactivity
 
@@ -70,7 +70,7 @@ This is the single largest divergence between Plan-label and Plan-gates resoluti
 
 ### Demo / sandbox is independent of Plan
 
-The merchant can put their site into sandbox / preview mode (the storefront is suspended for production traffic but admin remains active for testing). Sandbox is a Site-level toggle, not a Plan attribute — it operates orthogonally to the active Plan. Free *Start Up* + extended sandbox is what triggers the auto-expiry condition.
+A new store starts in sandbox (test environment): checkout accepts only orders with the owner's email until Go live ([[site-entity-lifecycle]]). Sandbox is a Site-level flag, not a Plan attribute — it operates orthogonally to the active Plan. Free *Start Up* + extended sandbox is what triggers the auto-expiry condition.
 
 The sandbox toggle itself is not a Plan-level concept — it's a Site-level flag. The Plan only enters the picture through the free-plan auto-expiry condition that uses sandbox-on-duration as one of its triggers.
 

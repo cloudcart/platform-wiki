@@ -7,8 +7,8 @@ aliases: ["Add moderator", "Create moderator", "Add staff", "Moderator creation 
 tags: [settings, staff, create, 2fa, plan-gate]
 plan_gates: ["administrators"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[settings-staff]]. See the hub for the other aspects (roles & list, edit, permissions, 2FA, delete, force sign out).
@@ -110,22 +110,28 @@ Username and email are checked for uniqueness across **all stores on the platfor
 
 ### Plan downgrade does NOT auto-remove existing moderators
 
-If the merchant downgrades to a plan that allows fewer moderator seats than they currently have, **existing moderators are NOT auto-deleted or suspended** — they keep their accounts and continue to log in. The plan limit is only enforced at creation: **Add moderator** keeps opening the upsell modal until the merchant either deletes excess moderators OR purchases extra seats. A downgrade leaves the merchant over-quota until they prune the list themselves.
+A downgrade below the current count removes or suspends no one. **Add moderator** keeps opening the upsell modal until moderators are deleted or seats bought.
 
-### `new_admin_account` admin notification fires on success
+### The new moderator's email and first sign-in
 
-On successful create, the `new_admin_account` admin notification is queued via [[settings-admin-notifications]]. Delivery is asynchronous (a background task). Recipient: `site_email` (from [[settings-general]]). Delivery is gated by the master `administrator_email_notifications` toggle AND the per-type toggle.
+The form has no password field, and the account is created without a password. On success the `new_admin_account` email (by default *"New admin account created for you in <store>"*) is queued to the **new moderator's own address**, not the store email, with their username and a link to `/admin/login`. Its password line stays empty. It is not an invitation: it carries no code and does not expire. The switches on [[settings-admin-notifications]] apply to it.
+
+The moderator then gets in by one of:
+
+- **A code by email**, where CloudCart's email sign-in switch is on for the store: the login asks only for the address and emails a code ([[account-cc2fa-email]]).
+- **Forgot password** on `/admin/login`: an emailed link to set a password, valid 60 minutes ([[settings-staff-edit-profile]]).
+- **The owner sets a password** with **Change password** on the moderator's Edit modal; the moderator gets `admin_account_password_change` at their own address.
 
 ### Only the owner adds moderators
 
-The **Add moderator** button shows to the store owner only, whatever permissions a moderator holds on the staff section. See [[settings-staff-permissions-tree]].
+The **Add moderator** button shows to the store owner only, whatever permissions a moderator holds on the staff section, and the server refuses a create from anyone else with *"This is a restricted area!"*. The Admin API's `createStaffMember` creates a moderator through the same check and sends the same email. See [[settings-staff-permissions-tree]].
 
 ## Related
 
 - [[settings-staff]] — hub.
 - [[account-cc2fa]] — the generic Cc2FaAction modal mechanics.
 - [[settings-admin-notifications]] — `new_admin_account` notification gating.
-- [[settings-general]] — `site_email` recipient.
+- [[account-cc2fa-email]] — email sign-in codes.
 - [[plan-features]] — upsell modal.
 - [[plan-vs-feature-pack]] — buying additional `administrators` seats as a pack.
 

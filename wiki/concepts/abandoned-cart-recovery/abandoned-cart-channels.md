@@ -5,8 +5,8 @@ aliases: ["Abandoned cart channels", "Email channel recovery", "Messenger channe
 tags: [orders, cart, abandoned, recovery, channels, email, messenger, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[abandoned-cart-recovery]]. See the hub for the other aspects (threshold, eligibility, restore link, bulk send, attribution, plan quota).
@@ -15,7 +15,7 @@ source_count: 3
 
 ## Definition
 
-Cart recovery is a **two-channel pipeline** — **Email** (the default, powered by the merchant's [[marketing-channels-email|Email channel]]) and **Facebook Messenger** (via the Facebook Messenger Bot app integration). SMS, push, and other channels are NOT supported for cart recovery. Both channels share the same eligibility rules (see [[abandoned-cart-eligibility]]) and the same restore-link URL format (see [[abandoned-cart-restore-link]]) — what differs is the **delivery medium** and the value stored as **`restore_source`** on the recovered order (`email` or `messenger`).
+Cart recovery is a **two-channel pipeline** — **Email** (the default, sent through the platform's notification mailer; for a guest cart gated on the subscriber's [[marketing-channels-email|Email channel]] consent flags, for a registered customer's cart not consent-checked) and **Facebook Messenger** (via the Facebook Messenger Bot app integration). SMS, push, and other channels are NOT supported for cart recovery. Both channels share the same eligibility rules (see [[abandoned-cart-eligibility]]) and the same restore-link URL format (see [[abandoned-cart-restore-link]]) — what differs is the **delivery medium** and the value stored as **`restore_source`** on the recovered order (`email` or `messenger`).
 
 In the **current production code**, only the **email** source is actively defined as a recovery source; the Messenger picker in [[settings-cart]] is hidden in the current UI. The Messenger pipeline is **paused** (source present but commented out) — likely a roadmap question, not a current-behaviour question. Recovered orders carrying `restore_source = messenger` would be historical records from a previous integration period.
 
@@ -25,7 +25,7 @@ Covered:
 
 - The two delivery channels (Email, Messenger) and what differs between them.
 - The shared restore-link URL format and the per-channel `restore_source` value on the recovered order.
-- The Email channel's two-layer marketing consent + deliverability flags.
+- The Email channel's consent + deliverability flags (guest carts only).
 - The Messenger channel's consent model (customer must have engaged the bot).
 - Facebook's 24-hour window — a third-party platform policy that blocks business-initiated messages outside it.
 - Current paused-Messenger state in code + UI.
@@ -39,16 +39,16 @@ Not covered here:
 ## Contrasts
 
 - **Email vs Messenger** — same restore-link URL, same eligibility filter, different delivery medium, different `restore_source` tag on the recovered order. Email is the production-active path today; Messenger is paused in current code.
-- **Recovery email vs marketing-campaign email** — recovery email is **one specific cart's restore link**, not a broadcast, and it goes out as promotional mail. Campaigns target a segment of [[subscriber|Subscribers]]; recovery targets the cart's specific customer or subscriber. Recovery still respects the two-layer marketing consent.
+- **Recovery email vs marketing-campaign email** — recovery email is **one specific cart's restore link**, not a broadcast, and it goes out as promotional mail. Campaigns target a segment of [[subscriber|Subscribers]]; recovery targets the cart's specific customer or subscriber. For a guest cart it still checks the Email channel's marketing consent; a registered customer's cart is not consent-checked.
 - **Platform consent (CloudCart) vs Facebook consent (Messenger Platform)** — even when CloudCart's checks all pass for Messenger, Facebook's Messenger Platform policy independently enforces the 24-hour business-message window. If the customer hasn't engaged the bot in over 24 hours, Facebook blocks the send at the API level.
 
 ## Where it applies
 
 ### Email channel (the default, production-active)
 
-- **Powered by** the merchant's [[marketing-channels-email|Email channel]] (Elastic Email sub-account).
+- **Sent through** the platform's notification mailer, like every other [[marketing-omnichannel-mails-list|Email notification]]: the store's own SMTP app when it is active and fully set up, otherwise CloudCart's shared sending account. It does **not** go through the store's Email marketing channel or its sub-account, so a broken or unconfigured Email channel does not stop it. The Email channel's subscriber flags still decide who receives it (next bullet).
 - **Subject + body** are merchant-customisable via the [[marketing-omnichannel-mails-list|Email notifications]] template editor.
-- **Consent / deliverability** — respects the two-layer marketing consent (Customer + Email-channel) per [[subscriber-vs-customer]], plus `unsubscribed = no`, `bounced = no`, and `verified = yes` (unless the channel's `unconfirmed_send` is ON).
+- **Consent / deliverability** — a registered customer's cart: none checked. A guest cart: the subscriber's Email-channel address needs `marketing = yes`, `unsubscribed = no`, `bounced = no`, and `verified = yes` (unless the channel's `unconfirmed_send` is ON). See [[abandoned-cart-eligibility]].
 - **Promotional at the sending service** — mail sent through the platform's Elastic Email transport is transactional unless marked promotional, and restore links (`abandoned_restore_link`) are marked, as are bulk customer e-mails from the Admin GraphQL `sendCustomerEmail` mutation, whichever `type` the request names. Elastic Email adds its own unsubscribe link and does not send to contacts who unsubscribed through it. Order, invoice, billing and security e-mails still reach them. That unsubscribe stays with the sending service and does not change the marketing flags in the admin. A store sending by its own SMTP is outside this.
 - **`restore_source` on the recovered order** — `email`.
 - **Banner on [[orders-history]]** — *"Order was recovered through email"*.
@@ -85,10 +85,10 @@ In the current paused state, the picker offers only Email, so the question is mo
 - [[abandoned-cart-restore-link]] — the shared URL format; only the `{source}` segment differs between channels.
 - [[abandoned-cart-attribution]] — how `restore_source` surfaces on the recovered order and on [[orders-history]].
 - [[abandoned-cart-bulk-send]] — bulk send uses whichever channel is configured.
-- [[marketing-channels-email]] — the Email channel powering Email recovery.
+- [[marketing-channels-email]] — the Email channel whose subscriber consent flags gate Email recovery (it does not carry the send).
 - [[marketing-omnichannel-mails-list]] — Email notifications template editor (where merchants customise the recovery email body).
 - [[settings-cart]] — channel picker and master switch live here.
-- [[subscriber-vs-customer]] — two-layer marketing consent referenced by the Email path.
+- [[subscriber-vs-customer]] — the consent layers; the Email path reads only the Email-channel layer, for guest carts.
 - [[notification-delivery]] — the platform's event → queued-job pattern that drives the actual email dispatch.
 
 ## Open Questions

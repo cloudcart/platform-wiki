@@ -3,12 +3,12 @@ type: feature
 nav_path: "Apps → XML Import → Job pipeline"
 route_name: apps.xml_import
 route_path: /admin/apps/xml_import (backend pipeline; no UI)
-aliases: ["XML Import job pipeline", "XML Import — Parse / ParseSingle / Insert", "XML Import — 12h tick", "XML Import — re-parse cadence", "XML Import — queue", "XML Import — insert chunking"]
+aliases: ["XML Import job pipeline", "XML Import — Parse / ParseSingle / Insert", "XML Import — 12h tick", "XML Import — re-parse cadence", "XML Import — minimum interval", "XML Import — every 20 minutes", "XML Import — queue", "XML Import — insert chunking"]
 tags: [apps, imports, xml, background-jobs, queue]
-plan_gates: []
+plan_gates: ["xml_import-interval"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[apps-xml-import]]. See the hub for the other aspects (wizard, fetch transport, mapping fields, plan gates, side effects).
@@ -34,7 +34,7 @@ Apps → XML Import → Status — the only merchant-visible surface for the pip
 
 What the merchant CANNOT do here:
 
-- Change the 12h tick or the 1h per-task gate — both are hard-coded.
+- Change the interval or the 1h per-task gate themselves. The 12h tick is only the default: the store's plan / feature-pack interval replaces it (see [[apps-xml-import-plan-gates]]). The 1h gate is hard-coded.
 - Move tasks to a different queue or change priority manually (priority is plan-driven; see [[apps-xml-import-plan-gates]]).
 - Pause and resume mid-record — only cancel.
 
@@ -44,7 +44,7 @@ Pipeline configuration is not merchant-facing. Operationally:
 
 | Stage | Cadence / trigger | Queue |
 |-------|-------------------|-------|
-| `xml_import_parse` | Every **43200 s (12 h)** for active tasks | `import1` |
+| `xml_import_parse` | Every **43200 s (12 h)** by default, or the plan's interval, for active tasks | `import1` |
 | `xml_import_parse_single` | Event-triggered per-record | `import1` |
 | `xml_import_insert` | Event-triggered per 50-product chunk | `import1` |
 
@@ -64,16 +64,16 @@ ParseSingle + Insert are **event-driven within a task run** — they do NOT wait
 
 ### 12-hour queue tick
 
-The merchant's XML feed is re-parsed **every 12 hours by default** for active tasks. Higher plans can override this interval — see [[apps-xml-import-plan-gates]] for plan-driven cadence.
+The merchant's XML feed is re-parsed **every 12 hours by default** for active tasks. The plan / feature-pack interval (a value in seconds) replaces this default — see [[apps-xml-import-plan-gates]]. The platform sets no lower limit on that value, but the 1-hour gate below still applies, so **the same task is never re-read automatically more often than about once an hour** — a 20-minute cadence is not possible on any plan.
 
 ### 1-hour per-task gate (additive on top of the 12h tick)
 
 Even when the parser ticks every 12h, each individual task is gated by `last_cron_update`. A task is eligible for re-parse only if either:
 
 - It has never run (`last_cron_update` is NULL), OR
-- The last run is older than **1 hour** AND the task is marked `updatable` (Step 2's per-field Update checkbox is set on at least one field).
+- The last run is older than **1 hour** AND the task is marked `updatable` when Step 2 is saved. (verify: the current wizard sends every updatable field, checked or not, so a saved task is normally marked updatable even with every Update box unchecked.)
 
-So a task that ran 30 minutes ago is skipped on the next tick. The 1h gate is hard-coded, not configurable per task.
+So a task that ran 30 minutes ago is skipped on the next tick. The hour counts from the end of the task's previous read. The 1h gate is hard-coded, not configurable per task or by plan.
 
 ### Plan-driven priority
 

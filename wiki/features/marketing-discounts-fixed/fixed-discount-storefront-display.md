@@ -7,8 +7,8 @@ aliases: ["Fixed discount storefront", "was / now rendering", "Save X EUR label"
 tags: [marketing, discounts, fixed, storefront, rendering]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-discounts-fixed]]. See the hub for the other aspects (product modal, validation rules, row writes, plan gates, API access).
@@ -21,7 +21,7 @@ This aspect documents **what the customer sees** once a Fixed-discount price is 
 
 ## Where to find it
 
-The storefront rendering happens automatically on every product card, category listing, and product-detail page where an active `product_to_discount` row matches the current customer-group + active date window. There is no merchant-side admin screen for the read-path — the merchant verifies behaviour by visiting the storefront or inspecting the saved rows via the JSON-API v2 path in [[fixed-discount-api-access]]. The variant-grid build documented here runs when the admin modal at `/admin/marketing/discounts/products/:id` opens for an existing Fixed-discount + product pair.
+The storefront renders it on every product card, listing and product page where an active `product_to_discount` row matches the customer group and date window. No admin screen shows the read path; the merchant checks the storefront or the saved rows via [[fixed-discount-api-access]]. The variant-grid build runs when the modal at `/admin/marketing/discounts/products/:id` opens for an existing product.
 
 ## What the merchant can do here
 
@@ -70,6 +70,10 @@ When the merchant updates a product's catalog price (Products → edit), the pla
 | Rises above fixed price (no prior drop) | Stays `active = 1`, `save` re-computed | Updated "Save X EUR" |
 
 The row staying deactivated after a recovery is the most common Fixed-discount support ticket: *"I raised my catalog price and the campaign price isn't showing again."* The merchant must re-save the row or switch it back on — see [[fixed-discount-row-writes]].
+
+### A fixed price above the catalog price can still be live
+
+Only the admin modal refuses a fixed price above the catalog price. The re-evaluation above runs when the product is saved from the product form, the JSON-API, Google Sheets or an import, and only while the discount is active, unexpired and has no code. A catalog price lowered from the **Inventory** screen or by an Admin GraphQL bulk price change does not re-evaluate the rows, and the APIs write fixed prices without comparing them ([[fixed-discount-api-access]]). The row then stays active: the storefront shows the fixed price as the sale price above the struck-through catalog price, with a negative saving on the product page (listings keep the stored saving). Saving the product from its form switches the row off.
 
 ### Cache invalidation chain
 

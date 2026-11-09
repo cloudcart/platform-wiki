@@ -7,8 +7,8 @@ aliases: ["llms.txt", "Llms.txt file", "LLM instructions", "AI assistant instruc
 tags: [marketing, seo, llms, ai, discoverability]
 plan_gates: []
 created: 2026-08-24
-updated: 2026-11-03
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Llms.txt file (instructions for AI assistants)
 
@@ -27,7 +27,7 @@ The published result is at `https://<store-domain>/llms.txt`.
 ## What the merchant can do here
 
 - Write the file's whole contents by hand, in Markdown.
-- Leave it empty and let the store publish a summary of itself (see below).
+- Leave the store's generated summary in place (see below). The box opens pre-filled with that summary; saving it, even unchanged, stores a fixed copy that no longer follows later changes to the name, description or contacts. Clearing the box and saving returns to the live summary.
 - Replace it at any time — the public file follows within five minutes at most.
 
 ### What the merchant CANNOT do here
@@ -51,9 +51,9 @@ Saving also stamps the file's **last-modified** time, which is what assistants s
 Clearing the field does not remove the file. The store falls back to a **summary built from what it already knows about itself**:
 
 - `# ` the **store name** ([[settings-general]]) — or the domain, if the name was never filled in.
-- `> ` the **home page's SEO description** — the one line the merchant already wrote to describe the whole shop, on the home page's SEO tab ([[marketing-seo-meta]]). Skipped when it merely repeats the store name, which is a common way to fill that field in.
+- `> ` the **SEO description of the CMS page assigned as the home page** ([[landing-pages-system-slots]]), not the Home section on [[marketing-seo-meta]]. Skipped when no page holds the home slot or the description merely repeats the store name. Each language version of a multi-language store is its own store and publishes its own file.
 - `## Pages` — a link to the store home and one to `/contacts`.
-- `## Contact` — the store's e-mail and phone, when [[settings-general]] has them.
+- `## Contact` — the store's e-mail ([[settings-general]]) and the **Phone** of the invoicing issuer details ([[settings-invoicing-issuer-block]]), each only when filled in. The phone is printed exactly as typed there: no reformatting, a `+` only if the merchant typed one. To fix a wrong phone in the file, correct that field (or write the file by hand).
 
 This is a **starting point, not a strategy**. It says the shop exists and how to reach it; it says nothing about what the shop is good at, which brands it carries, or which pages matter. A merchant who cares about how assistants describe them should write their own.
 
@@ -67,13 +67,13 @@ That is harmless for a store with one real domain and a redirect. It matters whe
 
 A store on a **trial** plan, or one whose plan has **expired**, publishes no llms.txt: the URL answers **404**, not an empty page. That is deliberate — *"no such file"* is a truthful answer, whereas an empty file would read as *"this shop describes itself as nothing"*.
 
-This mirrors how those stores are held back from crawlers generally — see [[marketing-seo-overview-trial-block]]. The moment the store is on a paid plan, the file starts answering.
+This mirrors how those stores are held back from crawlers generally — see [[marketing-seo-overview-trial-block]]. The moment the store is on a paid plan, the file starts answering. A store in development mode does serve its file (so it can be previewed), while its robots.txt still blocks everything; demo stores serve it normally.
 
 A store domain routed to a Nitrogen storefront serves this same file: the platform keeps `/llms.txt` there. See [[headless-legacy-vs-nitrogen]].
 
 ### Changes appear within five minutes
 
-The response is cached for **five minutes**, and the cache is cleared the moment the merchant saves — so a save is normally visible immediately, and five minutes is the worst case. The response also carries a `Cache-Control: public, max-age=300` header, so whatever fetched the file may hold its own copy for that long.
+The response is cached for **five minutes**, and the cache is cleared the moment the merchant saves this box — so a save is normally visible immediately. A change to the store name, e-mail, phone or home-page description is not tied to that clearing: allow up to five minutes for the generated summary to follow. The response also carries a `Cache-Control: public, max-age=300` header, so whatever fetched the file may hold its own copy for that long.
 
 ### It is a public file, published exactly as typed
 
@@ -88,8 +88,8 @@ There is also no guarantee any given assistant reads it. The convention is volun
 - [[marketing-seo-sitemap]] — the machine-readable URL list, for crawlers rather than assistants.
 - [[marketing-seo-overview-card-save]] — the per-card Save / Revert model this box follows.
 - [[marketing-seo-overview-trial-block]] — why trial and expired stores are held back.
-- [[marketing-seo-meta]] — where the home page's SEO description (the generated summary line) is written.
-- [[settings-general]] — store name, e-mail and phone, which the generated summary reads.
+- [[landing-pages-system-slots]] — the page in the home slot, whose SEO description is the summary line.
+- [[settings-general]] — store name and e-mail; [[settings-invoicing-issuer-block]] — the phone.
 - [[settings-domains]] — the primary domain the generated links are built from.
 
 ## Open questions

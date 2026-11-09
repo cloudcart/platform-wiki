@@ -5,8 +5,8 @@ aliases: ["Inventory debugging playbook", "Stock changed and we didn't change it
 tags: [catalog, inventory, stock, support, debugging, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[inventory-tracking]]. See the hub for the other aspects (variant model, decrement timing, restock, oversell, bundle stock, multi-warehouse).
@@ -79,7 +79,7 @@ A common misunderstanding: the merchant assumes stock dropped at order placement
 
 ### Step 5 — Check for multi-warehouse / external syncs
 
-If the store has [[apps-store-locations]] (multi-warehouse) or any ERP / dropshipping integration ([[apps-microbg]], [[apps-microinvest]], [[apps-fgo]], [[apps-smart-bill]], [[apps-emag-sync]], etc.), the per-Variant `quantity` is written from outside CloudCart on a schedule. The Change log shows these writes with the integration's source identifier as Initiator. **The merchant may have installed an app months ago and forgotten** — the Change log surfaces the truth. See [[inventory-multi-warehouse]] for the common sync patterns.
+If the store has [[apps-store-locations]] (multi-warehouse) or any ERP / dropshipping integration ([[apps-microbg]], [[apps-microinvest]], [[apps-fgo]], [[apps-smart-bill]], etc.), the per-Variant `quantity` is written from outside CloudCart on a schedule. The Change log shows these writes with the integration's source identifier as Initiator. **The merchant may have installed an app months ago and forgotten** — the Change log surfaces the truth. See [[inventory-multi-warehouse]] for the common sync patterns.
 
 ### Step 6 — Confirm there's no other actor
 
@@ -108,7 +108,7 @@ Only if Steps 1–5 produce no plausible explanation:
 - [[settings-api-keys]] — to map `api2` Initiator back to a specific integration.
 - [[orders-details]] / [[orders-history]] / [[orders-products]] — for Step 3 cross-reference.
 - [[apps-csv-import]] / [[apps-xml-sync]] — import paths.
-- [[apps-store-locations]] / [[apps-microbg]] / [[apps-microinvest]] / [[apps-fgo]] / [[apps-smart-bill]] / [[apps-emag-sync]] — sync sources to audit in Step 5.
+- [[apps-store-locations]] / [[apps-microbg]] / [[apps-microinvest]] / [[apps-fgo]] / [[apps-smart-bill]] — sources to audit in Step 5 ([[apps-emag-sync]] never writes stock).
 
 ## Open Questions
 

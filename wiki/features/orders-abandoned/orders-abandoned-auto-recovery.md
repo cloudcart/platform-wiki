@@ -7,8 +7,8 @@ aliases: ["Abandoned auto recovery", "Scheduled abandoned recovery", "Abandoned 
 tags: [orders, abandoned, scheduled-job, cart-recovery, background-job]
 plan_gates: ["abandoned_notification"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[orders-abandoned]]. See the hub for the other aspects (list view, detail view, eligibility, restore link, plan gates, cart lifecycle).
@@ -83,9 +83,9 @@ The bulk Send from [[orders-abandoned-list-view]] and the auto-job apply the sam
 
 When a recovery discount code is configured, the auto-job attaches it to the restore link's `{discount_code?}` URL segment exactly the same as the manual Send path. See [[orders-abandoned-restore-link]] for the URL contract.
 
-### Plan-cap behaviour — silent skip per cart
+### Plan-cap behaviour — sending stops, then the reminder is switched off
 
-When the `abandoned_notification` allowance for the plan year is exhausted, the auto-job checks it per cart and silently stops sending — the merchant does NOT receive a notification that the cap was hit. The cap state is observable on the list counter (the same value as `plan.count.email.abandoned_notification`). See [[orders-abandoned-plan-gates]].
+The auto-job checks the `abandoned_notification` allowance before each cart. Once the plan year's allowance is used up, the run stops at that cart, with no message at that moment; the list counter (the same value as `plan.count.email.abandoned_notification`) sits at the cap. Within 12 hours the platform's plan check switches **Abandoned cart reminder** OFF and posts an Important alert in [[notifications]]. The reminder stays off until the merchant turns it on again, even after a new plan year or a feature pack restores the allowance. See [[abandoned-cart-plan-quota]].
 
 ### Counter increments per send, restarts each plan year
 
@@ -93,9 +93,9 @@ Every e-mail the auto-job actually sends increments `plan.count.email.abandoned_
 
 ## Plan gates
 
-- `abandoned_notification` — numeric cap on sends per plan year. The auto-job checks this per cart before dispatching; when exhausted, silently skips.
+- `abandoned_notification` — numeric cap on sends per plan year. The auto-job checks this per cart before dispatching; when exhausted, the run stops and the reminder is later switched off.
 
-The auto-job does NOT depend on `abandoned_orders` (the access gate) — the auto-job runs regardless of whether the merchant can reach the admin page. So stores on plans without `abandoned_orders` can still benefit from automated recovery if they have `abandoned_notification`. (In practice the two are usually granted together — see [[orders-abandoned-plan-gates]].)
+The auto-job also requires `abandoned_orders` (the access gate): on a plan without it, the job exits before sending anything. See [[orders-abandoned-plan-gates]].
 
 ## Related
 

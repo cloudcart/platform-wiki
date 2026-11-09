@@ -4,8 +4,8 @@ nav_path: "Concept → Storefront themes catalog → Inheritance + fallback"
 aliases: ["Themes catalog inheritance", "Theme inheritance", "Theme filesystem fallback", "Base theme vs child variant", "Child variant fallback", "Flair fallback", "Default view path"]
 tags: [storefront, themes, catalog, reference]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[storefront-themes-catalog]]. See the hub for the other aspects (data source, pricing tiers, base themes, special-client variants, install flow).
@@ -14,7 +14,7 @@ source_count: 1
 
 ## Definition
 
-A storefront theme is rendered by resolving each template file under `themes/<mapping>/templates/`. When the active theme does NOT ship a given template, the renderer falls back to **the theme templates** — the platform's universal `_default` view path declared in the platform code. This filesystem fallback is what makes the catalog support **child variants**: a child theme is named `<parent>-<suffix>` (e.g., another custom theme, another custom theme) and ships only the templates and assets it wants to override; everything else inherits from `flair`.
+A storefront theme is rendered by resolving each template file under `themes/<mapping>/templates/`. **Correction from the code (verify):** on a storefront request the lookup is set to the active theme's own `templates/` and `includes/` folders plus the shared `_global` layer; the `flair` `_default` path declared in the platform code is not in it, so the `flair` fallback described on this page is doubtful. Earlier reading: when the active theme does NOT ship a given template, the renderer falls back to **the theme templates**. This filesystem fallback is what makes the catalog support **child variants**: a child theme is named `<parent>-<suffix>` (e.g., another custom theme, another custom theme) and ships only the templates and assets it wants to override; everything else inherits from `flair`.
 
 Inheritance is **purely filesystem-based** — there is no declared `parent` key in the child's the theme templates (the inspection of a child theme's configuration showed no such key). The naming convention `<parent>-<suffix>` is for human navigation; it does not drive the resolver. A child of `summer` named another custom theme still falls back to the theme templates, not to the theme templates, because `flair` is hard-coded as the platform's `_default` (verify).
 

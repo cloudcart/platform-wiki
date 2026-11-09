@@ -3,12 +3,12 @@ type: feature
 nav_path: "Marketing → Segments → Condition vocabulary"
 route_name: segments.core_new.list
 route_path: /admin/marketing/segments
-aliases: ["Segment conditions", "Segmentation conditions", "Condition vocabulary", "AND composition", "Allowed combinations"]
+aliases: ["Segment conditions", "Segmentation conditions", "Condition vocabulary", "AND composition", "Allowed combinations", "Subscriber type condition", "Тип Клиент Абонат"]
 tags: [marketing, segments, conditions, rules]
 plan_gates: ["subscribers-rfm"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[marketing-segments]]. See the hub for related aspects (editor, inactive errors, rebuild mechanics).
@@ -17,7 +17,7 @@ source_count: 4
 
 ## Purpose
 
-This aspect catalogues the **60+ condition managers** the merchant can pick from in the segmentation rule builder — grouped by mental model — and documents the AND-only composition rule, the allowed-combination restrictions (notably for `subscriber.missing_product`), the channel-aware filters, and the verified-email gate. The visual builder itself lives on [[marketing-segments-editor]].
+This aspect catalogues the **60+ condition managers** of the segmentation rule builder, grouped by mental model, plus the AND-only rule, allowed-combination restrictions, the subscriber type condition, channel filters and the verified-email gate. The visual builder lives on [[marketing-segments-editor]].
 
 ## Where to find it
 
@@ -39,7 +39,7 @@ The full list (from the conditions catalogue):
 
 | Group | Condition keys (examples) | What it tests |
 |-------|---------------------------|---------------|
-| **Subscriber** | `subscriber.channel`, `subscriber.channel.verified`, `subscriber.channel.contains`, `subscriber.type`, `subscriber.from`, `subscriber.from_form`, `subscriber.click_rate`, `subscriber.open_rate`, `subscriber.last_active`, `subscriber.browser`, `subscriber.os`, `subscriber.device_type`, `subscriber.rfm`, `subscriber.custom_field`, `subscriber.missing_product` | Channel (Email / SMS / Phone / WebPush / Messenger), email-verified state, channel-identifier substring match, subscriber-vs-customer type, source ("Subscribed by" — login, form, import, system, …), engagement (open/click rates), last-active recency, device/browser, RFM bucket, custom fields, stock-notification subscription. |
+| **Subscriber** | `subscriber.channel`, `subscriber.channel.verified`, `subscriber.channel.contains`, `subscriber.type`, `subscriber.from`, `subscriber.from_form`, `subscriber.click_rate`, `subscriber.open_rate`, `subscriber.last_active`, `subscriber.browser`, `subscriber.os`, `subscriber.device_type`, `subscriber.rfm`, `subscriber.custom_field`, `subscriber.missing_product` | Channel (Email / SMS / Phone / WebPush / Messenger), email-verified state, channel-identifier substring match, subscriber-vs-customer type, source ("Subscribed from" — login, form, import, system, …), engagement (open/click rates), last-active recency, device/browser, RFM bucket, custom fields, stock-notification subscription. |
 | **Customer** | `customer`, `customer.custom_field`, `customer_group`, `customers_customer` | Specific customer/customer-group membership, customer custom-field values. |
 | **Country / Region** | `country`, `country.region` | Subscriber's country and city. |
 | **Date** | `date`, `date_interval` | Subscribed-on date or relative interval ("in last 30 days", "before more than 6 months", "never", "sometime", "in next N days"). |
@@ -62,7 +62,11 @@ The full list (from the conditions catalogue):
 
 ### AND-only composition
 
-The help text on the create/edit form reads exactly: **"All conditions have a logical 'AND'"**. There is no OR composition at the top level — every condition row must match for the subscriber to qualify. To express OR, the merchant creates separate segments. Internally, a small subset of conditions can express compound logic via `sub_conditions` (e.g. `begin_order` joined with an order branch), but the merchant-visible composition is always AND.
+The help text on the create/edit form reads exactly: **"All conditions have a logical 'AND'"**. Every condition row must match; for OR, the merchant creates separate segments. Internally, a small subset of conditions can express compound logic via `sub_conditions` (e.g. `begin_order` joined with an order branch), but the merchant-visible composition is always AND.
+
+### The subscriber type condition (`subscriber.type`)
+
+**"Тип"** (Type) has two values: **"Клиент"** (Customer) = the subscriber is linked to a Customer record; **"Абонат"** (Subscriber) = linked to none (form, import or web push sign-ups that never ordered or registered). Every order links its subscriber to the buyer's Customer record, and guest buyers have one (Guests group), so **guest buyers are "Клиент"**. Because conditions are ANDed, **"Абонат"** plus any Customer-group condition (customer, customer group, customer custom field) matches nobody. To target guests, use **customer group = Guests** (verify it is listed). The labels come from the platform's segment strings (verify on screen).
 
 ### Allowed-combination restrictions
 

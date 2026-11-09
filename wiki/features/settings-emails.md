@@ -8,8 +8,8 @@ tags: [settings, emails, mailbox, modoboa, webmail, discontinued]
 plan_gates: ["change_email_notifications", "test_mail"]
 status: DISCONTINUED
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # Emails (DISCONTINUED)
@@ -78,7 +78,7 @@ The five quota tiers (service IDs 47–51) are defined in [[settings-emails-bill
 - **Domain must be attached + DNS-pointing first.** The Domain dropdown shows only attached external domains (`external=yes` in [[settings-domains]]); `*.cloudcart.net` is excluded. See [[settings-emails-create]].
 - **DKIM / SPF / DMARC auto-configured on first mailbox per domain** — four records written to the domain's Cloudflare zone (MX, TXT `_dmarc`, TXT SPF, TXT DKIM under `<domain>._domainkey`). The DKIM selector is the domain name itself (per-domain isolation). Cloudflare-only — external-DNS domains skip silently. See [[settings-emails-dns-records]].
 - **Auto-DNS records are NOT removed on mailbox deletion.** Deleting the last mailbox on a domain leaves MX / SPF / DMARC / DKIM behind; remove them manually via [[settings-domains]] → Manage DNS.
-- **Hosted email vs storefront sender are separate systems.** This page never affects the `site_email` From address, the storefront transactional delivery path, or marketing campaign mail. See [[settings-emails-vs-other-mail]] for the four-system disambiguation table.
+- **Hosted email vs storefront sender are separate systems.** This page never affects the `site_email` sender address, the storefront transactional delivery path, or marketing campaign mail. See [[settings-emails-vs-other-mail]] for the four-system disambiguation table.
 - **Mailbox deletion is irreversible.** Removes the Modoboa account permanently (inbox / sent / drafts lost), deactivates the subscription, removes the local row. No soft-delete. A 404 from Modoboa on delete is treated as success. See [[settings-emails-management]].
 - **Webmail uses a separate session.** No SSO from admin into `https://mail.cloudcart.com`. Password rotation does NOT invalidate existing Webmail sessions immediately.
 - **Permissions.** Requires the `settings` + `settings.emails` permission grants. Moderators ([[settings-staff]]) without the grant don't see the sidebar entry.
@@ -90,7 +90,7 @@ The five quota tiers (service IDs 47–51) are defined in [[settings-emails-bill
 - [[settings-general]] — the store's outgoing sender (`site_email`) lives here, NOT on this page.
 - [[settings-domains]] — the domain on which the mailbox is hosted must first be attached and DNS-active here; auto-DNS records appear in the DNS modal there after mailbox creation.
 - [[settings-admin-notifications]] — controls WHICH transactional events the store sends. Unrelated to the hosted-mailbox service on this page.
-- [[marketing-channels-email]] — marketing email delivery via the merchant's external SMTP provider — separate system, separate config.
+- [[marketing-channels-email]] — campaign email delivery through the store's Elastic Email sub-account — separate system, separate config.
 - [[settings-staff]] — moderator permission grants for the Emails section.
 - [[plan-services]] — paid services (including these mailboxes' subscriptions) are billed through the platform's plan / services billing.
 - [[plan-gates]] — plan / app-purchase mechanics shared with mailbox subscriptions.

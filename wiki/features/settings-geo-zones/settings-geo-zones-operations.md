@@ -7,8 +7,8 @@ aliases: ["Geo zone operations", "Geo rule types", "Geo zone rule operations", "
 tags: [settings, geo, shipping, tax, zones, operations]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-geo-zones]]. See the hub for the other aspects (matching, post-codes, Maps, polygon/distance, deletion-cascade, save-semantics).
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-Every rule inside a geo zone is a `(operation, location)` pair. The **operation** picks which kind of location matching the rule performs, and which location inputs the form shows. Multiple rules within one zone are **OR-combined** — a zone matches a customer's address if ANY of its rules match. There is no AND combination at the zone level — for "Bulgaria AND Sofia city" the merchant picks operation `5` (one rule that constrains country + region + city together).
+Every rule inside a geo zone is a `(operation, location)` pair. The **operation** picks which kind of location matching the rule performs, and which location inputs the form shows. Rules within one zone are **OR-combined**, with the same-kind exceptions under Business rules.
 
 The merchant picks the operation per rule from the **Operation** dropdown. The dropdown shows up to 11 options when a Google Maps API key is configured on [[settings-cart]]. Without a Maps key, the dropdown collapses to just 3 options (`1`, `4`, `11`) — see [[settings-geo-zones-google-maps]] for the gating rule.
 
@@ -71,21 +71,21 @@ When the merchant picks a Google Places suggestion, the parsing logic writes ALL
 
 ## Business rules
 
-### Rules within a zone are OR-combined
+### How the rules of one zone combine
 
-A geo zone matches a customer's address if ANY of its rules match. The UI shows an `OR` label between consecutive rules. There is no AND combination at the zone level — for "Bulgaria AND Sofia city" the merchant uses operation `5` (a single rule that already constrains country + region + city together).
+The UI shows an `OR` label between rules, and rules of different kinds are OR-combined. Rules of the **same** kind are checked together: several **Includes all locations except country** rules pool their countries, so the zone matches only an address in none of them ("everywhere except A and B" is two such rules in one zone). A region, city or neighbourhood rule (2, 3, 5, 7) for another country than the address's ends the check with no match, even if a later rule would match (verify); keep such rules for one country in their own zone. There is no AND: for "Bulgaria AND Sofia city" use operation `5`. There is no continent or world-region operation — add one country rule per country.
 
-### Multiple zones referenced by the same consuming rule create OR-of-OR
+### A consuming feature takes one zone
 
-A shipping method, tax rule, or discount that references two zones matches any customer who falls inside either zone (zone1 OR zone2). Combining zones via the consuming feature is the only way to express more complex location logic.
+A shipping method, tax or discount points at **one** zone (or none). To cover two areas, put both into one zone or create a second method.
 
-### Operation 1 clears `admin_zone_1_iso` on save
+### Operation 1 clears the region on save
 
-When the merchant changes a rule's operation to `1` (Includes country), the model's `saving` hook nulls out `admin_zone_1_iso` and `admin_zone_1_name`. So switching from a country+region rule to "whole country" cleans up the now-unused region columns automatically.
+Switching a rule to `1` (Includes country) clears its saved region (`admin_zone_1_iso`, `admin_zone_1_name`).
 
-### Country normalization uses two-letter ISO codes
+### Country is stored as a two-letter ISO code
 
-The platform stores `country_iso2` (two-letter ISO 3166-1 alpha-2 code) for every rule and normalizes the customer's address country before matching. So variations like "United Kingdom" / "UK" / "GB" all resolve to `GB` consistently.
+Every rule stores `country_iso2` (e.g. `GB`), and the address country is matched on that code.
 
 ### Operations gated behind a Google Maps API key
 

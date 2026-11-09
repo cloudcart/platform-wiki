@@ -7,8 +7,8 @@ aliases: ["Expired subscription redirect", "Plan middleware redirect", "Admin ac
 tags: [base, core, expired-subscription, subscriptions, billing, blocking-screen]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Expired Subscription — redirect & allowlist
@@ -37,7 +37,7 @@ The merchant can still reach a short allowlist of paths so they can log out, vie
 | Subscription / billing screens | `/admin/details/subscriptions`, `/admin/details/billing`, `/admin/details/invoices`, `/admin/billing/*` |
 | Subscription management APIs | `/admin/api/core/subscriptions`, `/admin/api/core/billing`, `/admin/api/core/checkout`, `/admin/api/core/transactions`, `/admin/api/core/invoice`, `/admin/api/core/applications/details` |
 | [[offers|Offers]] / contracts | `/admin/offers/*`, `/admin/api/core/offers`, `/admin/api/core/contracts` |
-| Settings / payment providers | `/admin/settings/*`, `/admin/payment-providers/*` |
+| Settings / payment providers | `/admin/settings/*`, `/admin/payment-providers/*`, and the settings API `/admin/api/core/settings/*` (so, for example, **Manage DNS** keeps saving) |
 | The expired-subscription screen itself | `/admin/expired-subscription` |
 | Sign-in / logout | `/admin/login-request*` |
 

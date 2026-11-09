@@ -5,8 +5,8 @@ aliases: ["Subscription cancellation", "Soft cancel", "Cancel button", "End of p
 tags: [billing, subscription, plan, lifecycle, cancellation, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[merchant-subscription-lifecycle]]. See the hub for the other aspects (states, renewal-retry, expiration, feature packs, payment methods, invoices, support flow).
@@ -57,6 +57,7 @@ The Cancel button appears on every Active and Past-due row in [[subscriptions]] 
 - The merchant KEEPS access until `next_billing_date` passes (because `isPaid` returns true while `now < next_billing_date && status == Canceled`).
 - After `next_billing_date` passes, the daily [[subscription-expiration|`expire:subscriptions` sweep]] flips the subscription to Expired the NEXT day. Cancelled subscriptions get NO 1-month grace.
 - **NO proration / NO partial refund / NO end-of-period grace beyond the already-paid cycle.** The merchant pays for the full cycle they're in, even if they cancel one day after renewal.
+- **Ending the contract.** Cancelling **all** active subscriptions is how the Terms of Use let the merchant end the contract (§19.2); they then have 30 days to download their data (§19.3). See [[terms-of-use-termination-data]].
 
 ### Per-type Cancel side effects (effective at `next_billing_date`)
 

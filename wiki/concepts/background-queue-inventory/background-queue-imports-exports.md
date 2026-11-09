@@ -5,8 +5,8 @@ aliases: ["Background imports", "CSV import queue", "XML import queue", "ERP fee
 tags: [background, async, imports, exports, images, support, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[background-queue-inventory]]. See the hub for related aspects (recurring platform jobs, the search index sync, order side-effects, Queue View, process catalogue).
@@ -26,7 +26,7 @@ Covered:
 - CSV imports for products, customers, subscribers, blog articles, URL redirects.
 - XML / JSON imports from ERP and vendor-catalogue feeds (manual *Sync now* and recurring).
 - Missing-product de-activation on recurring feed sync.
-- Async exports of customer / order / product / subscriber lists to CSV / XLSX / PDF.
+- Async exports of customer / order / product lists to CSV / XLSX / PDF.
 - Subscription-statement PDF generation.
 - Image processing: remote-URL image fetch, auto-generated variant images, dominant-colour detection, text-overlay placeholder generation.
 
@@ -65,7 +65,7 @@ Per-import field-mapping, error reporting, and the row-level outcome are surface
 
 | What happens | When | Visible on Queue View |
 |---|---|---|
-| Customer / order / product / subscriber export to CSV / XLSX / PDF | Merchant clicks **Export** on the relevant screen | No |
+| Customer / order / product export to CSV / XLSX / PDF (subscribers have no file export) | Merchant clicks **Export** on the relevant screen | No |
 | Subscription-statement PDF generation | Merchant requests an invoice from [[subscriptions]] | No |
 
 The merchant typically receives the exported file by email or via a download link in the admin panel. Large exports may take a few minutes for the file to arrive; the merchant can re-trigger the export if they didn't receive it.

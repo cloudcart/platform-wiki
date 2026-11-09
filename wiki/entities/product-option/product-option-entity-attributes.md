@@ -4,8 +4,8 @@ nav_path: "Entity → Product Option → Attributes"
 aliases: ["Product Option attributes", "Product Option fields", "Option input types", "Option supported types", "Option key attributes", "Option storefront name"]
 tags: [catalog, products, options, attributes, entity]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[product-option]]. See the hub for the other aspects (pricing, order-line storage, scoping + edge cases).
@@ -36,7 +36,7 @@ The merchant-controlled fields on a Product Option definition: what the customer
 | **Storefront name** | Optional 191-character override of the `name` field | When set, the storefront renders this label instead of the admin-facing `name`. Lets the merchant keep an internal label ("Engraving — sterling silver only") and a customer-facing label ("Engraving"). Max 191 chars. |
 | **Customer modify** (`customer_modify`) | Storefront visibility flag | When OFF, the Option exists in the data model but is NOT rendered on the storefront — the merchant uses it for admin / system purposes only. Storefront queries auto-filter on this flag. |
 | **System** (`system`) | Internal marker | When ON, the Option is system-managed (created by an app or by the platform itself) and is shielded from manual edits. Merchants typically only see this on options installed by apps. |
-| **Product symbol** / **Value symbol** | Per-Option / per-value text decorators | Optional unit symbols rendered alongside the Option name and submitted value on the storefront — e.g., "cm" next to a length input or "kg" next to a weight input. |
+| **Product symbol** / **Value symbol** | Length / square only | The unit the product's price is for and the unit the customer enters (Meter / Centimetre / Millimetre / Kilometer); the cart converts between them — see [[products-options-pricing]]. |
 
 ## Supported input types (full list)
 
@@ -47,7 +47,7 @@ The validation rule accepts exactly these input types: `text`, `textarea`, `sele
 - **`checkbox`** — multi-pick from the `options_list`; per-value price modifiers sum additively (see [[product-option-entity-pricing]]).
 - **`file`** — customer uploads a file; the value is a reference to the uploaded [[file-asset]] (see [[product-option-entity-order-storage]]).
 - **`image`** — image-swatch picker (the customer picks a visual swatch).
-- **`length` / `weight` / `square`** — measurement inputs; the merchant types a value in the configured unit (e.g., "120 cm" for a custom-cut fabric, an area for `square`). These auto-set `per_item = 1` because the merchant typically charges per measured unit — see [[product-option-entity-pricing]].
+- **`length` / `weight` / `square`** — measurement inputs; the customer types a size in the option unit (one number for `length`, length × width for `square`). They scale the product's price — see [[products-options-pricing]]. The admin form offers `length` and `square` only.
 
 There is **NO `date` type and NO `multi-checkbox` type** — only the seven listed above plus the three measurement types. The wiki previously listed Multi-checkbox + Date — those are NOT supported.
 

@@ -7,8 +7,8 @@ aliases: ["Nitrogen provisioning step", "Setting Up Your Storefront", "Nitrogen 
 tags: [nitrogen, storefronts, create, wizard, provisioning, github]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Nitrogen → Create Storefront — Provisioning + success
 
@@ -83,7 +83,7 @@ On full success the page auto-routes to `nitrogen.storefront.overview` with the 
 
 ### Max 10 storefronts per site — enforced before the repo is created
 
-The `max_storefronts_per_site` cap (default 10) is enforced at the storefront-creation stage **before** the GitHub repo is created, so a merchant at the cap is rejected without leaving an orphan repo behind. The wizard's UI cap reads the same value via the list endpoint's `meta.max_storefronts`. See the hub [[nitrogen-create-storefront]] for the owner-only + cap rules.
+The `max_storefronts_per_site` cap (default 10) is enforced at the storefront-creation stage **before** the GitHub repo is created, so a merchant at the cap is rejected without leaving an orphan repo behind. The wizard's UI cap reads the same value via the list endpoint's `meta.max_storefronts`. See the hub [[nitrogen-create-storefront]] for the permission and cap rules.
 
 ### Branch defaults differ by strategy
 

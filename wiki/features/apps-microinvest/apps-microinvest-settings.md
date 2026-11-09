@@ -7,8 +7,8 @@ aliases: ["Microinvest settings", "Microinvest price field", "Microinvest update
 tags: [apps, erp, microinvest, settings, configuration]
 plan_gates: []
 created: 2026-06-25
-updated: 2026-06-25
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[apps-microinvest]]. See the hub for the other aspects (sync model, product matching, reset import, sync debug).
@@ -35,7 +35,7 @@ The Settings tab persists, all under `settings.<key>`:
 - **Action** select — `import` (Microinvest → CloudCart, default) or `export` (CloudCart → Microinvest). Drives sync direction — see [[apps-microinvest-sync-model]].
 - **Compare by** (`compare_by`) — how to match an existing CloudCart product to a Microinvest record: SKU / EAN / Barcode (or `nothing`). The full matching behaviour is on [[apps-microinvest-product-matching]].
 - **Price field** (`price_field`) — which of Microinvest's 10 price slots `PriceOut1`…`PriceOut10` flows to CloudCart (default `PriceOut2`). A merchant can keep retail price in `PriceOut1` and online price in `PriceOut2`; CloudCart only reads the selected slot.
-- **Updates** multi-select (`updates`) — the 7 product fields the merchant lets Microinvest overwrite on each sync: `name`, `short_description`, `description`, `category_id`, `track_inventory`, `continue_selling`, `shipping`. Fields left out stay CloudCart-controlled. Useful for hybrid setups ("Microinvest is authoritative for stock + price but I control names / descriptions in CloudCart").
+- **Updates** multi-select (`updates`) — the 7 product fields the merchant lets Microinvest overwrite on each sync: `name`, `short_description`, `description`, `category_id`, `track_inventory`, `continue_selling`, `shipping`. Fields left out stay CloudCart-controlled. Quantity, per-store quantity and the selected price are written on every push regardless of this list. Useful for hybrid setups ("Microinvest is authoritative for stock + price but I control names / descriptions in CloudCart").
 - **Publish as** triplet — `publish_as_active` / `publish_as_featured` / `publish_as_new`, defaults applied to new imports.
 - **Require shipping** (`require_shipping`), **Quantity tracking** (`quantity_tracking`), **Continue sell** (`continue_sell`) — boolean defaults for new imports.
 - **Disable missings** (`disable_missings`) — when ON, products that disappear from Microinvest's feed are set inactive on CloudCart; when OFF they stay active. Interacts with deletion detection — see [[apps-microinvest-product-matching]].

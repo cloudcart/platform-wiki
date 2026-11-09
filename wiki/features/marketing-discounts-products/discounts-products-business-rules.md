@@ -3,12 +3,12 @@ type: feature
 nav_path: "Marketing → Discounts → Products → Business rules"
 route_name: discounts-products
 route_path: /admin/marketing/discounts/products/:id
-aliases: ["Discount products business rules", "Fixed discount type guard", "Default fixed discount singleton", "Customer-group fan-out for discount products", "Бизнес правила за продукти в отстъпка"]
+aliases: ["Discount products business rules", "Fixed discount type guard", "Default fixed discount singleton", "Default Fixed Discount", "On Sale product form", "Customer-group fan-out for discount products", "Бизнес правила за продукти в отстъпка", "Добави отстъпка", "Цена след отстъпка"]
 tags: [marketing, discounts, fixed, products, business-rules, customer-groups, plan-gates]
 plan_gates: ["discount_fixed"]
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Discount products — business rules & edge cases
@@ -68,7 +68,14 @@ The page and all CRUD endpoints are scoped under the standard `marketing.discoun
 
 ### Default fixed discount (auto-created)
 
-The platform has a concept of a **default Fixed discount** — a singleton Fixed discount marked with `for_products = yes` meta, auto-created on first need. Used as a fallback container for products discounted ad-hoc (e.g., via inline price edits on the product page). Most merchants never see this; it's an internal helper. A merchant who notices an unexpected Fixed discount appearing in their list is usually seeing this auto-created singleton — they shouldn't delete it manually.
+The discount block on the product form (the **On Sale** switch, a **Discount** as an amount or a percent, and the resulting sale price, see [[products-variants-matrix]]) does not create a discount of its own. It writes into one Fixed discount, **Default Fixed Discount**, created on first use (active, no end date) and reused from then on. The Admin GraphQL bulk sale-price action writes into it too.
+
+- **A percent is turned into a price** before saving: the regular price minus that percent, rounded to the cent. The discount stores only the resulting fixed price per variant, so a later change of the regular price does not re-apply the percent.
+- **Each save of the product form replaces** the product's prices in this discount with what the form shows; switching **On Sale** off removes them. A sale price not below the regular price is refused: *"The discounted price must be lower than the regular price!"* (BG *"Намалената цена трябва да е по ниска от редовната цена!"*).
+- **It shows in the Discounts list** as *Default Fixed Discount* (type Fixed). Its **Active** switch there is greyed out; the bulk status action still switches it.
+- **When it is inactive**, a price entered on the product form is still saved into it, without any warning, but the storefront never applies it. After a reload the form shows no discount, because it reads only active prices, and the next save of the product deletes the saved price. Switching the container back on brings back the prices still stored in it.
+
+Merchants should not delete it; it is recreated on the next use, empty.
 
 ### Customer groups are copied when a product's prices are saved
 

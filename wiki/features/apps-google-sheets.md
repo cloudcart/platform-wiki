@@ -7,8 +7,8 @@ aliases: ["Google Sheets", "Sheets export", "Sheets sync", "Google Sheets integr
 tags: [apps, google, sheets, export, sync]
 plan_gates: ["google_sheets"]
 created: 2026-05-22
-updated: 2026-11-03
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 # Google Sheets
 
@@ -21,7 +21,7 @@ source_count: 7
 - Trigger external automation via Google Apps Script / Zapier on the product data.
 - Maintain a backup / second copy of the catalog.
 
-Workflow: Upload pushes products from CloudCart to the auto-created spreadsheet; the merchant edits in Sheets; Download pulls the edits back. Each task is started manually from the Tasks tab.
+Workflow: Upload pushes products to the auto-created spreadsheet; the merchant edits in Sheets; Download pulls the edits back. Tasks run only on demand (Tasks tab or Admin API); none is scheduled.
 
 This page is the **hub** for the Google Sheets cluster. The deep mechanics (sync queues, the upload push, the download import, OAuth provisioning, and the column / filter catalogue) each live on a dedicated sub-page — see [[#sub-pages-in-this-cluster|Sub-pages]] below. The two tab UIs have their own pages: [[apps-google-sheets-settings]] (config) and [[apps-google-sheets-tasks]] (job history).
 
@@ -100,7 +100,7 @@ The merchant does not supply spreadsheet credentials directly — the spreadshee
 - **One concurrent task at a time** and **the spreadsheet wins on Download** — both detailed on [[apps-google-sheets-sync-pipeline]] and [[apps-google-sheets-download]].
 - **One spreadsheet per CloudCart store.** The integration auto-creates ONE spreadsheet per store. Multi-store merchants get separate auto-created spreadsheets per site (named "CloudCart Products {site_id}").
 - **Rate limits.** Google Sheets API has rate limits (60 read / 60 write requests per user per minute). High-volume stores may hit caps; the platform retries with backoff.
-- **No Active/Inactive toggle.** The page's top section is read-only (`show-activate-button: false`) — the app is auto-active once Settings are saved with OAuth, unlike most apps.
+- **No Active/Inactive toggle.** The page's top section is read-only; the app is auto-active once Settings are saved with OAuth, unlike most apps.
 - **Permission.** Standard apps permission scope.
 
 ## Plan gates

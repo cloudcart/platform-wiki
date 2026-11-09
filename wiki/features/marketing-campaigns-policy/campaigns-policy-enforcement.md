@@ -7,8 +7,8 @@ aliases: ["Policy enforcement", "Anti spam policy gate", "Campaign middleware or
 tags: [marketing, campaigns, policy, compliance, anti-spam, middleware]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Policy — enforcement layers
 
@@ -16,7 +16,7 @@ source_count: 2
 
 ## Purpose
 
-This page documents **how the Anti-Spam Policy gate is enforced** — the two layers that bounce a merchant to the policy page, the middleware ordering relative to the app-installed and plan gates, the AJAX-vs-full-page response shapes, and the admin-namespace-only scope.
+This page documents **how the Anti-Spam Policy gate is enforced** — the two layers that bounce a merchant to the policy page, the middleware ordering relative to the app-installed and plan gates, the AJAX-vs-full-page response shapes, the admin-namespace-only scope, and the fact that sending is never gated.
 
 ## Where to find it
 
@@ -54,11 +54,15 @@ So a merchant whose plan doesn't include campaigns is blocked at gate #2 (plan-u
 
 ### No campaign action possible without acceptance
 
-The third gate skips itself only for the policy endpoint — every other campaign endpoint (lists, channels, messages, statistics, subscribers, etc.) is gated. There is no campaign-area action a merchant can perform without first accepting.
+The third gate skips itself only for the policy endpoint — every other campaign endpoint (lists, channels, messages, statistics, subscribers, etc.) is gated. There is no campaign-area action a merchant can perform in the admin without first accepting — but sending itself is not gated (see below).
 
 ### Admin-namespace only (verified against backend)
 
 The middleware checks `app_namespace == 'sitecp'` — i.e. it only enforces when the request runs through the admin (`sitecp`) namespace. **Storefront namespaces, API-token-authenticated requests, public callbacks, and webhook endpoints are NOT gated** by the policy. This is why webhook routes (e.g. Elastic Email status callbacks at `/messages/elastic-email-campaign/...`) work even on a fresh store without policy acceptance.
+
+### Never checked when sending
+
+The gate exists only in the admin — screens such as the channels page, saved templates, the campaigns list and statistics. It is **never checked when a campaign sends**: sends run as background jobs, outside the admin, so a running campaign keeps sending even if the policy is not accepted. Accepting (or not) changes what the merchant can open in the admin, not what an already-running campaign delivers.
 
 ### AJAX vs full-page handling
 

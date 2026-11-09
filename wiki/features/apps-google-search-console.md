@@ -7,8 +7,8 @@ aliases: ["Google Search Console", "GSC", "Search Console", "Google Webmasters"]
 tags: [apps, google, seo, verification, search]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-05-28
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Google Search Console
 
@@ -41,7 +41,7 @@ The Manager exposes:
 
 ### Verification methods
 
-Google Search Console itself supports several verification methods (meta tag, HTML file, DNS TXT, Google Analytics property), but **CloudCart's GSC app only implements the meta-tag method**. The other methods are not supported here — to use DNS or file-upload verification the merchant must do that work outside CloudCart (the file would need to be served by the storefront infrastructure; DNS handled at the registrar).
+Google Search Console itself supports several verification methods (meta tag, HTML file, DNS TXT, Google Analytics property), but **CloudCart's GSC app only implements the meta-tag method**. The other methods are not supported here — to use DNS or file-upload verification the merchant must do that work outside CloudCart (the file would need to be served by the storefront infrastructure; a DNS TXT goes wherever the domain's DNS is hosted, which is **Manage DNS** for a domain on CloudCart's nameservers, see [[settings-domains-dns-cloudflare]]).
 
 ## Business rules
 
@@ -78,11 +78,11 @@ Standard apps permission scope.
 
 ### Single required setting: `meta_tag`
 
-The integration requires only the `meta_tag` field. The merchant pastes Google's verification meta tag (or just the content value).
+The integration requires only the `meta_tag` field. The merchant pastes Google's whole verification meta tag.
 
 ### Meta tag injection gated by install + active
 
-The platform returns the meta tag for injection **only when the app is installed AND active**. Toggling the app inactive immediately removes the verification tag from the storefront (next page load).
+The platform returns the meta tag for injection **only when the app is installed AND active**. Toggling the app inactive removes the tag from freshly rendered pages; a cached guest copy of the home page keeps it for up to 20 minutes and a crawler's copy for 1–2 days ([[storefront-arch-caching-invalidation]]). The same lag applies when the tag is added (verify which copy Google's check gets).
 
 **Confirms: STRICTLY meta-tag-based verification** — no OAuth, no GSC data pulled into CloudCart. The integration is push-only (CloudCart → Google) for verification; reading GSC data requires the merchant to visit search.google.com directly.
 
@@ -116,17 +116,17 @@ The integration is strictly outbound (CloudCart presents the verification tag to
 
 The Marketing Setup checklist (under [[marketing]] modules) checks for the GSC verification step by reading a separate setting (`google_search_console_verification`) and the merchant's manual checkbox (`marketing_step_status_google_search_console`). The platform DOES auto-detect when GSC verification is set, even if the merchant hasn't manually ticked the checklist item — that auto-detection is what feeds the Marketing Setup wizard's "complete" indicator.
 
-### Meta tag accepts either the full snippet OR just the content value
+### Paste the full meta tag, not only the code
 
-The `meta_tag` setting stores whatever the merchant pastes. The `getMeta` method returns that raw value to the template. If the merchant pastes the FULL meta tag (e.g., `<meta name="google-site-verification" content="ABC123" />`), the storefront emits exactly that. If they paste just the content value (`ABC123`), only that value is emitted — which Google's verifier will NOT accept. The ValidHtml rule only enforces "must parse as HTML", which accepts both forms; merchants who paste only the token value will pass save but FAIL verification at Google's end.
+The storefront emits exactly what was saved. The full tag (e.g. `<meta name="google-site-verification" content="ABC123" />`) saves and verifies. Only the code (`ABC123`) is refused at save with *"Code must be a valid HTML"*: the check parses the text as HTML in the page head, and bare text fails it (checked against the rule's code, not in a store).
 
 ### Storefront uses `getMeta` only when the app is installed AND active
 
-Toggling the app off (`active=0`) without uninstalling immediately removes the verification tag from new page loads. Google's next crawl will see no tag → verification revoked. The merchant should keep the app **active** for verification to remain valid.
+Toggling the app off (`active=0`) without uninstalling removes the verification tag from freshly rendered pages (cached copies keep it a while, above). Google's next crawl will see no tag → verification revoked. The merchant should keep the app **active** for verification to remain valid.
 
 ### Vue UI is a single Edit box (inline edit)
 
-The Vue Settings page renders a SINGLE settings box via `SettingsBox` with `editMethod: 'inline'` — the merchant clicks Edit inline, the text field appears in-place (no slide-over modal). The single field is labeled "Meta tag" with placeholder showing the full meta tag format: `<meta name='google-site-verification' content='XXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'>`. The field type is `text` (multi-line capable).
+The Vue Settings page renders a SINGLE settings box via `SettingsBox` with `editMethod: 'inline'` — the merchant clicks Edit inline, the text field appears in-place (no slide-over modal). The box is titled **Meta tag**; the field itself has no label, only the placeholder `<meta name='google-site-verification' content='XXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'>`.
 
 ## Open questions
 

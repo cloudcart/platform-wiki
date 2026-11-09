@@ -7,8 +7,8 @@ aliases: ["BGN2EUR", "BGN to EUR", "Currency transition", "Dual currency Bulgari
 tags: [apps, administration, currency, bulgaria, transition, plan-gated]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-08-06
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # BGN to EUR (Bulgaria currency transition)
 
@@ -72,9 +72,9 @@ Dual currency renders only when the app is active **and** the site currency is `
 
 The merchant chooses where dual currency renders via `display_mode` (`storefront` / `admin_panel` / `both`). Client-side dual rendering — both currencies updating live when the customer picks a variant on the product page — only runs in `storefront` and `both` modes; in `admin_panel` mode prices are rendered dual server-side only, with no live JS price updates.
 
-### Storefront cache flush
+### When a change shows on the storefront
 
-Changing display or conversion settings flushes the storefront cache so customers see updated prices on next page load.
+Saving display or conversion settings does not clear the storefront's full-page cache: signed-in customers see the change at once, guests within up to 20 minutes, crawlers within 1–2 days (see [[storefront-arch-caching-invalidation]]).
 
 ### Customer preference
 

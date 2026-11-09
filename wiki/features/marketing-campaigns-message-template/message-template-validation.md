@@ -7,8 +7,8 @@ aliases: ["Campaign message validation", "Channel message validators", "Per-chan
 tags: [marketing, campaigns, message, template, validation]
 plan_gates: ["campaigns"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-campaigns-message-template]]. See the hub for the other aspects (Email designer, channel variants, merge tags, saved + predefined, demo send, save flow).
@@ -25,7 +25,7 @@ Validation errors surface inline on the editor (the Email scratch modal, and the
 
 ## What the merchant can do here
 
-The merchant fixes validation errors inline: they read the per-field error message (verbatim strings tabled below), correct the offending field, and re-click **Save** (or **Send example email** for demos). The editor doesn't auto-correct; the merchant must change the body to satisfy each rule. For variable-validator errors that depend on out-of-editor setup (e.g., a `{$dynamic_discount_code}` without a linked discount), the merchant has to leave the editor, fix the campaign-level configuration, then return.
+The merchant fixes validation errors inline: they read the per-field error message (verbatim strings tabled below), correct the offending field, and re-click **Save** (or **Send example email** for demos). The editor doesn't auto-correct; the merchant must change the body to satisfy each rule. A `{$dynamic_discount_code}` error needs the triggered-products block plus a discount type, value and max uses, which today's editor has no fields for (verify).
 
 ## Settings & fields
 
@@ -83,8 +83,8 @@ The second pass scans the message body to extract every `{$variable_name}` and `
 
 Examples of variable-validator failures:
 
-- `{$generate_discount_code:25%}` references a discount setup the merchant hasn't created → fails with a per-variable validation error.
-- `{$dynamic_discount_code}` without a linked discount on the campaign → fails.
+- `{$dynamic_discount_code}` without the triggered-products block → fails with *"Discount required usage "Segment triggered products""*; without the discount type, value or max uses → field errors.
+- `{$generate_discount_code:25%}` has no validator and is never replaced: it is removed at send time.
 - Variables that depend on segment context (e.g., `{$triggered_products:N}`) without the right segment type on the campaign → may fail or resolve to empty at send time. (verify)
 
 Full variables catalogue + the dynamic-discount semantics live on [[message-template-merge-tags]].

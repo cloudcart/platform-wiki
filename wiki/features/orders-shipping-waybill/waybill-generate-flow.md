@@ -7,8 +7,8 @@ aliases: ["Generate waybill", "Save waybill", "Издаване на товар�
 tags: [orders, shipping, waybill, courier, fulfillment]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[orders-shipping-waybill]]. See the hub for other aspects (per-courier specifics, payer side, print PDF, remove/void, generic modal, API path).
@@ -41,7 +41,7 @@ The button opens one of TWO forms — see [[waybill-generic-modal]] for the fall
 | Sender | Store config / sender-address profile. |
 | Package weight / dimensions | Calculated from product weights + chosen shipping box per [[settings-boxes]]. |
 | Declared value (insurance) | Sum of `order_price × quantity` across non-digital products only. Formatted via the provider's `formatInsurance`. Merchant can override. |
-| COD amount | Order's invoice total when payment is COD; `0` otherwise. |
+| COD amount | When payment is COD, the computed amount (with or without shipping by pricing type and payer side, less returned items and wallet — [[shipping-provider-mech-cod]]); `0` otherwise. |
 | Payer side | See [[waybill-payer-side]] (3-step fallback: order's `side` meta → courier's "Default payer side" setting → first key in filtered allowed list). |
 | Products to ship | Only `digital = no` AND not already fulfilled. Digital products excluded entirely. |
 

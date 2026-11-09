@@ -7,8 +7,8 @@ aliases: ["Virtual Wallet", "Wallet", "Customer wallet", "Store credit", "Store 
 tags: [wallet, store-credit, customers, checkout, orders, products, hub]
 plan_gates: []
 created: 2026-11-03
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # Virtual Wallet
 
@@ -88,6 +88,7 @@ The settings themselves are on [[virtual-wallet-settings]]. Every credit carries
 ## Business rules
 
 - **No plan gate found.** The wallet code has no plan-feature check. (verify)
+- **No points programme.** The platform has no native earn-and-redeem points or referral programme. The `points` type is unused. An outside loyalty system can add money to wallets through the API ([[virtual-wallet-api]]), and spend tiers are built with Cart Rules on the customer's lifetime spend ([[cart-rules-conditions]]).
 - **Top-ups can be paid online only.** Every tab shows a warning when the store has no active online payment method: *"Wallet top-ups can only be paid online. Enable at least one online (card) payment method, otherwise customers can reach the top-up checkout but will not be able to pay."* See [[wallet-gift-instrument-checkout]].
 - **Switching top-ups off keeps the wallet.** Existing balances stay, and refunds and API credits still work and can be spent.
 - **It is a tender, not a discount.** The order total, VAT base and invoice total stay full. See [[virtual-wallet-checkout]].

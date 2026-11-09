@@ -4,8 +4,8 @@ nav_path: "Resources → dec_audit.xsd cheat sheet"
 aliases: ["dec_audit cheat sheet", "Annex 38 schema fields", "N18 Audit XML fields"]
 tags: [resources, reference, fiscal, bulgaria, n18, schema]
 created: 2026-06-08
-updated: 2026-06-08
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # dec_audit.xsd — field cheat sheet
 
@@ -68,10 +68,17 @@ Each fulfilled (paid + delivered) order in the reporting month is a `<orderenum>
 | `2` | Виртуален ПОС-терминал (requires `pos_n`) |
 | `3` | Наложен платеж с ППП |
 | `4` | Доставчик на платежни услуги (requires `proc_id`) |
-| `5` | (see XSD enumeration in source — values 1–6 commonly observed) |
-| `6` | (see XSD enumeration in source — values 1–6 commonly observed) |
+| `5` | Друг вид плащане, неизискващо издаване на фискален бон извън посочените в т. 1 – 4 |
+| `6` | Плащане, отразено с фискален бон |
 
-In the CloudCart [[apps-n18-audit-settings]] screen, the merchant maps each active payment provider to one of these via the provider's `n18_type` value (2 or 4) and supplies the terminal IDs.
+(Meanings verbatim from the XSD's `paym` documentation.)
+
+### How CloudCart fills `paym`, `pos_n`, `trans_n` and `proc_id`
+
+- **`paym`** is the code CloudCart stores on the payment provider itself (`n18_type`). The merchant cannot choose or change it. Exceptions: an order paid fully from the wallet gets `5`; cash on delivery has its own rule (`3` or `5`, see [[apps-n18-audit]]).
+- **`pos_n`** is written for every sale except a wallet-only one, whatever its `paym`: the terminal ID the gateway returned with the payment, if it returned one, otherwise the value typed for that provider in the **Terminal ID** box of [[apps-n18-audit-settings]].
+- **`trans_n`** is CloudCart's own number for the payment (the ID of its payment record), not the bank's or gateway's transaction ID.
+- **`proc_id`** is the value saved for that provider in an older separate type-4 mapping; when that mapping is empty (the current settings screen does not fill it), it is the same **Terminal ID** box value. So a type-4 provider (`paym = 4`) whose box is filled gets the **same value in `pos_n` and `proc_id`**: that is how the code works, not a fault of one store. Whether the tax authority accepts `pos_n` on a `paym = 4` sale is for the merchant's accountant (verify).
 
 ## Refunds — `<rorder>` → list of `<rorderenum>`
 

@@ -7,8 +7,8 @@ aliases: ["Meta settings", "SEO meta", "Meta information", "Meta titles", "Meta 
 tags: [marketing, seo, meta-tags, translations]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Meta settings (per-section meta titles & descriptions)
 
@@ -88,7 +88,7 @@ Saving an empty string for a previously-set field clears the stored value to emp
 
 ### Translation cache invalidates on save
 
-After save the platform-wide translation cache is flushed by tag, so the next storefront page-load picks up the new meta without a deploy or manual purge. Because it is the platform-wide cache, that next request rebuilds cached translations for any key requested, not only SEO meta.
+After save the platform-wide translation cache is flushed by tag, so the next freshly rendered page picks up the new meta without a deploy. The full-page cache is not cleared: guests can get the old page for up to 20 minutes and crawlers for 1–2 days ([[storefront-arch-caching-invalidation]]). Because it is the platform-wide cache, that next request rebuilds cached translations for any key requested, not only SEO meta.
 
 ### Permission
 

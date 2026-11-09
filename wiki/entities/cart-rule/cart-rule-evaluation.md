@@ -4,8 +4,8 @@ nav_path: "Entity → Cart Rule → Evaluation"
 aliases: ["Cart Rule evaluation", "Cart Rule matcher", "Cart Rule matches and notifications", "AI-assisted construction"]
 tags: [entity, marketing, automation, discounts, rules-engine, evaluation]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # Cart Rule — Evaluation
@@ -26,7 +26,7 @@ When the [[cart-rule|Cart Rule]] matcher runs, what data it sees about the custo
 
 The matcher reads these inputs and emits these outputs:
 
-- **Inputs (customer snapshot)** — `group_id`, total income across ALL orders, completed-orders count, total-orders count, `isGuest` boolean.
+- **Inputs (customer snapshot)** — `group_id`, lifetime spend and order count (paid / completed orders), `isGuest` boolean.
 - **Inputs (cart)** — line items, totals (post-discount), variant / option metadata.
 - **Outputs** — `matches` (rules that fire — contribute discounts) and `notifications` (rules that did NOT fire but have a non-empty message).
 - **Stats derivation** — `withStats` scope joins `orders_modification` to produce used-count + total-discount per rule.
@@ -47,12 +47,11 @@ This means the customer sees rules attach and detach in near-real-time as they s
 The Cart Rule matcher evaluates customer-level conditions against snapshot values read at evaluation time:
 
 - Customer `group_id` (membership in a [[customer-group|Customer Group]]).
-- Total income across ALL orders (lifetime spend).
-- Completed-orders count.
-- Total-orders count.
+- Lifetime spend: the stored figure shown as **Revenue** in the customer list (paid or completed orders, or fulfilled ones not cancelled, net of partial-return refunds).
+- The number of those orders.
 - A boolean `isGuest` (true when the customer's group equals the platform's "guest group").
 
-The matcher does NOT see browsing history, session age, referrer, or device type. Guest customers are treated as a real customer for matching purposes (with the guest group's `group_id`) — so a rule keyed off *"customer NOT in VIP group"* matches guests. See [[cart-rule-rows-and-triggers]] for the full customer-level trigger taxonomy.
+The matcher does NOT see browsing history, session age, referrer, or device type. Guest customers are treated as a real customer for matching purposes, with the Guests group's `group_id`. A customer-group condition only matches the groups selected — there is no "not in" — so to reach guests and every group but VIP, select Guests and those groups. See [[cart-rule-rows-and-triggers]] for the full customer-level trigger taxonomy.
 
 ## Matches + notifications outputs
 
@@ -61,7 +60,7 @@ When the matcher runs, it produces two outputs:
 - **`matches`** — rules whose triggers fired. These contribute discounts to the cart.
 - **`notifications`** — rules whose triggers did NOT fire but whose message field is non-empty. These tell the customer what they are MISSING to qualify.
 
-The notifications path runs only for rules that come AFTER the highest-matching row of each rule by `sorting` order, so the cart shows next-tier nudges (*"add 6 EUR more for free shipping"*) but suppresses already-satisfied tiers (*"you got the 10% deal!"*). See [[cart-rule-actions]] for the message-slot UX.
+When a rule matched, its message comes from the next row not reached (higher `sorting`), so the cart shows next-tier nudges and never already-satisfied tiers. When no rule matched, every active rule's topmost message shows; once any rule matches, the others show none. See [[cart-rules-stacking]] § *Message-row precedence*.
 
 ## Performance stats via `withStats`
 

@@ -5,15 +5,15 @@ route_path: /selection/{slug}
 themes_using: [all]
 tags: [storefront, selection, smart-collection, listing, curated]
 created: 2026-06-08
-updated: 2026-06-08
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Storefront — Selection (`/selection/{slug}`)
 
 ## Purpose
 
-A **selection** is a merchant-curated collection of products — either hand-picked (manual) or rule-driven (smart). Each selection has its own URL of the form `/selection/<url_handle>` and renders as a product listing scoped to the products in that selection.
+A **selection** is a rule-driven (smart) collection of products; to include specific products the merchant uses a **Products** rule (see [[smart-collections-rule-types]]), there is no separate hand-picked list. Each selection has its own URL of the form `/selection/<url_handle>` and renders as a product listing scoped to the products in that selection.
 
 Selections are CloudCart's equivalent of "Shopify collections" — the merchant builds them via [[products-smart-collections]] (also reachable as the "Smart collections" admin screen) and surfaces them from menus, banners, or page-builder blocks. Use cases: "Summer sale 2026", "New arrivals", "Bestsellers under 50 BGN", "Curated gift ideas".
 
@@ -63,7 +63,7 @@ The selection's description / image / SEO meta are honoured if the merchant set 
 
 | Aspect | Where to configure |
 |--------|--------------------|
-| Selection name, slug, products (manual or rule-driven) | [[products-smart-collections]] |
+| Selection name, slug, products (rules, including a Products rule) | [[products-smart-collections]] |
 | Customer-group scope (which groups see the selection) | [[products-smart-collections]] — group rules |
 | Selection's SEO title / description / canonical | [[products-smart-collections]] (verify) |
 | Whether the selection appears in the storefront menu | [[design-navigation]] |

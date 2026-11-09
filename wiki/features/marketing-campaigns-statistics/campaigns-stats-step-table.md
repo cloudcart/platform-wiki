@@ -7,8 +7,8 @@ aliases: ["Per-step table", "Campaign step statistics", "Per-action statistics",
 tags: [marketing, campaigns, statistics, steps]
 plan_gates: ["abandoned_orders", "campaigns"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-campaigns-statistics]]. See the hub for the other aspects (KPI cards, channel breakdown, attribution, aggregation, logs modal).
@@ -51,6 +51,7 @@ The per-step conversion-rate uses the same 10000× storage multiplier as the hea
 
 ## Business rules
 
+- **Total sent counts dispatches, not deliveries.** It is counted when each send job runs, before the provider accepts the message. A large Total sent with zero Reached subscribers means nothing left the platform; on Email, typically a rejected store key — see [[email-channel-reconnect]].
 - **Zero-send guard.** Each row checks `total_sent > 0` before computing rates. If a step has zero sends, all its numeric columns are set explicitly to `0` (not null) and the conversion-rate shows "0.00%" — so the merchant sees a clean row of zeros, never an empty cell or NaN. This is the default state for a campaign that has launched but not yet fired any messages.
 - **Only delivery channels appear.** The table shows only action types flagged as visible in statistics on their channel — the delivery channels Email, SMS, Viber, Web Push, Messenger. Non-delivery action types (set_tags, remove_from_campaign, set_customer_group) are excluded, because they have no "send statistics" to show.
 - **Per-step orders / revenue are attributed by step.** A step's Orders and Turnover come from order attribution keyed on the per-step `cc_campaign_action_id` metadata — so an order attributed to "Step 3" rolls up to that step's row AND to the campaign's headline Turnover card. See [[campaigns-stats-attribution]].

@@ -7,14 +7,14 @@ aliases: ["Bumpcart", "Bump Cart", "Bumper Offer", "Cart upsell module"]
 tags: [apps, marketing, conversion, cart, upsell]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-05-28
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 # Bump Cart (cart-upsell module)
 
 ## Purpose
 
-**Bump Cart** (internal name: Bumper Offer) — adds a **goal-based motivation module** to the storefront's cart page. The module shows the customer how close they are to a target (e.g., "Spend 10 BGN more to get free shipping") and may auto-add bumper products if the customer's cart is below a threshold. Used to:
+**Bump Cart** (internal name: Bumper Offer) — adds a **goal-based motivation module** to the storefront's cart page and checkout. The module shows the customer how close they are to a target (e.g., "Spend 10 BGN more to get free shipping") and may auto-add bumper products if the customer's cart is below a threshold. Used to:
 
 - Increase average order value via goal-gamification (free shipping at X, discount at Y).
 - Encourage discovery of specific add-on products (the bumper offer).
@@ -31,7 +31,7 @@ Sidebar → Apps → install → **Bump Cart**. Two sub-pages:
 | Overview / Index | `apps.bumper_offer.overview` | `/admin/apps/bumpcart` |
 | Settings ([[apps-bumpcart-settings]]) | `apps.bumper_offer.settings` | `/admin/apps/bumpcart/settings` |
 
-(Note: the route name uses `bumper_offer` while the URL path uses `bumpcart` — the route name is the historical/internal app key; the URL is the merchant-facing slug.)
+(The route name uses the internal key `bumper_offer`; the URL uses `bumpcart`.)
 
 ## What the merchant can do here
 
@@ -61,7 +61,7 @@ When the merchant picks a goal type, additional fields appear:
 
 ### What the merchant CANNOT do here
 - Run multiple bump cart modules simultaneously (single module per store).
-- Run on pages other than cart (cart-only module).
+- Run outside the cart and checkout. On `/cart` it sits in the totals; on checkout, in the order summary on large screens and inside the steps (address, payment, final step) on smaller ones.
 
 ## Settings & fields
 

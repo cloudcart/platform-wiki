@@ -3,12 +3,12 @@ type: feature
 nav_path: "Marketing → Channels → Channels setup → Viber → DLR & status"
 route_name: campaigns-channels
 route_path: /admin/marketing/campaigns/channels
-aliases: ["Viber DLR", "Viber delivery report", "Viber status mapping", "InfoBip DLR webhook", "Viber SEEN status", "Cascade-to-prior-pending"]
+aliases: ["Viber DLR", "Viber delivery report", "Viber status mapping", "InfoBip DLR webhook", "Viber SEEN status", "Cascade-to-prior-pending", "No status information for message", "Viber 1000 characters"]
 tags: [marketing, channels, viber, dlr, status, webhook]
 plan_gates: ["viber_messages"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-channels-viber]]. See the hub for the other aspects (settings, self-credentials, send pipeline, system messages, plan cap, message format).
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-Documents what happens **after** a Viber send leaves CloudCart. InfoBip posts back delivery reports (DLRs) to a per-store webhook; the platform normalises the InfoBip status vocabulary into CloudCart's, updates the log row, and fires status-change events for downstream stats. Viber's DLR is also the basis for the `message_read` / `message_not_read` campaign-step conditions — Viber is one of only two channels (the other is Email) whose DLR exposes a `SEEN` state.
+Documents what happens **after** a Viber send leaves CloudCart. InfoBip posts back delivery reports (DLRs) to a per-store webhook; the platform stores InfoBip's raw status on the log row, and fires status-change events for downstream stats. Pending rows are also polled. Viber's DLR is also the basis for the `message_read` / `message_not_read` campaign-step conditions — Viber is one of only two channels (the other is Email) whose DLR exposes a `SEEN` state.
 
 ## Where to find it
 
@@ -39,6 +39,8 @@ The DLR endpoint itself is `/web-hook/viber-message?site_id=...` — InfoBip is 
 
 ### InfoBip → CloudCart status mapping
 
+This mapping applies to InfoBip's response **at send time**. The DLR webhook does not use it — it stores the raw status (see How it works).
+
 | InfoBip status | CloudCart status | Notes |
 |---------------|------------------|-------|
 | `PENDING` | (null — keep current) | InfoBip hasn't decided yet. |
@@ -47,7 +49,7 @@ The DLR endpoint itself is `/web-hook/viber-message?site_id=...` — InfoBip is 
 | `EXPIRED` | `EXPIRED` | InfoBip gave up trying. |
 | `UNDELIVERED` | `UNDELIVERED` | |
 | `UNDELIVERABLE` | `UNDELIVERED` | Both InfoBip variants collapse to one CloudCart status. |
-| `REJECTED` | `REJECTED` | E.g., sender not registered. |
+| `REJECTED` | `REJECTED` | E.g., sender not registered. A REJECTED on send arrives as a normal response, so it counts as sent against the cap. |
 | (anything else) | `NOT_SENT` | Catch-all for unknown statuses. |
 
 The Viber channel uses the same status-vocabulary table as the other channels — see [[channels-logs-status-vocabulary]] for the cross-channel reference.
@@ -72,9 +74,21 @@ Bad-shape webhooks (no `results` array) get logged as a `HooksLog` row for suppo
 
 ### Status update has cascade-to-prior-pending behavior
 
-When a Viber log status changes (e.g., `DELIVERED` arrives → log is marked `SENT` on CloudCart's side), the platform looks for **other** logs with the same `(site_id, channel, channel_identifier)` whose `created_at <= this.created_at` AND status is null (for incoming `SENT`) OR status is null OR `SENT` (for incoming `DELIVERED` / `SEEN`). All matching prior pending logs get updated to the new status, with separate `ViberMessageStatusChange` events fired for each.
+When a Viber log status changes (e.g., a `DELIVERED` DLR arrives), the platform looks for **other** logs with the same `(site_id, channel, channel_identifier)` whose `created_at <= this.created_at` AND status is null (for incoming `SENT`) OR status is null OR `SENT` (for incoming `DELIVERED` / `SEEN`). All matching prior pending logs get updated to the new status, with separate `ViberMessageStatusChange` events fired for each.
 
 **Merchant-visible effect**: this catches the case where an earlier message's DLR was lost — the new DLR retroactively marks the older message as delivered too. The Usage / Logs screens then show consistent delivered-counts.
+
+### Pending rows are also polled
+
+Besides the webhook, pending Viber rows older than **4 hours** and younger than **7 days** are checked with InfoBip up to **10 times**; a row with no answer may become **ERROR** *"No status information for message"*.
+
+### A failed delivery marks the phone bounced
+
+A Viber EXPIRED or REJECTED marks the subscriber's single Phone channel bounced, so later Viber **and** SMS to it are skipped as „Спам“ / "SPAM" — see [[marketing-channels]].
+
+### Message length
+
+The message is limited to **1000 characters** after placeholders and link shortening. Before 04.11.2026 an over-length message was mislabelled with the reason „Спам“.
 
 ### `SEEN` requires the recipient to open the message
 
@@ -85,8 +99,8 @@ The actual `SEEN` state requires the recipient to open the Viber message — whi
 InfoBip posts DLR batches to `/web-hook/viber-message?site_id=...`. The controller validates the shape, normalises each result row, then queues a per-result processing job. The processing job:
 
 1. Looks up the originating log row by InfoBip's `messageId`.
-2. Maps the InfoBip status through the table above.
-3. Updates the log row's status.
+2. Stores InfoBip's raw status group name on the log row, **unmapped** (e.g. *Delivered*, *Undeliverable*; PENDING shows "N/A"). The full result, including the error detail, is stored but not shown in the admin.
+3. Updates the log row's status with that raw value.
 4. Fires a `ViberMessageStatusChange` event so downstream listeners (campaign-step branching, statistics aggregation, system-message counter increments) can react.
 5. Runs the cascade-to-prior-pending sweep for older pending logs on the same `(site_id, channel, channel_identifier)`.
 

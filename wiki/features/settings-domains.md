@@ -7,8 +7,8 @@ aliases: ["Domains", "Custom domains", "Domain management", "SSL", "DNS", "До�
 tags: [settings, domains, ssl, dns, cloudflare, namecom]
 plan_gates: ["domains", "custom_hostname"]
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 10
+updated: 2026-11-09
+source_count: 11
 ---
 
 # Domains
@@ -19,7 +19,7 @@ The screen where the merchant manages all custom domains pointing at their Cloud
 
 CloudCart's domain stack on this page:
 
-- **Cloudflare** — managed DNS + DDoS protection. Two modes depending on add path: a standard zone (full DNS control) or **Cloudflare for SaaS** Custom Hostname (merchant keeps DNS, only a CNAME points to CloudCart). See [[settings-domains-dns-cloudflare]].
+- **Cloudflare** — managed DNS + DDoS protection, in CloudCart's own account. The merchant picks one of two methods per domain: CloudCart's nameservers (full DNS control) or **Manage with CNAME** (merchant keeps DNS, one CNAME points to CloudCart). See [[settings-domains-dns-cloudflare]] and [[settings-domains-external-dns]].
 - **Name.com registrar** — powers the "Buy a domain" search and checkout flow. See [[settings-domains-add-flow]].
 - **Let's Encrypt** — free, automated SSL via the `lets_encrypt` app. External certs supported but the merchant manages renewal. See [[settings-domains-ssl]].
 - **CNAME plan feature** — paid plan-feature pack controlling how many CNAME-style domains the merchant can attach; shown as the "Other domains" usage chip. See [[settings-domains-plan-gates]].
@@ -43,7 +43,7 @@ Sidebar → Settings → **Domains**. Breadcrumb: "Settings → Domains". Route:
 - **Set as primary** — confirmation modal + hard redirect on success. See [[settings-domains-primary]].
 - **SSL** — opens the SSL Modal. See [[settings-domains-ssl]] + [[settings-ssl]].
 - **Manage DNS** — nameserver instructions while pending, records table once active. See [[settings-domains-dns-cloudflare]].
-- **Renew** — for CloudCart-purchased domains within 30 days of expiry. See [[settings-domains-add-flow]].
+- **Renew** — on every CloudCart-purchased domain, at any date. See [[settings-domains-add-flow]].
 - **WHOIS contacts edit** — for CloudCart-purchased domains. See [[settings-domains-add-flow]].
 - **Remove** — see [[settings-domains-deletion]] (asymmetric for external vs CloudCart-purchased).
 
@@ -52,14 +52,16 @@ No custom domains beyond the CloudCart subdomain: centered "Add domain" CTA.
 
 ## Sub-pages (in this cluster)
 
-This feature is split into 6 aspect pages, each covering one slice. The Assistant should drill into the matching aspect rather than read every page.
+This feature is split into 8 aspect pages, each covering one slice. The Assistant should drill into the matching aspect rather than read every page.
 
 - [[settings-domains-add-flow]] — Add New Domain modal: "Add existing" + "Buy new" sub-flows, WHOIS / ICANN, IDN domains, renewal warning, no inbound-transfer path.
-- [[settings-domains-dns-cloudflare]] — Cloudflare zones vs Cloudflare for SaaS Custom Hostnames; the Manage DNS modal (pending vs active); the orange-cloud Proxy toggle and what records get force-overridden; auto-set DKIM / SPF / DMARC for hosted email.
+- [[settings-domains-dns-cloudflare]] — the two connection methods; the Manage DNS modal (pending vs active); the Proxy setting and which records get force-overridden; the legacy hosted-mailbox records.
+- [[settings-domains-external-dns]] — Manage with CNAME, no A-record / IP method, what is copied on a nameserver change, moving DNS away.
+- [[settings-domains-edge-security]] — edge blocks and country rules, request logs, outside safety filters (ISP, antivirus, Safe Browsing).
 - [[settings-domains-ssl]] — Let's Encrypt vs external SSL; auto-renewal at 25 days; the daily SSL expiry sweep + primary fallback to `*.cloudcart.net`; `DeletedCertificate` paper trail.
 - [[settings-domains-primary]] — single-canonical-URL rule; set-as-primary verification gates (DNS / SSL / Powered-by-CloudCart header check at `/.well-known/acme-challenge/_selftest`); hard redirect on switch.
 - [[settings-domains-deletion]] — deletion safety (primary cannot be deleted); asymmetric behaviour for external vs CloudCart-purchased; model-boot cleanup hooks; `hosts` table is platform-wide unique.
-- [[settings-domains-plan-gates]] — `domains` numeric quota + `custom_hostname` numeric quota and access whitelist (cc-pro + unicorn only); CNAME usage chip; PlanFeature modal upsell; Activation modal's two methods.
+- [[settings-domains-plan-gates]] — `domains` + `custom_hostname` quotas; which plans can buy CNAME slots; usage chip; PlanFeature upsell.
 
 ## Settings & fields
 
@@ -73,19 +75,15 @@ This feature is split into 6 aspect pages, each covering one slice. The Assistan
 | **Source badge** | "External" (merchant brought it) or "CloudCart" (purchased here). |
 | **DNS status** | Pending (nameservers not yet pointing) / Active (Cloudflare zone live, DNS editable). |
 | **SSL badge** | Free (Let's Encrypt, auto-renewing) / External (manual renewal required). |
-| **Expiry date** | For CloudCart-purchased domains; shows renewal warning within 30 days. |
+| **Expiry date** | Registration expiry; a **Renew** link on CloudCart-purchased domains. |
 | **Row actions** | Set as primary, Manage DNS, Manage SSL, Activate / Deactivate, Remove. |
-
-### CNAME usage chip
-
-Page header chip in the form `<used> of <limit> external domains` — shown when the CNAME plan-feature is in use. See [[settings-domains-plan-gates]].
 
 ## Business rules
 
 ### "External" vs "CloudCart-purchased" domains
 
 - **External** (`external=yes`): merchant brought the domain from another registrar (GoDaddy, Namecheap, etc.). They change nameservers to point at CloudCart's Cloudflare nameservers. CloudCart does NOT manage renewal — the merchant keeps paying their original registrar.
-- **CloudCart-purchased** (`cloudcart=1`, `purchase_namecome=1` after transform): bought through the Buy a domain flow via Name.com. CloudCart handles renewal billing through the merchant's plan subscription. Merchant gets `for_renew=true` warnings 30 days before expiry.
+- **CloudCart-purchased** (`cloudcart=1`, `purchase_namecome=1` after transform): bought through the Buy a domain flow via Name.com. The registration is renewed when the merchant clicks **Renew** (charged to the plan's card); a daily alert warns from one month before to one month after expiry — see [[settings-domains-add-flow]].
 
 This distinction drives downstream rules — see [[settings-domains-deletion]] (asymmetric delete) and [[settings-domains-add-flow]] (renewal + WHOIS edit only for CloudCart-purchased).
 
@@ -95,9 +93,7 @@ The store's `*.cloudcart.net` subdomain is assigned at store creation and is NOT
 
 ### Side effects on save
 
-- DNS edits propagate immediately (storefront reflects the change within seconds).
-- Adding / removing a domain triggers a platform-wide cleanup of cached primary-host references.
-- Setting a new primary domain triggers a **hard redirect** — see [[settings-domains-primary]].
+Adding or removing a domain clears cached primary-host references; a new primary triggers a **hard redirect** ([[settings-domains-primary]]).
 
 ### Permissions
 

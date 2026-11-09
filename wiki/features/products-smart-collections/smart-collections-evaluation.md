@@ -7,8 +7,8 @@ aliases: ["Smart Collections evaluation", "Smart Collections regeneration", "Sel
 tags: [products, collections, selections, async, jobs, status, regeneration]
 plan_gates: ["product_collections"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[products-smart-collections]]. See the hub for the other aspects (list view, editor, rule builder, rule types, storefront side-effects, rules and limits).
@@ -54,8 +54,9 @@ When a regeneration finishes, the timestamp is written to `last_generated_at`. T
 The platform regenerates a collection's product list whenever any of these happen:
 
 1. **The collection itself changes** — name save, rule add / edit / delete, URL handle change. This is the most direct trigger and fires on every Save from the [[smart-collections-editor]].
-2. **A product changes** in a way that could affect membership — category change, price change, vendor change, tag change, property-value change, new / digital / sale / featured flag change, or product create / delete. Every collection that could possibly match the changed product is re-evaluated. For very large catalogues with many smart collections, a bulk import can queue many regeneration jobs at once — see [[smart-collections-storefront-side-effects]] for the search re-index pressure.
-3. **A linked discount changes** — discount activation / deactivation or scope change. Collections referenced by the discount's scope are re-evaluated to keep the discount-aware view consistent.
+2. **A product changes** in a way that could affect membership — category change, price change, vendor change, tag change, property-value change, new / digital / featured flag change, or product create / delete. Every collection that could possibly match the changed product is re-evaluated. For very large catalogues with many smart collections, a bulk import can queue many regeneration jobs at once — see [[smart-collections-storefront-side-effects]] for the search re-index pressure.
+3. **A discount is created or saved from its form, or the expiry sweep switches it off** — collections using it and every collection with a **Sale** rule are re-evaluated. The list's Active switch does not trigger this.
+4. **A nightly check at about 00:10 UTC** — re-evaluates a Sale collection whose stored list of active discounts no longer matches, which is when a discount with a future start date joins. Details on [[smart-collection-entity-discount-link]].
 
 ### Job completion time scales with catalogue size
 

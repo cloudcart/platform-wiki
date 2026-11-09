@@ -5,8 +5,8 @@ aliases: ["Inventory oversell", "Continue selling when sold out", "continue_sell
 tags: [catalog, inventory, stock, oversell, backorders, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[inventory-tracking]]. See the hub for the other aspects (variant model, decrement timing, restock, bundle stock, multi-warehouse, in-stock badge, debugging playbook).
@@ -72,7 +72,7 @@ When the new shipment arrives, the merchant edits the Variant's `quantity` to th
 
 ### Worked example — clamping with `continue_selling = yes`
 
-The merchant sells a popular book. Stock is `quantity = 0` but `continue_selling = yes` because a new shipment arrives next week. With `order_status_for_quantity_decrease = paid` (default):
+The merchant sells a popular book. Stock is `quantity = 0` but `continue_selling = yes` because a new shipment arrives next week. With `order_status_for_quantity_decrease = paid`:
 
 1. Customer 1 places order for 1 unit → order goes `pending`. No stock change (`paid` setting; `pending` doesn't decrement).
 2. Customer 2 places order for 1 unit → also `pending`. Same — no stock change.

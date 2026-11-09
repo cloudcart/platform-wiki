@@ -3,12 +3,12 @@ type: feature
 nav_path: "Apps → GDPR → Requests → Data model"
 route_name: apps.gdpr.requests
 route_path: /admin/apps/gdpr/requests
-aliases: ["GDPR request fields", "gdpr_requests table", "processed_at", "GDPR request validation", "GDPR request data model", "requestsList endpoint"]
+aliases: ["GDPR data retention", "Срок на съхранение на данни", "GDPR request fields", "gdpr_requests table", "processed_at", "GDPR request validation", "GDPR request data model", "requestsList endpoint"]
 tags: [apps, gdpr, compliance, requests, data-model]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # GDPR → Requests: data model
 
@@ -70,6 +70,18 @@ The `gdpr_requests` table has only `created_at` and `processed_at` timestamps. T
 ### IP captured automatically — cannot be spoofed via form
 
 The `client_ip` field is auto-set from the request IP (which respects trusted proxies / `X-Forwarded-For` per the platform's proxy config). The customer cannot spoof it via form data.
+
+### How long the platform keeps personal data
+
+For a store's privacy policy, these are the platform's own timers:
+
+- **Requests** (with the requester's IP) are kept with no expiry; nothing deletes them, even after processing.
+- **Policy acceptances** are kept indefinitely ([[apps-gdpr-acceptance]]).
+- **Cookie answers** live only in the visitor's browser, 180 days; the store does not log them ([[apps-gdpr-cookies-consent-state]]).
+- **Customer and guest records** are never removed by age; only the merchant deletes them ([[customers]]).
+- **Carts**, abandoned ones included, are removed 7 days after their last change and then permanently deleted within the hour; the 7 days is a platform value, not a setting ([[cart-entity-lifecycle]]). The job that marks them is flagged as deprecated in the code while still scheduled hourly (verify that it runs).
+
+How long the store must or may keep each kind of data is a legal question for the merchant.
 
 ### Submission writes via a DB transaction
 

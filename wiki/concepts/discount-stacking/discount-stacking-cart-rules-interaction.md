@@ -5,8 +5,8 @@ aliases: ["Cart Rules vs Discounts", "Cart Rules before order-level discounts", 
 tags: [marketing, discounts, stacking, cart-rules, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[discount-stacking]]. See the hub for the other aspects (code_apply toggle, evaluation order, cart code slots, uses counter, plan gating, per-variant rows).
@@ -17,7 +17,7 @@ source_count: 3
 
 [[apps-cart-rules|Cart Rules]] are a separate promotion engine evaluated **after product discounts and line-level codes, and before order-level discounts**. A Cart Rule that says *"if cart total > 50 EUR, free shipping"* sees the total after product discounts and line-level codes. It does not see no-code Orders over discounts, Orders-over codes, Countdown or payment-method discounts. Those are calculated, and their thresholds checked, on the subtotal after product-level rule reductions.
 
-This layering means Cart Rules are for **complex multi-trigger promotions** (e.g., "buy 2 from category A AND 1 from category B, get 30% off the cheapest") while Discounts handle single-target rules with first-class storefront support (the "from X / now Y" listing display).
+This layering means Cart Rules are for **complex multi-trigger promotions** (e.g., "2+ units of one product from category A, cart total over 100 EUR and a customer in the Wholesale group, get 30% off the cheapest item") while Discounts handle single-target rules with first-class storefront support (the "from X / now Y" listing display).
 
 ## Scope
 
@@ -50,7 +50,7 @@ Every cart update and order submit on the platform runs this sequence:
 
 - **Storefront cart updates** — items added / removed, codes entered, shipping zones picked.
 - **Storefront submit** — final snapshot.
-- **Admin order edit** on [[orders-details]] — re-running the chain on edit.
+- **Admin orders** on [[orders-details]], created or edited, do not re-run the rules: an edit recalculates from the discounts and rule results stored on the order, and an order created in the admin gets no Cart Rule and no no-code Orders over discount (see [[orders-discount-add-existing-eligibility]]).
 
 ### Cart-level Cart Rule stacking — only the HIGHEST-VALUE match wins per cart
 
@@ -72,7 +72,7 @@ See [[apps-cart-rules]] *"Product-level stacking"*. (verify)
 ### What Cart Rules can do
 
 - **Actions: only amount, percent and free shipping.** They reduce an already discounted line or the order. No price-setting, no adding amounts, no forced method.
-- **Multi-trigger conditions** ("buy from category A AND category B").
+- **Multi-trigger conditions** — product, cart and customer conditions in one row. All product conditions of a row must hold for the **same product**, so "a product from category A AND a product from category B" never matches.
 - **Explicit priority via `sort_order`** — merchant decides which rule evaluates first.
 
 Discounts, conversely, are simpler and have first-class storefront support (the "from X / now Y" listing display on category pages and product detail pages) — Cart Rules do NOT show on the storefront listing.
@@ -80,7 +80,7 @@ Discounts, conversely, are simpler and have first-class storefront support (the 
 ### When to pick which
 
 - **Single-target rule** ("10% off when this code is used") → Discount. Simpler, has storefront listing support.
-- **Multi-trigger promotion** ("buy 2 from A AND 1 from B, get 30% off cheapest") → Cart Rule.
+- **Multi-trigger promotion** ("2+ units of one product from A with cart over 100 EUR, get 30% off the cheapest item") → Cart Rule.
 - **Cart-total threshold for free shipping** → either (a Shipping discount with `order_over`, or a Cart Rule); the Shipping discount has the `force_save` switch for order edit.
 
 ## Related

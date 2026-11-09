@@ -7,8 +7,8 @@ aliases: ["Invoicing save flow", "Save handler invoicing", "Single invoicing rec
 tags: [billing, invoicing, save-flow, persistence]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[billing-invoicing]]. See the hub for the other aspects (fields, EIK/APIS, VAT/VIES, country-driven form, Vue checkout editor).
@@ -52,11 +52,11 @@ When the merchant clicks **Submit**:
 
 When saving, the platform sets the language of future invoices to `bg` if `country = BG`, otherwise `en`. The merchant doesn't choose this — it follows the country. This affects how field labels are translated on the generated PDF invoice.
 
-### Single invoicing record per merchant — replaced in place
+### One current record per store; each save adds a new one
 
-There is exactly one invoice-details record per merchant account. The save handler creates a NEW model instance from the gate site relation and OVERWRITES the previous record entirely on save. The same per-merchant invoicing row is updated in place — there is no audit log of prior values, no "old vs new" diff surfaced in the admin.
+Invoice details belong to the **store**. Every save writes a new record for the current store (noting the account holder too), and the newest one is what the form, the [[merchant]] screen and the next CloudCart invoice use. A merchant with several stores keeps separate details per store. Earlier records stay stored but are not shown in the admin; there is no "old vs new" view.
 
-To bill a different company in the future, the merchant edits the same record. To track changes across years (e.g. for accounting reconciliation), the merchant must keep their own external record or request a support export.
+**Issued invoices keep their details.** Each CloudCart invoice is linked to one stored record (the current one when it was issued (verify)), and its PDF is built from that record. Because a save adds a record instead of changing the old one, new details change later invoices only. The admin offers no way to re-issue or correct an issued invoice: cancelling it and issuing a credit note happen outside this code, in CloudCart's billing system (verify the procedure).
 
 ### Panel auto-closes + parent re-loads on success
 
@@ -70,7 +70,7 @@ The save handler does NOT mark the just-saved record as invalid — that flag is
 
 ### Side panel is opened via AJAX (Smarty)
 
-The Smarty side panel is loaded into the right-side AJAX panel via `data-ajax-panel="true"`. The URL is rarely typed by hand — it expects to be opened from the Vue admin shell via one of the entry points (pencil icon, Add invoice details button, or the services-purchase flow when no invoice details exist on file). See [[services]] for the auto-open trigger from the services-purchase flow.
+The Smarty side panel is loaded into the right-side AJAX panel via `data-ajax-panel="true"`. It is not a page to link. The current admin edits the same record in the **Invoice details** card on Merchant profile (`/admin/merchant`) and in purchase panels ([[billing-invoicing]]); see [[services]] for the services-purchase case.
 
 ### Vue–Smarty hybrid: server form + AJAX submit
 

@@ -5,8 +5,8 @@ aliases: ["Canonical tag", "Self-canonical", "Noindex", "Noindex on filtered pag
 tags: [seo, canonical, noindex, robots-meta, pagination, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[seo-handling]]. See the hub for related aspects (sitemap / robots, meta tags, redirects, sharing / RSS, plan overrides, route catalog).
@@ -41,7 +41,6 @@ Not covered here:
 ## Contrasts
 
 - **Canonical vs. 301 vs. robots Disallow vs. noindex** — four signals merchants confuse. **Canonical** keeps the URL accessible but tells Google "credit this other URL". **301** changes the URL the browser sees (HTTP status 301 + Location header) — old URL stops working. **Robots Disallow** blocks crawlers from fetching at all. **Noindex meta** lets crawlers fetch but tells them not to index. Pick by intent: rename → 301; reduce duplicate weighting → canonical; block crawling → robots; hide from search but keep customer-accessible → noindex.
-- **Self-canonical vs cross-canonical** — CloudCart's default is self-canonical (every page is its own master). The CMS-page editor and the Selection editor let the merchant override that to point elsewhere (cross-canonical).
 - **Pagination word ([[marketing-seo-meta-title]]) vs Meta title ([[marketing-seo-meta]])** — pagination word is the literal "Page" / "Страница" prepended to meta titles on paginated pages 2+. Meta title is the FULL `<title>` text for a section page. Different settings; the card on [[marketing-seo]] is mislabeled "Title", which confuses merchants. The pagination word lives on its own setting screen — see [[marketing-seo-meta-title]].
 - **Canonical and noindex side-by-side** — they work together: canonical keeps similar-but-not-duplicate pages from competing; noindex hides truly redundant variants. A page that is `noindex, nofollow` gets no canonical; a filtered listing that is `noindex, follow` points its canonical at the kept parameters.
 
@@ -60,12 +59,14 @@ When canonical is ON (the default), every storefront page emits `<link rel="cano
 
 ### Noindex on filtered / sorted pages — paired with canonical
 
-When [[marketing-seo-deindex]] is ON with threshold N, the storefront counts "meaningful" query parameters on the eligible routes (see [[seo-route-catalog]] for the full list — `category.view`, `selection`, `site.vendor.view`, `site.tag`, `products.search`, `bundles.list.list`, `bundles.list.category`):
+On the eligible routes (`category.view`, `selection`, `site.vendor.view`, `site.tag`, `products.search`, `bundles.list.list`, `bundles.list.category`; see [[seo-route-catalog]]) the storefront counts "meaningful" query parameters against a threshold N. With the [[marketing-seo-deindex]] switch OFF, the default, N is 0; ON, N is its **Parameter value**.
 
 - **Counted**: `order_by`, `order_direction`, `variants`, `price_range`, `price_from`, `price_to`, `vendors`, `brand`, `new`, `sale`, `query`, and on category pages the category property keys.
 - **Not counted**: `page`, `per_page`, an empty `query`, and every other parameter, ad trackers (`gclid`, `fbclid`, `utm_*`) included. These are ignored for the canonical too.
 
-If the count exceeds N, the page renders `<meta name="robots" content="noindex, follow">`. With the switch off, N is 0. Threshold range is **0-5** (5 = up to 5 stacked filters indexed, 6th is noindex).
+If the count exceeds N, the page renders `<meta name="robots" content="noindex, follow">`. Threshold range is **0-5**. So on a default store every `?order_by=`, `?brand=`, `?sale=`, `?new=` listing URL is `noindex, follow` with a canonical to the clean listing; Search Console lists such URLs under "Excluded by 'noindex' tag", which is expected.
+
+Two listing routes behave differently for crawlers: `/products` always carries an `X-Robots-Tag: noindex` response header (and no robots meta tag), and a crawler requesting `/search` gets a 403 with `X-Robots-Tag: noindex`; a browser on `/search?query=…` sees `noindex, follow`.
 
 **Corrupted-value default = 1.** A `noindex_query_limit` value outside the validated range (e.g. `99`) gets clamped to **1** at storefront render time, not to 5 or 0 (verify).
 
@@ -78,7 +79,7 @@ The self-canonical-per-page strategy creates a side effect: pages 2, 3, 4 all ha
 <meta name="description" content="Page 2 - <existing description>">
 ```
 
-The merchant sets the word per storefront language ("Page", "Страница", "Página", "Seite"). The page number and separator (" - ") are added automatically.
+The page number and separator (" - ") are added automatically.
 
 **One global string, not per-language.** The pagination word setting on [[marketing-seo-meta-title]] is one global value, not per-language. A storefront switching between languages should re-set the word to match the current display language. The field is `required` — leaving it empty fails validation, so there's no clean "off" switch.
 

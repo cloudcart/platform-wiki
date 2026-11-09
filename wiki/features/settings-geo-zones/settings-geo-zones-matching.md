@@ -7,8 +7,8 @@ aliases: ["Geo zone matching", "Geo zone runtime", "Geo zone resolution", "MaxMi
 tags: [settings, geo, zones, matching, runtime, shipping, tax, discount]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-geo-zones]]. See the hub for the other aspects (operations, post-codes, Maps, polygon/distance, deletion-cascade, save-semantics).
@@ -19,7 +19,7 @@ source_count: 3
 
 Once the merchant defines zones, the platform must decide at cart-display / checkout time **which zones match the current customer**. The matcher considers the customer's resolved country / region / city / lat / lng / post code against every zone's rules. The result is then handed to consuming features — shipping methods, tax rules, discount targets — each of which has its **own conflict-resolution rule** when multiple zones match the same customer.
 
-This aspect documents the matching mechanics: pre-population from MaxMind GeoIP, the country+region requirement, the per-feature conflict resolution, the US city special-case, and the "approximate shipping cost" shown in cart for guests.
+This aspect documents the matching mechanics: pre-population from MaxMind GeoIP, which rules need a region, the per-feature conflict resolution, the US city special-case, and the "approximate shipping cost" shown in cart for guests.
 
 ## Where to find it
 
@@ -42,13 +42,11 @@ The runtime matcher reads the customer's resolved location, populated from these
 
 ## Business rules
 
-### Customer must have BOTH country AND region resolved for most rules to evaluate
+### The country is enough for country and post-code rules
 
-The matcher only runs full geo-zone logic for shipping / tax / discount when **both country AND region (state)** are resolved on the customer's address. If either is empty, **only rules without any geo-zone restriction are returned**.
+Country rules (**Includes**, **Includes all locations except country**) and post-code rules match as soon as the address has a country; they do not wait for a region. Region, city and neighbourhood rules compare the region too, so they match only once it is known. With no country at all, only shipping methods, taxes and discounts without a zone apply. **The customer experience: as they fill more of the address form, more region- or city-scoped options can appear.**
 
-So a customer at the "country only" stage of the address form (no region yet) sees only the unrestricted methods, even if a country-only-rule zone would technically match. **The customer experience: as they fill more of the address form, more shipping / tax options can become available.**
-
-This also explains why the city / neighborhood operations (5, 6, 7, 8) require region to be auto-backfilled via Geonames at save time — see [[settings-geo-zones-google-maps]] and [[settings-geo-zones-save-semantics]].
+This is also why the city / neighborhood operations (5, 6, 7, 8) have their region auto-backfilled via Geonames at save time — see [[settings-geo-zones-google-maps]] and [[settings-geo-zones-save-semantics]].
 
 ### Customer geo info defaults from MaxMind GeoIP
 
@@ -85,9 +83,9 @@ So merchants should be careful when defining overlapping zones — for VAT/tax p
 
 The matcher iterates each defined zone's rules at checkout / cart-display time. Each rule type (country, region, city, neighborhood, polygon, distance, post-code) runs a fast indexed lookup, so even a merchant with hundreds of zones sees iteration cost on the order of milliseconds.
 
-### Cache invalidation on save
+### No zone cache
 
-Saving zones invalidates the geo-zone lookup cache, so the next shipping / tax computation sees the updated zones immediately — newly added zones take effect right away. No queue delay, no admin notification. See [[settings-geo-zones-save-semantics]].
+Matching reads the zone rules from the database each time (there is no zone lookup cache), so the next shipping / tax computation sees saved zones — newly added zones take effect right away. No queue delay, no admin notification. See [[settings-geo-zones-save-semantics]].
 
 ## Related
 

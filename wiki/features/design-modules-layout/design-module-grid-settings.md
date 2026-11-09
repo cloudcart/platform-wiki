@@ -7,8 +7,8 @@ aliases: ["Grid settings module", "Grid layout", "Product grid spacing", "Мод
 tags: [design, modules, layout, grid]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Grid settings module (`layout.grid`)
@@ -23,14 +23,14 @@ The **Grid settings** module (`gridConfiguration` — instance of `layout.grid`)
 
 Sidebar → **Design** → **Modules** → **Layout** tab → **Grid settings** card.
 
-The route is `/admin/storefront/widgets/gridConfiguration`. Changes apply to every grid-bound page on the storefront on the next request.
+The route is `/admin/storefront/widgets/gridConfiguration`. Changes apply to every grid-bound page rendered after the save (guests within 20 minutes).
 
 ## What the merchant can do here
 
 - Toggle the master **enabled** switch — when OFF, the theme's default grid width applies; when ON, the merchant's values override the theme defaults.
 - Set **Grid width** in pixels (`int:800,2000`) — the fixed grid container width on desktop.
 - Toggle **Full width** — when ON, the grid stretches to the viewport width and disables the **Grid width** input.
-- Set **Desktop offset** in pixels (`int:0,80`) — gutter (margin-left / margin-right) around the grid on desktop.
+- Set **Desktop offset** in pixels (`int:0,80`) — left and right padding inside the grid on desktop (1200 px and wider).
 - Set **Mobile offset** in pixels (`int:0,40`) — gutter on mobile breakpoints.
 - Save / Reset / Cancel — standard module actions.
 
@@ -47,7 +47,7 @@ The route is `/admin/storefront/widgets/gridConfiguration`. Changes apply to eve
 | `enabled` | toggle | `bool` | OFF | Master switch — when OFF, theme defaults apply (the values are still saved but inert). |
 | `grid_width` | number (px) | `int:800,2000` | 1170 | Fixed grid container width on desktop. Disabled in the form when `grid_width_full` is ON. |
 | `grid_width_full` | toggle | `bool` | OFF | When ON, the grid stretches to viewport width (overrides `grid_width`). |
-| `offset_desktop` | number (px) | `int:0,80` | 15 | Desktop gutter (margin-left / margin-right). |
+| `offset_desktop` | number (px) | `int:0,80` | 15 | Desktop left / right padding of the container. |
 | `offset_mobile` | number (px) | `int:0,40` | 15 | Mobile gutter. |
 
 ### Save / Reset / Cancel
@@ -79,11 +79,11 @@ The `offset_desktop` and `offset_mobile` settings let the merchant set tighter g
 
 ### Applies to grid-bound pages only
 
-Pages that use the master layout pick up the grid settings; Dynamic pages (see [[marketing-landing-pages]]) that disable the master layout do not — those use the per-row grid settings inside the page builder.
+Every storefront page, Dynamic (page builder) pages included, carries these settings: they style the content container. A page-builder row sits in that container, so it follows the width and offset, unless its row settings switch on **От край до край** (full width); such a row ignores both ([[landing-pages-builder-rows]]). The desktop width and offset apply from 1200 px screen width up; narrower screens get the mobile offset. The offsets are inner padding of the container.
 
 ### Cache invalidation
 
-Save and Reset bump the per-site cache key — the new grid settings are live on the next storefront request.
+Save and Reset bump the per-site cache key — pages rendered afterwards use the new grid settings; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ## Related
 
@@ -91,8 +91,8 @@ Save and Reset bump the per-site cache key — the new grid settings are live on
 - [[design-module-buttons-settings]] — sibling: button border-radius.
 - [[design-modules]] — parent catalogue.
 - [[design-theme-editor]] — colour palette + typography (the other half of storefront styling).
-- [[marketing-landing-pages]] — Dynamic pages with their own per-row grid settings.
+- [[landing-pages-builder-rows]] — page-builder rows: full width vs this container.
 
 ## Open questions
 
-- 📡 **Per-row grid override.** Dynamic pages use the page-builder's per-row container width controls (not this module). Confirm the override hierarchy. (verify)
+None.

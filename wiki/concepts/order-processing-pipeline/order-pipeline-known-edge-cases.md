@@ -5,8 +5,8 @@ aliases: ["Order pipeline edge cases", "Order pipeline known issues", "Gateway c
 tags: [orders, lifecycle, edge-cases, troubleshooting, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[order-processing-pipeline]]. See the hub for the other aspects (placement, status transitions, payment sync, fulfillment, edits).
@@ -62,7 +62,7 @@ If the store plan is expired when a queued background job runs, the job exits wi
 
 ### Hidden test-mode kill switch for customer emails
 
-Stores on plans **without** the `test_mail` plan-feature have a built-in **kill switch**: all customer-side order emails go ONLY to the store owner's address — never to the customer. This is the platform's "test mode" to stop free-trial / dev stores sending real customer email. The owner gets every customer email; the customer gets nothing. The complaint *"my customer didn't get the order confirmation email"* on a free-trial plan is almost always this. Upgrading to a plan that includes `test_mail` flips the switch off — emails reach the customer.
+Stores on plans **without** the `test_mail` plan-feature have a built-in **kill switch**: a customer email is sent only when its recipient is the store's contact email (`site_email`, [[settings-general-store-details]]); every other one is silently dropped, not redirected. This stops free-trial / dev stores emailing real customers. The complaint *"my customer didn't get the order confirmation email"* on a free-trial plan is almost always this. On a plan that includes `test_mail`, emails reach the customer; which plans include it is set in the plan catalogue (verify).
 
 ### Custom statuses are partial participants
 

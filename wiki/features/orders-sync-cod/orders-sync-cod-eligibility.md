@@ -7,8 +7,8 @@ aliases: ["COD sync eligibility", "COD sync polling conditions", "COD sync retry
 tags: [orders, cod, sync, eligibility, courier-integration]
 plan_gates: ["shipping_payment_sync"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # COD sync — eligibility
 
@@ -27,7 +27,7 @@ There is no dedicated screen for eligibility — it is enforced inside the backg
 Indirectly, the merchant controls eligibility by:
 - Marking the shipment fulfilled (adding a waybill) so the order qualifies.
 - Keeping the order in `pending` status until the courier reports payment.
-- Using a courier whose payment provider is recognised as COD.
+- Using a courier integration that supports cash on delivery, with its **Automatically set order status to paid** switch on (DPD Bulgaria included).
 
 The merchant cannot override eligibility — it is fixed by the platform.
 
@@ -40,14 +40,14 @@ The merchant cannot override eligibility — it is fixed by the platform.
 3. **Order created within the last 3 months** — older orders are excluded from polling entirely, even if still pending. Pre-3-month COD orders must be reconciled manually (see [[orders-sync-cod-manual]]).
 4. **Order has a `bol_id` meta value** — the courier's waybill / parcel tracking number must exist. Without it the COD-status lookup can't be made.
 5. **Order's payment provider = `cod`** — the platform-internal payment provider type must be COD. Cash-on-delivery via custom offline providers does NOT trigger this sync.
-6. **Expected delivery date is more than ~3 days in the past OR not set** — if the courier's expected delivery date is in the recent future (within 24h), the order is skipped this cycle and revisited later. This prevents pinging the courier before the package even arrives.
+6. **Expected delivery date at least one day in the past, or not set** — an order whose shipment's expected delivery date is later than 24 hours ago is skipped and counted as checked, so it comes up again a day later. This prevents asking the courier before the parcel can have been delivered.
 7. **More than 24h since the last sync attempt** — the same order is NOT re-checked within 24h.
 
 ### Hard retry cap — 15 attempts per order
 
 The platform tracks a per-order counter (`sync_payment` meta). Each failed sync attempt increments it. When the counter reaches **15**, the order is dropped from the polling pool permanently — no more attempts. From this point the merchant must reconcile manually.
 
-Some courier errors immediately jump the counter straight to **15** to avoid burning quota on configuration problems — specifically when the courier error message contains `is not authorized to access`, `There is not enough quantity for`, or `Няма достатъчно количество за`. The full error catalogue is on [[orders-sync-cod-errors]].
+Some courier errors immediately jump the counter straight to **15**, ending polling on configuration problems (failed attempts never use quota) — specifically when the courier error message contains `is not authorized to access`, `There is not enough quantity for`, or `Няма достатъчно количество за`. The full error catalogue is on [[orders-sync-cod-errors]].
 
 ## Business rules
 
@@ -66,4 +66,4 @@ Some courier errors immediately jump the counter straight to **15** to avoid bur
 
 ## Open questions
 
-- Exact tolerance window on condition 6 (expected-delivery date) is approximate (~3 days). (verify)
+None.

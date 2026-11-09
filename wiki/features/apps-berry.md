@@ -7,8 +7,8 @@ aliases: ["Berry", "Berry courier"]
 tags: [apps, shipping, deprecated, omniship]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-05-28
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # Berry (DEPRECATED / NOT IN USE)
 
@@ -41,7 +41,7 @@ Deprecated. No SLA / support on this integration.
 Berry remains in the CloudCart codebase but is not part of the actively supported shipping-provider set. Merchants who never installed it will not see it as a recommended option; merchants who configured it historically may still have residual data tied to it.
 
 ### What replaces Berry
-Merchants should pick an active courier integration from the recommended list above (Econt, Speedy, BoxNow, DPD Bulgaria, Sameday, Cargus, Fan Courier, DPD Romania, GLS, Sendcloud, DHL, DHL Express). For historical orders that already used Berry, the data remains in the order record but no new waybills can be generated.
+Merchants should pick an active courier integration from the recommended list above (Econt, BoxNow, DPD Bulgaria (Speedy), Sameday, Cargus, Fan Courier, DPD Romania, GLS, Sendcloud, DHL, DHL Express). For historical orders that already used Berry, the data remains in the order record but no new waybills can be generated.
 
 ### Codebase footprint (deprecated)
 The Berry module remains in the codebase under the theme templates with **legacy Smarty `.tpl` templates only** and the platform code. There is **NO modern Vue surface** under `vuejs-sitecp/src/CcModules/Shipping/Providers/` — Berry was never migrated to the modern admin UI. In the platform code Berry is registered with `active: 0` (`tracking_link` → `https://sandbox.berry.bg/bg/t/{$tracking_number}` — a SANDBOX URL, another sign the integration is not production-active). This confirms its deprecated status: any merchant who would try to install it would land on legacy Smarty pages, not the modern OmniShip experience.

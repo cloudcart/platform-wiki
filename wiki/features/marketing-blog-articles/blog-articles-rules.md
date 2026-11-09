@@ -7,8 +7,8 @@ aliases: ["Article validation", "Article business rules", "Tag caps", "500-per-c
 tags: [marketing, blog, articles, rules, validation, plan-gates, permissions]
 plan_gates: ["blog_articles", "blog_categories"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[marketing-blog-articles]]. See the hub for the other aspects (list, editor, CSV import, storefront visibility, API).
@@ -111,7 +111,7 @@ Standard admin roles include all four keys; restricted roles (cashier, fulfilmen
 
 ### Title-driven slug locks after first save
 
-Once an article has been saved at least once, the URL handle field stops auto-syncing from the title. Manually editing the slug afterwards creates a 301 redirect from the OLD slug to the new slug (via [[marketing-seo-301-redirects]]). The lock applies regardless of whether the merchant saved through the editor, the API, or the CSV import.
+Once an article has been saved at least once, the URL handle field stops auto-syncing from the title. When the slug is edited afterwards, the old handle is kept in a hidden 30-day history ([[seo-301-redirects-auto-tracking]]), not as a row on [[marketing-seo-301-redirects]]; add a rule there for a permanent redirect. The lock applies regardless of whether the merchant saved through the editor, the API, or the CSV import.
 
 ### Slug uniqueness per store
 

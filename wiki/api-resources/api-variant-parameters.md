@@ -7,8 +7,8 @@ aliases: ["Variant Parameters API", "JSON-API v2 variant-parameters", "API па�
 tags: [api, json-api-v2, products]
 plan_gates: []
 created: 2026-05-26
-updated: 2026-06-05
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # Variant Parameters (JSON-API v2)
 
@@ -40,7 +40,7 @@ Auth, headers, rate limits: [[json-api-v2]].
 | `display_type` | enum | yes | yes | **POST: required** | One of `select`, `radio`, `image`, `color`, `2d`, `numeric_alpha`. Controls storefront rendering. Mapped from the model's `type` column. |
 | `sort` | integer | yes | yes | no | Display order in the variant-parameters list. |
 | `visible` | tinyint (0/1) | yes | yes | no | Whether the parameter shows up on the storefront. Default 1. |
-| `in_listing` | tinyint (0/1) | yes | yes | no | Whether the parameter is exposed as a filter in product listings. Default 0. |
+| `in_listing` | tinyint (0/1) | yes | yes | no | Shows each value as a separate product in listings; needs the `variants.listing` plan feature. Default 0. |
 | `show_label` | tinyint (0/1) | yes | yes | no | Whether the parameter label renders next to its selected value. Default 0. |
 | `next_update` | timestamp | yes | yes | no | Internal scheduling field used by background sync. |
 | `type` | — | — | — | — | **Hidden** in serialised output — exposed as `display_type`. |
@@ -69,7 +69,7 @@ No appendable values.
 - **No platform-level audit log** for this resource beyond the standard model timestamps (`created_at` / `updated_at` are not exposed in serialised attributes — the framework treats the underlying table as untimestamped). Merchants needing an actor trail for parameter changes must keep their own log.
 - **Delete guard** — DELETE returns 422 `Cannot delete a variant parameter which is in use by a products resource.` if any product references this parameter as its `p1_id`, `p2_id`, or `p3_id`. Detach the parameter from all products first.
 - **Cascade behaviour on the database** — child [[api-variant-options|variant options]] under this parameter have an `ON DELETE CASCADE` rule on `parameter_id`, but the API delete is blocked before that point — so options are never silently lost via this endpoint.
-- **Storefront re-render** — flipping `visible` / `in_listing` does not invalidate caches by itself; CDN-cached listings refresh on next regeneration (see [[apps-listing-engine]]).
+- **Storefront re-render** — flipping `visible` / `in_listing` invalidates no cache itself; CDN-cached listings refresh when regenerated (see [[apps-listing-engine]]).
 
 ## Plan-feature gating
 

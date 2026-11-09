@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Dynamic Pages → Page-builder modules → Button"
+nav_path: "Design → Static pages → Dynamic page → Page-builder modules → Button"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["Button module", "Button block", "CTA button block", "Модул бутон"]
 tags: [design, modules, page-builder, button, cta, marketing]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Button block (`button`)
@@ -21,7 +21,7 @@ The **Button** block renders one to three call-to-action buttons inline on a Dyn
 
 ## Where to find it
 
-Open a Dynamic page in [[marketing-landing-pages]] → click **+ Add block** → pick **Button** from the block picker.
+Open a Dynamic page in [[marketing-landing-pages]] → **+ Добави нов модул** in a column → pick **Button** from the block picker ([[landing-pages-builder-rows]]).
 
 ## What the merchant can do here
 
@@ -31,8 +31,8 @@ Open a Dynamic page in [[marketing-landing-pages]] → click **+ Add block** →
   - Set the link URL (internal or external).
   - Toggle "open in new tab" (target).
   - Set the button label (text).
-  - Pick the button colour (theme-shipped variant).
-  - Pick the button size (theme-shipped variant).
+  - Pick the button colour (**Цвят**: **По подразбиране** / **Вторичен** / **Активен**).
+  - Pick the button size (**Размер**: **По подразбиране** / **Малък** / **Голям**).
   - Toggle full-width.
   - Add custom HTML attributes (`data-*`, `id`, `aria-*`, etc.).
 - Toggle the master enable switch.
@@ -62,7 +62,7 @@ Each button in `buttons[i]` (or the top-level fields for amount=1) carries:
 | `text` | text input | `''` | Button label. |
 | `link` | URL input | `''` | Where the button goes. Internal `/page/...` or external `https://...`. |
 | `target` | toggle | `false` | When ON, opens in a new tab (`target="_blank"`). |
-| `color` | image-preview select | (theme) | Theme-shipped colour variant — applied via CSS class. |
+| `color` | select **Цвят** | **По подразбиране** | One of the theme's button styles; no colour code field. See *Colour options* below. |
 | `size` | select | `''` | Theme-shipped size variant. |
 | `full_width` | toggle | `''` | When ON, the button stretches to the column width. |
 | `attributes` | text input | `''` | Custom HTML attributes appended to the `<a>` tag (e.g., `data-event="cta_click"`). |
@@ -76,6 +76,16 @@ Page-builder side panel — see [[marketing-landing-pages]].
 ### Single-button vs. multi-button rendering
 
 When `amount = 1`, the block renders a single `<a class="_button...">` with the row-level position. When `amount = 2` or `3`, the block renders a `<div class="_widget-buttons-wrap">` wrapping the buttons in a horizontal flex group — each button still carries its own colour / size / width.
+
+### Colour options map to the theme's button styles
+
+The block has no colour-code field: **Цвят** only picks one of the theme's button styles, whose colours are set in the Theme Editor ([[design-theme-editor-colors]]).
+
+- **По подразбиране** (Default) — the theme's main button colours.
+- **Вторичен** (Secondary) — the theme's secondary button colours, styled by most themes.
+- **Активен** (Active) — the theme's active-button colours, but only a few themes style it (5 of 58 theme stylesheets, `hades` among them); on the rest, including `knowledge`, it looks like the default button.
+
+For an exact colour, give the button an `id` or class in **Допълнителни атрибути** and style it with custom CSS ([[design-custom-assets]]).
 
 ### Picks up global button radii
 
@@ -100,4 +110,3 @@ Unlike [[design-module-pb-add-to-cart]], this block is a generic CTA — it does
 ## Open questions
 
 - 📡 **Per-button `target` semantics.** The toggle is a boolean; confirm whether it sets `target="_blank"` only or whether merchants need to add `rel="noopener noreferrer"` manually via `attributes`. (verify)
-- 📡 **Theme-shipped colour / size catalogues.** Each theme ships its own palette of `_button` variants (`_primary`, `_secondary`, etc.) — the select shows what the theme advertises. (verify per theme)

@@ -5,8 +5,8 @@ aliases: ["Variant Parameter", "Parameter entity", "Parameter definition", "Па
 tags: [catalog, variants, parameters, options, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[variants-model]]. See the hub for the other aspects (Option, matrix generation, pricing, inventory link, image mapping, known issues).
@@ -84,9 +84,9 @@ A Parameter cannot be deleted while any product still references it. The error r
 
 When the merchant edits a Parameter's name (e.g., "Colour" → "Color"), the platform updates the denormalised column header on every product editor + every storefront product page + every Variant's denormalised label. The rename is atomic on save and **cannot be partial** — there is no per-product override of the Parameter name.
 
-### Parameter Active OFF — soft hide
+### Parameter Active OFF — hides very little
 
-Setting Active = OFF removes the Parameter from storefront variant pickers and the product editor. Variants on every product that uses it remain intact — their data is preserved. Re-activating restores the picker without re-attaching Variants. Useful during a Parameter-type migration: hide the old Parameter while populating the new one without destroying historical Variant data.
+Setting Active = OFF keeps every Variant and its data. In code the flag is read only when the storefront filter loads one variant filter on demand; the product editor's parameter picker still lists the Parameter, and no other reader was found (verify the product-page variant picker). See [[products-variants-list-table]].
 
 ## Related
 

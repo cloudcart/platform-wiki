@@ -7,8 +7,8 @@ aliases: ["Text carousel module", "extra.text-carousel", "Testimonials module", 
 tags: [design, modules, content, carousel, testimonials, text]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Text carousel module (`extra.text-carousel`)
@@ -110,7 +110,7 @@ The per-slide `html` field is a TinyMCE block. The allowed-tag list matches the 
 
 ### Cache invalidation on save / reset
 
-Both **Save** and **Reset** regenerate the per-site cache key. The storefront picks up the new configuration on the very next request.
+Both **Save** and **Reset** regenerate the per-site cache key; pages rendered afterwards use the new configuration, while guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ## Theme-specific notes
 

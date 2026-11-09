@@ -7,8 +7,8 @@ aliases: ["Blog articles", "Posts", "Blog posts", "Articles", "Статии", "�
 tags: [marketing, blog, content, seo, articles]
 plan_gates: ["blog_articles", "blog_categories"]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 11
+updated: 2026-11-09
+source_count: 12
 ---
 # Blog Articles
 
@@ -57,7 +57,7 @@ The hub catalogues the surface only. Every detail lives on the relevant sub-page
 Full field catalogue lives on the relevant sub-page. Highlights that apply cluster-wide:
 
 - **Required fields**: `name` (3 ≤ length ≤ 191), `author_id`, `blog_id`. See [[blog-articles-rules]] for the full the request validator ruleset and verbatim error strings.
-- **URL handle** is auto-derived from the title on first save then locks; renaming creates a 301 redirect from the old slug via [[marketing-seo-301-redirects]]. See [[blog-articles-editor]] + [[blog-articles-rules]].
+- **URL handle** is auto-derived from the title on first save then locks; on a rename the old handle is kept in a hidden 30-day history ([[seo-301-redirects-auto-tracking]]), not as a row on [[marketing-seo-301-redirects]]; add a rule there for a permanent redirect. See [[blog-articles-editor]] + [[blog-articles-rules]].
 - **Plan-feature keys**: `blog_articles` (numeric + access — article count cap; lower plans cannot access the route at all) and `blog_categories` (numeric + access — required parent). Extendable via feature pack — see [[plan-features]] + [[plan-vs-feature-pack]].
 - **Permission keys** — four independent keys gate the area: `marketing.blog_articles`, `marketing.blog_categories`, `marketing.blog_comments`, `marketing.blog_tags`. See [[blog-articles-rules]] + [[settings-staff]].
 

@@ -7,8 +7,8 @@ aliases: ["Property values", "Property options", "Option values", "Property → 
 tags: [products, properties, values, options, taxonomy]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[products-property]]. See the hub for the other aspects (list view, wizard, categories, merge, business rules, programmatic access).
@@ -17,7 +17,7 @@ source_count: 2
 
 ## Purpose
 
-The per-property sub-page that manages the discrete option values (Red, Blue, Cotton, 16GB, etc.) for a Checkbox-type property. Each value carries its own metadata — image, description, SEO — that surfaces on the storefront's filter sidebar and (on some themes) on a dedicated value landing page.
+The per-property sub-page that manages the discrete option values (Red, Blue, Cotton, 16GB, etc.) for a Checkbox-type property. Each value carries its own metadata — image, description, SEO. The name (and, where the theme uses it, the image) surfaces in the storefront's filter sidebar; the description and SEO fields are stored but not shown by the platform's storefronts (see Business rules).
 
 Range-type properties have no discrete values (the slider auto-computes min/max from product data at runtime), so the sub-page is meaningful only for Checkbox-type properties.
 
@@ -44,11 +44,11 @@ Sidebar → Products → **Properties** → click the **Values** count for the r
 | Section | Field | Notes |
 |---|---|---|
 | **General settings** | **Name** | Required free text — the value as customers see it (e.g., "Red", "Cotton", "16GB"). Max **191 characters** (server-side, same cap as the property name). |
-| General settings | **Description** | Optional rich-text editor. Shown on the dedicated value landing page on some storefronts. |
+| General settings | **Description** | Optional rich-text editor. Stored only: no standard theme or Storefront API field shows it, and search does not index it. |
 | General settings | **Category Property Image** | Optional single image (e.g., colour swatch). When an existing image is removed, the modal POSTs `/admin/api/core/properties/image/{id}` to clear it. Dimensions / max-thumb-size are governed by the parent property's `width`, `height`, `max_thumb_size` fields — see [[products-property-business-rules]]. |
-| **Advanced settings** (collapsible) | **SEO title** | Optional. |
-| Advanced settings | **SEO description** | Optional. |
-| Advanced settings | **URL handle** | Optional URL slug for the value's storefront page. Managed via the shared `CcSeoConfiguration` block with a category-property URL prefix. |
+| **Advanced settings** (collapsible) | **SEO title** | Optional. Stored only, like the description. |
+| Advanced settings | **SEO description** | Optional. Stored only. |
+| Advanced settings | **URL handle** | Optional slug used in filter addresses: `/category/<category>?<property-handle>=<value-handle>`. Managed via the shared `CcSeoConfiguration` block. |
 
 ### Range-type properties
 
@@ -63,6 +63,8 @@ If a Range property somehow has option values (e.g., legacy data, or because it 
 - **Detaching a category does NOT cascade-delete per-product values that reference values defined here.** Orphan values remain in storage and reappear if the category is re-attached — see [[products-property-categories]].
 - **Drag-reorder controls storefront order.** The sort order of values is the order in which they appear under the property on the storefront filter sidebar.
 - **Saving a value triggers a storefront search-engine re-sync** for products tagged with the value — see [[products-property-api]] for side-effect detail.
+- **Search sees the value's name, not its description.** The index and the AI embeddings carry *"Property: Value"* pairs for active properties attached to the product's main category. A value's Description, SEO title and SEO description are in neither, so they never make a product findable ([[apps-advanced-search-settings]], [[apps-listing-engine-embeddings]]).
+- **A value has no storefront page of its own.** Its link is the category page filtered by the value. The storefront's filters carry only each value's name, address handle and count, and the Storefront API returns a product's properties only as names and values, so the value's Description and SEO fields reach no shopper.
 - **Value merge consolidates values irreversibly** — see [[products-property-merge]] for the dedicated mechanics (cross-property merge, deduplication, ES re-sync, transactional behaviour).
 - **The storefront product detail page joins on the product's PRIMARY category only.** A product in three categories (Electronics → Phones → Smartphones) only shows the values whose parent property is attached to the product's **primary `category_id`** in the Specifications table. Important for multi-category property strategies — see [[products-property-business-rules]].
 

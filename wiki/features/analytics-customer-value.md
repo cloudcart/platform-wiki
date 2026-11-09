@@ -7,8 +7,8 @@ aliases: ["Customer Value", "Customer Lifetime Value", "CLV proxy", "Order value
 tags: [analytics, ccanalytics, orders, customer-value, customer-lifetime-value]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-06-10
-source_count: 9
+updated: 2026-11-09
+source_count: 10
 ---
 # Customer Value
 
@@ -96,11 +96,9 @@ Per time bucket the analytics pipeline computes:
 
 The whole-period headline runs the same math without bucketing. This is mathematically equivalent to `total_revenue / unique_customers` over the same orders; it is expressed as a product only because it reuses the same intermediate metrics as the AOV box, which makes auditing and re-running easier. The headline total is truncated to integer scaled minor units.
 
-### Guest / anonymous orders are excluded
+### Orders without a Customer record are excluded
 
-Orders with no `customer_id` (guest checkout) are **dropped at ingest** — they are never stored in the customer-value collection. So the order count counts **customer-attributed orders only**, and the unique-customer denominator can never include a null.
-
-Consequence: a store with 80 customer orders and 20 guest orders shows `count = 80`, not 100. Because of this, Customer Value × Total Customers is **non-comparable** with [[analytics-total-sales]] (which counts all orders, including guests). For high-guest-checkout stores, Customer Value will be lower than a naive `Total Sales / Total Customers`.
+Orders with no `customer_id` are **dropped at ingest**, so the unique-customer denominator never includes a null. Storefront guest checkouts are not among them: each is linked to the guest's Customer record (Guests group) and counted. Only orders with no Customer record at all make Customer Value × Total Customers differ from [[analytics-total-sales]].
 
 ### Per-order revenue uses `amount_without_shipping`
 

@@ -3,12 +3,12 @@ type: feature
 nav_path: "Orders → Details → Shipping"
 route_name: admin.orders.details
 route_path: /admin/orders/details/:order_id
-aliases: ["Order shipping row", "Shipping action row", "Order fulfillment row", "Waybill", "Generate waybill", "Fulfill products", "Mark as unfulfilled", "Print label", "Insurance request", "Change side", "Shipping Hours expected delivery"]
+aliases: ["Order shipping row", "Shipping action row", "Order fulfillment row", "Waybill", "Generate waybill", "Fulfill products", "Подготви за изпращане", "Mark as unfulfilled", "Маркирай като неизпратена", "Change provider after waybill", "Print label", "Insurance request", "Change side", "Shipping Hours expected delivery"]
 tags: [orders, order-details, shipping, fulfillment, waybill, courier]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[orders-details]]. See the hub for the other aspects (header, products, addresses, payment, history, actions, known issues).
@@ -31,10 +31,11 @@ Main column of `/admin/orders/details/<order_id>`, below the **Payment** row. It
 
 There is no separate "Fulfillment row". Everything to do with dispatch lives in the single **Shipping** row:
 
-- Shipping provider icon + name, and a **Change provider** dropdown (when allowed; a read-only provider name otherwise).
-- **Fulfill products** primary button — for a courier with an integration, creates the courier waybill; for any other shipping method, opens a form to record the dispatch date, delivery date, tracking number and an optional tracking link, and saving it marks the order fulfilled.
+- Shipping provider icon + name, and a **Change provider** dropdown while the order is not fulfilled and stock suffices; a fulfilled order shows the provider name read-only, so **Mark as unfulfilled** comes first.
+- **Fulfill products** (**Подготви за изпращане**) primary button — for a courier with an integration, creates the courier waybill; for any other shipping method, opens a form to record the dispatch date, delivery date, tracking number and an optional tracking link, and saving it marks the order fulfilled.
 - **Print** — the label PDF, shown once a waybill exists and the order is fulfilled.
-- **Mark as unfulfilled** — the un-fulfil path (see below), shown only once the order IS fulfilled.
+- **Mark as unfulfilled** (**Маркирай като неизпратена**) — the un-fulfil path (see below), shown only once the order IS fulfilled.
+- For Econt, a yellow box **"Съобщение от Еконт: …"** with the warning Econt returned with the waybill ([[econt-waybill-save]]).
 - Per-courier secondary buttons: **Change side** (receiver-pays vs sender-pays), **Request insurance**.
 - Tracking number (plus the return waybill number, when one exists).
 - Situational messages instead of the button: out-of-stock, outstanding card authorisation, or an open return (see below).
@@ -43,7 +44,7 @@ Per-line fulfilment state is shown as a **badge on each line of the products tab
 
 ### Mark as unfulfilled — the only un-fulfil path
 
-Once the order is fulfilled, a red **Mark as unfulfilled** button appears in the Shipping row. It is the only un-fulfil button — there is no bulk equivalent on the [[orders]] list; for a shipping method without a courier integration the order's status menu also offers **Not fulfilled**, and a fulfilled order moved to a negative status is reset automatically (see Business rules). It fires **immediately, with no confirmation dialog**. It drops the order's fulfillment record so the order returns to `not_fulfilled` and the waybill can be re-generated. It does **not** re-open line-item editing on an invoiced order — that block keys on the invoice, not on fulfilment ([[orders-details-known-issues]]).
+Once the order is fulfilled, a red **Mark as unfulfilled** button appears in the Shipping row. It is the only un-fulfil button — there is no bulk equivalent on the [[orders]] list; for a shipping method without a courier integration the order's status menu also offers **Not fulfilled**, and a fulfilled order moved to a negative status is reset automatically (see Business rules). It fires **immediately, with no confirmation dialog**. It drops the fulfillment record, returns the order to `not_fulfilled` and asks the courier to cancel the stored waybill; a failed cancellation is not reported ([[waybill-remove-void]]). It does **not** re-open line-item editing on an invoiced order — that block keys on the invoice, not on fulfilment ([[orders-details-known-issues]]).
 
 ### Fulfill products / waybill flow
 
@@ -103,10 +104,6 @@ If `quantity_enough` returns false (i.e., the order's line items exceed current 
 
 If the payment is in `authorized` state (capture hold) and the gateway requires capture-before-fulfilment, the button is hidden until the merchant captures the authorisation via [[orders-payment-capture]].
 
-### Waybill EUR variant — hard error after 2026-01-01
-
-For orders in `BGN` currency that hit the `admin.eur.waybill` route after 2026-01-01, the platform throws a hard error asking the merchant to convert the order to EUR first. The conversion button is in the sidebar (see [[orders-details-actions]]). This is part of the Bulgarian BGN→EUR transition — verified.
-
 ### Per-line fulfillment badge states
 
 Each line in the products table carries a fulfillment badge with three possible states:
@@ -127,9 +124,9 @@ When the merchant moves an order to a negative status (cancelled / refunded / fa
 
 While the order is fulfilled and its status is neither `completed` nor `cancelled`, the status badge on this page and in the [[orders]] list reads **Fulfilled** rather than the order's real status — a paid, dispatched order therefore shows *Fulfilled*, not *Paid*. See [[orders-details-header]].
 
-### Mark as completed requires fulfilment
+### Mark as completed and fulfilment
 
-The **Mark as completed** action (in the header 3-dot menu) is gated on `status == paid` AND `status_fulfillment == fulfilled` — see [[orders-details-header]]. So the merchant can only mark as completed AFTER both the payment and the courier dispatch are confirmed.
+The one-click **Mark as completed** action (header 3-dot menu) shows only when `status == paid` AND `status_fulfillment == fulfilled` — see [[orders-details-header]]. The status change needs only one of the two ([[orders-status-change-transition-rules]]).
 
 ### Shipping amount display — converted / original (multi-currency)
 
@@ -148,14 +145,7 @@ On a **paid (recalc-locked) order** the shipping price is kept rather than re-qu
 
 ### Waybill side effects
 
-Waybill generation does the following:
-
-- POSTs to the courier's API and stores the returned tracking number.
-- Optionally writes COD amount + insurance metadata to the order.
-- Failure surfaces an inline error in the panel — the order is NOT marked fulfilled.
-- On success, the order's `status_fulfillment` may automatically flip to `fulfilled` (depends on courier).
-
-See [[orders-shipping-waybill]] for the full per-courier catalogue.
+A successful waybill stores the courier's number and marks the order fulfilled; a failure shows the courier's error and leaves it not fulfilled. Per courier: [[orders-shipping-waybill]].
 
 ## Related
 

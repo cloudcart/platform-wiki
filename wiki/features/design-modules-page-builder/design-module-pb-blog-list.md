@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Dynamic Pages → Page-builder modules → Blog list"
+nav_path: "Design → Static pages → Dynamic page → Page-builder modules → Blog list"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["Blog list module", "Blog listing block", "Blog feed block", "Модул блог листинг"]
 tags: [design, modules, page-builder, blog, marketing]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Blog list block (`blog-list`)

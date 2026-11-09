@@ -1,11 +1,11 @@
 ---
 type: entity
 nav_path: "Entity → Import Task → Processing model"
-aliases: ["Import task processing", "Chunked import", "500-row chunks", "Upsert default", "Import validation handling", "Silent skip", "Counted error", "Import file format constraints"]
+aliases: ["Import task processing", "Chunked import", "500-row chunks", "Upsert default", "CSV import creates only", "Import validation handling", "Silent skip", "Counted error", "Import file format constraints"]
 tags: [entity, settings, ops, imports, processing, validation]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 > Part of [[import-task]]. See the hub for the other aspects (attributes, lifecycle, types + queues, provenance + recovery, history + webhooks).
@@ -19,7 +19,7 @@ How the worker actually executes an Import Task — the **500-row chunked iterat
 ## Aliases
 
 - **Chunked import** — emphasises the 500-row batching.
-- **Upsert default** — the create-or-update semantics every importer uses.
+- **Upsert default** — the create-or-update semantics most importers use (product CSV only creates).
 - **Validation handling** — the three buckets a bad row falls into (silent skip / counted error / abort).
 - **Import file format** — the input constraints (csv / txt, UTF-8, etc.).
 
@@ -44,13 +44,13 @@ Identifier resolution per importer:
 | Importer | Identifier(s) used to match existing records |
 |----------|----------------------------------------------|
 | Customers CSV | `email` (primary), optionally backed by stored customer-ID column |
-| Products CSV | `product.id` (if column mapped), then SKU, then barcode |
-| XML sync | `xml_import_product_id` written on first sync, then matched on subsequent runs |
+| Products CSV | None against the existing catalogue: the file's product ID only groups rows within the same task, so every task creates new products (see [[apps-csv-import]]) |
+| XML sync | The task's "Compare by" column (SKU, barcode or ID) on existing variants; unmatched feed rows are not created |
 | Subscribers CSV | `email` |
 | Blog articles CSV | Slug or article-ID |
 | Redirects CSV | Source URL |
 
-There is no **"update only"** or **"create only"** toggle on most importers — the upsert is the default. The merchant who wants to ONLY add new (skip existing) typically filters the source data to exclude existing identifiers before upload.
+There is no **"update only"** or **"create only"** toggle on any of these importers. Where an importer upserts, the merchant who wants to ONLY add new (skip existing) filters the source data to exclude existing identifiers before upload. Product CSV has no update path at all: re-importing products that already exist creates duplicates.
 
 ### Validation handling — three buckets
 

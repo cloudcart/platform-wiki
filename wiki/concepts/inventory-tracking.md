@@ -5,8 +5,8 @@ aliases: ["Inventory tracking", "Stock tracking", "Quantity tracking", "Stock ma
 tags: [catalog, inventory, stock, variants, concepts]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 13
+updated: 2026-11-09
+source_count: 14
 ---
 
 # Inventory tracking
@@ -17,7 +17,7 @@ source_count: 13
 
 > **Important: stock does NOT go negative on the order-decrement path.** When a Variant's stock would drop below 0 on a decrement, the platform clamps it to **0** (regardless of the `continue_selling` flag). The merchant tracks "how many units we owe customers" via the count of outstanding orders against a 0-stock Variant — the Variant `quantity` itself never goes negative. This is the most-misstated rule about CloudCart inventory. See [[inventory-oversell]] for the full clamping mechanics.
 
-CloudCart's native inventory tracking is **single-warehouse** — one `quantity` per SKU, with no notion of per-location sub-totals; multi-warehouse fulfilment lives in apps (see [[inventory-multi-warehouse]]). The most-asked operational question is **when** stock drops — set store-wide by `order_status_for_quantity_decrease` on [[settings-cart]] (`paid` default vs `pending`); cancelled / refunded orders return stock automatically, tracked per-line so the platform never double-credits (see [[inventory-decrement-timing]] + [[inventory-restock]]).
+CloudCart's native inventory tracking is **single-warehouse** — one `quantity` per SKU, with no notion of per-location sub-totals; multi-warehouse fulfilment lives in apps (see [[inventory-multi-warehouse]]). The most-asked operational question is **when** stock drops — set store-wide by `order_status_for_quantity_decrease` on [[settings-cart]] (`pending` on new stores, or `paid`); cancelled / refunded orders return stock automatically, tracked per-line so the platform never double-credits (see [[inventory-decrement-timing]] + [[inventory-restock]]).
 
 **Stock movements ARE auditable** — every Variant `quantity` change (auto-decrements, manual edits, imports, ERP syncs, JSON-API v2 writes) is recorded in the parent product's [[products-change-log|Change log]] with timestamp + explicit Initiator. For "the stock changed and we didn't change it" tickets, the Change log is the **first place to look** — see [[inventory-debugging-playbook]].
 

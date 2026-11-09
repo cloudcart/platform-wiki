@@ -5,8 +5,8 @@ aliases: ["Tax", "Fee", "VAT", "Tax rate", "VAT rate", "Surcharge", "Handling fe
 tags: [entity, taxes, fees, vat, finance, invoicing]
 plan_gates: []
 created: 2026-05-24
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 # Tax / Fee
@@ -20,7 +20,7 @@ A **Tax / Fee** is a rate or charge the platform applies to an order at checkout
 
 Each rule carries a name, a rate (percent or flat amount), a target scope (rest-of-world fallback or specific [[geo-zone]]), a VAT flag, and optional per-region / per-category overrides. Once an order is placed, the engine snapshots the applied tax lines onto the order so historical invoices stay accurate even when the merchant later edits the rate — see [[tax-entity-snapshot]] for the snapshot lifecycle and [[tax-computation]] for the full picker logic.
 
-A Tax is distinct from a [[discount]] (a merchant promotion subtracted from the total) and from a [[shipping-provider|shipping cost]] (a courier charge) — though VAT can apply on top of shipping via the rule's `shipping` bucketing flag.
+A Tax is distinct from a [[discount]] (a merchant promotion subtracted from the total) and from a [[shipping-provider|shipping cost]] (a courier charge) — though VAT can apply to store-charged shipping (decided per quote, not by the rule's `shipping` flag; see [[settings-taxes-pricing-display]]).
 
 ## Aliases
 
@@ -53,7 +53,7 @@ Quick reference — the **full table** with all per-field notes is on [[tax-enti
 | `target` | enum `restofworld` / `regions` | both | both |
 | `geo_zone_id` | FK → [[geo-zone]] | required when target = `regions` | same |
 | `price_with_vat` | bool | toggleable | **forced to `0`** |
-| `shipping` (bucketing) | enum `yes` / `no` | default `yes`, no UI toggle | **forced to `no`** |
+| `shipping` (stored, not read by the totals) | enum `yes` / `no` | default `yes`, no UI toggle | **forced to `no`** |
 | `oss_registration` | bool | visible when target = `regions` | n/a |
 | `regions[]`, `categories[]` | repeatable | both available | n/a |
 | `without_vat_reasons`, `_non_eu` | string, max 64,000 | available | n/a |

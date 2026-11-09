@@ -8,8 +8,8 @@ tags: [settings, emails, disambiguation, transactional, marketing, discontinued]
 plan_gates: []
 status: DISCONTINUED
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-emails]] (DISCONTINUED). See the hub for related aspects (create, management, billing, DNS records, discontinued context).
@@ -40,18 +40,18 @@ This page does not expose actions. It maps merchant questions to the correct scr
 | System | Where | What it controls | What it does NOT control |
 |--------|-------|------------------|--------------------------|
 | **Hosted mailboxes** | [[settings-emails]] | Branded `@yourdomain` INBOX-style mailboxes for the merchant to receive customer mail (`support@`, `info@`, etc.). Modoboa-hosted. DISCONTINUED. | Anything the store sends. Does not set the From address of any transactional or marketing email. |
-| **Store outgoing sender (`site_email`)** | [[settings-general]] | The **From address** on transactional emails sent by the store (order confirmations, password resets, customer notifications). Typically a no-reply address. | The Reply-To address of marketing campaigns. The delivery path (CloudCart's own infrastructure or marketing channel — not the hosted mailbox SMTP). |
-| **Transactional event gating** | [[settings-admin-notifications]] | **Which** transactional events the store sends (using `site_email` from [[settings-general]] as both sender and admin recipient). The admin's low-stock alerts, new-order notifications, etc. | The mailbox infrastructure. The marketing campaign delivery. |
-| **Marketing email delivery** | [[marketing-channels-email]] | Marketing campaign mail delivery via the merchant's external SMTP provider (SendGrid, Mailgun, Mailchimp, etc.). Newsletters, promotions, abandoned-cart recovery. | The transactional events. The hosted-mailbox infrastructure. |
+| **Store email (`site_email`)** | [[settings-general]] | The store's own address on its notifications to customers (order confirmations, password resets): their **Reply-To**, since the From is noreply@cloudcart.com with the store's name, or their **From** when the [[apps-smtp|SMTP app]] sends them. | The sender or Reply-To of campaigns (the Email channel's own sender address). The delivery path. |
+| **Transactional event gating** | [[settings-admin-notifications]] | **Which** transactional events the store sends (using `site_email` from [[settings-general]] as the admin recipient). The admin's low-stock alerts, new-order notifications, etc. | The mailbox infrastructure. The marketing campaign delivery. |
+| **Campaign email delivery** | [[marketing-channels-email]] | Campaign mail (newsletters, promotions, automated campaigns) and the subscriber confirmation, sent through the store's Elastic Email sub-account that CloudCart runs, From the channel's sender address with Reply-To the same address. | The notifications, including the abandoned-cart reminder. The hosted-mailbox infrastructure. |
 
 ### Setting key cross-reference
 
 | Key | Where | What it sets |
 |---|---|---|
-| `site_email` | [[settings-general]] | From address on transactional store emails (and the admin recipient on admin notifications). |
+| `site_email` | [[settings-general]] | Reply-To (From with the SMTP app) on notifications to customers, and the admin recipient on admin notifications. |
 | Modoboa per-mailbox subscription | [[settings-emails]] | Hosted mailbox (DISCONTINUED). |
 | Per-event toggles | [[settings-admin-notifications]] | Which transactional events fire. |
-| Marketing channel SMTP config | [[marketing-channels-email]] | External SMTP relay for marketing mail. |
+| Email channel sender address | [[marketing-channels-email]] | From and Reply-To of campaign mail. |
 
 ## Business rules
 
@@ -59,16 +59,16 @@ This page does not expose actions. It maps merchant questions to the correct scr
 
 This page (and [[settings-emails]]) does NOT affect:
 
-- The **From address** on transactional emails sent by the store. That is `site_email` in [[settings-general]] — typically a no-reply address that need NOT be a hosted mailbox at all.
-- The **delivery mechanism** for storefront transactional mail. The platform sends those through its own infrastructure (or through CloudCart's marketing channels — see [[marketing-channels-email]]); they do NOT go through the hosted mailbox SMTP.
-- The **marketing campaign mail**. Marketing emails go through the configured marketing channel ([[marketing-channels-email]]) — typically the merchant's own SendGrid / Mailgun / Mailchimp etc.
+- The sender of the store's notifications. They go From noreply@cloudcart.com with the store's name and Reply-To `site_email` from [[settings-general]], which need NOT be a hosted mailbox.
+- The **delivery mechanism** for the notifications. The platform sends them through CloudCart's shared sending account, or the store's own server via the [[apps-smtp|SMTP app]]; never through the Email channel or the hosted mailbox SMTP.
+- The **campaign mail**. It goes through the Email channel ([[marketing-channels-email]]), the store's Elastic Email sub-account that CloudCart runs.
 
 ### A common merchant configuration
 
 A typical merchant can have all three running simultaneously, on the same domain:
 
 - `support@mystore.bg` as a hosted mailbox (or, post-discontinuation, in Google Workspace) where customers email them directly.
-- `no-reply@mystore.bg` (or any other address) as the store's transactional sender configured in [[settings-general]]'s `site_email`.
+- `info@mystore.bg` (or any other address) as the store's email in [[settings-general]] (`site_email`), the Reply-To of its notifications.
 - `marketing@mystore.bg` configured for outgoing marketing campaigns via [[marketing-channels-email]].
 
 All three can use the same domain but they are independent setups. Changing one does NOT affect the others.
@@ -78,23 +78,24 @@ All three can use the same domain but they are independent setups. Changing one 
 | Merchant question | Where to point them |
 |---|---|
 | *"Customers are emailing `info@mystore.bg` but it bounces."* | [[settings-emails]] — is the hosted mailbox active and paid? Or migrate to a third-party provider. |
-| *"My order confirmations are going to spam."* | [[settings-general]] (`site_email`) + [[settings-domains]] DNS records (SPF / DKIM for the sender domain). |
+| *"My order confirmations are going to spam."* | Sent by CloudCart's shared account, they don't depend on the store's DNS. With the [[apps-smtp|SMTP app]], the store's domain needs SPF / DKIM for that server ([[settings-domains]]). |
 | *"I want to stop getting low-stock alerts."* | [[settings-admin-notifications]] — toggle the event off. |
-| *"My newsletter campaign didn't send."* | [[marketing-channels-email]] — check the configured SMTP provider's status / quota. |
-| *"How do I change the From address on order confirmation emails?"* | [[settings-general]] (`site_email`) — NOT [[settings-emails]]. |
+| *"My newsletter campaign didn't send."* | [[marketing-channels-email]] — check the Email card: Reconnect ([[email-channel-reconnect]]), suspension, plan limit. |
+| *"How do I change the From address on order confirmation emails?"* | They go From noreply@cloudcart.com; `site_email` in [[settings-general]] is their Reply-To. A From on the store's own domain needs the [[apps-smtp|SMTP app]]. NOT [[settings-emails]]. |
 
 ### What `site_email` does (and doesn't)
 
-`site_email` in [[settings-general]] is the **transactional From address**. It does NOT need to be a hosted mailbox — it can be any address the merchant controls. The merchant only needs to make sure the domain's SPF / DKIM are set up so receiving mail servers don't reject it as spoofed.
+`site_email` in [[settings-general]] is the **Reply-To** of the store's notifications to customers (their From is noreply@cloudcart.com), and their **From** only when the [[apps-smtp|SMTP app]] sends them; then the domain's SPF / DKIM must cover that server. It does NOT need to be a hosted mailbox — it can be any address the merchant controls.
 
-If the merchant uses a hosted mailbox address (e.g., `no-reply@mystore.bg`) as `site_email`, the transactional mail still goes through CloudCart's transactional infrastructure — NOT through the hosted-mailbox SMTP. The address is just the From label.
+If the merchant uses a hosted mailbox address (e.g., `no-reply@mystore.bg`) as `site_email`, the transactional mail still goes through CloudCart's transactional infrastructure — NOT through the hosted-mailbox SMTP. The address is only the Reply-To.
 
 ## Related
 
 - [[settings-emails]] — hub (this disambiguation table's primary subject).
 - [[settings-general]] — `site_email` (the transactional From address); two-step double-confirmation flow on change.
 - [[settings-admin-notifications]] — which transactional events fire; admin-recipient gating.
-- [[marketing-channels-email]] — marketing email delivery via external SMTP.
+- [[marketing-channels-email]] — campaign email delivery through the store's Elastic Email sub-account.
+- [[apps-smtp]] — notifications through the store's own mail server.
 - [[settings-domains]] — the shared domain layer that all four mail systems sit on top of.
 
 ## Open questions

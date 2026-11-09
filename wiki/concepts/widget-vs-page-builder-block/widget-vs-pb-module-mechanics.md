@@ -5,8 +5,8 @@ aliases: ["Module mechanics", "Storefront module mechanics", "Theme module slots
 tags: [design, modules, page-builder, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[widget-vs-page-builder-block]]. See the hub for the other aspects (block mechanics, shared template library, theme-switch behaviour, system pages + restrictions).
@@ -62,7 +62,7 @@ Each module instance in a theme's `theme.json` declares:
 - A **slot location** — where the theme renders this instance (homepage row, footer column, header bar, cart sidebar, etc.). The theme controls placement; the merchant cannot move a module to a different slot.
 - A **settings form** — generated from one of the 25 shared template files based on the module type.
 
-Editing flow: merchant clicks an instance card → opens settings panel → edits form fields → clicks **Save module**. Settings persist as JSON keyed by `(theme, instance_name)`. Storefront cache regenerates; next page render picks up the new settings.
+Editing flow: merchant clicks an instance card → opens settings panel → edits form fields → clicks **Save module**. Settings persist as JSON keyed by `(theme, instance_name)`. The module cache renews; pages rendered afterwards use the new settings (guests within 20 minutes).
 
 ## Storage shape
 

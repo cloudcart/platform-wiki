@@ -7,8 +7,8 @@ aliases: ["Variant data model", "Variant limits", "3 parameters per product", "5
 tags: [products, variants, limits, data-model]
 plan_gates: ["multi_variants"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Variants — data-model rules + hard caps
@@ -112,7 +112,7 @@ Any incoming attribute NOT on the fillable list is dropped before save — preve
 
 ### Delete protection — must detach products first
 
-- Deleting a parameter whose values any product or variant uses is refused, and the toast names the parameters. The merchant must first remove it from those products (product editor or bulk-edit).
+- Deleting a parameter is refused while any product uses it or any variant still carries one of its values; the toast names the parameters. Detach it **one product at a time in the product editor**: remove its row in **Product type settings** (the ⓧ) and save, or switch to **Simple Product** ([[variant-entity-lifecycle]]). No bulk action, CSV or Google Sheets path exists; switching **Active** off does not detach it.
 - Same logic applies to deleting an individual value: if any variant uses that value, the deletion fails. The merchant can reassign products to other values or use the Merge action ([[products-variants-values]]) to consolidate values.
 
 ### Variants are store-wide (NOT category-scoped)

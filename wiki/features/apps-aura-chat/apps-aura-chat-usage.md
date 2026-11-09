@@ -7,8 +7,8 @@ aliases: ["Aura Chat usage", "Aura Chat credits", "Buy more credits", "Top up no
 tags: [apps, ai, chat, billing, usage]
 plan_gates: ["aura-chat-credit"]
 created: 2026-09-23
-updated: 2026-09-23
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Aura Chat — credits, the allowance, and running out
@@ -70,8 +70,13 @@ Conversations left = what remains ÷ the average conversation over the **last 30
 ### When it runs out
 
 - The admin shows *The allowance is used up. The assistant stops answering until it is raised.* (or *No allowance is loaded, so the assistant cannot answer.*).
-- Shoppers see only *Чатът временно не е достъпен. Моля, опитайте по-късно или се свържете с магазина по друг начин.* There is no mention of billing or credit ([[apps-aura-chat-widget]]).
-- Buying credit raises the allowance as soon as the payment is confirmed, and the assistant answers again.
+- The launcher stops appearing on the storefront from the next page view.
+- The check runs before every shopper message, so a conversation already open stops at the shopper's next message; a reply already being written is finished. The shopper sees only *Чатът временно не е достъпен. Моля, опитайте по-късно или се свържете с магазина по друг начин.* (English stores: *Chat is temporarily unavailable. Please try again later or contact the store another way.*). There is no mention of billing or credit ([[apps-aura-chat-widget]]).
+- Buying credit raises the allowance as soon as the payment is confirmed; the launcher is back on the next page view and the assistant answers again.
+
+### No automatic top-up, low-balance alert or spending cap
+
+Nothing tops the allowance up when it runs low, and no e-mail or admin alert warns before it runs out: the warnings are the texts on this tab and the Overview. A pack bought with a renewal period adds its value again at each paid renewal. There is no separate spending cap to set; the allowance itself is the ceiling. Credit is bought through the same paid-feature window as any CloudCart feature pack and invoiced the same way ([[subscription-invoices]]). Like every CloudCart price, the pack prices shown in the admin are in EUR without VAT (Terms of Use §11.1, [[terms-of-use-billing-renewal]]).
 
 ### Credit is a separate purchase from the Aura Search plan
 
@@ -87,4 +92,4 @@ Aura Chat credit (`aura-chat-credit`) is bought on its own and covers only the c
 
 ## Open questions
 
-- Whether a conversation already under way is cut off mid-conversation when the allowance runs out, or only new messages are refused (verify).
+- Pack prices are in the billing catalogue and are deliberately not recorded here (they are in EUR without VAT, Terms §11.1).

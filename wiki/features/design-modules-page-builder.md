@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Dynamic Pages → Page-builder modules"
+nav_path: "Design → Static pages → Dynamic page → Page-builder modules"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["Page builder modules", "Page builder blocks", "Dynamic page modules", "Builder blocks", "Модули за builder", "Блокове в builder"]
 tags: [design, modules, page-builder, marketing, landing-pages]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-10-21
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Page Builder modules
@@ -41,13 +41,12 @@ The page builder is gated by the `storefront_builder` plan feature (see [[plan-g
 
 ## Where to find it
 
-Sidebar → **Marketing** → **Pages** → click **+ Add new page** → pick **Dynamic page** → opens the page builder at `/admin/marketing/pages/builder/{page_id?}`.
+Sidebar → **Design** → **Static pages** → **Add page** → pick **Dynamic page** → opens the page builder at `/admin/marketing/pages/builder/{page_id?}`.
 
 Inside the builder:
 
-1. Click **+ Add block** on any row to open the block picker.
-2. Pick a module from the picker — only apps-installed modules appear.
-3. Configure the block in the side panel.
+1. Click **+ Добави нов модул** (Add new widget) at the bottom of a column to open the block picker.
+2. Pick a module; configure it in the panel. Rows, row settings and moving blocks: [[landing-pages-builder-rows]].
 4. The change is auto-saved as a draft history version. Click **Publish changes** to write it to the page's content JSON and make it live (a published `PageHistory` row is created).
 
 The same module registry is used to render the storefront — every block stored in the page's content JSON resolves to a module class via the platform code.
@@ -100,11 +99,11 @@ The page builder URL `/admin/marketing/pages/builder/...` is gated by the `store
 
 ### `blog-list` module is wired but commented out in the registry
 
-The codebase has the platform code class fully implemented (with `per_page` setting + restrictions), and the page-builder settings template `blog-list.tpl` is present. However, the entry in `App\Services\Module::$widgets_map` for `blog-list` is **commented out** (annotated `//@todo 50-60% ready`). At the time of writing, the block is therefore NOT available in the picker — see [[design-module-pb-blog-list]] for details. (verify against current main branch)
+The codebase has the platform code class fully implemented (with `per_page` setting + restrictions), and the page-builder settings template `blog-list.tpl` is present. However, the entry in `App\Services\Module::$widgets_map` for `blog-list` is **commented out** (annotated `//@todo 50-60% ready`). The block is therefore NOT available in the picker — see [[design-module-pb-blog-list]].
 
 ### Cache invalidation
 
-Saving a page invalidates the page's cache key and (if the page is assigned to a system slot) the `error404` / `private-shop:redirect_page` caches — see [[marketing-landing-pages]]. The next storefront request renders the new arrangement.
+Saving a page clears only the `private-shop:redirect_page` cache and, when its system slot changed, the `error404` cache — see [[marketing-landing-pages]]. The cached page itself is not cleared: guests see changes within 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ## Related
 

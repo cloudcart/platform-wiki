@@ -7,8 +7,8 @@ aliases: ["Review moderation", "Approve review", "Verified buyer", "Reviews tab"
 tags: [apps, others, reviews, qa, moderation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 > Part of [[apps-product-review]]. See the hub for the other aspects (settings, submission, Q&A, internals).
@@ -29,15 +29,18 @@ Sidebar → Apps → **Product Reviews** → **Reviews** tab (`apps.product_revi
 
 - List of all reviews across products.
 - Filter / search / moderate — Approve / Hide / Delete bulk actions (same workflow as [[customers-details-reviews]]).
+- **Add new review** — a form with **Select product**, **Client** (any name, typed freely), date, rating, title and **Comment**; the review is published at once. Marked *Paid feature*: it needs the same plan feature as reviews in general (see the plan cap below). This is how a merchant adds a review on someone's behalf, under any name.
+- **Answers** — a review's answers open in a window where each can be approved (**Approve answer**) or deleted. There is no reply box there.
 
 ### Questions tab
 
 - List of all questions on products (when Q&A is enabled — see [[apps-product-review-qa]]).
-- Same moderation workflow.
+- Same moderation workflow, plus adding a question from the admin.
 
 ### What the merchant CANNOT do here
 
-- Edit the review's text — only Approve / Hide / Delete.
+- Edit an existing review's text or author name — only Approve / Hide / Delete.
+- Reply from this screen — replies are written on the storefront, see below.
 - Export reviews — there is no Export button on the Reviews tab; reviews cannot be exported to a file for external analysis.
 
 ## Settings & fields
@@ -53,6 +56,10 @@ Moderation behaviour is driven by the settings on [[apps-product-review-settings
 3. **All reviews auto-published** (`accept_review = OFF`) — no moderation.
 
 Threshold-based is the most popular setting — it balances speed (good reviews go up fast) and protection (bad reviews get screened).
+
+### Replying as the merchant
+
+Open the product page on the storefront in the same browser while signed in to the admin. With **Allow replies** (`accept_answers`) on, the admin can always answer, whatever "who can answer" is set to; with it off nobody can. The answer is signed with the name of a customer or remembered visitor signed in on that browser, otherwise with the admin's name. A review answer is published at once when `approved_answers` is on, otherwise it waits under **Answers**; a question answer is published at once. The reviewer is not notified. Integrations can also add answers through the Admin API.
 
 ### Verified-buyer enforcement
 

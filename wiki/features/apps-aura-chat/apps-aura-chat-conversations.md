@@ -7,8 +7,8 @@ aliases: ["Aura Chat conversations", "chat transcripts", "chat history admin", "
 tags: [apps, ai, chat, conversations, inbox]
 plan_gates: ["aura-chat-credit"]
 created: 2026-09-23
-updated: 2026-09-23
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Aura Chat — the Conversations inbox
@@ -27,7 +27,7 @@ The **Conversations** inbox is the merchant's record of every chat: what the sho
 
 - Browse conversations, newest first, and open one.
 - Filter by channel, outcome, feedback, topic, and "kept".
-- Read the full transcript, optionally with the assistant's working steps (**Show tool calls**).
+- Read the full transcript.
 - See the order(s) that followed a conversation, and which shown products were bought.
 - Mark a conversation **Keep this conversation for later** (and **Remove the mark**).
 
@@ -58,7 +58,7 @@ Each row shows who it was, a preview of the last message, the time, a **Kept for
 
 ### The transcript
 
-Messages from the shopper and the **Assistant** in order, with product cards, shop cards, question cards (and the answer chosen) exactly as shown. The rating and any complaint text appear with it. **Show tool calls** adds the steps the assistant took, by name (searching the catalog, looking up an order); it does not show the raw search results the shopper never saw.
+Messages from the shopper and the **Assistant** in order, with product cards, shop cards, question cards (and the answer chosen) exactly as shown. The rating and any complaint text appear with it. Sources are not listed per answer: a page link appears only where the assistant gave it to the shopper. The **Show tool calls** switch, which adds the assistant's working steps (the catalog search, the order lookup, the question put to an agent), appears only for CloudCart staff who open the store from the CloudCart console; merchants and their staff do not see it.
 
 ### Details panel
 
@@ -76,7 +76,11 @@ Messages from the shopper and the **Assistant** in order, with product cards, sh
 
 ### Transcripts are kept six months
 
-Messages are deleted **six months** after they were written. The conversation's figures (dates, replies, usage, orders credited to it) are kept for 24 months. **Keep this conversation for later** is a bookmark for finding it again; it does **not** protect a transcript from the six-month deletion. To keep a transcript longer, copy it out.
+Messages are deleted **six months** after they were written. The conversation's figures (dates, replies, usage, orders credited to it) are kept for 24 months. **Keep this conversation for later** is a bookmark for finding it again; it does **not** protect a transcript from the six-month deletion. There is no export and no delete button: to keep a transcript longer, copy it out; one cannot be removed sooner from the admin.
+
+### No hand-over to a person, no notifications
+
+The inbox is a record, not a live desk. Nobody can join or take over a conversation, and the assistant has no way to pass one to staff; where it cannot help, it sends the shopper to the shop's own published pages or contacts. The merchant gets no e-mail or alert for a new conversation or a complaint, and reads them here.
 
 ### What the transcript records
 

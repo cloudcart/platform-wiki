@@ -7,8 +7,8 @@ aliases: ["Articles API access", "Blog API write paths", "Posts API behavior", "
 tags: [marketing, blog, articles, api, json-api-v2]
 plan_gates: ["blog_articles"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[marketing-blog-articles]]. See the hub for the other aspects (list, editor, CSV import, rules, storefront visibility).
@@ -61,7 +61,7 @@ API writes are gated by `marketing.blog_articles` (the same key as the admin UI)
 A POST / PATCH triggers the same pipeline as the admin save:
 
 - **Auto-slug + uniqueness** — Title-driven slug on first save; `url_handle` must be unique per store.
-- **301-redirect auto-creation** — When `url_handle` is renamed on an existing article, a 301 redirect is created from the OLD slug to the new — via [[marketing-seo-301-redirects]].
+- **Old handle history** — when `url_handle` is renamed on an existing article, the old handle is kept in a hidden 30-day history ([[seo-301-redirects-auto-tracking]]), not as a row on [[marketing-seo-301-redirects]]; add a rule there for a permanent redirect.
 - **Per-category 500-article cap** — The save fails with *"The blog can not have more than 500"* if the target category already has 500 articles. See [[blog-articles-rules]].
 - **Tag auto-creation, capped** — Up to 100 tags per article, each ≤ 191 chars; `%` and `_` are silently filtered.
 - **Plan-feature cap on article count** — `blog_articles` numeric cap is checked before the 500-cap.

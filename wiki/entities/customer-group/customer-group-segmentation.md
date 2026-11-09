@@ -5,8 +5,8 @@ aliases: ["Customer Group segmentation", "Bulk set group", "Group-based segment"
 tags: [entity, customers, groups, segments, marketing, webhooks]
 plan_gates: ["customer_groups"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[customer-group]]. See the hub for the other aspects (attributes, system groups, pricing & checkout, lifecycle & deletion, API).
@@ -51,7 +51,7 @@ A Customer Group is distinct from neighbouring grouping mechanisms:
 
 ### Group changes fire `customer.updated` (no dedicated event)
 
-When the merchant moves a Customer between groups — or a Cart Rule / sign-up flow auto-assigns a group — the platform fires the `customer.updated` webhook event ([[settings-hooks]]). There is **no dedicated `customer.group_changed` event**; receivers must compare the customer's `customer_group_id` against their last-seen snapshot to detect the change. The group entity itself has no `customer_group.*` webhook — group lifecycle (create / edit / delete) is silent.
+When the merchant moves a Customer between groups — or sign-up places a new customer in the Default group — the platform fires the `customer.updated` webhook event ([[settings-hooks]]). There is **no dedicated `customer.group_changed` event**; receivers must compare the customer's `customer_group_id` against their last-seen snapshot to detect the change. The group entity itself has no `customer_group.*` webhook — group lifecycle (create / edit / delete) is silent.
 
 ## Where it appears
 

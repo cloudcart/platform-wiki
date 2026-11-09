@@ -5,10 +5,10 @@ route_name: (none)
 route_path: (none)
 aliases: ["Digital products", "Downloadable products", "Virtual products", "Sell files", "Sell downloads", "Digital goods", "Дигитални продукти", "Сваляеми продукти", "Продажба на файлове", "E-book selling"]
 tags: [digital, downloadable, products, product-type, concepts, hub]
-plan_gates: []
+plan_gates: ["digital_products"]
 created: 2026-06-11
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 # Digital & downloadable products
 
@@ -23,22 +23,25 @@ A **digital product** is a non-physical item — a downloadable file (e-book, so
   - **file** — the customer downloads an attached file after purchase.
   - **page** — the customer is granted access to a page / content; this mode is the [[apps-membership]] integration ("Landing pages").
 - **Two internal values** — `wallet` and `gift_card` mark the hidden products behind [[virtual-wallet]] top-ups and [[apps-gift-card]] purchases. Merchants do not choose them; they show in webhook and order payloads. See [[wallet-gift-instrument-checkout]].
-- **No shipping** — a digital product carries no weight and generates no courier waybill; a digital-only cart skips the shipping step at [[checkout-flow]].
+- **Plan, not an app** — the **file** mode is native and needs only the plan feature `digital_products`; there is no separate digital-files app. The **page** mode needs [[apps-membership]].
+- **No shipping** — a digital product carries no weight and generates no courier waybill; a digital-only cart skips the shipping step at [[checkout-flow]] unless the store-wide **Ask for shipping address for digital products** is on. The product's own **Requires shipping** switch does not change this.
+- **Account required** — a cart holding a digital product never offers guest checkout; see [[checkout-flow-guest-vs-registered]].
 - **Auto-fulfilled on paid** — a digital-only order needs no waybill and no manual step: it is fulfilled automatically the moment it reaches `paid`, so (with `order_complete = 1`) it auto-promotes to `completed` without a shipping step. See [[order-pipeline-stage-4-fulfillment]].
-- **Delivery after purchase** — the file is served through a signed, order-scoped download link (the headless storefront exposes a signed `/api/sf/downloads/{id}` endpoint — see [[headless-storefront-api]]).
+- **Delivery after purchase** — on a paid or completed order the email and the thank-you page send the buyer to **My account → Files**, which needs sign-in and shows only their own orders' files; no download cap or expiry. Details on [[products-digital]]. A headless storefront gets a 15-minute signed link (`/api/sf/downloads/{id}` — see [[headless-storefront-api]]).
 - The `digital` / `type_digital` flags live on the product record — see [[product-entity-attributes]].
 
 ## Contrasts
 
 - **Digital vs physical.** Physical = shipped, has weight / stock / waybill; digital = delivered electronically, no shipping step.
 - **file vs page mode.** `file` = a downloadable asset; `page` = gated content / access (closer to a membership).
-- **Type vs variants.** "Digital" is a product *type*, orthogonal to whether the product has [[products-variants-options|variants]] or belongs to a bundle.
+- **Type vs variants.** "Digital" is a product *type*; a digital product has a single variant and cannot have [[products-variants-options|variants]].
+- **Digital file vs attached file.** Any product can carry attached files (a manual, a data sheet) with a **Publish file** switch. A published one downloads at `/download/product/public/…` (`site.download.public`). An unpublished one shows only on the buyer's order page and thank-you page, through a link carrying the order's hash (`site.download.private.hash`); `site.download.private` without the hash works only for a signed-in buyer of that product. These are not a digital product's download.
 
 ## Where it applies
 
 - Product editor — the Digital type selection ([[products-editor]]).
 - Checkout — a digital-only order skips shipping ([[checkout-flow]]).
-- Order delivery — signed download link per order ([[headless-storefront-api]]).
+- Order delivery — the buyer's **Files** page in their account ([[products-digital]]); a signed link on a headless storefront ([[headless-storefront-api]]).
 
 ## Related
 
@@ -52,6 +55,6 @@ A **digital product** is a non-physical item — a downloadable file (e-book, so
 
 ## Open Questions
 
-- Exact file-upload limits, accepted types, and download caps / expiry for the Downloadable-files mode (verify) — see [[products-digital]].
-- Whether digital products track stock and/or enforce download limits / expiry (verify).
+- (Resolved) File limits, types and download access — see [[products-digital]]: up to 5 files, any file-manager type up to 1024 MB, no download cap or expiry.
+- Whether digital products track stock (verify).
 - (Resolved) The "membership" option is **not** a distinct type — it creates a digital product with `type_digital = page` via the [[apps-membership]] app; see [[products-digital]].

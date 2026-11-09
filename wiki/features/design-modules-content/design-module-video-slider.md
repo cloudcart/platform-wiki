@@ -3,12 +3,12 @@ type: feature
 nav_path: "Design → Modules → Content → Video slider"
 route_name: admin.storefront.widget
 route_path: /admin/storefront/widgets
-aliases: ["Video slider module", "Video carousel module", "Reels module", "extra.videoSlider", "videoSlider", "Видео слайдер", "Видео карусел"]
+aliases: ["Video slider module", "Video carousel module", "Reels module", "extra.videoSlider", "videoSlider", "Слайдър с видео", "Видео слайдер", "Видео карусел"]
 tags: [design, modules, content, video, slider, plan-gated]
 plan_gates: ["video_slider_widget"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Video slider module (`extra.videoSlider`)
@@ -17,7 +17,7 @@ source_count: 2
 
 ## Purpose
 
-The **Video slider** is a multi-slide video carousel — Instagram-Reels-style — with navigation arrows, pagination dots, progress bars, mute / pause controls, and per-slide CTAs. Each slide plays a full-bleed video (with a separate mobile video and an image fallback) plus a typographic overlay (H1 / H2 / H3 + description + button). It is plan-gated by `video_slider_widget` (see **Business rules**).
+The **Video slider** is a multi-slide video carousel with arrows, dots, a progress bar, a mute button and per-slide buttons. Each slide plays a full-width video (or image), with an optional separate mobile file, under an overlay of up to three headings, a description and a button. It is plan-gated by `video_slider_widget`.
 
 ## Where to find it
 
@@ -25,16 +25,12 @@ Sidebar → **Design** → **Modules** → **Others** tab → **Slider** group o
 
 ## What the merchant can do here
 
-- Toggle the slider on / off, autoplay (interval 2–15 s), arrows, dots, progress bar, mute button, and pause-on-hover.
-- Set desktop (200–1000 px) and mobile (200–800 px) carousel heights.
-- Add and configure slides — each with its own video, text overlay and CTA button (full list under **Settings & fields**).
-- Save / Reset / Cancel.
+- Toggle autoplay (2–15 s), arrows, dots, progress bar, mute button and pause-on-hover; set desktop (200–1000 px) and mobile (200–800 px) heights.
+- Add, copy and remove slides, each with its own video, overlay and button.
 
 What the merchant CANNOT do here:
 
-- Open or save the module on a plan without `video_slider_widget` — see **Business rules**.
-- Use an unsupported video host — the URL is validated only as a URL, so the merchant must host the video where the browser can stream it (YouTube, Vimeo, a CDN-hosted MP4, etc.).
-- Have CloudCart auto-generate poster images — the merchant supplies the image fallback.
+- Use a YouTube or Vimeo link. The slide plays its address in the browser's own video player, so it must point to a video file (the field's hint names MP4), picked **От хранилище** (the store's files) or typed as **Външен URL**.
 
 ## Settings & fields
 
@@ -64,7 +60,7 @@ All toggles below are `yes` / `no` (validation `in:yes,no`).
 | `bg_type` | select | Fallback: `video` (default) or `image` poster. |
 | `video_src` | URL (required) | Desktop video URL. |
 | `video_mobile` | URL (optional) | Mobile video URL. |
-| `video_src_type` / `video_mobile_type` | text | Optional media-type hint. |
+| `video_src_type` / `video_mobile_type` | select | **От хранилище** / **Външен URL**. |
 | `h1` / `h2` / `h3` | text | Three overlay heading lines. |
 | `description` | text | Overlay sub-heading. |
 | `h1_color` / `h2_color` / `h3_color` | colour | Heading colours. |
@@ -87,6 +83,8 @@ All toggles below are `yes` / `no` (validation `in:yes,no`).
 | `button_font_size` / `button_font_size_mobile` | number (8–200) | Button font size (px). |
 | `button_weight` | select | Font weight `100`–`900`. |
 
+Bulgarian labels in the editor: **Височина** with a laptop icon (desktop) and with a phone icon (mobile); per slide **Тип медия** (Видео / Изображение), **URL на фон (десктоп)** and **URL на фон (мобилен, по избор)**, each with **От хранилище** / **Външен URL** and **Източник**.
+
 ### Save / Reset / Cancel
 
 | Button | Action | Confirmation | Success message |
@@ -99,7 +97,7 @@ All toggles below are `yes` / `no` (validation `in:yes,no`).
 
 ### PLAN-GATED — `video_slider_widget` required
 
-Gated by the `video_slider_widget` plan feature in [[plan-gates]]. Without it, opening the edit panel shows a plan-upgrade prompt, a save fails before validation, and the module is hidden from the storefront. A merchant who saved on a higher plan and then downgrades keeps the saved configuration (not deleted) but loses view / edit access and storefront rendering until re-upgrading.
+Gated by the `video_slider_widget` plan feature in [[plan-gates]]. Without it the edit panel shows an upgrade prompt, saving fails and the storefront hides the module. A downgraded store keeps its saved slides but cannot edit or show them until it upgrades again.
 
 ### Every slide must have a desktop video URL
 
@@ -107,23 +105,23 @@ A slide with no desktop video URL is silently dropped on save. If that leaves ze
 
 ### Enum and range coercion
 
-Invalid values are corrected automatically: fallback type to `video`, text alignment to `center`, vertical alignment to `middle`. Padding clamps to 0–500 px, font sizes to 8–200 px, overlay opacity to 0–100. Heading weights must be blank or `100`–`900`.
+Invalid values are corrected on save: alignments fall back to centre / middle, padding clamps to 0–500 px, font sizes to 8–200 px, overlay opacity to 0–100.
 
 ### Fonts are restricted to installed store fonts
 
-A heading font not in the store's installed-fonts list is silently reset to empty. The merchant adds fonts via **Storefront fonts** first.
+A heading font not among the store's installed fonts is silently cleared; add it via **Storefront fonts** first.
 
 ### Defaults and cache
 
-Default heights are 700 px desktop, 600 px mobile. Both **Save** and **Reset** regenerate the storefront cache, so changes show on the next storefront request.
+Default heights are 700 px desktop, 600 px mobile. Save and Reset renew the module cache; guests see changes within 20 minutes ([[storefront-arch-caching-invalidation]]).
 
-### Autoplay and mobile bandwidth
+### How the video fits the slider
 
-Browsers block autoplay of videos with audio, so videos play muted by default; customers tap the mute button for sound. Video files are large — always provide a mobile-optimised mobile video URL (lower resolution / bitrate) so mobile customers don't burn data.
+The slider spans the full width of the area it sits in; its height is the desktop **Височина** value, or the mobile one at screen widths of 768 px or less. Each video (or image) is scaled to cover the whole frame and centred, so whatever does not match the frame's shape is cropped, never letterboxed. The platform sets no recommended ratio or file size: the frame's shape is that width divided by the height set, so keep the important part in the middle. Without a mobile URL, phones get the desktop video. Videos play muted and loop; the mute button unmutes. Every slide's video is marked to preload when the page opens, so keep files small and give phones a lighter file.
 
 ### Where the module comes from
 
-Most themes do NOT ship a `videoSlider` instance. The merchant typically adds it via a Dynamic page in [[marketing-landing-pages]] — drop the Video Slider block onto the page. A richer dedicated editor lives at [[apps-video-slider-widget]]. (verify whether the two surfaces share saved data.)
+Most themes do NOT ship a `videoSlider` instance. The merchant typically drops the **Слайдър с видео** block onto a Dynamic page in [[marketing-landing-pages]]; [[apps-video-slider-widget]] is the app that unlocks it.
 
 ## Related
 
@@ -131,8 +129,6 @@ Most themes do NOT ship a `videoSlider` instance. The merchant typically adds it
 - [[design-modules]] — parent module catalogue.
 - [[apps-video-slider-widget]] — richer dedicated video-slide editor.
 - [[design-module-carousel]] — image / mixed carousel (no plan gate).
-- [[design-module-text-carousel]] — text-only rotating carousel.
-- **Storefront fonts** — source of the H1 / H2 / H3 font choices.
 - [[plan-gates]] — `video_slider_widget` gating.
 - [[marketing-landing-pages]] — Dynamic pages can drop the Video Slider block in.
 
@@ -140,4 +136,3 @@ Most themes do NOT ship a `videoSlider` instance. The merchant typically adds it
 
 - 📡 **Plan-gate scope.** Whether `video_slider_widget` is on / off only, or whether higher plans allow more slides. (verify)
 - 📡 **Per-language overlay copy.** Whether overlay text and button label store separate values per storefront language. (verify)
-- 📡 **Mobile video aspect ratio.** Whether the module crops mobile videos to fill or letterboxes off-ratio ones. (verify)

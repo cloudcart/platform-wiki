@@ -5,8 +5,8 @@ aliases: ["Nitrogen overview", "Nitrogen storefront limits", "Handle hash", "Sto
 tags: [nitrogen, headless, storefront-api, limits, permissions, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[headless-storefront]]. See the hub for the other aspects (deployment methods, Nova platform, Storefront API, customer accounts, environment variables, legacy-vs-Nitrogen surfaces).
@@ -60,7 +60,11 @@ All three are platform-wide. Plans that have Nitrogen access all see the same ca
 
 A store can run its theme and up to 10 Nitrogen storefronts at the same time. The theme serves the store's domains by default. Every storefront answers on its own `{handle}.cloudcart.dev` address. One storefront at a time may serve the store's domains: routing a domain is done on that storefront's **Domains** tab, and a second storefront is refused with *"Another storefront already serves this site — remove it first"*. See [[headless-nova-platform]].
 
-**Back to the store theme** on that tab returns a domain to the theme. The storefront's own address does not change either way.
+**Back to the store theme** on that tab returns a domain to the theme. The storefront's own address does not change either way. Neither routing nor deleting a storefront touches the store's theme or its settings: the theme comes back exactly as it was left. Only a domain whose DNS CloudCart hosts can be routed; see [[headless-nova-platform]] for the refusals.
+
+### Active and Paused
+
+Every storefront is created **Active**, and no screen or action in the admin sets **Paused**. A Paused storefront cannot be given a domain (*"Storefront must be active before it can serve a domain"*); its own address keeps answering.
 
 ### Same CloudCart data backs every storefront
 
@@ -72,7 +76,7 @@ Access to the whole Nitrogen area needs the **Nitrogen Storefronts** permission 
 
 ### Plan gates
 
-Nitrogen itself does not have a published `plan_gate` key (verify). Certain scopes (`write_customers`, `read_orders`, `read_bulk_operations`) may be implicitly gated by the merchant's plan capabilities (verify). Trial and expired stores still reach the admin screens. On a domain routed to a storefront the platform answers `/robots.txt`, so the `Disallow: /` block applies there as on any store — see [[headless-legacy-vs-nitrogen]].
+Nitrogen has no plan gate: creating, deploying and routing a storefront check only the **Nitrogen Storefronts** permission and the 10-storefront cap, the same on every plan, and the admin charges nothing for them. A trial store uses it as usual. When the plan subscription is Past due or Expired, the Nitrogen screens redirect to the expired-subscription screen like the rest of the admin ([[expired-subscription-redirect]]), and while the store is Past due or Expired the Storefront API answers *"Store is currently unavailable."*, so the storefronts show no data ([[expired-subscription-data-lifecycle]]). On a domain routed to a storefront the platform answers `/robots.txt`, so the `Disallow: /` block applies there as on any store — see [[headless-legacy-vs-nitrogen]].
 
 ### Deletion — full teardown
 
@@ -104,8 +108,7 @@ The list's confirmation reads: *"Delete this storefront? It is removed from Nova
 - [[nitrogen-create-storefront]] — creation wizard.
 - [[nitrogen-storefront-overview]] — per-storefront detail and tabs.
 - [[settings-domains]] — where a domain joins the store.
-- [[plan-gates]] — how implicit scope-gating relates to the merchant's plan.
 
 ## Open Questions
 
-- Whether any storefront-creation surface enforces a plan-feature key (not just the per-site cap).
+- Whether Nova hosting is billed separately in the billing catalogue (nothing in the admin charges for it).

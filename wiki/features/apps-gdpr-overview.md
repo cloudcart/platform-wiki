@@ -3,12 +3,12 @@ type: feature
 nav_path: "Apps → GDPR"
 route_name: apps.gdpr.overview
 route_path: /admin/apps/gdpr/overview, /admin/apps/gdpr
-aliases: ["GDPR", "Gdpr Overview", "Cookie consent", "Privacy compliance", "GDPR app", "ДРЛЗ", "enable disable button", "app active toggle"]
+aliases: ["GDPR", "Gdpr Overview", "Cookie consent", "Privacy compliance", "GDPR app", "ДРЛЗ", "enable disable button", "app active toggle", "Consent sections", "Policy acceptance", "Data processing"]
 tags: [apps, gdpr, compliance, privacy, cookies, eu-regulation]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-08-06
-source_count: 12
+updated: 2026-11-09
+source_count: 13
 ---
 # GDPR — Overview (compliance hub)
 
@@ -32,32 +32,25 @@ This page is the **hub** for the GDPR app. It covers what the app is, where to f
 
 Sidebar → Apps → install → **GDPR**. The route is `/admin/apps/gdpr` (overview/hub) with sub-routes under the same prefix.
 
-Tabs (sub-pages):
+Tabs, with the admin's English labels (its Bulgarian ones are kept in the admin's translations):
 
 | Tab | Route name | Purpose |
 |----------|------------|---------|
 | Overview | `apps.gdpr.overview` | This hub page. |
-| Settings | `apps.gdpr.settings` | App-level config + install-settings. See [[apps-gdpr-settings]]. |
-| Address | `apps.gdpr.address` | Store legal address (company name, BULSTAT, MOL, phone, country/city). See [[apps-gdpr-address]]. |
-| Cookies | `apps.gdpr.cookies` | Cookie consent management — bar/wall + per-group + per-cookie. See [[apps-gdpr-cookies]]. |
-| Policy | `apps.gdpr.policy` | Privacy policies CRUD. See [[apps-gdpr-policy]]. |
-| Acceptance | `apps.gdpr.acceptance` | Per-customer policy acceptance log + Export. See [[apps-gdpr-acceptance]]. |
-| Requests | `apps.gdpr.requests` | Customer data-subject requests (access / erasure / portability). See [[apps-gdpr-requests]]. |
+| Consent sections | `apps.gdpr.settings` | Which policies each storefront form asks to accept, checkout included. See [[apps-gdpr-settings]]. |
+| Cookies | `apps.gdpr.cookies` | Cookie consent — bar/wall, groups, cookies. See [[apps-gdpr-cookies]]. |
+| Policies | `apps.gdpr.policies` | The policy pages. See [[apps-gdpr-policy]]. |
+| Policy acceptance | `apps.gdpr.acceptance` | Per-customer policy acceptance log + Export. See [[apps-gdpr-acceptance]]. |
+| Data processing | `apps.gdpr.requests` | Customer data-subject requests. See [[apps-gdpr-requests]]. |
+| Address | `apps.gdpr.address` | Shown right after install, until the store address is filled in. See [[apps-gdpr-address]]. |
 
-API endpoints under `/api/gdpr/*` (gated by `hasApiPermission:apps`):
-- `GET/POST /api/gdpr/settings/{form?}` — load/save settings (per form section).
-- `POST /api/gdpr/install` + `GET/POST /api/gdpr/install-settings` — install flow.
-- `GET /api/gdpr/cookies` — cookies listing.
-- `GET /api/gdpr/requests` — requests listing.
-- `GET /api/gdpr/active/{status?}` — toggle active state.
-- Cookies management nested routes under `/api/gdpr/cookies/*`.
-- Policies management nested routes under `/api/gdpr/policy/*`.
+API endpoints sit under `/api/gdpr/*` (settings per form section, install, cookies, policy, requests, `active/{status?}`), gated by `hasApiPermission:apps`.
 
 ## Sub-pages (in this cluster)
 
 This app is split into the GDPR tab pages (Address, Cookies, Policy, Acceptance, Requests, Settings — each documented on its own page) PLUS four aspect pages under this hub that document the verified cross-tab mechanics:
 
-- [[apps-gdpr-overview-consent-ux]] — the storefront cookie bar vs wall, the five standard cookie groups taxonomy, the `cc-cookie-consent` cookie structure + 365-day expiry, the "manage preferences" trigger hooks, no geo-gating, and no automatic cookie discovery.
+- [[apps-gdpr-overview-consent-ux]] — the storefront cookie bar vs wall, the five standard cookie groups taxonomy, the `cc-cookie-consent` cookie structure + 180-day lifetime, the "manage preferences" trigger hooks, no geo-gating, and no automatic cookie discovery.
 - [[apps-gdpr-overview-script-gating]] — how consent gates tracking scripts: Google Consent Mode v2 via the `consent_mode_for_traffic` group, and how the consent state propagates to Google Analytics / Tags / TikTok Pixel / Facebook Comments loaders.
 - [[apps-gdpr-overview-data-requests]] — the four customer data-subject request types, why rectification is not a request type, the three self-service storefront download endpoints (right-to-portability), the storefront request URLs, and the merchant-driven right-to-erasure flow.
 - [[apps-gdpr-overview-consent-logging]] — how consent is captured: the five storefront form types, the append-only acceptance log, the `policies_popup` re-prompt mechanism, the marketing-policy flag, and the install seeder defaults.
@@ -65,7 +58,7 @@ This app is split into the GDPR tab pages (Address, Cookies, Policy, Acceptance,
 ## What the merchant can do here
 
 ### Activate / configure the app
-- Install + go through the install-settings flow (collects required compliance data upfront).
+- Install the app (one install step), then fill in the store address.
 - Toggle the app Active / Inactive via `GET /api/gdpr/active/{status?}`.
 - Navigate to each tab to configure that area.
 
@@ -77,7 +70,6 @@ This app is split into the GDPR tab pages (Address, Cookies, Policy, Acceptance,
 - **Customer Requests** — review and process customer data-subject requests. See [[apps-gdpr-requests]] and [[apps-gdpr-overview-data-requests]].
 
 ### What the merchant CANNOT do here
-- Auto-comply without configuring policies + cookies first — the install flow forces minimum config.
 - Skip the store-address requirement — many GDPR jurisdictions require visible business identification.
 - Disable cookie consent if any tracking script is active — would be non-compliant.
 
@@ -104,7 +96,7 @@ GDPR audit requires retention of WHO accepted WHICH policy version WHEN. The log
 The Acceptance Export action triggers `CC2FaAction` with action key `export_gdpr` — meaning the merchant must enter a 2FA code (TOTP / email-based) before the platform allows the export. This protects against unauthorised data export. See [[account-cc2fa]].
 
 ### Side effects on activation
-- Install flow asks for minimum required config (address + cookies bar + at least one policy) and runs a seeder that creates the default policies + cookie groups + cookie providers — see [[apps-gdpr-overview-consent-logging]].
+- The first install seeds starter policies, cookie groups and cookie entries; a reinstall seeds nothing. Switching off, a lapse and an uninstall: [[apps-gdpr-settings]].
 - Storefront begins showing the cookie bar / wall — see [[apps-gdpr-overview-consent-ux]].
 - Customer-side request form becomes accessible — see [[apps-gdpr-overview-data-requests]].
 - Acceptance log starts accumulating — see [[apps-gdpr-overview-consent-logging]].

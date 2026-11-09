@@ -5,8 +5,8 @@ aliases: ["Variants known issues", "Variants by-design quirks", "Variants gotcha
 tags: [catalog, variants, parameters, options, concepts, known-issues]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[variants-model]]. See the hub for the other aspects (Parameter, Option, matrix generation, pricing, inventory link, image mapping).
@@ -77,9 +77,9 @@ A Variant has no `created_at` / `updated_at` field, so the merchant cannot see "
 
 ### By-design constraint 6 — Merchant cannot pick the default Variant manually
 
-The default Variant shown on the storefront category card (and in the price box before the customer picks) is auto-computed as the Variant with the lowest `price`, ties broken by oldest / first-created, recomputed on every price save.
+The default Variant shown on the storefront category card (and in the price box before the customer picks) is auto-computed as the Variant with the lowest `price`, ties broken by oldest / first-created, recomputed on every save. When all Variants share one price and at least two have different sale prices, the lowest sale price wins instead.
 
-**Workaround:** to force a specific Variant as default, price it lower than all siblings. There is no UI to manually pin a different Variant. See [[variants-pricing]].
+**Workaround:** price the wanted Variant lowest; nothing pins it by hand. See [[variants-pricing]].
 
 ### By-design constraint 7 — Deletion guard on in-use Parameters / Options
 

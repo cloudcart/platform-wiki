@@ -7,8 +7,8 @@ aliases: ["Sales by traffic source attribution", "Order referer attribution", "H
 tags: [analytics, ccanalytics, orders, traffic, sales-by-traffic-source]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 11
+updated: 2026-11-09
+source_count: 12
 ---
 
 > Part of [[analytics-sales-by-traffic-source]]. See the hub for related aspects (UI surfaces, data source + pipeline).
@@ -53,7 +53,7 @@ There are no merchant-editable settings for attribution. The capture is driven e
 
 ### Source — the buyer's PHP session, populated by storefront session middleware
 
-The `referer_name`, `referer_group`, `referer_host`, and `referer_key` written per order come from the buyer's **PHP session** (`session('utmData')`), populated by the storefront's `OrderSource` middleware on the **first non-checkout request of a visit**. The middleware:
+The `referer_name`, `referer_group`, `referer_host`, and `referer_key` written per order come from the buyer's **PHP session** (`session('utmData')`), populated by the storefront's `OrderSource` middleware on the **first non-checkout request of the session**. The middleware:
 
 1. Parses the HTTP `Referer` header.
 2. Checks for ad-click parameters in the URL (`gclid`, `gad_source`, `gbraid`, `wbraid` → Google Ads; `fbclid` → Meta Ads; `ttclid` → TikTok Ads).
@@ -72,6 +72,17 @@ Once captured, the values persist in the session and are attached to whichever o
 ### `referer_key` composition
 
 `referer_key = "{referer_group}-{referer_name}"` (same shape as the visits side, but driven by the session middleware's parsing rather than the visitor tracker). Examples: `paid-Google Ads — Display Network`, `paid-Meta Ads`, `social-Facebook`, `unknown-Direct`. This is the join key used by the Details / ViewMore queries documented in [[analytics-sales-traffic-source-data]].
+
+### Window, keys and edge cases
+
+- **Window.** The source is kept in the storefront session until an order is placed (then cleared, so the next order starts afresh) or the session expires after 7 days without a visit. There is no other attribution window.
+- **Precedence.** `utm_source=cloudcart` wins over everything (**CloudCart**, `campaign`). Next a Google click ID (`gclid`, `gad_source`, `gbraid` or `wbraid`, with or without UTM tags) gives **Google Ads** or **Google Ads — {network}** (`paid`); when no `utm_campaign` is set, `gad_campaignid` fills it as `gad_{id}`. Then `fbclid` gives **Meta Ads** and `ttclid` **TikTok Ads**. Only then the referring site counts. UTM tags alone do not change the row; they feed [[analytics-orders-by-social-source]].
+- **Checkout first.** Checkout pages capture nothing. A session that opens on a checkout page and orders without visiting another page lands in **Direct**, even with a click ID in the address.
+- **Join key.** The order copies the session's source and UTM tags and stores the visitor's `uuid` cookie value; no session ID goes on the cart or the order. The landing page ([[analytics-landing-pages-by-sales]]) is found through that `uuid`. Visits meet this box only through the source label; see [[analytics-sales-traffic-source-data]].
+- **CloudCart campaigns.** The order also records the last campaign link clicked in the session, which the campaign revenue statistics read. The referral is first-touch per session; the campaign credit is last-click.
+- **Fast orders** are created the same way and get the same source, UTM tags, `uuid` and campaign.
+- **Cookie consent.** Nothing here waits for the cookie banner: the source lives in the store's own session, and neither the analytics tracker nor its `uuid` cookie checks the visitor's choice.
+- **`cca_sid`.** Not a cookie: a random ID the tracker keeps in the browser tab's session storage and sends with its events. Closing the tab drops it.
 
 ### The "Direct" bucket
 

@@ -7,8 +7,8 @@ aliases: ["How a campaign gets archived", "Auto-archive on completion", "Manual 
 tags: [marketing, campaigns, archive, lifecycle, auto-archive]
 plan_gates: ["abandoned_orders", "campaigns"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-campaigns-archive]]. See the hub for the other aspects (the tab, actions, unarchive/restore, delete cascade).
@@ -44,9 +44,13 @@ The Archive action is exposed in the row action column on every non-archived tab
 
 A legacy error string *"You must stop the campaign before you can archive it"* exists in the platform's language files but is **not currently enforced** by any controller — it is dead text. So a merchant can archive a running campaign in one click without stopping it first.
 
+### Archiving stops the remaining sends
+
+Archiving only sets the archive date. Every later campaign job checks that flag and drops itself, so archiving a running campaign stops its remaining sends; messages already queued to the email sender still go out. Unarchiving does **not** resume them — the dropped per-subscriber jobs are never re-created. See [[campaigns-archive-unarchive-restore]].
+
 ### Auto-archive on Regular-campaign completion
 
-The campaign-execution job auto-completes a Regular campaign when no more subscribers remain to process and the campaign has fully drained (every enrolled customer has either completed or exited). This:
+A Regular campaign is marked completed when no more subscribers remain to process and the campaign has fully drained (every enrolled customer has either completed or exited) — both when the last pending subscriber completes and by an hourly progress-check job. This:
 
 1. Sets `progress = completed`.
 2. Sets `archived_at = now`.

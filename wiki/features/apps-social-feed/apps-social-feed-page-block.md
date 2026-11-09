@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Pages → Dynamic page → page builder → Social Feed block"
+nav_path: "Design → Static pages → Dynamic page → page builder → Social Feed block"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["Social Feed block", "social-feed block", "Social Feed module in the page builder", "Instagram block on a landing page", "Heading (optional)", "As in the app settings", "All connected (tabs)", "Open Style settings", "Install and switch on the app", "Заглавие (по желание)", "Както в настройките на приложението", "Отвори настройките „Стил“", "Инсталирай и включи приложението", "Social Feed блок"]
 tags: [apps, social-feed, page-builder, landing-pages, homepage]
 plan_gates: [storefront_builder]
 created: 2026-10-05
-updated: 2026-10-05
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 
 # Social Feed — page-builder block
@@ -21,7 +21,7 @@ The **Social Feed** block puts the feed at an exact spot on a Dynamic page: a la
 
 ## Where to find it
 
-Sidebar → **Marketing → Pages** → open or create a **Dynamic page** → the page builder (`/admin/marketing/pages/builder/{page_id?}`) → add a block → **Social Feed**. The block list describes it as *"Your latest Instagram, Facebook and TikTok posts, anywhere on the page."* (*"Последните ти публикации от Instagram, Facebook и TikTok — навсякъде в страницата."*).
+Sidebar → **Design → Static pages** → open or create a **Dynamic page** → the page builder (`/admin/marketing/pages/builder/{page_id?}`) → add a block → **Social Feed**. The block list describes it as *"Your latest Instagram, Facebook and TikTok posts, anywhere on the page."* (*"Последните ти публикации от Instagram, Facebook и TikTok — навсякъде в страницата."*).
 
 The block is offered only while the Social Feed app is **installed and enabled**. See [[design-modules-page-builder]] for the page builder itself.
 

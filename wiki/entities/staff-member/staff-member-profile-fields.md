@@ -3,8 +3,8 @@ type: entity
 aliases: ["Staff member profile", "Staff member fields", "Username email password", "Staff avatar", "Staff contacts", "Connected social accounts", "Профил на персонал"]
 tags: [settings, access, staff, admin, entity]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 # Staff Member — Profile Fields
 
@@ -25,10 +25,10 @@ This page catalogues the editable profile fields on a [[staff-member|Staff Membe
 | Attribute | What the merchant controls | Notes |
 |-----------|----------------------------|-------|
 | **Username** | Editable from the Edit modal | Required. Visible on the storefront where the staff member's name appears publicly (e.g. blog post author — see [[blog-article]]). |
-| **Email** | Editable from the Edit modal | Required. Used as the login identifier and as the recipient for per-account lifecycle emails (2FA codes, password reset). Must be a valid email format. |
-| **Password** | Set on create; changed via the Edit modal's "Change password" | Hashed at rest. A non-Owner cannot change the Owner's password. A user can change their own password. |
+| **Email** | Editable from the Edit modal | Required. The person's sign-in address, and where their codes, reset links and account emails go. Changing it needs no confirmation code. Separate from the store email ([[settings-general]]) and the account holder's email ([[merchant]]). |
+| **Password** | Not set at creation; set later with **Forgot password** on the login page or the Edit modal's **Change password** | Hashed at rest. A non-Owner cannot change the Owner's password. A user can change their own password. |
 | **First name** / **Last name** | Editable from the Edit modal | Required at creation. Used in greetings and admin notification emails. |
-| **Avatar** | Uploaded via the Edit modal's Profile Summary | Optional image (250×250, max 25 MB, standard image MIME types). Shown next to the username in the Staff list and in the admin top bar when this account is signed in. |
+| **Avatar** | Uploaded via the Edit modal's Profile Summary | Optional image (250×250, max 25 KB, standard image MIME types). Shown next to the username in the Staff list and in the admin top bar when this account is signed in. |
 | **Contacts** (`info.country`, `info.city`, `info.street`, `info.postal_code`, `phone`) | Editable from the Edit modal's Contacts section | All optional. Computed into the Staff list's "Address" column as `<country>, <city>, <street>, <postal_code>` with empty values skipped. |
 | **Google account** | Connect / disconnect on the Owner's Edit modal | Moderators don't see this card. |
 | **Last updated** | n/a (auto-set) | Timestamp shown in the Staff list; default sort is by ID descending (newest first). |
@@ -40,6 +40,10 @@ This page catalogues the editable profile fields on a [[staff-member|Staff Membe
 - [[account]] — the logged-in staff member's own profile hub.
 
 ## Business rules
+
+### When the login mailbox is lost
+
+Because a login email changes without a code, whoever can still sign in fixes it: the owner changes a moderator's address on their Edit modal, and anyone signed in changes their own. While CloudCart's email sign-in switch is on, every sign-in (password or Google too) asks for a code sent to the login address; only an authenticator app set up on the account replaces it. An owner locked out by a lost mailbox without one needs CloudCart staff, whose console sign-in skips the emailed code, to change the address.
 
 ### Password change is constrained by role
 

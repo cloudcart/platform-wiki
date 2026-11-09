@@ -7,8 +7,8 @@ aliases: ["Staff 2FA", "Two-factor authentication", "Authenticator app", "QR set
 tags: [settings, staff, 2fa, security, authenticator]
 plan_gates: ["administrators"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-staff]]. See the hub for the other aspects (roles & list, create, edit, permissions, delete, force sign out).
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-Documents the **Two-factor authentication** section on the Edit modal: the always-on email channel (status indicator, not a toggle), the configurable authenticator-app channel (TOTP via QR code), the nested QR Setup modal, and the "is 2FA required for this edit?" gating helper that decides whether saving a staff change pops a verification challenge.
+Documents the **Two-factor authentication** section on the Edit modal: the email channel (a status row, not a toggle), the configurable authenticator-app channel (TOTP via QR code), the nested QR Setup modal, and the "is 2FA required for this edit?" gating helper that decides whether saving a staff change pops a verification challenge.
 
 ## Where to find it
 
@@ -54,9 +54,9 @@ This modal is OPENED from within the Edit modal. When open, the parent Edit moda
 
 ## Business rules
 
-### Email channel is always active for every staff member
+### The email channel follows a platform switch
 
-Every staff member receives a `two_factor_action` email automatically when a 2FA-protected action requires verification. This email channel is **permanent** — the "Email two factor authentication is active" row on the Edit modal is a **status indicator, not a toggle**. There is no UI to disable email 2FA.
+Email codes, at sign-in and for 2FA-protected actions, are sent only while CloudCart's email sign-in switch (`2fa_email`) is on. CloudCart sets it for all stores or per store; the merchant cannot change it, and the code ships with it off. The "Email two factor authentication is active" row shows on your own Edit modal whatever the switch, so it does not prove codes are sent. Whether the switch is on for a store is not in the wiki (verify).
 
 **But it stops being used once the authenticator app is configured.** The platform only generates and sends an email code for a staff member who has **no** authenticator secret; with one configured, no email is produced at all and the app's code is what satisfies the challenge. The two channels do not run side by side — see [[account-cc2fa-email]].
 

@@ -3,12 +3,12 @@ type: feature
 nav_path: "Apps → GDPR → Cookies → Behaviour matrix → Configurations"
 route_name: ""
 route_path: ""
-aliases: ["cookie consent settings space", "bar and wall combinations", "show_cookies_bar show_cookies_wall", "no cookie prompt shown", "empty cookie group missing", "cookie category not in banner", "GDPR app off cookies", "cookie banner all visitors", "cookie bar text per language"]
+aliases: ["cookie consent settings space", "bar and wall combinations", "show_cookies_bar show_cookies_wall", "no cookie prompt shown", "cookie category not in banner", "GDPR app off cookies", "cookie banner all visitors", "cookie bar text per language"]
 tags: [apps, gdpr, cookies, consent, settings]
 plan_gates: []
 created: 2026-08-08
-updated: 2026-08-08
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[apps-gdpr-cookies-behaviour-matrix]]. See the hub for the other aspects (visitor actions, banner persistence, theme limits).
@@ -47,8 +47,8 @@ The 5 standard groups are catalogued on [[apps-gdpr-cookies-groups]]. Each carri
 | Setting | Values | Effect |
 |---|---|---|
 | `active` | 0 / 1 | Whether the category is offered at all. The `system` group is always active and can never be rejected. |
-| `default` | 0 / 1 | The **assumed** state before the visitor answers — and the state the toggle starts in. Only `consent_mode_for_traffic` ships as **no**. |
-| cookie definitions | list | A group with **no** cookies defined is not rendered at all (see below). |
+| `default` | 0 / 1 | The position the group's switch starts in before the visitor answers. It does not change what the tracking apps do before an answer (fixed states, see [[apps-gdpr-overview-script-gating]]). Only `consent_mode_for_traffic` ships as **no**. |
+| cookie definitions | list | Listed in the group's tab; they are what a refusal deletes. |
 
 ## Business rules
 
@@ -57,15 +57,15 @@ The 5 standard groups are catalogued on [[apps-gdpr-cookies-groups]]. Each carri
 | `show_cookies_bar` | `show_cookies_wall` | Result |
 |---|---|---|
 | ON | OFF | The normal setup: a dismissible bar at page bottom; the dialog opens on demand. |
-| OFF | ON | The blocking setup: the dialog **auto-opens** on load whenever there is no stored consent, and blocks the page behind it. Use only where the law requires it. |
-| OFF | OFF | **No prompt is shown at all.** Nothing is ever stored, so every group falls back to its `default` permanently — the store runs on assumed consent indefinitely. Legally risky; confirm with the merchant that it is deliberate. |
-| ON | ON | The merchant-facing UI prevents this (choosing one clears the other), but the underlying settings still accept it. Treat it as a misconfiguration and set the intended one. |
+| OFF | ON | The blocking setup: the dialog **auto-opens** without a close button until the visitor answers. |
+| OFF | OFF | **No prompt and no dialog.** The current admin cannot choose this (its dropdown has only bar and wall); only settings saved earlier can hold it. Nothing is ever stored, so the fixed pre-answer states apply for good. |
+| ON | ON | The storefront treats it as the bar. |
 
-Only the **wall** is auto-opened by the platform, and only when no consent is stored.
+Only the **wall** is auto-opened by the platform, and only when no answer is stored.
 
-### A group with no cookies defined disappears from the prompt
+### Every active group is offered, even an empty one
 
-The dialog renders a category only when it has at least one cookie definition. A group that is `active` but empty is **invisible to the visitor** — it never appears as a toggle. When a merchant says *"my Targeting category is missing from the banner"*, check whether any cookies are defined in it ([[apps-gdpr-cookies-definitions]]) before looking anywhere else.
+The dialog has a tab for every **active** group, with or without cookie entries. A group missing from the dialog is switched off ([[apps-gdpr-cookies-groups]]). Only the cookie table that the `{cookies_table}` placeholder prints on a page leaves out groups without entries ([[apps-gdpr-cookies-definitions]]).
 
 ### When the app itself is off
 

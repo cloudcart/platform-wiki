@@ -7,8 +7,8 @@ aliases: ["Web Push browser support", "Web Push Safari", "Web Push iOS", "PWA We
 tags: [marketing, channels, web-push, browser-support, pwa, safari, ios, compatibility]
 plan_gates: ["campaign.channel.web_push"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[marketing-channels-webpush]]. See the hub for the other aspects (storefront prompt, subscription flow, VAPID config, send pipeline, DLR webhook, system messages).
@@ -25,12 +25,11 @@ There is no admin UI for this — it's a browser / OS capability question. The m
 
 - Their decision about whether Web Push is worth enabling at all.
 - Their **multi-channel strategy** — e.g. send Web Push first, fall back to Email for non-WebPush subscribers.
-- Their **PWA enablement** — for Safari coverage, the storefront must be installed as a PWA.
+- Their Safari audience — Safari offers Web Push only to a store opened from the Home Screen or Dock.
 
 ## What the merchant can do here
 
 - Choose whether to enable the channel based on their customer mix.
-- Customise the storefront's PWA manifest (icon, name, theme color) via the storefront design system, which improves Safari subscription rates.
 - Use [[marketing-campaigns]] step-conditions to fall back to SMS / Viber / Email when a customer doesn't have a Web Push channel row.
 
 ## Settings & fields
@@ -45,16 +44,9 @@ There is no admin UI for this — it's a browser / OS capability question. The m
 | Safari (iOS) | Yes (iOS 16.4+) | The storefront must be added to the Home Screen as a PWA first. Push then works through APNs (Apple Push Notification service). Older iOS versions don't support Web Push at all. |
 | In-app browsers (Instagram, Facebook, TikTok webviews) | None | Customers browsing inside these embedded webviews cannot subscribe — the in-app browsers don't expose the Push API. |
 
-### PWA requirements for Safari coverage
+### Safari's Home Screen path — what CloudCart provides
 
-For Safari (macOS or iOS) to support Web Push, the storefront must be installed as a PWA. The PWA requirements are:
-
-- A proper `manifest.json`.
-- A registered service worker.
-- HTTPS (already mandatory on CloudCart storefronts).
-- An "Add to Home Screen" / "Add to Dock" UX hint shown to the customer.
-
-CloudCart's storefronts ship with PWA manifests by default. The merchant can customise the manifest icon, name, and theme color through the storefront design system.
+What Safari requires of a Home Screen or Dock web app before it offers Web Push is Apple's rule. On CloudCart's side ([[storefront-arch-root-files-and-pwa]]): the storefront's pages link **no web app manifest** (the platform's `/manifest.json` holds only a push sender ID), there is **no install prompt or "Add to Home Screen" hint**, and the admin has no setting for an app name, icon or theme colour. The service worker the platform registers once the channel is set up handles push only. HTTPS is standard on every storefront.
 
 ## Business rules
 
@@ -108,4 +100,4 @@ The [[webpush-channel-storefront-prompt|two-stage popup design]] exists specific
 ## Open questions
 
 - ⏸️ Exact share of Bulgarian customers on iOS 16.4+ vs older iOS — would inform whether the PWA-install push is worth the friction for any given merchant.
-- ⏸️ Whether the CloudCart storefront's default PWA manifest already triggers the "Add to Home Screen" UX hint on iOS Safari, or whether the merchant must add it via a theme customisation.
+- ✅ Resolved: the storefront links no web app manifest and shows no "Add to Home Screen" hint — see [[storefront-arch-root-files-and-pwa]].

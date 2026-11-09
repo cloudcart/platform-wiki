@@ -7,8 +7,8 @@ aliases: ["Product status evaluation", "Which status applies", "Status priority"
 tags: [products, statuses, stock, customer-facing]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 # Product statuses — how a status is chosen
 
@@ -63,7 +63,7 @@ A product displays only ONE status badge. The Conditional system picks one by pr
 
 ### Status sync is real-time
 
-When an order changes stock (decrement on checkout, increment on cancellation), the product's status is re-evaluated immediately. The customer browsing the storefront sees the new status on the next page load — no merchant action needed. The decrement timing itself is governed by `order_status_for_quantity_decrease` on [[settings-cart]].
+When an order changes stock (decrement on checkout, increment on cancellation), the product's status is re-evaluated immediately. The customer sees the new status on the next freshly rendered page (a guest's cached copy can lag up to 20 minutes) — no merchant action needed. The decrement timing itself is governed by `order_status_for_quantity_decrease` on [[settings-cart]].
 
 ### Bundles bypass this system entirely
 

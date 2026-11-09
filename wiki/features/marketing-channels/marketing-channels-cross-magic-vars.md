@@ -7,8 +7,8 @@ aliases: ["Channel template variables", "Magic links in campaigns", "Unsubscribe
 tags: [marketing, channels, template-variables, subscriber-feedback, unsubscribe]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-channels]]. See the hub for related aspects (catalog, lifecycle, suspension, plan caps, pre-flight, UI surfaces).
@@ -41,7 +41,7 @@ Every channel-rendered message body (Email, SMS, Viber, Web Push) supports these
 
 | Variable | Resolves to | Notes |
 |----------|-------------|-------|
-| `{$unsubscribe_url}` | Per-subscriber one-time unsubscribe link | Encrypted ID is regenerated on every send (includes the current timestamp). Links can't be reused beyond the campaign send window. |
+| `{$unsubscribe_url}` | Per-subscriber link to the subscription page ([[storefront-notifications]]) | The encrypted token carries the send time, but the page reads only the subscriber part, so the link keeps working after the send. Not available in notification templates. |
 | `{$cart_url}` | Subscriber-attributed magic link to the cart | Auto-logs the subscriber in (no password) when clicked. Useful for abandoned-cart recovery. |
 | `{$checkout_url}` | Subscriber-attributed magic link to checkout | Same auto-login semantics as `{$cart_url}`. |
 | `{$triggered_products:N}` | First N products that triggered the campaign. Hidden products are included; a product must be active, not a draft, published and within its active-to date. | `N` is capped at **12** per render — larger requested counts are silently clamped (verify). |
@@ -99,7 +99,7 @@ Every send (regardless of channel) checks consent in two layers:
 
 If either layer fails, the send is skipped. The subscriber-removal cascade above writes the per-channel layer's flags; the customer-level layer is written through subscriber-list management ([[marketing-subscribers]]).
 
-This is the same gate used by both campaign sends AND the [[marketing-omnichannel-mails-list|transactional Email notifications]] — see [[notification-delivery]].
+Notifications ([[marketing-omnichannel-mails-list]]) are not gated by these flags; the one consent-gated exception is the abandoned-cart reminder for a guest cart ([[abandoned-cart-eligibility]]).
 
 ### Programmatic mirror (JSON-API v2)
 

@@ -7,17 +7,19 @@ aliases: ["Channels", "Channels setup", "Communication channels", "Marketing cha
 tags: [marketing, channels, campaigns, setup, integrations]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]
 created: 2026-05-23
-updated: 2026-11-03
-source_count: 9
+updated: 2026-11-09
+source_count: 10
 ---
 
 # Channels setup
 
 ## Purpose
 
-The **Channels setup** screen is the merchant's hub for every outbound message delivery pipe the store can use to reach its subscribers and customers: **Email**, **SMS (MsgHub)**, **SMS (NTH Message)**, **Viber Business Messages**, and **Browser Web Push**. Each channel is an installable + configurable + activatable unit — once installed and active, it shows up as an available send-medium when building a [[marketing-campaigns|campaign]] step (and for some channels, as a transactional pipe used by [[marketing-omnichannel-mails-list|Email notifications]] too).
+The **Channels setup** screen is the merchant's hub for every outbound message delivery pipe the store can use to reach its subscribers and customers: **Email**, **SMS (NTH Message)**, **Viber Business Messages**, and **Browser Web Push**. Each channel is an installable + configurable + activatable unit — once installed and active, it shows up as an available send-medium when building a [[marketing-campaigns|campaign]] step. [[marketing-omnichannel-mails-list|Email notifications]] do not use these channels.
 
-The channel mapping keys (`email`, `sms_msghub_message`, `sms_nth_message`, `viber_message`, `web_push`) are the verbatim keys used across campaign actions, [[marketing-subscribers#Channels - Email, Phone, Messenger, WebPush|SubscriberChannel]] rows, routes, logs, and the plan-feature gating layer. See [[marketing-channels-cross-catalog]] for the full mapping table.
+**SMS (MsgHub)** is retired: in the current platform code its module is not registered, so it is not loaded, and SMS campaigns go through NTH (verify on production).
+
+The channel mapping keys (`email`, `sms_nth_message`, `viber_message`, `web_push`; retired `sms_msghub_message`) are the verbatim keys used across campaign actions, [[marketing-subscribers#Channels - Email, Phone, Messenger, WebPush|SubscriberChannel]] rows, routes, logs, and the plan-feature gating layer. See [[marketing-channels-cross-catalog]] for the full mapping table.
 
 ## Where to find it
 
@@ -53,11 +55,18 @@ This feature is split into 7 cross-cutting aspect pages. Each aspect covers one 
 
 ## Settings & fields
 
-This is a hub page. Per-channel settings (sender domain, credentials, system message templates, VAPID keys, etc.) live on the channel-specific pages — see [[marketing-channels-email]], [[marketing-channels-viber]], [[marketing-channels-webpush]], [[marketing-channels-sms-msghub]], [[marketing-channels-sms-nth]]. Cross-cutting fields shared by every channel (state values, mapping keys, sender identity table) are catalogued in [[marketing-channels-cross-catalog]].
+This is a hub page. Per-channel settings (sender domain, credentials, system message templates, VAPID keys, etc.) live on the channel-specific pages — see [[marketing-channels-email]], [[marketing-channels-viber]], [[marketing-channels-webpush]], [[marketing-channels-sms-nth]] (and the retired [[marketing-channels-sms-msghub]]). Cross-cutting fields shared by every channel (state values, mapping keys, sender identity table) are catalogued in [[marketing-channels-cross-catalog]].
 
 ## Business rules
 
 This is a hub page. The cross-cutting business rules — lifecycle transitions, auto-suspension thresholds, plan-cap accounting, anti-spam policy gate, template-variable rendering, subscriber-removal cascades, and UI-surface quirks — are documented on the seven cross-cutting aspect pages listed above. Per-channel-specific rules live on the channel pages.
+
+### Send facts shared by every channel
+
+- **The send row is written `NOT_SENT` before the provider call.** A provider error returned by SMS, Viber or push leaves that row without a reason; the reason appears only in the campaign's statistics step log.
+- **„Спам“ / "SPAM" means bounced.** It is the skip reason for a subscriber whose channel is marked bounced, not a spam verdict.
+- **SMS and Viber share the subscriber's single Phone channel.** A Viber EXPIRED or REJECTED (or an SMS UNDELIVERED, UNDELIVERABLE, REJECTED or EXPIRED) marks that phone bounced, so later SMS **and** Viber to it are skipped as „Спам“.
+- **Sandbox mode (CloudCart staff only).** While it is on, nothing is sent to the provider: rows are flagged sandbox and stay `NOT_SENT` (no status for push), yet still count against the cap. Only a CloudCart employee can switch it off.
 
 ## Programmatic access
 
@@ -71,7 +80,7 @@ What IS exposed programmatically is the **per-subscriber channel row** (`Subscri
 - [[marketing-campaigns]] — campaigns use these channels as the delivery medium for each step.
 - [[marketing-campaigns-policy]] — anti-spam policy gate that must be accepted before configuring any channel.
 - [[marketing-channels-email]] — Email channel configuration (Elastic Email).
-- [[marketing-channels-sms-msghub]] — SMS via MsgHub (Link Mobility).
+- [[marketing-channels-sms-msghub]] — SMS via MsgHub (Link Mobility); retired, not loaded in current code (verify on production).
 - [[marketing-channels-sms-nth]] — SMS via NTH Mobile.
 - [[marketing-channels-viber]] — Viber Business Messages.
 - [[marketing-channels-webpush]] — Browser WebPush notifications.
@@ -80,8 +89,8 @@ What IS exposed programmatically is the **per-subscriber channel row** (`Subscri
 - [[marketing-channels-reputation]] — Email reputation modal deep-dive.
 - [[marketing-channels-system-messages]] — Viber / Web Push system message editor.
 - [[marketing-subscribers]] — subscribers carry per-channel `SubscriberChannel` rows whose `marketing` / `verified` / `bounced` / `unsubscribed` flags gate per-channel sending.
-- [[marketing-omnichannel-mails-list]] — transactional email notifications (separate from these promotional channels — uses the same Email channel for delivery).
-- [[apps-smtp]] — alternative SMTP integration (when the merchant prefers to deliver via their own SMTP server instead of Elastic Email).
+- [[marketing-omnichannel-mails-list]] — order and system email notifications (separate from these channels; they do not use the Email channel).
+- [[apps-smtp]] — sends those notifications through the store's own SMTP server instead of CloudCart's shared sending account; campaigns are unaffected.
 - [[notification-delivery]] — concept page on platform-wide outbound message routing.
 - [[channel]] — Channel entity reference.
 - [[plan-gates]] — `campaign.channel.*` and `viber_messages` plan-feature keys.

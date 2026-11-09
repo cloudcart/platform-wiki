@@ -7,8 +7,8 @@ aliases: ["Campaign subscriber enrolment", "Campaign enrolment data source", "Re
 tags: [marketing, campaigns, subscribers, recipients]
 plan_gates: ["abandoned_orders", "campaigns"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Campaign subscribers — enrolment model
 
@@ -16,7 +16,7 @@ source_count: 2
 
 ## Purpose
 
-This page documents **how subscribers get onto the Campaign-subscribers list** — the enrolment data source (the campaign-subscribers enrolment records), how Regular vs Automated campaigns populate it differently, why a single subscriber can appear multiple times on a repeating campaign, and the gating rules (Draft = empty, anti-spam, permissions). A support agent answering "why is the same person listed three times?" or "why is my new campaign's subscriber list empty?" should land here.
+This page documents **how subscribers get onto the Campaign-subscribers list** — the enrolment data source (the campaign-subscribers enrolment records), how Regular vs Automated campaigns populate it differently, the channel filter that decides who is enrolled, how a repeating campaign reuses a subscriber's record, and the gating rules (Draft = empty, anti-spam, permissions). A support agent answering "why does my campaign list fewer people than the segment?" or "why is my new campaign's subscriber list empty?" should land here.
 
 ## Where to find it
 
@@ -45,7 +45,7 @@ Only subscribers actually enrolled in this campaign appear. Subscribers in the t
 
 ### Times completed counter — applies to both Regular and Automated
 
-The `times_completed` value on the enrolment record is incremented whenever a subscriber completes the campaign — regardless of campaign type. For a typical Regular campaign each subscriber completes once (`times_completed = 1`). For Automated campaigns with `repeat = true`, subscribers re-entering the trigger flow start a fresh enrolment row, and the counter on each enrolment increments to 1 on completion. The counter is not strictly an Automated-only concept. (Its icon-only rendering is documented on [[campaigns-subscribers-columns]].)
+The `times_completed` value on the enrolment record is incremented whenever a subscriber completes the campaign — regardless of campaign type. For a typical Regular campaign each subscriber completes once (`times_completed = 1`). For Automated campaigns with `repeat = true`, a subscriber re-entering the trigger flow reuses the same enrolment record, so the counter keeps counting up with each completion. The counter is not strictly an Automated-only concept. (Its icon-only rendering is documented on [[campaigns-subscribers-columns]].)
 
 ## Business rules
 
@@ -53,9 +53,14 @@ The `times_completed` value on the enrolment record is incremented whenever a su
 
 The route doesn't gate on campaign type — both Regular and Automated campaigns expose this list. For Regular campaigns the list is typically a single batch enrolled at start time; for Automated campaigns enrolments accrete over time as the trigger fires.
 
-### Repeating campaigns can show the same subscriber multiple times
+### Who is enrolled — the channel filter
 
-For automated campaigns with `repeat=true`, a subscriber who re-enters the trigger gets a **fresh enrolment record**. So the same subscriber can appear N times on this list, each row showing a different enrolment date and progress. This is by design, not a duplication bug.
+- **At start.** A Regular campaign always enrols the segment's existing members; an Automated one only when *"Execute campaign for existing subscribers in segment"* is ON. Only members with a marketable row on the step's channel are enrolled. For Email: marketing on, not bounced, not unsubscribed, plus verified when *"Sending emails to unverified subscribers"* is OFF. Members excluded here leave **no log row anywhere**, so the list can be much shorter than the segment, which counts any channel (see [[segments-rebuild-mechanics]]).
+- **New entrants (Automated).** Attached without the channel filter; an ineligible one is logged with its reason at dispatch. Entrants are skipped when the campaign's start time has already passed.
+
+### Repeating campaigns reuse the enrolment record
+
+For automated campaigns with `repeat=true`, a subscriber who re-enters the trigger does **not** get a new record: the restart updates the existing enrolment record in place (progress cleared, **Added at** refreshed, **Times completed** kept). So a repeating subscriber appears once on this list.
 
 ### Pre-launch state
 

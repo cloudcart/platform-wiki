@@ -7,8 +7,8 @@ aliases: ["Create Nitrogen Storefront", "Create headless storefront", "Nitrogen 
 tags: [nitrogen, storefronts, create, wizard, github, staff-permission]
 plan_gates: []
 created: 2026-05-27
-updated: 2026-11-04
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Nitrogen → Create Storefront (multi-step wizard)
 
@@ -71,7 +71,7 @@ Per-field validation and the exact server rules live on the aspect pages: name/m
 ## Business rules
 
 - **Nitrogen Storefronts permission.** The Create action is inside the pillar's route group, which requires the **Nitrogen Storefronts** permission — the store owner, or a moderator granted it in [[settings-staff]]; without it, direct API calls are rejected with HTTP 403. There is no separate `nitrogen.create` row: the one permission covers the whole pillar. See [[nitrogen]].
-- **Max 10 storefronts per site.** The `max_storefronts_per_site` cap (default 10) is enforced before the storefront is created, on top of the owner check. The list endpoint exposes the same value via `meta.max_storefronts`.
+- **Max 10 storefronts per site.** The `max_storefronts_per_site` cap (default 10) is enforced before the storefront is created, on top of the permission check. The list endpoint exposes the same value via `meta.max_storefronts`.
 - **GitHub via App, not personal tokens.** The integration uses the CloudCart Nitrogen GitHub App. Detail on [[nitrogen-create-storefront-github-connect]].
 - **Command-line path skips the repo steps.** Picking **Command line or CI/CD** goes from step 1 straight to the result page with a deployment token shown once. Detail on [[nitrogen-create-storefront-setup]].
 - **Starter template is fixed: `cloudcart/nitro-starter`.** The new-repo path always clones it. What it holds is on [[headless-starter]], the screen's detail on [[nitrogen-create-storefront-repository]].

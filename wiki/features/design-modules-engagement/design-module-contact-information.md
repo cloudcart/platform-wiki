@@ -7,8 +7,8 @@ aliases: ["Contact information module", "contactInformation module", "Contacts p
 tags: [design, modules, engagement, contact, contact-info]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-24
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Engagement module — contactInformation
@@ -48,7 +48,7 @@ Clicking the card opens the side panel with the four settings below.
 
 ## Theme dependencies
 
-Universal — every theme that ships a `/contacts` page uses this module. Some themes (e.g., a theme that ships it) ADDITIONALLY pull `contactInformation → page_text` into a sidebar or footer block (verify in the theme's templates). The auto-pulled fallback shown when `custom_information` is empty includes the store's saved address + phone formatted via the platform format helper — meaning even a brand-new store with an empty module shows SOMETHING usable on `/contacts`.
+Universal — every theme that ships a `/contacts` page uses this module. Some themes (e.g., a theme that ships it) ADDITIONALLY pull `contactInformation → page_text` into a sidebar or footer block (verify in the theme's templates). The fallback shown when `custom_information` is empty uses the company address and phone (see below).
 
 ## Business rules
 
@@ -60,9 +60,9 @@ Setting `show_form = no` hides the [[design-module-contact-form]] from the rende
 
 Beyond the visible Custom information block, this toggle also controls whether the store's contact details (**email**, **phone**, and the custom contact info) are emitted into the page's **structured data / microdata** — the schema.org `itemprop` contact markup. With `show_custom_information = no`, those contact `itemprop` values are dropped from the markup as well as from the visible block, so a merchant who hides the block also keeps their email / phone out of the page's structured data. Turn it on to expose the contact details to search engines via microdata.
 
-### Falls back to store-general settings when empty
+### Falls back to the company details on Settings → Invoicing when empty
 
-When `custom_information` is empty AND `show_custom_information = yes`, the template renders an auto-built block with the store's address (country / city / postal code / street) and phone, pulled from the platform's address-format helper. The merchant doesn't have to fill anything to get a usable contact page — the platform fills in the gaps from [[settings-general]].
+When `custom_information` is empty AND `show_custom_information = yes`, the block shows an **address** (country / city / postal code / street) and a **phone** line reading *company name, phone*. Both come from the company details on **Settings → Invoicing** ([[settings-invoicing-issuer-block]]), not from [[settings-general]]. The same phone is also written by the GDPR app's store-address step and the Aftercare app's data step; the last save wins.
 
 ### Phone / email links work inline
 
@@ -88,7 +88,7 @@ One `front_widget` row keyed by mapping `contact.information`, JSON blob contain
 
 ### Cache
 
-Save / Reset bump the per-site cache key via the platform cache helper — the next storefront request rebuilds. See the storage / cache mechanics documented under [[design-modules-utility-storage]] (same pipeline applies to engagement modules).
+Save / Reset bump the per-site cache key via the platform cache helper — pages rendered afterwards rebuild; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]). See the storage / cache mechanics documented under [[design-modules-utility-storage]] (same pipeline applies to engagement modules).
 
 ### Sanitisation (commented out)
 
@@ -102,7 +102,7 @@ Some themes read `contactInformation → page_text` from the module facade and r
 - [[design-modules-engagement]] — hub.
 - [[design-module-contact-form]] — sibling; `show_form` here controls its visibility.
 - [[design-module-contact-google-map]] — sibling; the third block on the `/contacts` page.
-- [[settings-general]] — store address / phone / contact-email defaults that this module falls back to.
+- [[settings-invoicing-issuer-block]] — the company address and phone this module falls back to.
 - [[design-themes]] — theme picks where `page_text` renders (some themes also drop it in sidebar / footer).
 - [[multi-language]] — per-language rich-text content via the `multylang` app.
 

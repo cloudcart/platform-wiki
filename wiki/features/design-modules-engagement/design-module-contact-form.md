@@ -7,8 +7,8 @@ aliases: ["Contact form module", "contactForm module", "Contacts page form", "М
 tags: [design, modules, engagement, contact, contact-form]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Engagement module — contactForm (Contacts page form)
@@ -51,9 +51,9 @@ The Modules screen shows **no edit panel** for `contactForm`. The form below is 
 | `first_name` | text | yes (when guest) | Label: *"First name"* — hidden when the shopper is logged in |
 | `last_name` | text | yes (when guest) | Label: *"Last name"* — hidden when logged in |
 | `email` | email | yes (when guest) | Label: *"E-mail"* — hidden when logged in |
-| `phone` | tel | no | International phone-format picker (`js-phone-intl`) — hidden when logged in |
-| `subject` | text | yes | Label: *"Subject"* — pre-fills when navigated from a product "request product" link |
-| `message` | textarea | yes | 5 rows — pre-fills similarly |
+| `phone` | tel | yes (when guest) | International phone-format picker (`js-phone-intl`) — hidden when logged in |
+| `subject` | text | yes | Label: *"Subject"* — prefilled *Request for "<product>"* in product-request mode |
+| `message` | textarea | yes | Up to 1,800 characters — prefilled with the product name and address in product-request mode |
 | GDPR consent | checkbox | yes (when GDPR enabled) | Pulled from the platform's `contacts` GDPR form definition |
 | Google reCAPTCHA v3 | hidden | yes | Anti-spam — automatic via `GoogleReCaptchaV3` integration |
 
@@ -61,10 +61,10 @@ The merchant cannot add custom fields, remove the GDPR block, or change validati
 
 **Hidden fields injected when arriving from a product page:**
 
-- `requested_product_id` — set when the shopper landed on `/contacts` via a product detail's "Ask about this product" link.
+- `requested_product_id` — set when the form opens from a product's **Show as request** status button (`/contacts/<product URL>`, as a popup) — see [[product-status-actions-buy-button]].
 - `requested_variant_id` — same, for a specific variant.
 
-These cause the form to behave as a **product-request form** rather than a generic contact form — the merchant's inbox shows which product the shopper was asking about.
+The form then works as a **product-request form**; the merchant sees the product through the prefilled subject and message.
 
 ## Theme dependencies
 
@@ -96,7 +96,7 @@ The form posts to the storefront's `contacts` route via AJAX (`js-form-submit-aj
 
 ### Product-request mode
 
-When `requested_product_id` is set (the shopper clicked "Ask about this product" on a product detail), the same form persists the product reference into the contact-message payload. The merchant's inbox can then surface which product the shopper was asking about. See [[settings-emails]] for the templates used. Note: the **subject** and **message** fields pre-fill from any matching query-string or session value, not only from the product-request flow.
+When `requested_product_id` is set, the same **contact** notification email goes to `site_email` in the shopper's name; no separate template fires and nothing is stored in the admin. The product reaches the merchant only through the prefilled subject and message, so it is lost if the shopper deletes them. The sender is also added as a subscriber (marketing consent only if ticked). The form has no file field. See [[settings-emails]].
 
 ## Related
 
@@ -112,4 +112,3 @@ When `requested_product_id` is set (the shopper clicked "Ask about this product"
 
 - 📡 **Per-store contact-form recipient.** Configured in [[settings-general]] under `site_email`. GraphQL-resolvable: query the merchant's general settings to read the recipient.
 - 📡 **GDPR consent text.** The `contacts` GDPR form definition is in the platform-level GDPR config. GraphQL-resolvable: query whether GDPR is enabled and the consent body for the `contacts` form.
-- ⏸️ **Product-request mode.** Triggered automatically by hidden `requested_product_id` field — no merchant-side configuration. (verify) whether a separate notification template fires when the field is present.

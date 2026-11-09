@@ -7,8 +7,8 @@ aliases: ["Segment editor", "Segment conditions editor", "Segment condition buil
 tags: [marketing, segments, editor, condition-builder]
 plan_gates: ["segments", "subscribers", "subscribers-rfm"]
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 # Segment editor
 
@@ -94,8 +94,8 @@ Numeric gates extend via packs ([[plan-vs-feature-pack]]); the boolean `subscrib
 - [[marketing-subscribers-custom-fields]] — custom fields that show up as a condition value-control here.
 - [[marketing-subscribers-subscribe-forms]] — produces subscribers + can be filtered via the `from_form` condition.
 - [[marketing-campaigns]] — campaigns target the segments the editor produces.
-- [[marketing-discounts]] — discounts can require a segment match (audience-targeted promotions).
-- [[apps-cart-rules]] — shares the same condition *family / vocabulary* (customer-group, product, tag, amount, …), but the two systems have **separate** condition-manager implementations — Cart Rules matches via its own `CartRuleMatches` filters, Segments via `*ConditionManager` classes; they do not share manager classes.
+- [[marketing-discounts]] — the **Discount** condition finds buyers who used a given discount; discounts themselves cannot target a segment.
+- [[apps-cart-rules]] — a similar condition vocabulary (customer group, product, tag, amount, …), but a separate implementation.
 - [[apps-product-review]] — contributes review-related conditions when installed.
 - [[segment]] — entity page.
 - [[api-segments]] — read-only JSON-API v2 resource (no write path).

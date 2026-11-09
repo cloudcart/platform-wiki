@@ -7,8 +7,8 @@ aliases: ["Product showcase module", "showcaseProducts module", "product.product
 tags: [design, modules, products, showcase, homepage]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Product module — Product showcase (`product.productShowcase`)
@@ -107,7 +107,7 @@ Each instance has its own saved settings. Reset clears one instance without touc
 
 ### Cache invalidation on save / reset
 
-Save and Reset make the new layout live on the next storefront request.
+Save and Reset apply the new layout to pages rendered afterwards; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Bundle filter is independent of "in bundles" module
 

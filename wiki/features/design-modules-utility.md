@@ -7,8 +7,8 @@ aliases: ["Utility modules", "Vendors module", "Payment providers module", "Leas
 tags: [design, modules, storefront-customisation, utility]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 # Storefront Modules — Utility
@@ -91,7 +91,7 @@ The `store_locations`, `yotpo-reviews`, and `brand-model` page-builder blocks on
 
 ### Cache invalidation is automatic
 
-Save and Reset both bump a per-site cache key, so merchants see their changes on the very next storefront request. No manual cache clear required. Full pipeline in [[design-modules-utility-storage]].
+Save and Reset both bump a per-site cache key, so every page rendered afterwards uses the new settings; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]). Full pipeline in [[design-modules-utility-storage]].
 
 ### Plan-gating
 

@@ -3,8 +3,8 @@ type: concept
 aliases: ["Admin alerts", "The bell icon", "Alerts feed", "Admin-panel notifications", "MakeAlert surface"]
 tags: [notifications, alerts, admin-panel, concepts]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[notification-delivery]]. See the hub for the other aspects (event spine, retry semantics, transactional email inventory, customer suppression).
@@ -51,6 +51,8 @@ What it does NOT cover:
 - **Export complete** — an async report export finished; the alert carries the download URL (the platform deliberately uses an admin alert here instead of an email).
 - **App install / uninstall** — an app was added to or removed from the store.
 - **Plan / subscription warnings** — billing or plan-limit notices.
+
+**No alert for visitor submissions.** A storefront contact-form message raises no alert and is not stored in the admin; it reaches the merchant only as the **Contact request** email ([[contacts]]). A subscribe-form signup raises no alert and sends the merchant no email; it shows only as a new subscriber and in the form's counters ([[subscribe-forms-submission-flow]]).
 
 ## In-panel alert vs. email escalation
 

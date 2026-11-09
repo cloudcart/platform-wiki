@@ -1,14 +1,14 @@
 ---
 type: feature
 nav_path: "Design → Custom CSS/JS"
-route_name: admin.custom.assets
-route_path: /admin/storefront/custom-assets
+route_name: design.custom-assets
+route_path: /admin/design/custom-assets
 aliases: ["Custom CSS/JS", "Custom assets", "Custom CSS", "Custom JavaScript", "Custom code", "Storefront custom code", "Tracking code", "Tracking pixel", "Персонализиран код", "Custom JS", "Тракинг код", "Глобален код", "Custom HTML"]
 tags: [design, custom, css, js, advanced]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-11-04
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 # Custom CSS/JS
 
@@ -24,14 +24,7 @@ This page is a hub. The detail of the editor, the injection mechanics, and the s
 
 Sidebar → **Design** → **Custom CSS/JS** (sidebar label *Custom CSS/JS*). The link appears immediately below the **Colors and typography** link, within the same "Design edit" section of the Design sidebar.
 
-The route is `/admin/storefront/custom-assets`. The breadcrumb reads **Design** → **Custom CSS/JS**.
-
-Sub-routes:
-
-| Action | Route name | Path | Method |
-|--------|------------|------|--------|
-| Open the editor | `admin.custom.assets` | `/admin/storefront/custom-assets` | GET |
-| Save edited code | `admin.custom.assets_save` | `/admin/storefront/custom-assets/save` | POST |
+The screen is the Vue page at `/admin/design/custom-assets` (route `design.custom-assets`); the old `/admin/storefront/custom-assets` address is not a route any more. It reads and saves through `GET` / `POST /admin/api/design/custom-assets`. The code is output raw in the `<head>` of every storefront page, so it is also where a merchant pastes a search engine's verification meta tag (for example Bing's `msvalidate.01`).
 
 There is no separate reset / delete endpoint — to remove all custom code, the merchant clears the editor and saves an empty string (see [[design-custom-assets-storage]]).
 
@@ -41,15 +34,15 @@ This screen is split into 3 aspect pages. The Assistant should drill into the as
 
 - [[design-custom-assets-editor]] — the CodeMirror `htmlmixed` editor; the single `custom_assets` field; what kinds of markup can be pasted; what the merchant can and cannot do (no preview, no rollback, no per-page targeting); the Save action.
 - [[design-custom-assets-injection]] — where the code lands (`<head>` of every storefront page), the render order vs theme stylesheets, no sanitisation, no per-page filter, the read path.
-- [[design-custom-assets-storage]] — per-theme storage row (`custom-css-js`), theme-switching hides/reveals code, empty-save as the only off-switch, no version history, no cache invalidation, plan / permission gating, the disabled server-side parse helper.
+- [[design-custom-assets-storage]] — per-theme storage row (`custom-css-js`), theme-switching hides/reveals code, empty-save as the only off-switch, no version history, cached pages keeping the old code up to 20 minutes, plan / permission gating, the disabled server-side parse helper.
 
 ## What the merchant can do here
 
-The screen is a single full-width form with one big CodeMirror editor for pasting any combination of HTML, `<style>`, and `<script>` markup, then a **Save** action that persists the content. The full editor capabilities (modes, line numbers, folding, resize) and the catalogue of what the merchant **cannot** do (no preview, no per-page targeting, no rollback, no enable/disable toggle) are documented on [[design-custom-assets-editor]].
+The screen is a single full-width form with one big CodeMirror editor for pasting any combination of HTML, `<style>`, and `<script>` markup, then a **Save** action that persists the content. The full editor capabilities (mode, line numbers, wrapping) and the catalogue of what the merchant **cannot** do (no preview, no per-page targeting, no rollback, no enable/disable toggle) are documented on [[design-custom-assets-editor]].
 
 ## Settings & fields
 
-The screen has exactly **one editable field** — `custom_assets`, a free-form HTML / CSS / JS blob with no required value and no documented size cap — plus the **Edit** (Save) action. Field format, editor configuration, and the save confirmation message are detailed on [[design-custom-assets-editor]].
+The screen has exactly **one editable field** — `custom_assets`, a free-form HTML / CSS / JS blob with no required value and no documented size cap — plus the **Save changes** button of the bar that appears once the code is changed (there is no **Edit** button). Field format, editor configuration, and the save confirmation message are detailed on [[design-custom-assets-editor]].
 
 ## Business rules
 
@@ -60,6 +53,7 @@ The business rules split across the aspect pages:
 - **Save replaces the full content** — no append / merge / version history; the merchant must keep their own backup. See [[design-custom-assets-storage]].
 - **Empty save removes all custom code** — the only "off switch". See [[design-custom-assets-storage]].
 - **No plan gate, no permission of its own** — every plan tier can use it; the sidebar link sits behind the `store.builder` permission. See [[design-custom-assets-storage]].
+- **The merchant's code is the merchant's responsibility** — under the Terms of Use the merchant answers for all of the store's content, code included (§8.15), and no clause promises notice before changes to the markup custom code relies on. See [[terms-of-use-changes-liability]].
 
 ## Related
 
@@ -78,5 +72,5 @@ The business rules split across the aspect pages:
 
 ## Open questions
 
-- ⏸️ **Cache invalidation after save.** Saving does not flush external caches. Storefront CDN / Cloudflare caches may serve the old page until the cache TTL expires; merchants making time-sensitive changes should flush their CDN manually. See [[design-custom-assets-storage]].
+- ✅ Resolved: saving does not clear cached pages; guests see the change within 20 minutes, crawlers within 1–2 days. See [[design-custom-assets-storage]].
 - ⏸️ **Conflict with dedicated app integrations.** Not detected by the platform — merchants who install an integration app (e.g., Facebook Pixel) AND paste the pixel here will fire both. Avoid duplication manually.

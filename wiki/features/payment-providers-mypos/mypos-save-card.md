@@ -7,8 +7,8 @@ aliases: ["myPOS save card", "myPOS CardToken", "myPOS tokenisation", "myPOS sav
 tags: [paymentproviders, payment-providers, mypos, save-card, tokenisation, cardtoken]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[payment-providers-mypos]]. See the hub for related aspects (setup & config pack, payment lifecycle, refund & sync).
@@ -48,7 +48,9 @@ When **Save customer card** is ON AND the buyer is signed in (non-guest), the pl
 
 1. **First purchase** — the platform sends `CardTokenRequest = CARD_TOKEN_REQUEST_PAY_AND_STORE` on the purchase. The customer enters their card on myPOS's page, completes 3DS, and on success myPOS returns `CardToken`, `PAN` (masked), `ExpDate`, and `CardType`. The platform stores these on the customer's `CustomerCard` record.
 2. **Subsequent purchases** — when the customer picks myPOS again, the platform calls `IAPurchase` (Initial-Auth Purchase) directly with the stored `CardToken` — myPOS processes the charge server-side without showing the hosted page (3DS step-up may still happen depending on the issuer).
-3. If a saved-card charge fails, the merchant-facing error reads: *"Payment failed. Please remove the saved card and try again."* — the customer is encouraged to delete the stale token from their account panel.
+3. If a saved-card charge fails, the shopper sees *"Payment failed. Please remove the saved card and try again."* This is CloudCart's fixed text for **any** unsuccessful answer from myPOS (for example status 5, which the myPOS SDK names "invalid params"); myPOS's own status and message are kept in the payment's log. The payment becomes `failed` and the order `cancelled`.
+   - Why removing the card is the advice: while a customer has a saved myPOS card and Save customer card is on, **every** myPOS checkout charges that card, with no option to enter another one. Once it is removed, the next checkout opens myPOS's page again and, on success, stores a new token.
+   - What exactly myPOS rejected behind a given status code is myPOS's to say (verify with myPOS).
 4. The customer can remove a saved card from their storefront account panel.
 
 Guest checkouts never tokenise — save-card requires a signed-in customer with an account to attach the `CustomerCard` to.

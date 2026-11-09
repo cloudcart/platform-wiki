@@ -7,8 +7,8 @@ aliases: ["Cart rule conditions", "Cart rule triggers", "Cart rule filters", "Co
 tags: [apps, cart-rules, marketing, promotions, conditions, triggers]
 plan_gates: ["cart_rules_conditions"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[apps-cart-rules]]. See the hub for the other aspects (actions, scoping, stacking, cooldowns, examples, known issues).
@@ -48,11 +48,11 @@ The sharpest trap is **quantity**:
 
 | Merchant intent | Correct filter | What it measures |
 |---|---|---|
-| *"Buy **2 or more of a specific product**"* | **Product → `product_quantity`** (UI: *Продукт → Количество на продукта*), operator `gte`/`gt`, value `2` | the units of **that one product line** |
+| *"Buy **2 or more of a specific product**"* | **Product → `product_quantity`** (UI: *Продукт → Количество на продукта*), operator `gte`/`gt`, value `2` | the units of **that product**, its variant lines added together |
 | *"Cart has **5+ items total**" (any products)* | **Cart → `cart_quantity`** (UI: cart quantity) | the **sum of every line's quantity** — cart-wide |
 | *"Cart has **3+ different products**"* | **Cart → `cart_products_count`** (UI: *Количка → Брой продукти в количката*) | the number of **distinct product lines** — cart-wide |
 
-So *"buy 2 of product X → discount"* must be **Product → `product_quantity` ≥ 2** (usually paired with a Product record-set condition selecting product X or its category). Using `cart_quantity` or `cart_products_count` for this is **wrong** — they fire for **any** cart with 2 total units / 2 different products, not "2 of X". The same cart-vs-product split applies to **value**: `product_amount` / `product_line_amount` = one line's value; `cart_amount` = the whole cart's value.
+So *"buy 2 of product X"* is **Product → `product_quantity` ≥ 2**, usually paired with a condition selecting product X or its category; `cart_quantity` / `cart_products_count` alone fire for any cart with 2 units / 2 products. The same split applies to value: `product_amount` / `product_line_amount` = one line; `cart_amount` = the cart (see *Business rules* for condition order).
 
 ### Cart-level filters (`condition_type = "cart"`)
 
@@ -79,15 +79,15 @@ So *"buy 2 of product X → discount"* must be **Product → `product_quantity` 
 | `product_sale` | Product is on sale | yes / no |
 | `product_amount` | Value of **one specific product line** (its price × qty) — not the cart total | numeric (cents) |
 | `product_line_amount` | Same as `product_amount` — one line's value | numeric (cents) |
-| `product_quantity` | **Units of one specific product** (that product's line quantity). Use this for *"N or more of a particular product"* (UI: *Продукт → Количество на продукта*) — **not** the cart-wide `cart_quantity` / `cart_products_count` | numeric |
+| `product_quantity` | **Units of one specific product** (its variant lines added together). Use this for *"N or more of a particular product"* (UI: *Продукт → Количество на продукта*) — **not** the cart-wide `cart_quantity` / `cart_products_count` | numeric |
 
 ### Customer-level filters (`condition_type = "customer"`)
 
 | Filter (`filter_type`) | What it checks | Notes |
 |---|---|---|
-| `order_amount` | Sum of the customer's **COMPLETED** past order totals | numeric. Pending, failed, cancelled, refunded and voided orders do NOT count — a customer who spent 200 EUR but had every order cancelled will NOT match `order_amount > 100`. |
-| `order_count` | Number of the customer's **COMPLETED** past orders | numeric. 5 pending orders awaiting payment will NOT match `order_count >= 3` until they reach `paid` / `completed`. |
-| `customer_group` | Membership in specific group(s) | Record-set, operator IN / NOT IN. Use the auto-created **Guests** group to target guest checkouts; `NOT IN Guests` targets registered customers — there is no separate `is_registered` / `is_guest` filter. |
+| `order_amount` | The customer's lifetime spend, the same stored figure as the **Revenue** column of the customer list | numeric. Counts orders that are paid or completed, or fulfilled and not cancelled / refunded, net of partial-return refunds. Unpaid and cancelled orders do not count. |
+| `order_count` | The number of those orders (the **Completed orders** column) | numeric. Pending orders awaiting payment do not count until paid. |
+| `customer_group` | Membership in specific group(s) | Matches when the shopper's group is one of those selected. The editor offers no In / Not in choice here, and a `not_in` sent through the API is ignored. **Guests** targets guest checkouts; to target registered customers, select every group except Guests. |
 
 **Customer filters cannot check:** campaign / segment membership (Cart Rules don't read it), the date of the last order, or average order value — only the lifetime aggregates above are exposed. To target any of these, build a [[marketing-segments|Segment]], assign its members to a custom group via [[customers-custom-groups]], then trigger on the `customer_group`.
 
@@ -97,11 +97,11 @@ Every condition shows what looks like a single "operator" dropdown, but dependin
 
 | Filter family | UI dropdown reads | Field that holds the choice | Allowed values |
 |---|---|---|---|
-| **Record-set** — `product`, `vendor`, `category`, `tag`, `selection`, `customer_group` | *In / Not in* | **`operator`** | `in`, `not_in` |
+| **Record-set** — `product`, `vendor`, `category`, `tag`, `selection` (`customer_group` is always "in") | *In / Not in* | **`operator`** | `in`, `not_in` |
 | **Numeric** — `product_quantity`, `cart_quantity`, `cart_products_count`, `product_amount`, `product_line_amount`, `cart_amount`, `order_amount`, `order_count` | *≥ / > / = / between …* | **`value_type`** | `gte`, `gt`, `lte`, `lt`, `equal`, `not_equal`, `between` |
 | **String** — `product_title`, `product_variant`, `product_option` | *contains / equals / starts / …* | **`value_type`** | `contains`, `not_contains`, `equal`, `not_equal`, `start`, `end`, `in`, `not_in` |
 
-> **The trap (verified from a real broken rule):** on a `product_quantity` condition the numeric comparison was written to the **`operator`** field (`operator: "gte"`) instead of **`value_type`**. `value_type` stayed **null**, so the editor rendered the operator as **"Select" / "undefined"** — *"product's quantity **undefined** 2 qty"* — the condition never matched and the whole promotion silently did nothing. **`operator` accepts ONLY `in` / `not_in`** (record-set inclusion); it is NOT the ≥/>/= dropdown. A numeric comparison put there is meaningless.
+> **The trap:** a `product_quantity` condition saved with `operator: "gte"` instead of `value_type` leaves `value_type` null; the editor shows the operator as **"Select" / "undefined"** and the condition never matches. **`operator` accepts only `in` / `not_in`** — it is not the ≥ / > / = dropdown.
 
 **So *"2 or more of a product"* is:** `condition_type=product`, `filter_type=product_quantity`, **`value_type=gte`**, `value=2`, with **`operator` left null** (nothing to include/exclude). Only its paired record-set trigger — e.g. `category`, `operator=in`, `records=[…]` — uses `operator`. One row, two triggers, two DIFFERENT operator fields.
 
@@ -114,7 +114,7 @@ Available operators depend on the filter's data type. There are **three parallel
 | `equal` / `not_equal` | Exact match |
 | `gt` / `gte` | Greater than / Greater than or equal |
 | `lt` / `lte` | Less than / Less than or equal |
-| `between` | Range — requires both `value` (low bound) AND `sub_value` (high bound). A null on either side means "no bound" (e.g., `value=10, sub_value=null` means *"≥ 10 and no upper limit"*). |
+| `between` | Range, **both bounds included** (`value` ≤ x ≤ `sub_value`). A null on either side means "no bound". In a range rule two ranges can share a bound (75–150, then 150–299.99); at exactly 150 both match, and the lower row in the editor wins because rows are tested bottom-up ([[cart-rules-stacking]]). |
 
 **String pool** — for `product_title`, `product_variant`, `product_option`. All comparisons are **case-insensitive** (both sides lowercased first), so *"Red T-Shirt"* matches condition value *"red"* under `contains`:
 
@@ -156,10 +156,8 @@ The platform validates the rule structure against a strict schema before saving:
 - `filter_type` must match the `condition_type` taxonomy (product filters only when `condition_type=product`, etc.).
 - Record-set filters (product / vendor / category / tag / selection / customer_group) REQUIRE `operator` (in/not_in) + `records`; `value` and `value_type` must be null.
 - Numeric value filters (`cart_amount`, `cart_products_count`, `cart_quantity`, `product_amount`, `product_line_amount`, `product_quantity`, `order_amount`, `order_count`) require `value_type` from: `between`, `gt`, `gte`, `equal`, `not_equal`, `lte`, `lt` — a **null `value_type` is rejected** with *"Field is required"* (this is where a comparison mis-written into `operator` gets caught).
-- **Caveat — the AI generator bypasses this.** The two validators differ: the standard form / API save requires a real `value_type` on numeric filters, but the **AI rule generator** uses a separate schema that *permits* `value_type: null` (and restricts `operator` to `in`/`not_in`). So an AI-built rule can be persisted in the broken "undefined operator" state above without being caught until a human opens and re-saves it. **After any AI generation, confirm each numeric condition shows a real operator (≥ / > / =), not "Select".**
+- **AI output still needs a check.** The AI generator's own schema permits `value_type: null`, so a generated numeric condition can arrive showing **"Select"**; pick a real operator (≥ / > / =) before saving.
 - Boolean filters (`product_new`, `product_featured`, `product_sale`) require `value` from `["yes", "no"]` and a null `value_type`.
-- `sub_value` REQUIRED when `value_type = between`, null otherwise.
-- AI-generated rules conform by construction, but the same Save-time validation still runs.
 
 ## Business rules
 
@@ -167,11 +165,12 @@ The platform validates the rule structure against a strict schema before saving:
 
 When a row has several **product-level** triggers, they are evaluated against the **same product line**: the engine keeps the set of cart products that satisfy each product trigger and **intersects** them (`array_intersect`). So a row with **`category = X` AND `product_quantity ≥ 2`** matches only if **one product is BOTH in category X AND has quantity ≥ 2** — i.e. *"2 or more of a product in category X"*. It does **not** match "1 product from category X plus 2 of some unrelated product". This intersection is exactly what makes *"buy N of a specific product / category → discount"* expressible: pair a product record-set trigger (`product` / `category` / `vendor` / `selection` / `tag`) with **`product_quantity`** in the same row.
 
-**Cart-level and customer-level triggers are NOT per-product** — `cart_quantity`, `cart_amount`, `cart_products_count`, `order_amount`, `order_count` measure the **whole cart / customer**, independent of which product matched. (Subtlety: when a row also has product triggers, `cart_products_count` counts within the product-matched set, not the entire cart.)
+**Cart-level triggers follow the order of the row's conditions.** Conditions are checked top to bottom. A cart condition (`cart_quantity`, `cart_amount`, `cart_products_count`) placed **after** a product condition measures only the lines that matched so far; placed first, it measures the whole cart. So *"3 or more units from category X, any mix of products"* (mixed flavours) is **Product → category X**, then **Cart → cart quantity ≥ 3**: the units of every category-X line are summed. `product_quantity` instead counts one product's units (its variants together), never several products. Customer conditions always measure the customer.
+
+**One product from category A and one from category B cannot be required.** Two category conditions in a row intersect on the same line, and a line counts only its product's main category, so such a row never matches. The nearest shape is a condition on A with the action aimed at B (*"buy from A, get the discount on B"*) — see [[cart-rules-actions]].
 
 - **AND across triggers within a row.** All triggers in the row must match for its action to fire.
 - **OR across rows of the same rule** is not what it looks like — multi-row rules are an OR-fallback ladder where only ONE row fires per rule. See [[cart-rules-stacking]] for the reverse-evaluation rule.
-- **You provide the human value; the save helper multiplies it by 100 (see "Value scale" below).** A *"cart over 50 EUR"* trigger is **`value: 50`**, NOT `5000`. Money is stored as cents; the action percent is stored ×100; quantity/count are plain integers. This stored form is what the cart-level stacking comparison uses — see [[cart-rules-stacking]].
 - **Cart-side values match the POST-DISCOUNT amount.** Each line's amount is taken after [[marketing-discounts]] apply, so *"cart_amount > 100"* tests the discounted total, not the catalog total.
 - **Deleted records silently disappear from record-set triggers** — see [[cart-rules-known-issues]] for the orphan-reference behaviour (especially dangerous for `not_in`).
 

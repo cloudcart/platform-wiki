@@ -3,8 +3,8 @@ type: concept
 aliases: ["Notification suppression", "notify_customer flag", "No global mute", "Pause notifications", "Customer-side suppression"]
 tags: [notifications, email, suppression, orders, concepts]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[notification-delivery]]. See the hub for the other aspects (event spine, retry semantics, admin alerts, transactional email inventory).
@@ -60,7 +60,7 @@ So `notify_customer = 0` is precisely "stop emailing THIS customer about THIS or
 There is no merchant-facing "pause all notifications" or "mute the bell" switch. The closest available controls, each scoped narrowly, are:
 
 - Individual webhooks toggled inactive on [[settings-hooks]].
-- Individual mail templates toggled off per template on [[marketing-omnichannel-mails-list]] (subject to the master switch and the three bypass labels — see [[notification-delivery-email-inventory]]).
+- Individual mail templates toggled off per template on [[marketing-omnichannel-mails-list]] (locked mails cannot be switched off — see [[notification-delivery-email-inventory]]).
 - Admin-alert email escalation preferences on [[settings-admin-notifications]].
 
 There is no single platform-wide kill switch in the merchant UI that stops everything at once.

@@ -7,8 +7,8 @@ aliases: ["Add domain", "Buy a domain", "Add existing domain", "Purchase new dom
 tags: [settings, domains, namecom, whois, idn, registrar]
 plan_gates: ["domains", "custom_hostname"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[settings-domains]]. See the hub for related aspects (DNS / Cloudflare, SSL, primary, deletion, plan gates).
@@ -29,39 +29,25 @@ Settings → Domains → **+ Add domain** button in the page header. The button 
 
 Only one option can be expanded at a time. Opening the second collapses the first.
 
-**Option 1 — Add existing domain** (collapsed by default):
+**Option 1 — Add existing domain** (collapsed by default; its description is still placeholder copy):
 
-- Browser-icon header. Description: *"Lorem ipsum dolor sit amet consectetur."* (placeholder copy not yet replaced).
-- On expansion: *"Enter domain name here"* heading + styled input with a fixed `https://` prefix badge. The merchant types just the hostname.
-- Inline validation: red error below the field for *"Domain is required"*, *"Invalid domain name"*, *"The domain already exists in the system"*. Errors are x-closable.
-- **Cancel** clears the input and collapses the accordion.
-- **Save** POSTs to `save-external` with `{domain: <value>}`. On success the new row is added; modal closes. On error `responseErrors.domain` shows inline.
-- Below the buttons: *"Need help adding a domain?"* with a **Contact us** link to the help-center article.
+- *"Enter domain name here"* + an input with a fixed `https://` prefix; the merchant types just the hostname.
+- Inline errors: *"Domain is required"*, *"Invalid domain name"*, *"The domain already exists in the system"*.
+- **Save** adds the row and opens the Activate Domain modal ([[settings-domains-dns-cloudflare]]); **Cancel** clears the input. *"Need help adding a domain?"* links to the help center.
 
 **Option 2 — Purchase new domain** (collapsed by default):
 
-- Globe-icon header. Description: *"Purchase new domain description"* (placeholder).
-- On expansion: *"Search for your new domain here"* heading + search input with magnifying-glass icon + **Search** button.
-- The merchant types a name (e.g., `mystore`); Enter or Search calls `POST /search` with `{keyword: <value>}`.
-- Below the search input, an animated list of TLD variants from the registrar. Each row shows:
-  - Check-circle icon (purchasable) OR ban icon (not available).
-  - The full domain name (e.g., `mystore.com`).
-  - For purchasable rows: a **"Promo price 1st year"** badge with first-year price, a *"Price for next year: {price}"* subtitle, and a **Buy** button.
-  - For unavailable rows: *"This domain is not available for purchase."*.
-- Clicking **Buy** emits `purchaseDomain` to the parent — opens the `CheckoutExternal` panel for WHOIS + payment.
+- *"Search for your new domain here"* + a search input and **Search**.
+- A list of TLD variants from the registrar. Purchasable rows show a **"Promo price 1st year"** badge, *"Price for next year: {price}"* and **Buy**; others say *"This domain is not available for purchase."*.
+- **Buy** opens the checkout panel for WHOIS + payment.
 
 ### CheckoutExternal panel (domain purchase)
 
-A separate side-panel that opens after the merchant clicks **Buy**. Implemented as `CheckoutExternal` (shared component used elsewhere for plan-pack purchases — not unique to Domains). The merchant:
-
-- Sees the domain + price line item.
-- Fills in WHOIS registrant contact: name, address, email, phone — required by **ICANN** registration rules.
-- Confirms payment from the stored payment method on their plan subscription.
-- On success the new domain appears in the table as Active.
+A side-panel (the same checkout used for plan packs). The merchant sees the domain and price, fills in the WHOIS registrant contact (name, address, email, phone — required by **ICANN**), and pays with the plan's stored payment method. On success the new domain appears in the table as Active.
 
 ### Per-domain row — renewal + WHOIS edit (CloudCart-purchased only)
 
-- **Renew** CTA: shown when `expire_date <= now + 1 month` for CloudCart-purchased domains. Renewal is billed through the merchant's plan subscription.
+- **Renew** link: under **Expires on** on every CloudCart-purchased domain, whatever the date. It opens the checkout with the renewal price; paying charges the plan's card at once (an invoice for the domain service) and extends the registration by one year at the registrar.
 - **WHOIS contacts edit**: lets the merchant update the registrant contact info that ICANN requires on file.
 
 ## Settings & fields
@@ -92,15 +78,16 @@ On success the new row appears with DNS status **Pending** — the merchant must
 5. **WHOIS Privacy is automatically enabled** — the public WHOIS lookup shows the registrar's privacy proxy, not the merchant's real address.
 6. Domain appears as Active typically within seconds (no DNS-propagation wait, because CloudCart already owns the registration).
 
-### Renewal warning threshold = 1 month
+### Renewal and expiry
 
-For CloudCart-purchased domains only, the row shows a renewal warning when `expire_date <= now + 1 month`. Renewal price may differ from the initial purchase price — it reflects current registrar pricing at renewal time. This is independent of the SSL auto-renewal sweep (which triggers at 25 days before cert expiry — see [[settings-domains-ssl]]).
+- **Only Renew renews.** No CloudCart job renews or charges a registration by itself. A daily job posts an Important admin alert for each CloudCart-purchased domain from one month before to one month after its expiry date: *"Domain {domain} is paid to {date}. You can renew it from HERE"* (*"Домейн {domain} е платен до {date}. Можете да го подновите от ТУК"*).
+- The renewal price is the registrar's current price plus CloudCart's margin, so it can differ from the first year. It is independent of the SSL sweep at 25 days ([[settings-domains-ssl]]).
+- Whether the registrar still accepts a renewal after the expiry date, and at what price, is the registrar's rule; whether the registrar account renews on its own is not set in CloudCart's code (verify).
+- A lapsed registration stops resolving. The store stays on its `*.cloudcart.net` address, but a lapsed **primary** keeps the other addresses redirecting to it — see [[settings-domains-primary]].
 
 ### Internationalised domain names (IDN) — Punycode under the hood
 
-When the merchant types an IDN like `сайт.бг`, the platform lowercases it, converts to ASCII Punycode via `idn_to_ascii($name, 0, INTL_IDNA_VARIANT_UTS46)` (stored as e.g. `xn--80aswg.xn--90ae` in the `hosts.host` column), and converts back to UTF-8 via `idn_to_utf8(...)` when displaying. The certificate model uses the same conversion on its `common` column.
-
-So the merchant sees the IDN in native characters but ACME requests, Cloudflare zone creation, and SSL certificate Subject all use the Punycode form. If the merchant exports settings or hits a CDN endpoint directly with the IDN form, the URL may show as the Punycode equivalent — that's normal.
+When the merchant types an IDN like `сайт.бг`, the platform lowercases it and stores it in Punycode (e.g. `xn--80aswg.xn--90ae`), converting back to native characters for display. ACME requests, Cloudflare zones and the certificate Subject use the Punycode form, so a URL may show that form elsewhere — that's normal.
 
 ### No inbound-transfer flow
 
@@ -109,7 +96,7 @@ CloudCart does NOT expose a "transfer a domain into Name.com from another regist
 1. **Add existing** — keep the domain at the original registrar, change its nameservers to point at CloudCart-managed Cloudflare.
 2. **Buy new** — purchase a fresh registration through CloudCart's reseller.
 
-Merchants who want to move their registration to be managed by CloudCart must either buy a fresh registration via *Buy new*, or contact CloudCart support to arrange a manual transfer.
+The registrar integration has no transfer call, and the admin shows no unlock or transfer (EPP) code for a domain bought here. Pointing a domain's nameservers at CloudCart is not a transfer; what it copies is on [[settings-domains-external-dns]]. A merchant who wants CloudCart to hold the registration buys it with *Buy new* or asks CloudCart support about a manual transfer (verify the procedure and price).
 
 ### Domain purchase failed — what to tell the merchant
 

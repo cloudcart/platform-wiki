@@ -4,8 +4,8 @@ nav_path: "Entity → Blog Article → Data model"
 aliases: ["Blog Article data model", "Blog Article fields", "Blog Article attributes", "Article slug", "Article body", "Article excerpt", "Article category_id", "Article translations", "Article cascade delete"]
 tags: [entity, blog, marketing, content, data-model, fields]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[blog-article]]. See the hub for the other aspects (lifecycle, business rules, storefront & modules, programmatic access).
@@ -34,7 +34,7 @@ Three structural rules recur across the other aspects of this entity and are enc
 | Field | What it stores | Notes |
 |-------|----------------|-------|
 | `title` | Article headline | Required. Displayed everywhere — list, edit header, storefront article page, RSS feed, newsletter teasers. |
-| `slug` / `url_handle` | URL slug | Drives the storefront path `/blog/<slug>`. Renaming creates a 301 redirect from the old slug. Must be unique within the store. |
+| `slug` / `url_handle` | URL slug | Drives the storefront path `/blog/<slug>`. On a rename the old slug is kept for 30 days in a hidden history, not as a redirect rule. Must be unique within the store. |
 | `body` | Rich-text content | The article's main HTML body. Supports formatting, images (lifted into [[file-asset]] storage on save), embedded videos, internal links, and CTAs. Same rich-text editor as product descriptions. |
 | `excerpt` / `short_description` | Summary text | Optional. Shown on the blog index, category feeds, and in newsletter teaser blocks. Falls back to a truncation of `body` when empty. |
 | `author` | Author name / byline | Free text. Optional. Shown on the storefront article page when set. |

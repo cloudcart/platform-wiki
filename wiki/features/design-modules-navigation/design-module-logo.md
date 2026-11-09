@@ -7,8 +7,8 @@ aliases: ["Logo module", "logo", "extra.logo", "Store logo module", "Модул 
 tags: [design, modules, navigation, header, logo, branding]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Storefront Modules — Logo (`logo`)
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-The **Logo** module renders the store's logo image in the header — usually top-left or top-center — wrapped in a link to the homepage (`/`). The image itself is uploaded in [[settings-general]] (Logo section) and reused across the whole storefront, including email templates, PDF order documents, and progressive-web-app icons (on themes that ship a PWA manifest).
+The **Logo** module renders the store's logo image in the header — usually top-left or top-center — wrapped in a link to the homepage (`/`). The image itself is uploaded in [[settings-general]] (Logo section) and reused across the whole storefront, including email templates and PDF order documents. No theme ships a web app manifest, so the logo is not used as an app icon ([[storefront-arch-root-files-and-pwa]]).
 
 This module is a SYSTEM module — it's injected by the module helper even when the active theme doesn't declare it in its `theme.json`. The merchant always has a logo slot.
 
@@ -72,10 +72,8 @@ The same uploaded image is used in:
 - Header (this module)
 - Email templates (order confirmations, abandoned cart, password reset, etc.)
 - PDF order documents (invoice, packing slip)
-- PWA mobile icon (themes that ship a `manifest.json`)
-- Schema.org `Organization` JSON-LD (SEO metadata)
 
-There is no per-surface logo override at the module level.
+There is no per-surface logo override at the module level. The storefront outputs no `Organization` structured data, so the logo is not published that way ([[seo-structured-data]]).
 
 ### Logo is INJECTED as a system module
 
@@ -96,7 +94,7 @@ Custom `alt` text per language requires the `multylang` app and is set via the l
 
 ### Cache invalidation on logo upload
 
-Uploading a new logo via [[settings-general]] regenerates the storefront cache key. Customers see the new logo on the next page load — no manual cache-clear needed.
+Uploading a new logo via [[settings-general]] regenerates the storefront cache key. Pages rendered afterwards show the new logo; guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### No plan-gating
 
@@ -117,4 +115,4 @@ The `logo` helper resolves to the image URL in the merchant's media storage (S3-
 
 - 📡 **Per-language logo upload.** With `multylang` installed, [[settings-general]] exposes per-language logo upload (e.g., a Cyrillic logo for BG, Latin for EN). GraphQL-resolvable: query whether the `multylang` app is installed.
 - ⏸️ **Dark / light logo variants.** Themes with dark-mode support typically need a second logo — currently a support-only workflow. Verify which themes (if any) auto-detect dark mode.
-- ⏸️ **PWA icon vs header logo.** Some themes use a separate PWA icon (`manifest.json` `icons`) — confirm whether the upload is shared with the header logo or stored separately per theme.
+- ✅ Resolved: no theme links a web app manifest or app icon — see [[storefront-arch-root-files-and-pwa]].

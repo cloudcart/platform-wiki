@@ -3,12 +3,12 @@ type: feature
 nav_path: "Apps → GDPR → Cookies → Consent state"
 route_name: apps.gdpr.cookies
 route_path: /admin/apps/gdpr/cookies
-aliases: ["cc-cookie-consent", "Consent cookie", "Consent state", "Cookie consent expiry", "Cookie cleanup", "Cookie groups cache", "Re-consent rules"]
+aliases: ["cc-cookie-consent", "Consent cookie", "Consent state", "Cookie consent expiry", "Consent 180 days", "Cookie cleanup", "Cookie groups cache", "Re-consent rules"]
 tags: [apps, gdpr, compliance, cookies, consent, storefront, cache]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-08
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # GDPR — Cookies: consent state & lifecycle
 
@@ -16,16 +16,16 @@ source_count: 5
 
 ## Purpose
 
-This aspect documents **where and how the visitor's consent choice is stored and acted on** — the `cc-cookie-consent` browser cookie, its structure and defaults, its 365-day lifespan, why it is deliberately left unencrypted, the storefront cleanup of rejected cookies, the 20-minute group cache, and the rules for when (and when not) a visitor is re-prompted. This is the runtime / lifecycle slice; the admin UI for editing groups and cookies is on [[apps-gdpr-cookies-groups]] and [[apps-gdpr-cookies-definitions]].
+This aspect documents **where and how the visitor's consent choice is stored and acted on** — the `cc-cookie-consent` browser cookie, its structure, the states that apply before an answer, its 180-day lifespan, why it is deliberately left unencrypted, the cleanup of refused groups' cookies, the 20-minute group cache, and what asks a visitor again. This is the runtime / lifecycle slice; the admin UI for editing groups and cookies is on [[apps-gdpr-cookies-groups]] and [[apps-gdpr-cookies-definitions]].
 
 ## Where to find it
 
-This behaviour runs on the storefront, driven by the configuration in the **Cookies tab** (`/admin/apps/gdpr/cookies`). The runtime endpoint is `GET /gdpr/cookie-consent`. There is no separate admin screen for the consent state itself — the merchant sees logged acceptances on [[apps-gdpr-acceptance]].
+This behaviour runs on the storefront, driven by the configuration in the **Cookies tab** (`/admin/apps/gdpr/cookies`). The runtime endpoint is `GET /gdpr/cookie-consent`. There is no admin screen for it: a visitor's cookie answer lives only in their browser and is not logged by the store. The **Policy acceptance** tab ([[apps-gdpr-acceptance]]) records policy acceptances, not cookie answers.
 
 ## What the merchant can do here
 
-- Set per-group defaults that become the visitor's assumed state until they choose (see [[apps-gdpr-cookies-groups]]).
-- Rely on the storefront to persist the choice for 365 days and to clean up rejected cookies automatically.
+- Set each group's **Default state**, the position its switch starts in (see [[apps-gdpr-cookies-groups]]).
+- Rely on the storefront to keep the answer for 180 days and to delete the cookies listed under refused groups.
 - Understand that editing the cookie LIST does not force existing visitors to re-consent, and plan re-consent strategy accordingly.
 
 ## Settings & fields
@@ -38,13 +38,15 @@ The consent state is persisted in a browser cookie named `cc-cookie-consent`. It
 system:yes+performance:yes+functional:yes+targeting:no+consent_mode_for_traffic:no
 ```
 
-When no cookie is set yet, each group falls back to its `default` (see [[apps-gdpr-cookies-groups]]): `system`, `performance`, `functional`, `targeting` default to **yes**; `consent_mode_for_traffic` defaults to **no** (see [[apps-gdpr-cookies-consent-mode]]). Consent is recorded **per group, not per individual cookie**.
+Every answer names every active group. Consent is recorded **per group, not per individual cookie**.
 
-### 365-day expiry
+### Before an answer: fixed states, not the merchant's defaults
 
-When the customer accepts via "Accept all" or "Save preferences", the storefront JS writes the cookie with `expires: 365` days. After one year (or when the visitor clears browser cookies) the cookie is gone and the bar/wall re-appears on the next visit, prompting re-consent.
+Until the visitor answers, the storefront and the store's server treat `system`, `performance`, `functional` and `targeting` as **yes** and `consent_mode_for_traffic` as **no**. These states are fixed in the platform: a group's **Default state** setting only moves its switch in the dialog ([[apps-gdpr-cookies-groups]]). A group the store switched off, absent from every answer, keeps its fixed state.
 
-> **Writing the cookie does not necessarily dismiss the bar.** A **partial** consent (some categories rejected) is stored correctly and honoured, but the bar **keeps showing** until the visitor accepts every category — by design, as a standing reminder. So "the banner came back" is not evidence that the cookie failed to save. See [[gdpr-consent-persistence]] for the full outcome table and the support playbook.
+### 180-day lifetime
+
+Every answer — Accept, Save settings or Reject — is written for **180 days** at the site root, `SameSite=Lax`, on the host it was given on (until 06.11.2026: 365 days). After that, or when the visitor clears cookies, the bar or wall shows again. Any answer dismisses it ([[gdpr-consent-persistence]]).
 
 ## Business rules
 
@@ -52,15 +54,16 @@ When the customer accepts via "Accept all" or "Save preferences", the storefront
 
 The platform explicitly leaves the `cc-cookie-consent` cookie unencrypted, so the value is plain readable text (`system:yes+performance:yes+...`). This is intentional: it lets storefront JavaScript and third-party tracking scripts read the consent state directly via `Cookies.get` without a server round-trip.
 
-### Storefront cleans up rejected cookies
+### Every answer cleans up the refused groups
 
-The storefront endpoint `GET /gdpr/cookie-consent` deletes any browser cookie whose name appears in a not-yet-accepted group — actively removing tracking cookies the visitor hasn't agreed to. (This is the endpoint the consent-modal "Save preferences" button triggers — see [[apps-gdpr-cookies-bar-wall]].)
+After each answer the storefront deletes, in the browser, the cookies listed under each refused group, on the store's host and its parent domains (where trackers such as `_fbp` live); a listed `_ga_…` name matches every GA4 stream cookie. It also calls `GET /gdpr/cookie-consent`, which tells the browser to forget the same cookies, including ones scripts cannot reach. Only cookies the merchant listed under a group are removed ([[apps-gdpr-cookies-definitions]]).
 
-### 365-day expiry is the only automatic re-consent trigger
+### What asks a visitor again
 
-Adding a NEW cookie to an existing group does **not** re-prompt visitors — their group-level consent already covers it. To force fresh consent, the merchant must rebuild the consent UX themselves (e.g., delete and re-create a group, so visitors whose cookie lacks that group key fall back to the default state). The 365-day expiry is the only built-in automatic **re-consent** trigger — i.e. the only thing that discards a stored consent.
+- The answer expiring (180 days) or the visitor clearing cookies.
+- The store switching on a group the stored answer does not name: everyone is asked once more.
 
-That is a different thing from the bar **re-appearing**: after a partial consent the bar keeps showing on every page load even though the stored consent is intact and unexpired (see [[gdpr-consent-persistence]]). Expiry discards the consent; the bar's persistence does not.
+Adding a cookie to an existing group, or editing a text, asks nobody again — the group-level answer already covers it.
 
 ### 20-minute group cache, invalidated on save
 
@@ -69,10 +72,11 @@ The cookie-groups list is cached as `gdpr.cookie_groups_v2` with a 20-minute TTL
 ## Related
 
 - [[apps-gdpr-cookies]] — hub.
-- [[apps-gdpr-cookies-groups]] — per-group `default` flag that seeds the pre-consent state.
+- [[apps-gdpr-cookies-groups]] — per-group **Default state** that sets the switch's starting position.
 - [[apps-gdpr-cookies-consent-mode]] — why `consent_mode_for_traffic` defaults to no (referenced inline above).
-- [[apps-gdpr-cookies-bar-wall]] — the "Save preferences" button that triggers the cleanup endpoint (referenced inline above).
-- [[apps-gdpr-acceptance]] — the merchant-facing log of recorded consent acceptances.
+- [[apps-gdpr-cookies-bar-wall]] — the buttons that store an answer.
+- [[apps-gdpr-cookies-platform-cookies]] — the storefront's own cookies.
+- [[apps-gdpr-acceptance]] — the log of policy acceptances (cookie answers are not logged).
 
 ## Open questions
 

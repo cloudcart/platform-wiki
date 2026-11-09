@@ -5,8 +5,8 @@ aliases: ["Storefront route catalog", "Indexable routes", "Noindex routes", "Alw
 tags: [seo, routes, storefront, middleware, indexing, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[seo-handling]]. See the hub for related aspects (sitemap / robots, canonical / noindex, meta tags, redirects, sharing / RSS, plan overrides).
@@ -48,7 +48,7 @@ Not covered here:
 
 ### Indexable routes (redirect middleware activates)
 
-The redirect middleware activates on these route names only. These are also the routes that emit `<link rel="canonical">` by default (see [[seo-canonical-noindex]]):
+The redirect middleware activates on these route names (plus `products.list`) before the page renders, so a matching 301 rule replaces even a live page; a path that matches no storefront page runs the same lookup on its 404 (see [[seo-301-redirects-middleware]]). These are also the routes that emit `<link rel="canonical">` by default (see [[seo-canonical-noindex]]):
 
 ```
 site.home
@@ -115,7 +115,9 @@ For any incoming storefront request:
 2. **Always-noindex check** — if the route name matches the always-noindex set, emit `noindex, nofollow`, skip canonical, done.
 3. **Robots-meta-exempt check** — if the route name matches `products.list` or `ajax.*`, skip the robots meta. Canonical may still emit on `products.list`.
 4. **Noindex-eligible check** — if the route is in the noindex-eligible set, count meaningful query params; if over threshold, emit `noindex, follow` and a canonical with the kept parameters.
-5. **Indexable default** — emit canonical, run the redirect-middleware lookup, emit normal meta tags.
+5. **Indexable default** — emit canonical and normal meta tags.
+
+The 301 lookup is not a step in this chain: it runs before the page renders, and a matching rule returns the redirect instead of the page, so no page meta is emitted (see [[seo-301-redirects-middleware]]).
 
 ## Related
 

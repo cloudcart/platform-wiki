@@ -7,8 +7,8 @@ aliases: ["Email channel", "Email setup", "Elastic Email", "Email marketing chan
 tags: [marketing, channels, email, elastic-email, dkim, spf]
 plan_gates: ["campaign.channel.email"]
 created: 2026-05-23
-updated: 2026-11-03
-source_count: 11
+updated: 2026-11-09
+source_count: 12
 ---
 
 # Email channel
@@ -17,9 +17,9 @@ source_count: 11
 
 The **Email channel** is the merchant's main outbound bulk-email delivery pipe — used for newsletters, promotional campaigns, abandoned-cart recovery, drip sequences, and any other marketing message sent via [[marketing-campaigns|Campaigns]]. Behind the scenes, CloudCart connects to **Elastic Email** (`api.elasticemail.com/v2/`) and creates a dedicated **sub-account** per store, isolating each merchant's sender reputation, bounce list, and statistics.
 
-This is also the channel used for the platform's notification emails (order confirmation, password reset, account verification, abandoned-cart restore links) when the merchant has the [[marketing-omnichannel-mails-list|Email notifications]] system point to the Elastic Email channel. Restore links go out as promotional, the rest as transactional — see [[abandoned-cart-channels]]. The same plan-cap (`campaign.channel.email`) and sender-domain setup applies in both cases.
+Only campaign mails and the subscriber confirmation mail use this channel. They go From the sender address set in the wizard's last step, with the store's name as display name and the same address as Reply-To; neither has a field of its own ([[email-channel-setup-wizard]]). Order and system notifications ([[marketing-omnichannel-mails-list|Email notifications]]) go through the platform's notification mailer: the store's [[apps-smtp|SMTP app]] when active and fully set up, otherwise CloudCart's shared sending account (From noreply@cloudcart.com with the store's name, Reply-To the store's email). No setting routes them here, so a broken Email channel does not stop order notifications.
 
-To send any production email, the merchant must complete a **four-step setup**: profile, domain, DNS verification (SPF / DKIM / Tracking CNAME / DMARC), then sender mailbox. The channel cannot be activated for campaign use until all four steps are green — see [[email-channel-setup-wizard]] for the full wizard and [[email-channel-dns-records]] for the four DNS records.
+To send campaigns, the merchant completes a **four-step setup**: profile, domain, DNS verification (SPF / DKIM / Tracking CNAME / DMARC), then sender mailbox. The channel cannot be activated for campaign use until all four steps are green — see [[email-channel-setup-wizard]] for the full wizard and [[email-channel-dns-records]] for the four DNS records.
 
 ## Where to find it
 
@@ -29,11 +29,13 @@ Sidebar → **Marketing** → **Channels** → **Channels setup** (route `campai
 
 ## Sub-pages (in this cluster)
 
-This feature is split into 7 aspect pages, each covering one well-scoped slice. The Assistant should drill into the aspect that matches the question, not read every page.
+Nine aspect pages; read the one that matches the question.
 
 - [[email-channel-setup-wizard]] — the 4-step Configuration modal (Profile / Domain / Verify / Sender email) + Completed review pane + Edit Profile / Edit Domain / Edit Email re-entry.
 - [[email-channel-dns-records]] — the four required DNS records (SPF / Tracking CNAME / DKIM / DMARC); auto-CNAME on Cloudflare-managed zones; the per-method `Domain.Verify*` flow and post-verify webhook registration.
-- [[email-channel-elastic-email-account]] — CloudCart-owned master account + per-store sub-account model; `{primary-host}@cloudcart.net` convention; credentials persistence + audit; **Reset configuration** flow (with preserved settings).
+- [[email-channel-dns-changes]] — merging with an existing SPF / DMARC, when Verify sees a new record, records removed or DNS moved after verification.
+- [[email-channel-elastic-email-account]] — CloudCart-owned master account + per-store sub-account model; `{service-name}@cloudcart.net` convention; credentials persistence + audit; **Reset configuration** flow (with preserved settings).
+- [[email-channel-reconnect]] — a rejected Elastic Email key: campaigns stop silently; the **Reconnect** repair.
 - [[email-channel-webhook-feedback]] — the delivery-status webhook (`messages/elastic-email-campaign/{site_id}`); status mapping (Sent / Opened / Clicked / Unsubscribed / Error / AbuseReport / WaitingToRetry); per-event subscriber-side effects.
 - [[email-channel-send-pipeline]] — per-recipient send job; subscriber pre-flight checks; variable substitution + UTM injection; `{$verify_url}` / `{$subscriber_email}` merge tags; demo / test sends; saved vs predefined templates; `message_html` validation (incl. base64-image rejection).
 - [[email-channel-suspend-thresholds]] — `SUSPENDED_SPAM = 0.5`, `SUSPENDED_BOUNCED = 5`, `SUSPENDED_OPEN = 5`; reputation ≥ 99 exemption; suspend recovery (no self-service unsuspend).
@@ -42,8 +44,8 @@ This feature is split into 7 aspect pages, each covering one well-scoped slice. 
 ## What the merchant can do here
 
 - **Configure** the Email channel via the 4-step wizard — see [[email-channel-setup-wizard]].
-- **Edit Profile / Edit Domain / Edit Email** to change any step after completion. Changing the domain wipes verify / email / send_email / configured settings — re-verification required.
-- **Reset configuration** — nuclear wipe (offered when an `expired` error pops up) — see [[email-channel-elastic-email-account]].
+- **Edit Profile / Edit Domain / Edit Email** to change any step after completion. In the current admin, re-saving or changing the domain only overwrites it: verification is not re-run and the sender is unchanged.
+- **Reconnect**, or the **Reset** wipe — offered on the card when Elastic Email rejects the key — see [[email-channel-reconnect]].
 - Toggle **Sending emails to unverified subscribers** (`unconfirmed_send`) — see [[email-channel-settings-pane]].
 - View **Reputation** — live spam% / bounce% / open% / click% / reputation% from Elastic Email's `Account.LoadReputationImpact`. The thresholds that drive auto-suspend live on [[email-channel-suspend-thresholds]].
 - Manage **Saved templates** — merchant-curated reusable HTML email layouts. See [[email-channel-send-pipeline]].
@@ -70,15 +72,6 @@ Detail lives on the aspect pages; this is the quick-reference index.
 |---|---|---|
 | `unconfirmed_send` | `false` | [[email-channel-settings-pane]] |
 
-### Hard-coded thresholds (`EmailChannelManager`)
-
-| Constant | Value | Aspect page |
-|---|---|---|
-| `API_URL` | `https://api.elasticemail.com/v2/` | [[email-channel-elastic-email-account]] |
-| `SUSPENDED_SPAM` | `0.5` | [[email-channel-suspend-thresholds]] |
-| `SUSPENDED_BOUNCED` | `5` | [[email-channel-suspend-thresholds]] |
-| `SUSPENDED_OPEN` | `5` | [[email-channel-suspend-thresholds]] |
-
 ### Validation summary
 
 | Field | Validation | Aspect page |
@@ -95,18 +88,18 @@ Detail lives on the aspect pages; this is the quick-reference index.
 The deep mechanics live on each aspect page; what every merchant must know at this level:
 
 - **CloudCart owns the Elastic Email account; per-store sub-accounts.** The merchant doesn't bring their own Elastic Email contract — CloudCart pays Elastic Email centrally and bills the merchant via the plan-cap `campaign.channel.email`. The `account_token` (sub-account API key) is stored server-side and never shown. See [[email-channel-elastic-email-account]].
-- **The sender domain is the merchant's, not CloudCart's.** The domain must come from [[settings-domains]]. Sending from `*.cloudcart.com` is forbidden for campaigns — protects CloudCart's shared reputation. See [[email-channel-dns-records]].
+- **The sender domain is the merchant's, not CloudCart's.** The domain is picked from [[settings-domains]]; the store's `*.cloudcart.net` address can't pass verification. See [[email-channel-dns-records]].
 - **Auto-suspend triggers.** Four thresholds run against each reputation pull: `SUSPENDED_SPAM = 0.5`, `SUSPENDED_BOUNCED = 5`, `SUSPENDED_OPEN = 5` (open-rate floor). Channel auto-suspends with the matching reason (`spam` / `bounced` / `open`). See [[email-channel-suspend-thresholds]] and [[marketing-channels#The four auto-suspend triggers]].
 - **No merchant-self-service unsuspend.** After an auto-suspend, the merchant fixes their list / content and contacts support to clear `suspended_by` or set `manual_allowed_suspended` — see [[email-channel-suspend-thresholds]].
-- **Step 4 completion also activates the channel.** Saving the sender mailbox flips `configured = true` AND `active = true` simultaneously — the Email channel is the only channel where wizard completion also turns it ON. See [[email-channel-setup-wizard]].
+- **Step 4 completion also activates the channel.** Saving the sender mailbox flips `configured = true` AND `active = true` simultaneously. Campaigns send only when the channel is active, configured and installed, so normally an unverified domain cannot send them. See [[email-channel-setup-wizard]].
 - **Test sends bypass Elastic Email.** Demo sends use the platform's transactional MailManager, don't count against the plan-cap, don't increment statistics, and don't appear in the campaign log — see [[email-channel-send-pipeline]].
 
 ## Related
 
 - [[marketing-channels]] — parent hub (multi-channel framework + auto-suspend triggers).
 - [[marketing-campaigns]] — campaigns use this channel as the most common delivery medium.
-- [[marketing-omnichannel-mails-list]] — transactional email notifications use this same Email channel for delivery.
-- [[apps-smtp]] — alternative integration for merchants who want to deliver via their own SMTP server instead of the CloudCart-managed Elastic Email pool.
+- [[marketing-omnichannel-mails-list]] — notifications; they do not use this channel.
+- [[apps-smtp]] — notifications via the store's own SMTP server instead of CloudCart's shared account.
 - [[apps-mailchimp]] — sync subscribers to a Mailchimp list (different system; doesn't use this channel).
 - [[settings-domains]] — sender domains must be defined here first.
 - [[settings-hooks]] — `subscriber.*` events fire on email-driven subscribe/unsubscribe state changes.

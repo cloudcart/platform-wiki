@@ -4,8 +4,8 @@ nav_path: "Entity → Category"
 aliases: ["Category", "Product category", "Catalog category", "Категория", "Категория на продуктите"]
 tags: [entity, catalog, products, categories, navigation, taxonomy]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # Category
@@ -31,7 +31,7 @@ The Category is a multi-faceted record split across **five well-scoped aspects**
 - [[category-entity-attributes]] — the full per-field schema (name, parent, description, image, `display_child`, `taxonomy_id`, allowed payment / shipping methods, `make_interval`, SEO title / description / URL handle, sort order, icon, dimensions, `seo_generated_through_spinner`, computed `real_products_count` / `properties_count`, materialised path `level`).
 - [[category-entity-lifecycle]] — the merchant-controlled states (Draft, Active, Reorganised, Renamed, Deleted), save-time transitions, the **6-level depth cap**, deletion blocked while products remain or an active XML-import task uses the category, URL-handle renames generating 301 redirects, search-index rebuild + cache flush on save, orphan-image-on-delete behaviour.
 - [[category-entity-relationships]] — parent / child Categories (self-referential tree), product M2M with primary `category_id`, [[category-property|Category Properties]] for per-category specifications, M2M to [[payment-provider|Payment Providers]] and [[shipping-provider|Shipping Providers]] for cart-rule overrides, SEO entries, app references (Google Shopping, CSV / XML importers), storefront menu and search facet placement, analytics rollups.
-- [[category-entity-business-rules]] — `display_child` recursive-inclusion toggle; per-category payment / shipping restrictions **AND-combined** across cart products (empty-intersection pitfall); URL-handle 301 redirects; sibling-scoped name uniqueness; auto-assigned sort order on create; technological-delivery-time (`make_interval`) pushing the earliest delivery slot; per-locale multi-language naming with store-wide Google Shopping mapping; SEO defaults (title → name, description → truncated description, handle → slugified name); duplicate-handle behaviour (manual rejects, CSV / XML auto-suffixes).
+- [[category-entity-business-rules]] — what `display_child` really controls (subcategory tiles, not products); per-category payment / shipping restrictions **AND-combined** across cart products (empty-intersection pitfall); URL-handle 301 redirects; sibling-scoped name uniqueness; auto-assigned sort order on create; technological-delivery-time (`make_interval`) pushing the earliest delivery slot; per-locale multi-language naming with store-wide Google Shopping mapping; SEO defaults (title → name, description → truncated description, handle → slugified name); duplicate-handle behaviour (manual rejects, CSV / XML auto-suffixes).
 - [[category-entity-side-effects-and-api]] — transaction-bound tree-reorder atomicity (Organize tab drag-drop), materialised `category_paths` rebuild on create + parent change, cascade cleanup on delete (path rows + restriction rows + webhook + the application framework events), search-index rebuild, customer-cart cache flush, SEO cache invalidation, JSON-API v2 access via [[api-categories]] (same side effects, same validation, one CSV-vs-API duplicate-handle divergence).
 
 ## Why it matters to the merchant
@@ -40,7 +40,7 @@ Categories sit at the centre of **storefront navigation, checkout method scoping
 
 - **Deletion is BLOCKED while products remain inside.** The merchant must re-assign or remove every product first — the platform never silently re-parents products. See [[category-entity-lifecycle]].
 - **Per-category payment / shipping restrictions intersect across cart products.** If a cart mixes products from two restricted categories and the allowed-methods sets don't overlap, the customer sees no payment / shipping methods at checkout. See [[category-entity-business-rules]].
-- **`Display subcategories` controls whether parent-category pages show descendant products.** ON = recursive inclusion; OFF = only directly-assigned. Read only at the level being browsed — deep descendants cannot opt out of an ancestor's recursion. See [[category-entity-business-rules]].
+- **A category page always lists the products of all its subcategories.** `Display subcategories` only adds tiles of the direct subcategories above the products. See [[category-entity-business-rules]].
 - **URL-handle changes generate 301 redirects automatically.** Bookmarks and search-engine indexes keep working. See [[category-entity-business-rules]].
 - **Publish requires at least one category on every product.** A merchant cannot publish anything until they've created at least one category. See [[product]].
 

@@ -7,8 +7,8 @@ aliases: ["Import history", "Import log", "Import results", "История на
 tags: [settings, import, history, csv, xml, products]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 9
+updated: 2026-11-09
+source_count: 10
 ---
 
 # Import history
@@ -27,7 +27,7 @@ This feature is split into five aspect pages. The Assistant should drill into th
 - [[settings-import-history-details-view]] — the **Details** tab: per-record columns, the filter chip set (Action / Search / Save Filter), what fields the search actually scans (`name`, `compare_value`, payload SKU / barcode), and the saved-filter namespace.
 - [[settings-import-history-change-log-modal]] — the *View Detailed Change Log* modal: field-by-field before/after diff, where error reasons surface, and why the format is identical across CSV / XML / JSON / ERP importers.
 - [[settings-import-history-action-states]] — the per-record action taxonomy (Created / Updated / No action / Error / Pending), the synthetic `processed` chip, how Pending is detected, and how the merchant uses pending-tick-down as a manual progress indicator.
-- [[settings-import-history-storage-and-retention]] — where history lives (a separate logging database), indefinite retention with no auto-cleanup, no in-app delete, server-side pagination, the cross-importer `mapping` codes shown in the Name column, and how the permission gate works.
+- [[settings-import-history-storage-and-retention]] — where history lives (a separate logging database), how long history is kept (set on the logging database), no in-app delete, server-side pagination, the cross-importer `mapping` codes shown in the Name column, and how the permission gate works.
 
 ## Where to find it
 
@@ -58,7 +58,7 @@ What the merchant **cannot** do here:
 - Roll back / revert a completed import — there's no undo. Botched imports must be corrected via standard product / customer / order editing or a corrective import.
 - Cancel a running import — controlled from the originator app's screen and / or [[settings-queue-view]].
 - Compare two imports side-by-side.
-- Delete history rows from the UI — see [[settings-import-history-storage-and-retention]] for the indefinite-retention rule and the unexposed API endpoint.
+- Delete history rows from the UI — see [[settings-import-history-storage-and-retention]] for retention and the unexposed API endpoint.
 
 ## Settings & fields
 
@@ -75,7 +75,7 @@ Several cross-cutting rules apply across the whole feature; each is detailed on 
 - **Read-only audit.** No row edit, no delete, no retry, no cancel on either tab — see [[settings-import-history-list-view]] for the deliberate absence of these affordances.
 - **Five action states**, not four — Pending is a real fifth state surfaced in the badge column while a job runs — see [[settings-import-history-action-states]].
 - **Imports run asynchronously** via the background queue. The merchant kicks off the import elsewhere; this page reads the resulting log tables only after the queue processes the records. See [[settings-queue-view]] for the live-queue view.
-- **Indefinite retention** — history rows accumulate forever; no auto-cleanup; CloudCart support must clean up manually — see [[settings-import-history-storage-and-retention]].
+- **Short retention** — no platform job deletes history, but the logging database keeps it only briefly (support reports about 2 days, verify); an empty page is not lost data — see [[settings-import-history-storage-and-retention]].
 - **Cross-importer aggregation** — CSV, XML, JSON, and every ERP integration write into the same history table; the Name column distinguishes them via the `mapping` code — see [[settings-import-history-storage-and-retention]].
 - **Auto-refresh** — unlike [[settings-queue-view]], this page does NOT auto-refresh; the merchant manually reloads to see newly-completed imports.
 - **Permission** — standard settings permission scope; no per-importer or per-staff permission — see [[settings-import-history-storage-and-retention]].

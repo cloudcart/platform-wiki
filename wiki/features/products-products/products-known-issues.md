@@ -7,8 +7,8 @@ aliases: ["Products known issues", "Products by-design quirks", "Product edge ca
 tags: [catalog, products, known-issues, edge-cases, support]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[products-products]]. See the hub for the other aspects (list view, editor, variants matrix, bulk actions, AI content, change log).
@@ -45,13 +45,13 @@ The internal search re-index fires from every save regardless of source — so t
 
 The *"Products: used / max"* counter in the [[products-list-view]] header counts only catalog products (simple, multi-variant, digital). **Bundle-type products are NOT counted** — they have a separate `bundles` plan quota, so a merchant maxed out on products can still create bundles. The Variants counter beside it is product-only too; bundle component lines aren't counted.
 
-### Sort order tie-break is implicit ID ASC
+### The Sort number counts only under manual sort
 
-The storefront orders by `sort_order` ascending. When two products share the same `sort_order`, the tie-break falls back to insertion order (typically `id` ASC) — there's no explicit secondary ordering. This applies to category listing pages too. **For deterministic ordering, the merchant should set distinct `sort_order` values.**
+Listings follow the Product Catalog Settings card's default sort (factory default: date, ascending) or the shopper's choice. The Sort number counts only under **Ръчно сортиране**; ties go Featured first, then oldest, and blank is not 0. **Give every product a distinct number.** See [[design-module-product-filters-sorting]].
 
 ### `/product/` URL prefix is HARDCODED
 
-The storefront URL pattern is `/product/{slug}/{cart_key?}`. The prefix `/product/` is **HARDCODED** — there's no merchant-configurable prefix setting, so the merchant CANNOT change it to `/p/` or anything else without code changes.
+The storefront URL pattern is `/product/{slug}/{cart_key?}`. The prefix `/product/` is **HARDCODED**; the merchant cannot change it.
 
 A redirect handles `/products/{id}` (plural with numeric ID) — it 301-redirects to the canonical `/product/{slug}`, ignoring publish-state filters so it works for inactive products too.
 
@@ -83,7 +83,7 @@ When the merchant doesn't supply a URL handle:
 1. The handle is slugified from the product name and trimmed to 180 characters.
 2. Suffixed `-1`, `-2`, ... if a duplicate URL handle exists.
 3. **For very large catalogs** the suffix becomes a **6-digit random number** to avoid suffix-collision lookups (so the merchant may see e.g. `red-shirt-481732` instead of `red-shirt-1`).
-4. The old URL handle is saved to redirect history — when the merchant edits a slug on a published (non-draft) product, the old slug 301-redirects to the new canonical URL.
+4. The old URL handle is saved to redirect history — when the merchant edits a slug on a published (non-draft) product, the old slug 301-redirects to the new canonical URL for 30 days (no row on the 301 Redirects screen).
 
 ### Product delete is HARD delete (no soft-delete / trash)
 

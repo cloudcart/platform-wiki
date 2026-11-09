@@ -5,8 +5,8 @@ route_path: /product/{slug}/{cart_key?}
 themes_using: [all]
 tags: [storefront, product, layout, gallery, sidebar, tabs, modules]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 > Part of [[product-detail]]. See the hub for the other aspects (routing & load, the buying flow, JavaScript hooks & customisation).
@@ -33,7 +33,7 @@ The default `flair` layout splits the page into a main column and a sidebar:
 - **Image gallery** (`_product-details-pictures-container`):
   - **Bundle products**: bundle image (if `meta.show-image` is set) + a bundle-builder block (`product/bundle/choose.tpl`) instead of variant pickers.
   - **Regular products**: thumbnail strip carousel + primary image with hover-zoom (`jqueryZoom`). 1280x1280 source. Vertical thumbnail strip with `swiper`-style breakpoints (`369 480 768 7680`).
-  - **Video / 360 gallery items** mixed into the gallery when present.
+  - **Video / 360 gallery items** mixed into the gallery when present, in the gallery order; the video is the product's YouTube video ([[products-editor-video]]).
 - **Sidebar** (`_product-sidebar js-product-details-sidebar`):
   - Title (`<h1 class="js-product-title">`) and short description.
   - Price block (`_product-details-price product-details-price-js`): new price, old strikethrough price, "You save" line — only rendered when the platform code is on AND `showPriceForUser` allows it (B2B price-hiding plays in here — see [[product-detail-buying]]).
@@ -57,7 +57,7 @@ The default `flair` layout splits the page into a main column and a sidebar:
   - `productsRelated` module — auto-related products carousel.
   - `productsCombine` — "Frequently bought together"-style block.
   - `lastViewedProducts` — recently-viewed strip (browser-cookie-driven).
-- **schema.org JSON-LD** — the theme templates (currently commented out in the default `flair` template) + the theme templates — see [[seo-handling]].
+- **schema.org** — a `Product` JSON-LD block that every theme outputs from the shared page head, plus breadcrumb microdata; the theme's own product microdata include is empty — see [[seo-structured-data]].
 
 ## Storefront behaviour
 
@@ -87,13 +87,13 @@ Themes that significantly deviate (verify):
 - `flair-camerasandoptics`, `flair-clothesforyou`, `flair-diel`, `flair-electronicstore` — `flair` variants with category-specific layouts.
 - `motion` — sticky sidebar with a permanent "Add to cart" footer bar.
 - `one` — single-column mobile-style layout.
-- `properties` — real-estate-oriented; replaces the variant picker with a "Make an enquiry" form.
+- `properties` — real-estate-oriented; same add-to-cart form and variant picker as other themes (no separate enquiry form in its code).
 
 ## Known issues / by-design vs bug
 
 - **Bundle products skip the variant picker** — bundles render a dedicated bundle-builder UI; the standard variant-picker logic doesn't apply. The buying flow for bundles is on [[product-detail-buying]].
 - **Price block can be entirely hidden** — when the platform code is off OR `showPriceForUser` returns false (e.g. price-on-login, B2B group rules). Customers see the product, but no price or Add-to-cart, which can confuse staff who don't know about the B2B switch. See [[product-detail-buying]].
-- **schema.org product microdata commented out in `flair`** — the product JSON-LD block is present but disabled in the default template; only breadcrumb microdata renders. (verify per theme.)
+- **Product JSON-LD is always output** — from the shared page head, on every theme, whatever the theme's own microdata include does. Its fields are on [[seo-structured-data]].
 
 ## Related
 
@@ -102,8 +102,9 @@ Themes that significantly deviate (verify):
 - [[products-variants-types]] — per-Parameter-type picker DOM rendered in the sidebar.
 - [[variants-model]] — how the variant picker is populated.
 - [[products-list]] — the product-tile hooks reused by the below-the-fold carousels.
-- [[seo-handling]] — the JSON-LD microdata blocks.
+- [[seo-structured-data]] — the JSON-LD and microdata blocks.
 
 ## Open questions
 
-- Whether the product JSON-LD block is enabled in any shipped theme or only via custom assets. (verify)
+None.
+

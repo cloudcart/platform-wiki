@@ -7,8 +7,8 @@ aliases: ["Product editor", "Edit product", "Product edit form", "Edit page", "P
 tags: [catalog, products, editor, form, details]
 plan_gates: ["products"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[products-products]]. See the hub for the other aspects (list view, variants, bulk actions, etc.).
@@ -29,11 +29,11 @@ The single-product **Edit view** is a two-column form — the structural data th
 
 ### Main area sections
 
-- **Details** — **Product title** and a rich-text editor with a row of tabs: **Description** (can be renamed), **Files** (files shown on the product page), and extra tabs from **Add new tab**, which can be renamed, removed and dragged into order. **Add short description** reveals the **Short description** editor. The AI bar sits under the editors — see [[products-ai-content]].
-- **Media** — image gallery: drag to reorder, first image is the thumbnail. **Add image**, **Add video** (a YouTube URL; one per product) and **Add 360° image** (up to 36 images; one per product). Selecting images enables **Tools**: **Set as primary** (one image) and **Delete**. Dropping more than 36 images keeps the first 36, with *"You can upload up to 36 images only!"*
+- **Details** — **Product title** and a rich-text editor with a row of tabs: **Description** (can be renamed), **Files** (files shown on the product page), and extra tabs from **Add new tab**, which can be renamed, removed and dragged into order. Tabs belong to one product: no bulk action, CSV or Google Sheets column fills them; **Duplicate** copies them, and the Admin GraphQL API adds one tab per call. **Add short description** reveals the **Short description** editor. The AI bar sits under the editors — see [[products-ai-content]].
+- **Media** — image gallery: drag to reorder, first image is the thumbnail. **Add image**, **Add video** (one YouTube link per product: [[products-editor-video]]) and **Add 360° image** (up to 36 images; one per product). Selecting images enables **Tools**: **Set as primary** (one image) and **Delete**. Dropping more than 36 images keeps the first 36, with *"You can upload up to 36 images only!"*
 - **Product setup** (digital products) — the download files or the pages, with pricing and inventory. See [[products-digital]].
 - **Product type settings** (other products) — the **Simple Product** / **Product with variants** toggle, **Pricing**, the variants and the **Inventory** card. See [[products-variants-matrix]] and [[products-variants-options]].
-- **Categories** — the main category, with **Create new category** and *Edit "<name>" category*, both opening a category window (a category's Metafields card is on the window from [[products-categories]]). **Show also in**: up to 5 additional categories, where the product appears on the storefront; discounts, widgets and automated selections go by the main category only. Below, the category properties from [[products-property]], with **Manage category properties** and **Create new property**.
+- **Categories** — the main category, picked from a flat, searchable list (no tree view) where each entry shows its full path, `Parent > Child`, in creation order (verify); typing matches any part of the path, so a parent's name also lists its subcategories. With **Create new category** and *Edit "<name>" category*, both opening a category window (a category's Metafields card is on the window from [[products-categories]]). **Show also in**: up to 5 additional categories, one picker each, where the product appears on the storefront; discounts, widgets and automated selections go by the main category only. Below, the category properties from [[products-property]], with **Manage category properties** and **Create new property**.
 - **Metafields** — right below Categories: the pinned definitions in order, then *Show all*, saved with the page's save bar. See [[metafields-definitions]].
 - **Brand and model** (Brand-Model app) — models related to the product, with **Add new brand** and **Add new model**.
 - **Suppliers** (Suppliers app) — *"Link suppliers to this product and compare the supplier price to the one in your store."*, with **Add supplier to this product**.
@@ -49,7 +49,7 @@ The single-product **Edit view** is a two-column form — the structural data th
 - **Vendors** — pick a manufacturer; typing a new name offers to create it, as does **Add new vendor**.
 - **Tags** — tag autocomplete; new tags are accepted, and a comma-separated paste adds several.
 - **Smart Collections** — [[products-smart-collections]]: search to add the product to a collection, or **Create new collection**. Collections it joined by their rules carry a **By criteria** badge linking to the collections screen; the ones added by hand can be removed here.
-- **Sort number** — manual sort-order override: the smaller the number, the higher the product.
+- **Sort number** — counts only under **Ръчно сортиране**, in the saved direction ([[design-module-product-filters-sorting]]).
 - **Applied discounts** (visible when any apply) — read-only — see Business rules.
 
 ### Header action menu
@@ -68,7 +68,7 @@ While **Published** is on, the **Publish later** button opens a popup with two t
 
 ### What the merchant CANNOT do here
 
-Edit multiple products side-by-side (use [[products-list-view]] + [[products-bulk-actions]]); import categories / vendors / tags (separate import flows); drag-reorder the storefront category-page list (the per-product **Sort number** field and Smart Collections settings drive ordering); or create/assign a discount (**Applied discounts** is read-only).
+Edit several products at once (use [[products-bulk-actions]]); drag-reorder a category page (**Sort number** drives it); or create a discount (**Applied discounts** is read-only).
 
 ## Settings & fields
 
@@ -87,7 +87,7 @@ The product's state follows the **Published** switch: with it on, the save publi
 
 ### URL handle generation rules
 
-With no URL handle supplied, it is slugified from the product name, trimmed to 180 characters, and suffixed `-1`, `-2`, ... on duplicates (a 6-digit random number for very large catalogs). The **old URL handle is automatically saved to the redirect history** — editing a slug on a published (non-draft) product 301-redirects the old slug to the new one, so a URL change doesn't break inbound search or external links.
+With no URL handle supplied, it is slugified from the product name, trimmed to 180 characters, and suffixed `-1`, `-2`, ... on duplicates (a 6-digit random number for very large catalogs). The **old URL handle is automatically saved to the redirect history** — editing a slug on a published product 301-redirects the old slug for **30 days**, with no row on [[marketing-seo-301-redirects]].
 
 ### Product image upload
 
@@ -97,7 +97,7 @@ An uploaded image appears immediately in the admin; the first becomes the primar
 - **Allowed image formats**: `gif`, `png`, `jpg`, `jpe`, `jpeg`, `svg`, `webp`. Another file shows *"Only images are allowed"*.
 - **Storage full**: the Media card shows *"Storage space at 100%, you cannot upload any more files"* with **Upgrade storage space**.
 
-**Bulk-upload from URL** — images added via *"Upload from URL"* (ERP imports, bulk migrations) download in the background; the save returns immediately, the image appears seconds later. For 50+ images, storefront display can take 5–10 minutes.
+**Bulk-upload from URL** — images added by URL (ERP imports, migrations) download in the background, so they appear a little after the save.
 
 ### Storefront URL pattern
 
@@ -107,11 +107,11 @@ The storefront URL is `/product/{slug}/{cart_key?}`. The `/product/` prefix is *
 
 ### Applied discounts card is read-only
 
-The **Applied discounts** card LISTS the discounts currently applying, each with a link to the discount (new tab), an **Amount** or **Percent** badge, its dates and *Visible to*; it does NOT create or assign them. To add one targeting this product, the merchant uses the separate Discounts feature.
+The **Applied discounts** card lists the discounts applying now, each with a link, an **Amount** or **Percent** badge, its dates and *Visible to*. Discounts are created in the Discounts feature.
 
 ### Linked products are NOT auto-derived
 
-The Linked products cross-sell list is 100 % merchant-curated — no smart suggestion; the merchant picks each one manually (or uses a smart collection). Only published products are offered. Each row has a **Two way connection** switch (on when added), a drag handle for the order, and a remove action (*"Remove linked product?"*).
+The Linked products list is picked by hand from published products; nothing is suggested. Each row has a **Two way connection** switch (on when added), a drag handle for the order, and a remove action (*"Remove linked product?"*).
 
 ### "Extend functionality by:" — apps that add cards
 
@@ -119,7 +119,7 @@ This card lists the apps from this set that the store doesn't have yet: Product 
 
 ### Default-variant auto-assignment and Price From / Price To
 
-For a multi-variant product the platform auto-picks the **cheapest variant** as the *"default"* (not picked manually) — its price is the storefront card's headline. After every variant save the default, **Price From** (cheapest), and **Price To** (most expensive) are recalculated, so a new cheapest variant updates the headline. Cards show Price From – Price To.
+For a multi-variant product every save makes the **cheapest variant** the *"default"*; there is no picker. When all variants share one price and at least two have different sale prices, the one with the lowest sale price wins instead. **Price From** (cheapest) and **Price To** (most expensive) are recalculated with it.
 
 ## Related
 

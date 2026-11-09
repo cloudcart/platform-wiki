@@ -7,8 +7,8 @@ aliases: ["XML Import — mappable fields", "XML Import — variant patterns", "
 tags: [apps, imports, xml, mapping, variants, categories]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-19
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[apps-xml-import]]. See the hub for the other aspects (wizard, job pipeline, fetch transport, plan gates, side effects).
@@ -17,7 +17,7 @@ source_count: 2
 
 ## Purpose
 
-The wizard turns raw XML tags into CloudCart product fields. This page catalogues **what can be mapped**, **how the three variant structural patterns work**, **how category placement is decided**, **how images and inline data are handled**, and **what gets quietly transformed** (HTML sanitisation, dropped rows). Without this catalogue the wizard's Step 2 is hard to reason about — XML feeds vary wildly and the wizard's behaviour is more permissive in some places and stricter in others than merchants assume.
+The wizard turns raw XML tags into CloudCart product fields. This page catalogues **what can be mapped**, **how the three variant structural patterns work**, **how category placement is decided**, **how images and inline data are handled**, and **what gets quietly transformed** (HTML sanitisation, dropped rows).
 
 For the wizard flow that surfaces these mappings see [[apps-xml-import-wizard]]; for how mapped values flow into the catalog see [[apps-xml-import-side-effects]].
 
@@ -51,7 +51,7 @@ Mappable groups:
 | Inventory | quantity | Written only when `track_inventory` is ON (see [[apps-xml-import-wizard]]). |
 | Description | description, short description, SEO title, SEO description | All run through `xss_clean`. |
 | Images | image URL (main + gallery) | Downloaded into CloudCart media library; base64 inline data is dropped. |
-| Category | category path | Auto-created when missing; multi-level on `>` separator. |
+| Category | category path | One category per product: a `>` path (first 6 levels kept), or several mapped values joined as one path's levels. Auto-created when missing. |
 | Variants | parameter / option / variant tags | Three structural patterns — see below. |
 | Tags | tag list (comma-separated) | Maps to product tags. |
 | Custom data | category properties, description tabs, supplier data | Structured extras only — no arbitrary fields. |
@@ -64,7 +64,7 @@ The mapping skeleton and operation rules are stored on the task record. **Once c
 
 ### Update strategy — per-field "Update" checkbox
 
-The merchant controls which fields refresh per Step 2's `update` checkbox PER FIELD. Only fields explicitly marked "updatable" overwrite on subsequent runs. Unmarked fields (e.g., description) keep their existing CloudCart values. Matching uses the task's import ID + a per-row task key stored on the product. This lets the merchant say "refresh prices and stock every 12h, but never overwrite my edited descriptions".
+The merchant controls which fields refresh per Step 2's `update` checkbox PER FIELD. Only fields explicitly marked "updatable" overwrite on subsequent runs. Unmarked fields (e.g., description) keep their existing CloudCart values. Product matching is on [[apps-xml-import-wizard]].
 
 ### Images — downloaded into CloudCart media library
 
@@ -87,7 +87,7 @@ The silent-drop matters: the merchant won't see an error, just fewer products im
 
 ### Category auto-creation from XML path
 
-When the XML references a category not in CloudCart, **the platform auto-creates it**. Multi-level paths (e.g., `Electronics > Phones > Smartphones`) are split on `>` and each level is created in order. If the task has a fixed `category_id` set on Step 1 (see [[apps-xml-import-wizard]]), the XML's category is IGNORED and all products land in the chosen category. Categories are matched by name OR by external metadata (so re-imports don't duplicate).
+When the XML references a category not in CloudCart, **the platform auto-creates it**. Multi-level paths (e.g., `Electronics > Phones > Smartphones`) are split on `>` and each level is created in order. A fixed category on Step 1 overrides it. Each level is matched by name (case-insensitive) under its parent, so a bare name matches only top-level categories. XML Import sets the main category only, never additional ones; with the Category Update box ticked, each run also clears additional categories added in the admin (verify).
 
 ### Variant import — 3 structural patterns supported
 

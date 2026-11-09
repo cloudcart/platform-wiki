@@ -7,8 +7,8 @@ aliases: ["CSV Import — async row processing", "CSV Import — working lock", 
 tags: [apps, imports, csv, pipeline, queues]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[apps-csv-import]]. See the hub for the other aspects (wizard, task detail, final statuses, mapping fields, side effects, plan gates).
@@ -59,11 +59,22 @@ The `working` lock prevents the merchant from starting a second import while one
 
 ### Async row processing — every row is a background job
 
-Each row is queued as a background job. Large imports don't block the UI. The merchant can navigate away and return to see results without losing progress. Per-row jobs are dispatched in batches by the import dispatcher; workers process them on a CSV-import queue handled by the background worker pool. See [[background-queue-inventory]] for the queue inventory.
+Each row is queued as a background job, dispatched in batches, so large imports don't block the UI and the merchant can navigate away and return. See [[background-queue-inventory]].
 
 ### Queue-worker context — the search index sync is always async
 
 Because the import runs in a queue-worker (CLI) context, every the search re-index event the row processor fires gets dispatched to a `MakeSearchable` job on the `searchable-import4` queue — there is **no synchronous fast-path in this context**. The storefront lags the admin view until that queue catches up. This is the #1 source of "I imported and don't see it" tickets. See [[apps-csv-import-side-effects]].
+
+### Product images download after the row, on their own
+
+The row saves the product first; each image address then becomes a separate background download, started one to five minutes later. So images appear a few minutes after the product, and a bad image never fails the row or the task:
+
+- **Accepted formats** — JPEG, PNG, GIF and WebP. The type is read from the downloaded file, not from the address; anything else is rejected.
+- **Address not found (404) or the image host refusing too many requests (429)** — that image is dropped, with no retry.
+- **An address without a valid host** — dropped.
+- **Other failures** (timeout, unreachable host) — retried about every minute, up to 10 times, then dropped.
+
+A dropped image is logged only on the platform's side: the task still shows success and the product simply lacks that image. The same address already imported for the product is not downloaded twice.
 
 ### 3-flag finalisation gate — protects against the "momentary zero" race
 
@@ -89,7 +100,7 @@ When something external halts the import (typically a plan-quota exception caugh
 
 ### Modern Vue UI on top of CcDomain
 
-The integration uses modern Vue (CcDomain) — newer UI, TypeScript types. Different from older XML Import which uses legacy Vue. The task-detail Vue stack consumes the same backend pipeline this page describes.
+The task-detail screen is the current Vue admin (unlike the older XML Import screens) and reads this same pipeline.
 
 ## Related
 

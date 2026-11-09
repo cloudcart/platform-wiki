@@ -5,8 +5,8 @@ aliases: ["Order side-effects", "Order async fan-out", "Webhook delivery queue",
 tags: [background, async, orders, webhooks, campaigns, support, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[background-queue-inventory]]. See the hub for related aspects (recurring platform jobs, imports/exports, the search index sync, Queue View, process catalogue).
@@ -51,8 +51,11 @@ Not covered:
 | Discount-usage counters are updated for any [[discount]] applied to the order | On order placement / payment / cancellation | No |
 | Outbound webhooks to the merchant's external systems are delivered | On order placement / status change | No (visible on [[settings-hooks]]) |
 | Admin-panel alerts for the merchant (new order, low stock, payment failed) are queued | At the triggering event | No |
+| An online payment's result is asked from the provider, one check per payment, until it is final or the provider's window ends (most providers then time the payment out) | From the moment the shopper is sent to the payment page (Fibank: first at 11 minutes, then every 5 minutes, timeout at 180 minutes) | No |
 
 Webhook delivery deserves special attention: it is the **chattiest** of all background processes. `product.updated` fires on every stock change; `order.created` / `order.updated` / `order.status.changed` fire on the order lifecycle. Merchant integrations must be idempotent — the same event can deliver more than once on retry. See [[settings-hooks]] for the catalogue of event names and the delivery-retry policy.
+
+The per-payment check exists for Fibank, Stripe, CloudCart Pay, Revolut, CIB Bank, BNP, PayPal card payments, SimplePay and Fusion Pay RO; a provider without it (myPOS, for example) relies on its own notification, the shopper's return and the merchant's **Sync payment** button. Cadences are on each provider's page, e.g. [[fibank-payment-lifecycle]], [[stripe-refunds-sync]].
 
 Admin-panel notification queuing is what feeds the admin's notification bell and triggers transactional-email sends for things like *"New order #N just arrived"*, *"Low stock on Product X"*, *"Payment failed on order #N"*. The actual transactional email send runs on a generic email queue downstream.
 

@@ -7,8 +7,8 @@ aliases: ["Facebook Pixel", "Meta Pixel", "Facebook Conversions API", "Facebook 
 tags: [apps, facebook, meta, pixel, capi, conversions-api, tracking, analytics]
 plan_gates: ["facebook.capi"]
 created: 2026-06-08
-updated: 2026-08-08
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # Facebook Pixel + Conversions API (CAPI)
 
@@ -69,7 +69,7 @@ See [[apps-facebook-pixel-settings]] for the saved fields (`pixel`, `token`, `te
 
 - **Two transport legs, one `event_id`.** Browser pixel + server CAPI both carry the same `event_id` so Meta dedupes the duplicate conversion. Full vocabulary + dedup rules: [[apps-facebook-pixel-events]].
 - **CAPI is triple-gated.** Plan feature `facebook.capi` + Access Token filled + Enable CAPI on + visitor accepted the Targeting cookie group. If any gate fails only the browser pixel fires. Full mechanics: [[apps-facebook-pixel-capi]].
-- **Targeting cookie group gates BOTH legs.** Reject Targeting consent in the GDPR banner → neither browser pixel nor CAPI sends data to Meta. See [[apps-gdpr-cookies]].
+- **Targeting cookie group gates BOTH legs.** Before any answer it counts as accepted; after a refusal neither leg sends data to Meta. See [[apps-gdpr-overview-script-gating]].
 - **One Pixel ID per store install.** Multi-pixel routing requires [[apps-google-tags]] (GTM) with CAPI disabled here.
 - **Storefront-only.** The pixel + CAPI relay runs only from the storefront; the admin panel is excluded so admin previews never fire conversion events.
 - **`event_source_url` CRITICAL BUG.** Meta warned (2026-06-08) that CAPI events without `event_source_url` will be blocked. `AddToCart`, `AddToWishlist`, `Search` send no URL; `InitiateCheckout` / `Purchase` send a relative path. See [[apps-facebook-pixel-event-source-url]].

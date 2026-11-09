@@ -7,8 +7,8 @@ aliases: ["Staff permissions", "Permissions tree", "Moderator permissions", "Acc
 tags: [settings, staff, permissions, access-control, plan-gate]
 plan_gates: ["administrators"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-staff]]. See the hub for the other aspects (roles & list, create, edit, 2FA, delete, force sign out).
@@ -33,7 +33,7 @@ Inside the Create or Edit modal on Settings → Staff, in the **Access permissio
 
 ### The permission tree
 
-Implementation: `CcCheckboxTree` — a recursive checkbox component. The tree shipped to the form is the platform's full admin permission hierarchy with approximately **80+ permission nodes** covering every sidebar section, every feature toggle, and every sub-page:
+The tree is a fixed list of about 96 rows built into the platform, covering every sidebar section and sub-page:
 
 - **Dashboard**
 - **Orders**
@@ -82,19 +82,30 @@ The dormant permission is harmless because access to the Backups feature is also
 
 The tree has no separate "create moderator" row, and the **Add moderator** button shows to the store owner only, whatever a moderator holds on the staff section. A moderator's own access is not editable by that moderator: the "my profile" modal from the profile menu has no permissions box.
 
-### Permissions middleware on the API endpoints
+### The staff screen itself
 
-Every endpoint under `/admin/api/core/settings/account/admins` is wrapped in `hasApiPermission:settings,settings.admins.all,store.admins`. Translation: the acting user must have at least one of these three permission sections to make any API call against the staff API. A moderator without any of them cannot even list the staff table (the page itself renders empty / 403).
+Listing, editing and deleting staff need the **Settings** box or the **Staff** row (`settings`, `settings.admins.all`); without either the staff screen is refused. The owner holds everything.
 
-The owner has all permissions by default.
+### Ticking and unticking boxes
 
-### Permissions tree is hierarchical — parent grants whole sub-tree
+Ticking a box ticks every box under it, and the saved list holds that box and all of them. Unticking a box also clears the box directly above it (one level only); ticking every box under a parent ticks the parent again. So a moderator given **Orders** minus one row keeps the other Orders rows but no longer holds **Orders** itself.
 
-Checking a parent permission automatically grants the entire sub-tree underneath it. The flat-array payload sent to the server includes every child ID under a checked parent. Un-checking the parent un-checks all children.
+### Orders → Returns and Credit notes
 
-### Permissions are flat strings server-side
+Under **Orders** the tree lists **Orders** (with **Orders Export**), **Abandoned**, **Invoices** (with **Invoices Download** and **Invoices Export**), **Returns**, **Credit notes** (a group holding a **Credit notes** list row and **Credit notes Download**), **Refund**, **User Files** and **Ordered Products** (with **Ordered Products Export**). These are the English names; the Bulgarian ones come from the admin's translations.
 
-Despite the UI showing a tree, the persisted permission set is a **flat array of section IDs**. The tree shape is reconstructed in the UI from the static config. So permission storage is order-independent and tree-mutation-resistant: if the platform adds a new permission node tomorrow, existing moderators do not auto-receive it (they only have the IDs explicitly granted).
+| Screen | In the menu with | The screen and its actions need |
+|---|---|---|
+| **Returns** (`/admin/orders/returns`) | **Orders** or **Returns** | **Orders** and **Returns** |
+| **Credit notes** (`/admin/orders/credit-notes`) | invoicing switched on, plus **Orders**, the **Credit notes** group or its list row | **Orders** and the **Credit notes** list row |
+
+Downloading credit notes in bulk is a two-factor-verified action that **Orders**, the **Credit notes** group or **Credit notes Download** each allow.
+
+Without the needed boxes the menu item is hidden. Opening the address directly shows the admin's 403 page, *"You don't have permissions to visit this page"*, as soon as the list is refused. Because unticking any row directly under Orders clears **Orders**, such a moderator can see **Returns** in the menu and still land on the 403 page. Returns and Credit notes open only with the **Orders** box itself ticked.
+
+### Saved as a flat list
+
+The tree is saved as a flat list of the ticked rows. A row the platform adds later is not given to existing moderators; the owner ticks it.
 
 ## Related
 
@@ -108,4 +119,4 @@ Despite the UI showing a tree, the persisted permission set is a **flat array of
 ## Open questions
 
 - Is re-enabling the commented-out `settings.admins.create` permission node on the roadmap, or is "only the owner can create moderators" an intentional product decision? (verify)
-- Full list of the ~80 permission node IDs (would be useful for the support LLM to match against ticket questions like "I want to give my warehouse staff access to X").
+- The Bulgarian names of the rows: they come from the admin's translations, not the code.

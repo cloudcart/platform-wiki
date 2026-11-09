@@ -3,12 +3,12 @@ type: feature
 nav_path: "Apps → GDPR → Cookies → Behaviour matrix → Visitor actions"
 route_name: ""
 route_path: ""
-aliases: ["Accept all vs Save preferences", "cookie banner close button", "dismiss cookie banner", "js-cookies-accept", "js-cookies-accept-modal", "bottom-freezed-bar-close", "cookie cleanup on reject", "reopen cookie settings", "cookie consent 365 days"]
+aliases: ["Accept all vs Save preferences", "Accept vs Save settings", "Приемам vs Запази настройките", "Отхвърлям", "Reject cookies button", "cookie banner close button", "dismiss cookie banner", "js-cookies-accept", "js-cookies-accept-modal", "js-cookies-save-modal", "js-cookies-reject", "bottom-freezed-bar-close", "cookie cleanup on reject", "reopen cookie settings", "cookie consent 180 days"]
 tags: [apps, gdpr, cookies, consent, storefront]
 plan_gates: []
 created: 2026-08-08
-updated: 2026-08-08
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[apps-gdpr-cookies-behaviour-matrix]]. See the hub for the other aspects (configurations, banner persistence, theme limits).
@@ -17,11 +17,11 @@ source_count: 3
 
 ## Purpose
 
-The five things a visitor can do with the cookie prompt, and precisely what each one writes and triggers. Two of them surprise people: closing with **×** stores nothing at all, and **Accept all** does not run the cookie cleanup that **Save preferences** does.
+The things a visitor can do with the cookie prompt, and precisely what each one writes and triggers. Verified against the storefront script as changed on 06.11.2026, when every answer started to dismiss the prompt and **Accept** in the dialog started to accept everything.
 
 ## Where to find it
 
-On the storefront prompt itself — the bar at page bottom and the consent dialog it opens.
+On the storefront prompt itself — the bar at page bottom and the settings dialog. Labels and markup: [[apps-gdpr-cookies-bar-wall]].
 
 ## What the merchant can do here
 
@@ -29,39 +29,40 @@ Nothing directly; this is the visitor's side. It matters to the merchant because
 
 ## Settings & fields
 
-| Action | Control | What it does |
+| Action | Where | What it does |
 |---|---|---|
-| **Accept all** | `.js-cookies-accept` | Writes every category as `yes`, hides the bar, closes the dialog. Does **not** call the cleanup endpoint. |
-| **Save preferences** | `.js-cookies-accept-modal` | Writes each category as `yes`/`no` per its toggle, hides the bar, closes the dialog, **and** calls the cleanup endpoint (`/gdpr/cookie-consent`). |
-| **Close the bar (×)** | `.bottom-freezed-bar-close` | **Hides the bar on the current page only. Nothing is stored.** |
-| **Do nothing** | — | Nothing stored. Each group's `default` acts as the assumed state. |
-| **Re-open the prompt** | `#gdpr-trigger` / `#cookies-trigger` | Re-opens the dialog so the visitor can change their mind. The element must be placed by the theme — see [[gdpr-consent-theme-limits]]. |
+| **Accept Cookies** / *Приемам* | Bar and dialog | Writes every active group as `yes`, whatever the switches show. |
+| **Save settings** / *Запази настройките* | Dialog | Writes each group `yes` or `no` as its switch shows. |
+| **Reject Cookies** / *Отхвърлям* | Bar | Writes every group `no`, except Strictly necessary (`system:yes`). |
+| **×** | Bar | Hides the bar on the current page only. **Nothing is stored.** |
+| Do nothing | — | Nothing stored; the fixed pre-answer states apply ([[apps-gdpr-cookies-consent-state]]). |
+| Re-open the settings | A `#cookie-settings` link, `#cookies-trigger` | Opens the dialog, switches showing the stored answer. See [[apps-gdpr-cookies-bar-wall]]. |
 
-On every page load the bar is hidden only when a stored consent is considered present; with the **wall**, the dialog auto-opens when it is not.
+After each of the three answers the storefront closes the dialog, hides the bar, deletes from the browser the cookies listed under each refused group (on the store's host and its parent domains, `_ga_…` matching every GA4 stream cookie), and asks the store to delete the same on its side.
 
 ## Business rules
 
+### Any answer dismisses the prompt
+
+The bar or wall stops showing once the stored answer names every active group, whatever the values. A visitor who refused everything is not asked again on the next page. It shows again only when the answer expires (180 days), when the visitor clears cookies, or when the store switches on a group the answer does not name.
+
+Until 06.11.2026 the prompt kept returning until every group was accepted, and the dialog's **Приемам** saved the switches, so pressing it with the switches off stored `no` for every optional group. Observations from before that date reflect that behaviour.
+
 ### Closing with × is neither consent nor rejection
 
-The × hides the bar for the current page only. **Nothing is written**, so the bar returns on the next page load and every group stays on its `default` assumed state. Merchants often read this as *"I dismissed it and it came back"* — the prompt is behaving correctly; the visitor simply never answered it.
+The × hides the bar for the current page only. **Nothing is written**, so the bar returns on the next page load and the pre-answer states keep applying.
 
-### Accept all and Save preferences are NOT symmetric
+### Every answer cleans up the refused groups
 
-Both store a consent, but only **Save preferences** triggers the endpoint that deletes cookies belonging to rejected categories (see [[apps-gdpr-cookies-consent-state]]). **Accept all** does not call it — harmless in itself, because accepting everything leaves nothing to remove.
+Accepting everything leaves nothing to delete; any answer that refuses a group removes the cookies listed for it, in the browser and on the store's side. Only cookies the merchant listed under that group are removed ([[apps-gdpr-cookies-definitions]]).
 
-The practical consequence: **rejected cookies are actively cleaned up only along the reject path.** A visitor who rejects a category gets that category's existing cookies deleted; a visitor who accepts everything needs no cleanup.
+### A stored answer lasts 180 days
 
-### Saving does not necessarily dismiss the prompt
+Every answer — accept, partial save or reject — is written for **180 days** at the site root, `SameSite=Lax`. Format and what asks again: [[apps-gdpr-cookies-consent-state]].
 
-A **partial** save stores the choice correctly, yet the bar keeps showing until every category is accepted. That rule — and how to tell it apart from a genuine failure — is on [[gdpr-consent-persistence]].
+### Google Consent Mode is answered like any other group
 
-### A stored consent lasts 365 days
-
-The consent is written with a **365-day** lifetime at the site root. It survives page loads and sessions, and disappears when it expires or when the visitor clears their browser cookies — at which point the prompt starts over. Format and re-consent triggers: [[apps-gdpr-cookies-consent-state]].
-
-### Google Consent Mode is answered like any other category
-
-`consent_mode_for_traffic` is offered as a normal toggle, with one difference: it is the only standard category whose `default` ships as **rejected**. Until the visitor explicitly accepts it, Consent Mode signals stay denied — and because it is an offered category, leaving it unaccepted also keeps the bar showing under the partial-consent rule. See [[apps-gdpr-cookies-consent-mode]].
+`consent_mode_for_traffic` is a normal switch in the dialog. Until the visitor accepts it, Consent Mode signals stay denied. See [[apps-gdpr-cookies-consent-mode]].
 
 ## Related
 
@@ -73,4 +74,4 @@ The consent is written with a **365-day** lifetime at the site root. It survives
 
 ## Open questions
 
-None — the one unresolved case (rejecting *every* optional category) is recorded on [[gdpr-consent-theme-limits]].
+None.

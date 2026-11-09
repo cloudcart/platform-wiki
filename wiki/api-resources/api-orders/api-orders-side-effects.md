@@ -8,8 +8,8 @@ aliases: ["Orders API side effects", "orders status PATCH cascade", "orders fulf
 tags: [api, json-api-v2, orders]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Orders API — side effects & failure modes
 
@@ -25,7 +25,7 @@ The side effects here fire from `PATCH /api/v2/orders/{id}` (and the `PATCH /api
 
 ## Attributes
 
-The cascade is driven by the four writable attributes documented on [[api-orders-attributes]] — `status` (the transition trigger), `invoice_number` and `usn` (single-write, uniqueness-checked), and `invoice_date` (plain write). `status_fulfillment` is read-only here and only flips through the fulfillment path ([[api-order-fulfillment]]).
+The cascade is driven by the writable attributes on [[api-orders-attributes]]: `status` (the transition trigger), `invoice_number` and `usn` (single-write, uniqueness-checked), and the plain writes `invoice_date`, `note_administrator` and `notify_customer`. `status_fulfillment` is read-only here and only flips through the fulfillment path ([[api-order-fulfillment]]).
 
 ## Relationships
 
@@ -76,7 +76,7 @@ A successful **PATCH `/orders/{id}`** that changes `status` runs the **same stat
 ## Related
 
 - [[api-orders]] — hub.
-- [[api-orders-attributes]] — the four writable attributes that drive this cascade.
+- [[api-orders-attributes]] — the writable attributes that drive this cascade.
 - [[order-processing-pipeline]] — the full status-transition side-effect catalogue.
 - [[order-status-workflow]] — transition rules + hard gates.
 - [[api-order-fulfillment]] — the cascade behind `/fulfill`.

@@ -7,8 +7,8 @@ aliases: ["Module storage", "Module settings storage", "Module JSON blob", "Per-
 tags: [design, modules, storage, theme]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 # Storefront Modules — Storage
@@ -29,7 +29,7 @@ The storage layer is **invisible** to the merchant — no admin surface manages 
 
 - **Save** an editable module — upserts a row in the per-site module storage with the new JSON, then bumps the per-site cache key (see [[design-modules-cross-cache-invalidation]]).
 - **Reset** an editable module — deletes the merchant's saved row, falling back to theme defaults.
-- See changes on the next storefront request — no manual cache clear required.
+- See changes at once while signed in to the admin; guests within 20 minutes — see [[design-modules-cross-cache-invalidation]].
 
 The merchant CANNOT manage the underlying storage / cache directly — there is no admin "Clear module cache" button, no "List orphaned modules" surface, no "Restore deleted settings" surface.
 

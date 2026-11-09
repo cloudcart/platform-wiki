@@ -7,8 +7,8 @@ aliases: ["Percent discount validity", "Percent discount date rules", "Percent d
 tags: [marketing, discounts, percent, validity, dates]
 plan_gates: ["discount_global", "discount_coupon"]
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-discounts-percent]]. See the hub for the other aspects (editor, fields, targeting, stacking, plan gates, programmatic access).
@@ -57,7 +57,7 @@ A Percent discount is evaluated at checkout only when ALL of:
 
 ## Strictly-greater subtotal check on `order_over` (no-code AND code-based)
 
-The cart subtotal must be **strictly greater than** the `order_over` threshold for the discount to apply. A subtotal exactly equal to the threshold is rejected — the comparison is "discount's `order_over` is less than the cart subtotal" (the discount qualifies only when the cart strictly exceeds the threshold). The subtotal is the lines after product discounts, line-level codes and product-level Cart Rule reductions.
+The cart subtotal must be **strictly greater than** the `order_over` threshold for the discount to apply. A subtotal exactly equal to the threshold is rejected — the comparison is "discount's `order_over` is less than the cart subtotal" (the discount qualifies only when the cart strictly exceeds the threshold). The subtotal is the lines after product discounts, line-level codes and product-level Cart Rule reductions, at the prices as entered: a store whose prices exclude VAT is compared without VAT.
 
 This strict-greater rule applies to **all `order_over` Percent / Flat discounts at cart-engine evaluation time** (both no-code and code-based variants). Merchants wanting *"X% off for orders 100 EUR or more"* should set the threshold to 99.99 EUR so that a 100.00 EUR cart still qualifies.
 

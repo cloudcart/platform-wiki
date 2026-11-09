@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Apps → Cart Rules → Rules → New rule / Edit"
+nav_path: "Marketing → Apps → Cart Rules → Create new / Edit"
 route_name: apps.cart-rules.create
 route_path: /admin/apps/cart-rules/rules/create/:type/:rule
-aliases: ["Cart rule editor", "Create cart rule", "Edit cart rule", "Rule constructor", "Cart rule validation"]
+aliases: ["Cart rule editor", "Create cart rule", "Edit cart rule", "Rule constructor", "Cart rule validation", "Rule with ranges", "Single rule", "Add amount range", "Cart rule message"]
 tags: [apps, marketing, automation, rules-engine, editor, validation]
 plan_gates: ["cart_rules_range", "cart_rules_conditions", "cart_rules_actions"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 
 # Cart Rules — the rule editor
@@ -21,7 +21,7 @@ The **rule editor** is where the merchant builds or revises a single cart rule: 
 
 ## Where to find it
 
-**Sidebar → Apps → Cart Rules → Rules → + New rule** (or click a rule's name to edit).
+**Sidebar → Marketing → Apps → Cart Rules → Create new**, then **New rule from scratch** (**Single rule**, conditions default to ≥, or **Rule with ranges**, default between), **New rule from predefined template**, or **Create using AI**. Click a rule's name to edit it.
 
 Create route: `/admin/apps/cart-rules/rules/create/:type/:rule` (route name `apps.cart-rules.create`). Edit route: `/admin/apps/cart-rules/rules/:id` (route name `apps.cart-rules.edit`). The editor loads via GET `/api/cart-rules/{id}` and saves via POST (create) or PUT (update) to `/api/cart-rules`.
 
@@ -44,16 +44,15 @@ The form is organised into these sections:
 | Section | What it controls |
 |---|---|
 | **General settings** | `name`, `title`, dates, status, sort order |
-| **Rows array** | one entry per row, draggable to reorder |
-| **Per-row triggers — cart conditions** | conditions evaluated against the whole cart |
-| **Per-row triggers — product conditions** | conditions evaluated against catalog items |
-| **Per-row action — value / type** | what the deal does (amount / percent / free shipping / fixed price each) |
-| **Per-row action triggers** | scope which products the action applies to, with extra action-only filters: `product_lowest_price`, `product_highest_price`, `product_from_condition`, `product_not_from_condition` |
-| **Per-row message** | the customer-facing motivational message shown on the cart **and at checkout** when the row is relevant — see the tip below |
+| **Rule message** | a text box above each row: the customer message — see the tip below |
+| **When** | the row's conditions (**Cart**, **Product(s)**, **Customer**), checked top to bottom; **Add additional condition** |
+| **Then** | the discount (**Amount**, **Percent**, **Free shipping**) and its value |
+| **On** | the target: **Cart** or **Product(s)**; with Product(s), **Add action condition** adds **Where** filters ([[cart-rules-actions]]) |
+| **Range {n}** | in a range rule, each row is a numbered range; **Add amount range** / **Delete range**. Later ranges change only the values ([[cart-rules-known-issues]]) |
 
 For the full filter / operator / action taxonomy + scenarios, see [[apps-cart-rules]] § Field reference, and the engine aspect pages [[cart-rules-conditions]] / [[cart-rules-actions]] / [[cart-rules-scoping]].
 
-> **Tip — fill in the message; it is a free upsell.** The per-row `message` is **customer-facing**: it attaches to the cart on every cart read and surfaces on the cart drawer, the cart page, **and carries into checkout**. Because the shopper sees it exactly while deciding whether to buy, a good message actively nudges them to act — *"Add 1 more and get 10% off!"*, *"Spend 20 EUR more for free shipping"*. Leaving it blank still applies the discount, but the customer gets **no prompt** and may never learn the deal exists, so a rule with a blank message quietly under-performs. For tiered (multi-row) rules the customer sees the message for the **next tier they have NOT yet reached**, so phrase each tier's message as the reward for reaching the tier above it — see [[cart-rules-stacking]] § *Message-row precedence*.
+> **Tip — the message is a nudge.** It shows as a dashed box in the cart drawer, the cart page and the checkout summary while the shopper has **not** reached that row (*"Spend 20 EUR more for free shipping"*); a blank message still lets the discount apply. In a range rule, word each row's message as the reward for reaching it. When it shows is on [[cart-rules-stacking]] § *Message-row precedence*. **To remove a box**, clear the row's text and save (an empty message is not stored), or set the rule Inactive.
 
 ### Server-side validation rules
 
@@ -73,12 +72,12 @@ The Form Request enforces the following on Create + Update — each maps to a me
 | `rows.*.triggers.*.condition_type` | **Required** per trigger. | *"Field is required"* |
 | `rows.*.triggers.*.filter_type` | **Required**. (On action-triggers it's required only when the action's `condition_type = product`.) | *"Field is required"* |
 
-Each trigger also passes through custom rule classes (`ValueType`, `FilterTypeRecords`, `RecordsExists`, `Value`, `SubValue`, `Operation` / `ActionValue`, `ActionSubValue`) which return field-mapped errors when the value shape doesn't match the condition's value-kind — see [[apps-cart-rules]] § "Schema validation on save" for the full match-up between `condition_type` / `filter_type` / `value_type` / `records`.
+Each condition is also checked against its filter's value kind, with errors shown on the field — see [[cart-rules-conditions]] § *Schema validation on save*.
 
 ## Business rules
 
 - **Date window applies BEFORE everything else.** A rule outside its `[active_from, active_to]` window doesn't evaluate at all.
-- **Draft status (`status = 2`)** = the rule exists but never fires. Useful for half-built rules being prepared in advance.
+- **The Active switch sets Active or Inactive only.** Draft cannot be set in the admin ([[cart-rules-known-issues]]).
 - **The four plan-tier limits are read live on every save.** A plan downgrade does NOT delete existing rows over the cap, but trying to **edit** a rule that has too many rows / triggers fails until the merchant removes the excess. New saves over the cap fail immediately. See [[apps-cart-rules-rules-plan-limits]].
 - **AI-generated and template-generated rules arrive pre-filled in this same editor**, where the merchant reviews and edits before saving (see [[apps-cart-rules-rules-ai]]).
 
@@ -94,4 +93,4 @@ Each trigger also passes through custom rule classes (`ValueType`, `FilterTypeRe
 
 ## Open questions
 
-None — all previously-flagged items resolved.
+- The Bulgarian labels of the editor's controls (**When**, **Then**, **On**, **Range {n}**, **Rule message**) are held in the admin translations database, not the code, so they are not quoted here.

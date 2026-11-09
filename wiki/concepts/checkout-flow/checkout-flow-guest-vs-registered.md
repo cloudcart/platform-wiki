@@ -5,8 +5,8 @@ aliases: ["Guest checkout", "Registered checkout", "Guest vs member", "Convert g
 tags: [orders, checkout, customer, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[checkout-flow]]. See the hub for the other aspects (cart entity, abandoned detection, submit-to-order, lifecycle overview, discounts & rules, events & webhooks).
@@ -15,14 +15,14 @@ source_count: 3
 
 ## Definition
 
-Every storefront checkout runs in one of two modes: **guest** (customer is not signed in) or **registered** (customer is signed in). The store's **Customer accounts** setting on [[settings-cart]] decides which modes are allowed (`registered` — sign-in required, `guests` — guest only, `both` — default, both allowed). The mode affects how the customer is linked to the resulting order, which discounts are eligible, whether saved addresses persist, and whether a Customer account is auto-created post-checkout.
+Every storefront checkout runs in one of two modes: **guest** (customer is not signed in) or **registered** (customer is signed in). The store's **Customer accounts** setting on [[settings-cart]] decides which modes are allowed (stored values `member` — sign-in required, `guest` — guest only, `both` — default, both allowed). The mode affects which Customer record the order is linked to, which discounts are eligible, whether saved addresses persist, and whether the guest becomes a registered Customer.
 
 ## Scope
 
 Covered:
 
 - The guest-vs-registered behaviour matrix at submit time.
-- The three values of the **Customer accounts** setting (`registered` / `guests` / `both`).
+- The three values of the **Customer accounts** setting (`member` / `guest` / `both`).
 - The **Convert guests into members** setting and what happens when it's ON.
 - Per-customer discount caps under each mode.
 
@@ -34,9 +34,10 @@ Not covered here:
 
 ## Contrasts
 
-- **Guest mode `customer_id = NULL` vs registered mode `customer_id` set** — the most consequential field difference. Guest orders aggregate by `customer_email`; registered orders aggregate by `customer_id`. Per-customer discount caps follow this split.
-- **Convert guests into members OFF vs ON** — OFF leaves guest orders unattached to any Customer row; ON creates a Customer account post-checkout, emails a generated password, and the customer can sign in later to view their history.
-- **Customer accounts = `registered` vs `guests` vs `both`** — the storefront-side gate. `registered` redirects unsigned-in visitors to register/sign in; `guests` allows guest checkout AND ALSO places orders as guests when a signed-in customer checks out (the order is NOT linked to the signed-in customer); `both` (default) allows both modes.
+- **Guest record vs registered record** — a guest checkout is **not** anonymous: it finds or creates a Customer in the **Guests** group by the entered email (no password) and links the order to it. Later guest orders with the same email attach to the same record. So guests appear in the [[customers]] list and export; filter by group to separate them.
+- **Convert guests into members OFF vs ON** — OFF keeps the buyer as a guest record that cannot sign in; ON turns that same record into a registered Customer when the order is placed, emails a generated password, and the customer can sign in to view their history.
+- **Customer accounts = `member` vs `guest` vs `both`** — the storefront-side gate. `member` redirects unsigned-in visitors to register/sign in; `guest` allows guest checkout AND ALSO places orders as guests when a signed-in customer checks out (the order is NOT linked to the signed-in customer) (verify); `both` (default) allows both modes.
+- **A digital product or a subscription in the cart overrides the setting** — such a cart never offers guest checkout, because the downloads (or the subscription) are reached from the buyer's account ([[digital-products]]). With `both` or `member` the customer step shows the **register form with a password** and the sign-in link; with `guest` it shows no form, only *"Only registered customers can purchase digital products"* (bg *"Само регистрирани клиенти могат да поръчват дигитални продукти"*; a subscription gets its own wording). A guest submit for such a cart is refused with the same message. A cart of physical products only follows the setting as usual.
 
 ## Where it applies
 
@@ -44,18 +45,18 @@ Not covered here:
 
 | Behaviour | Guest checkout | Registered checkout |
 |-----------|----------------|---------------------|
-| Customer association | `customer_id = NULL`, email + first / last name still captured | `customer_id` set to the logged-in customer |
-| Customer group | Default group (or guest-group ID if configured) | Customer's existing group |
+| Customer association | Linked to the guest Customer record (Guests group) found or created by email | Linked to the logged-in customer |
+| Customer group | **Guests** (moved to the default group if converted) | Customer's existing group |
 | Saved addresses | Not saved to a profile (snapshot lives only on the order) | Address can be saved to the customer's profile depending on the order-side checkbox |
 | Discounts gated by `only_customer` | Blocked — *"Only registered customers can use this discount"* | Allowed |
 | Per-customer cap on discount | Counted against the email address (anonymous) | Counted against `customer_id` |
-| Customer accounts setting `registered` | Blocked entirely — the storefront redirects to register / sign in | Allowed |
-| Customer accounts setting `guests` | Allowed | Order is placed as guest (NOT linked to the signed-in customer) |
+| Customer accounts setting `member` | Blocked entirely — the storefront redirects to register / sign in | Allowed |
+| Customer accounts setting `guest` | Allowed | Order is placed as guest (NOT linked to the signed-in customer) |
 | Customer accounts setting `both` (default) | Allowed | Allowed |
 
 ### Convert guests into members
 
-When **Convert guests into members** (`guest_to_customer`) is ON, guest orders also create a Customer account post-checkout — the customer receives an email with a generated password and can sign in to view their order history. The conversion runs inside the `PreOrderCreated` listener BEFORE the order row is persisted, so the resulting order is born linked to the freshly-promoted Customer record. The marketing-consent flag from the guest row is preserved on the new Customer. See [[checkout-flow-submit-order-creation]] for the placement of this step in the pipeline.
+When **Convert guests into members** (`guest_to_customer`) is ON, the guest record itself is converted just before the order is saved: it moves to the default group, gets a generated password (sent in the welcome email), its email counts as confirmed, the buyer is signed in, and `customer.created` fires. It happens at the first order placed while the setting is ON; turning the setting on converts nobody retroactively, and earlier guest orders with that email are already on the same record, so the history is complete. Skipped when Customer accounts is `guest`. The marketing-consent flag stays on the record. Separately, a guest who signs in with a social account under the same email is converted (no password email). See [[checkout-flow-submit-order-creation]] for the placement of this step in the pipeline.
 
 ### Per-customer caps under each mode
 
@@ -78,5 +79,4 @@ This means a customer with an old guest order PLUS a new registered order agains
 
 ## Open Questions
 
-- Confirm `guest_to_customer` is the exact setting key for **Convert guests into members** (verify).
 - Confirm the storefront message string for the blocked-guest discount case ("Only registered customers can use this discount") matches current translations (verify).

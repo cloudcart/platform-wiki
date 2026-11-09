@@ -1,11 +1,11 @@
 ---
 type: entity
 nav_path: "Entity → SEO Meta → Canonical and no-index"
-aliases: ["Canonical URL per page", "Per-page canonical_url", "No-index per page", "no_index_meta toggle", "CMS Page canonical", "CMS Page noindex", "OG image dimensions not validated", "SEO meta plan gates", "marketing.seo permission"]
+aliases: ["Canonical URL per page", "Per-page canonical_url", "No-index per page", "CMS Page canonical", "CMS Page noindex", "OG image dimensions not validated", "SEO meta plan gates", "marketing.seo permission"]
 tags: [entity, seo, marketing, canonical, noindex, cms-page]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[seo-meta]]. See the hub for the other aspects (fields, fallback chain, section defaults, per-entity storage, multi-language storage).
@@ -14,17 +14,16 @@ source_count: 4
 
 ## Identity
 
-Of the 5 user-facing SEO Meta fields ([[seo-meta-fields|catalogued here]]), **two** are CMS-page-only: `canonical_url` and `no_index_meta`. They don't appear on Product / Category / Vendor / Blog Article editors. They are the per-page levers the merchant uses to:
+Of the SEO Meta fields ([[seo-meta-fields|catalogued here]]), `canonical_url` is CMS-page-only (curated selections carry their own canonical too). The merchant uses it to point a CMS Page's canonical tag elsewhere, e.g. the thank-you page to the home page so it doesn't compete in search.
 
-- Point a CMS Page's canonical tag elsewhere (e.g., the thank-you page canonical points to the home page so it doesn't compete in search).
-- Tell search engines NOT to index a specific CMS Page (thin content, internal-only landing pages, drafts).
+**There is no per-page noindex field.** No CMS page, product, category, vendor or article has a noindex switch; the platform has no `no_index_meta`.
 
-This page also documents two non-validation gotchas: OG image dimensions are not platform-validated, and `no_index_meta` is NOT inherited from parent category to child products. Plan and permission gates are also covered here.
+This page also covers OG image non-validation and the plan and permission gates.
 
 ## Aliases
 
 - **canonical_url** / **Canonical URL** / **`<link rel="canonical">`** / **Per-page canonical**.
-- **no_index_meta** / **No-index meta** / **noindex toggle** / **`<meta name="robots" content="noindex">`**.
+- **Per-page noindex / noindex toggle** — does not exist; see below.
 - **OG image dimensions** — the unvalidated upload.
 - **`marketing.seo` permission** — the API gate.
 
@@ -41,16 +40,9 @@ This page also documents two non-validation gotchas: OG image dimensions are not
 | **Validation** | None on the URL format itself (verify). |
 | **Storage** | Column on the CMS Page row. |
 
-### `no_index_meta` — Per-CMS-page noindex
+### No per-page noindex
 
-| Aspect | Behaviour |
-|--------|-----------|
-| **Carried by** | [[marketing-landing-pages|CMS Page]] only. (Categories in some platform versions also carry a `no_index_meta` flag — verify which entity types currently expose it.) |
-| **HTML emitted (when ON)** | `<meta name="robots" content="noindex">` |
-| **Typical use** | Thin product pages, internal-only landing pages, draft content the merchant wants reachable via direct link but not indexed by Google. |
-| **NOT inherited** | Setting `no_index_meta = 1` on a Category does NOT propagate to products in that category. Each entity carries its own independent flag. Setting it on a Category only affects that category's listing page; products in that category render with their own per-product flag (or, if blank, are indexed). |
-| **Relationship to site-wide deindex** | The site-wide deindex toggle on [[marketing-seo-deindex]] controls noindex for **filtered / sorted URL variants** of storefront pages (e.g., `/products?color=red`). This per-page `no_index_meta` is independent: it applies to the canonical URL itself. The two operate on different surface areas. |
-| **Storage** | Column on the CMS Page row (and on Categories where supported). |
+A storefront page is `noindex` only through the platform's own rules ([[seo-canonical-noindex]]): filtered and sorted listings, the always-noindex system pages (cart, checkout, account, sign-in, compare), `/products`, the 404 page and demo stores. The Deindex card on [[marketing-seo-deindex]] governs only the filtered listings. To keep a specific page out of search the merchant can deactivate it (it then answers 404), redirect it ([[marketing-seo-301-redirects]]), point a CMS page's canonical elsewhere, or add a `Disallow` line in robots.txt ([[marketing-seo-robots]]), which stops crawling rather than indexing.
 
 ### OG image dimensions are not validated
 
@@ -62,10 +54,6 @@ The `og_image` field accepts any uploaded image regardless of size. The platform
 
 A merchant who uploads a tiny 200×200 image or a giant 4000×3000 image saves it unchanged; the receiving social platform decides how to crop / scale / reject. The platform's only validation is the generic image-upload validation (file type, max size in MB) — nothing SEO-specific.
 
-### `no_index_meta` is per-entity, not per-section
-
-Note that the per-section meta defaults on [[marketing-seo-meta]] **do NOT** expose `no_index_meta` — there is no per-section noindex flag for "noindex the entire home page" or "noindex the entire blog index". To noindex an entire section, the merchant has to set `no_index_meta = 1` on the CMS Page implementing that section, or rely on the site-wide deindex toggle ([[marketing-seo-deindex]]) for filtered variants.
-
 ### Permission and plan gates
 
 | Gate | Value |
@@ -76,19 +64,18 @@ Note that the per-section meta defaults on [[marketing-seo-meta]] **do NOT** exp
 
 ## Where it appears
 
-- **[[marketing-landing-pages]] (CMS Page editor)** — both `canonical_url` (text input) and `no_index_meta` (toggle) appear in the SEO section of the editor.
+- **[[marketing-landing-pages]] (CMS Page editor)** — `canonical_url` (text input) in the SEO section of the editor.
 - **[[marketing-seo-canonical]]** — the site-wide canonical toggle that gates whether `canonical_url` is rendered at all.
-- **[[marketing-seo-deindex]]** — the site-wide deindex toggle (different surface from per-entity `no_index_meta`).
-- **[[category]] editor** — `no_index_meta` toggle (where supported — verify).
+- **[[marketing-seo-deindex]]** — the site-wide deindex toggle for filtered listings.
 - **API permission management** — `marketing.seo` permission group.
 
 ## Related
 
 - [[seo-meta]] — hub.
-- [[seo-meta-fields]] — the field catalogue including these two CMS-only fields.
-- [[seo-meta-per-entity]] — why CMS Pages have 2 extra fields the other entity types don't.
-- [[seo-meta-fallback-chain]] — canonical / noindex don't participate in the meta-title fallback chain; they are independent flags.
-- [[marketing-landing-pages]] — the CMS Page editor where these 2 fields live.
+- [[seo-meta-fields]] — the field catalogue.
+- [[seo-meta-per-entity]] — which fields each entity type carries.
+- [[seo-meta-fallback-chain]] — canonical does not take part in the meta-title fallback chain.
+- [[marketing-landing-pages]] — the CMS Page editor where the canonical field lives.
 - [[marketing-seo-canonical]] — site-wide canonical toggle.
 - [[marketing-seo-deindex]] — site-wide deindex of filtered URLs.
 - [[seo-handling]] — the concept hub for the 10 SEO surfaces.

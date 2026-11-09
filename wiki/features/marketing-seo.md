@@ -7,8 +7,8 @@ aliases: ["Main SEO settings", "SEO settings", "SEO", "Marketing SEO", "Глав
 tags: [marketing, seo, sitemap, robots, canonical, rss, sharing]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 14
+updated: 2026-11-09
+source_count: 15
 ---
 # Main SEO settings
 
@@ -94,7 +94,7 @@ Card-specific business rules (how canonical actually renders, how the noindex th
 - [[marketing-seo-meta]] — per-section meta titles & descriptions.
 - [[marketing-seo-301-redirects]] — per-URL 301 redirects manager.
 - [[apps-seo-spinner]] — AI content-variation generator for descriptions + meta.
-- [[apps-domain-redirect]] — whole-domain (cross-domain) 301 redirects.
+- [[apps-domain-redirect]] — country-based routing between the merchant's own stores (302; not a forwarder to an external domain).
 - [[product]] — per-product meta-tag overrides.
 - [[category]] — per-category meta-tag overrides.
 - [[settings-domains]] — primary domain affects sitemap / RSS / canonical URL host.

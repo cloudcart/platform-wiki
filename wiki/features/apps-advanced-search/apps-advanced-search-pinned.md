@@ -7,8 +7,8 @@ aliases: ["pinned products", "pin a product", "pin product to top", "product at 
 tags: [apps, search, merchandising, categories, vendors]
 plan_gates: ["advanced_search"]
 created: 2026-09-23
-updated: 2026-09-23
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # Aura Search — pinned products
@@ -77,7 +77,7 @@ Pins are read when the app is installed **and enabled**. They keep working after
 
 ### Changes need no reindex; deletions clean up after themselves
 
-A category or vendor list applies from the next page load. A search-term list is handed to the search engine in the background and applies within moments. Neither needs the index rebuilt.
+A category or vendor list applies to the next freshly rendered page; guests can keep a cached copy for up to 20 minutes ([[storefront-arch-caching-invalidation]]). A search-term list is handed to the search engine in the background and applies within moments. Neither needs the index rebuilt.
 
 Deleting a product removes it from every pin list, and a list it leaves empty is removed. Deleting a category or vendor removes its list. Deleting a list removes only the list, not the products.
 

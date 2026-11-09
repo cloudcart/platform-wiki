@@ -5,8 +5,8 @@ aliases: ["Sitemap", "Sitemap.xml", "Robots.txt", "Crawl directives", "Sitemap-r
 tags: [seo, sitemap, robots, crawler, indexing, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[seo-handling]]. See the hub for related aspects (canonical / noindex, meta tags, redirects, sharing / RSS, plan overrides, route catalog).
@@ -29,7 +29,7 @@ Covered:
 - The robots.txt request pipeline: merchant body + platform safety block + 5-minute cache.
 - The platform default template (used when the merchant has never edited robots.txt).
 - The "sitemap doesn't reference itself from robots.txt" gap.
-- The "sitemap omits noindex'd URLs" rule.
+- What the sitemap leaves out (and that it does not check noindex).
 
 Not covered here:
 
@@ -51,18 +51,20 @@ Not covered here:
 
 `/sitemap.xml` is a sitemap-index. Each entry points to a per-entity sub-sitemap (`/sitemap/<type>/<page>.xml`). Currently indexed entity types:
 
-- vendors
-- categories
-- products (`visible` scope only)
-- CMS pages (`visible` scope only)
+- vendors (all)
+- categories holding at least one active product
+- products that are active and published (not hidden, draft, scheduled or expired)
+- CMS pages that are active and not hidden, system-slot pages included
 - blogs (with at least one active article)
 - blog articles
 
-Per-entity sub-sitemap pagination caps at **1,000 URLs per file** (verify). `.xml.gz` (gzip-compressed) is also accepted — Google Search Console fetches gzip by default for large sitemaps.
+Plus `/contacts`, `/vendors` and `/blog`. The home page `/` and old (renamed) addresses are never listed. Details: [[marketing-seo-sitemap]].
+
+Per-entity sub-sitemap pagination caps at **1,000 URLs per file** (verify). The `.xml.gz` addresses return the same uncompressed XML.
 
 **Newly created products lag by up to 1 hour** in the sitemap because of the 1-hour cache TTL. There is no proactive cache flush on product create.
 
-URLs the storefront marks as `noindex` (via [[seo-canonical-noindex]], or system pages like cart / checkout / account) are **NOT** included in the sitemap. The sitemap is meant to expose indexable URLs only.
+The sitemap does not check noindex ([[seo-canonical-noindex]]); it lists clean item addresses, so filter variants and cart / checkout / account pages never appear.
 
 ### Robots.txt — the request pipeline
 
@@ -78,11 +80,12 @@ URLs the storefront marks as `noindex` (via [[seo-canonical-noindex]], or system
    Disallow: /bbt/*
    Crawl-Delay: 3
    ```
-3. Return as `text/plain` with `Last-Modified` from the merchant's last save timestamp.
+3. When the store serves an llms.txt, append `Llms: <store URL>/llms.txt` ([[marketing-seo-llms]]).
+4. Return as `text/plain`.
 
 Even if the merchant saves a completely empty robots.txt, checkout / cart / wishlist are still blocked. The merchant cannot make those URLs crawlable from the admin UI.
 
-The platform default template (used when the merchant has never edited robots.txt or saves empty) **also blocks `/tags` and `/contacts/*`** — the merchant has to deliberately keep those allowed by saving custom content if they want them indexed.
+The platform default template (used when the merchant has never edited robots.txt or saves empty) **also blocks `/tags` and `/contacts/*`**, and already contains the checkout / cart / wishlist / `Crawl-Delay` lines, so a default store serves those lines twice. Repeating an identical line changes nothing in what is allowed.
 
 ### Sitemap reference from robots.txt — NOT auto-injected
 

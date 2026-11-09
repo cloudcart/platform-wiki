@@ -7,8 +7,8 @@ aliases: ["Reviews moderation queue", "Pending reviews list", "Reviews table", "
 tags: [marketing, apps, reviews, moderation]
 plan_gates: ["product_reviews_added_rating"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # Reviews — Moderation queue (table)
@@ -88,7 +88,7 @@ The table lists ONLY root reviews. Replies live in the same backing table with `
 
 ### Status change recomputes the product summary immediately
 
-Every Publish / Hide / Delete (bulk OR per-row) recomputes the affected product's aggregate rating + total review count. The storefront product page's "X stars (Y reviews)" headline reflects the moderation decision **on the next page load — no cache TTL**.
+Every Publish / Hide / Delete (bulk OR per-row) recomputes the affected product's aggregate rating + total review count. The storefront product page's "X stars (Y reviews)" headline reflects the moderation decision **on the next freshly rendered page**; guests can get a cached product page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Bulk delete is irreversible — answers cascade
 

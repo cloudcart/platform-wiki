@@ -7,14 +7,16 @@ aliases: ["SMS Msg Hub", "SMS MsgHub", "SMS Link Mobility", "MsgHub", "SMS ка�
 tags: [marketing, channels, sms, msghub, link-mobility]
 plan_gates: ["campaign.channel.sms_msghub_message"]
 created: 2026-05-23
-updated: 2026-11-03
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 # SMS channel (Msg Hub)
 
 ## Purpose
 
-The **SMS Msg Hub** channel delivers SMS text messages to the merchant's subscribers via the **Link Mobility / MsgHub Bulgaria** SMS aggregator (api.msghub.cloud). It's one of the two SMS providers CloudCart supports for marketing campaigns (the other is [[marketing-channels-sms-nth|NTH Mobile]]) — chosen by merchants who need time-sensitive promotional blasts, order-status SMS alerts, or Bulgaria-focused communication with strong DLR (delivery report) coverage.
+> **Retired (verify on production).** In the current platform code this channel's module is not registered, so it is not loaded and has no card; SMS campaigns go through [[marketing-channels-sms-nth|NTH]]. This page describes how the channel worked.
+
+The **SMS Msg Hub** channel delivered SMS text messages to the merchant's subscribers via the **Link Mobility / MsgHub Bulgaria** SMS aggregator (api.msghub.cloud), sending from short code 1917. It was one of the two SMS providers CloudCart supported for marketing campaigns (the other is [[marketing-channels-sms-nth|NTH Mobile]]) — chosen by merchants who need time-sensitive promotional blasts, order-status SMS alerts, or Bulgaria-focused communication with strong DLR (delivery report) coverage.
 
 The channel is **shared infrastructure**: every CloudCart merchant using SMS MsgHub sends from the same Link Mobility sub-account (`api_key` + `api_secret` provisioned at the platform level), under CloudCart's contract terms. The merchant doesn't enter their own credentials; CloudCart bills the merchant via the plan-cap on `campaign.channel.sms_msghub_message`.
 

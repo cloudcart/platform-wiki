@@ -4,8 +4,8 @@ nav_path: "Entity → Payment Provider → Relationships"
 aliases: ["Payment Provider relationships", "Payment Provider links", "Payment Provider data model relations"]
 tags: [entity, payments, payment-providers, relationships, entities]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 # Payment Provider — Relationships
@@ -28,7 +28,7 @@ A Payment Provider:
 - **Has many payment records** — one per charge attempt on an [[order|Order]]. Each payment record carries the canonical [[payment-status]], the `provider_reference_id` returned by the gateway, the amount, and the timestamp.
 - **Is referenced by the [[order|Order]]** — every Order has exactly one payment-provider association (via its payment row).
 - **Is referenced by the [[cart|Cart]]** — the customer's in-progress payment-method selection.
-- **Is scoped by [[geo-zone|Geo Zones]]** — country / region availability is set on the common payment-method options (see [[settings-geo-zones]]).
+- **Is NOT scoped by [[geo-zone|Geo Zones]]** — a payment method takes no zone, and checkout never hides one by the customer's location. A fee in [[settings-taxes]] can be tied to both a payment method and a geo zone; a method can also be limited indirectly through a shipping method's payment allow-list.
 - **Is filtered by [[shipping-provider|Shipping Provider]]** — every shipping method carries an "allowed payments" list; if the customer's selected courier excludes this provider, the provider is hidden from the payment-method picker.
 - **Is filtered by [[category|Category]]** — categories can restrict which providers are offered for orders containing products in that category (see [[products-categories]] → "Define custom payment methods for this category").
 - **Is filtered by [[customer-group|Customer Group]]** — groups can restrict the list of available providers per loyalty tier.
@@ -65,7 +65,7 @@ A Payment Provider:
 - [[shipping-provider]] — sister entity; both are third-party integrations gated at checkout.
 - [[category]] — categories can restrict which providers are offered for orders containing products in that category.
 - [[customer-group]] — groups can restrict the available providers per loyalty tier.
-- [[geo-zone]] — providers are scoped by allowed countries.
+- [[geo-zone]] — not used by payment methods (only by fees in [[settings-taxes]]).
 - [[payment-provider-checkout-visibility]] — the runtime filter chain that uses these relationships.
 
 ## Open Questions

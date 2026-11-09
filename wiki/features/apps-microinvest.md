@@ -7,8 +7,8 @@ aliases: ["Microinvest", "Микроинвест", "Microinvest Warehouse Pro", 
 tags: [apps, erp, accounting, bulgaria, retail]
 plan_gates: ["microinvest_total_products"]
 created: 2026-05-22
-updated: 2026-08-06
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # Microinvest (ERP / retail accounting)
 
@@ -29,7 +29,7 @@ Sidebar → Apps → install → **Microinvest**. The app's tabs (Overview / Sta
 ## What the merchant can do here
 
 - Sync orders from CloudCart → Microinvest (for accounting / invoicing).
-- Sync stock from Microinvest → CloudCart (real-time inventory updates).
+- Sync stock from Microinvest → CloudCart whenever Microinvest pushes it (CloudCart does not poll).
 - Sync the product catalogue (one direction or bi-directional), matching products by Barcode / SKU.
 - Configure event-driven sync and new-product defaults.
 
@@ -52,7 +52,7 @@ The full field reference is on [[apps-microinvest-settings]]. In brief: credenti
 
 Each rule lives on its aspect page:
 
-- **Sync direction / authority** — Microinvest is master for stock + price (the chosen `Updates` fields); CloudCart for orders + customers. Syncs are on-demand, one feed per store. See [[apps-microinvest-sync-model]].
+- **Sync direction / authority** — Microinvest is master for stock, per-store stock and price (written on every push, whatever `Updates` says) and for the product fields chosen in `Updates`; CloudCart for orders + customers. Syncs are on-demand, one feed per store. See [[apps-microinvest-sync-model]].
 - **Matching & dedup** — two layers (the `compare_by` field, then the persistent `ExternalMetaData` id↔id mapping populated via `sync-ids`); mismatches create duplicates. See [[apps-microinvest-product-matching]].
 - **Reset import** — unlinks the store from Microinvest (drops the mapping + `app_import` tag) without deleting products. See [[apps-microinvest-reset-import]].
 

@@ -7,8 +7,8 @@ aliases: ["Edit staff", "Edit moderator", "Edit admin", "Staff profile", "Avatar
 tags: [settings, staff, edit, profile, avatar, password]
 plan_gates: ["administrators"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[settings-staff]]. See the hub for the other aspects (roles & list, create, permissions, 2FA, delete, force sign out).
@@ -108,15 +108,17 @@ Whether the Edit modal requires an additional 2FA step depends on the acting use
 
 The owner's Edit modal shows a card for the linked Google account: its name, email and avatar with a disconnect action (confirmation *"Are you sure you want to logout?"*), or the Google sign-in button when none is linked. Connecting returns to this page through `#user-<id>`, which re-opens the account. A moderator's row does not show this card.
 
-### `admin_account_changes` admin notification fires on save
+### Who is emailed when a profile changes
 
-When the merchant saves any profile change on this modal, the `admin_account_changes` admin notification is queued via [[settings-admin-notifications]]. Delivery is asynchronous on the `admin_notify` queue task and depends on the master toggle + per-type toggle. Recipient: `site_email`.
+When someone saves **another person's** record and that person's email, username, first or last name changed, `admin_account_changes` goes to that person's address (the new one, if the email changed). Saving your own record sends nothing. A password set for someone else sends them `admin_account_password_change`; changing your own sends nothing. The switches on [[settings-admin-notifications]] apply.
 
-A password update fires a **separate** `admin_account_password_change` admin notification.
+### Changing a login email needs no code
+
+The email here is the person's sign-in address. A change saves at once, with no confirmation code to the old or the new address. It is separate from the store email on [[settings-general]], which needs codes from both addresses, and from the account holder's email on [[merchant]]; changing one never changes the others.
 
 ### Password reset is triggered from the admin login page, not here
 
-The `admin_account_password_reset` notification fires when an admin/moderator clicks "Forgot password" on the **admin login screen** (not from inside this Settings page). The reset flow emails a one-time code to the admin's recorded email; the admin enters it on a reset form, then sets a new password. Once the new password is saved, the `admin_account_password_change` notification ALSO fires (separately).
+The `admin_account_password_reset` email is sent when an admin or moderator uses "Forgot password" on the **admin login screen**, to their own address. It carries a link to set a new password; saving the new password sends no further email.
 
 ### Password reset code valid for 60 minutes
 
@@ -128,7 +130,7 @@ When a staff member clicks "Forgot password" on the admin login page, the platfo
 - [[settings-staff-permissions-tree]] — Access permissions section mechanics.
 - [[settings-staff-2fa]] — Two-factor authentication section.
 - [[settings-admin-notifications]] — `admin_account_changes`, `admin_account_password_change`, `admin_account_password_reset` notifications.
-- [[settings-general]] — `site_email` recipient for the change notifications.
+- [[settings-general]] — the store email, separate from a login email.
 - [[account-cc2fa]] — generic 2FA modal mechanics that may interrupt save.
 
 ## Open questions

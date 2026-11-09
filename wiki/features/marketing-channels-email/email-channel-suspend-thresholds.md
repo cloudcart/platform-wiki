@@ -7,8 +7,8 @@ aliases: ["Email channel reputation", "Email auto-suspend", "SUSPENDED_SPAM", "S
 tags: [marketing, channels, email, reputation, suspend, deliverability]
 plan_gates: ["campaign.channel.email"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-channels-email]]. See the hub for the other aspects (setup wizard, DNS records, Elastic Email sub-account, webhook feedback, send pipeline, settings pane).
@@ -17,17 +17,17 @@ source_count: 2
 
 ## Purpose
 
-The platform polls the merchant's Elastic Email sub-account for reputation metrics (`abusepercent`, `unknownuserspercent`, `openedpercent`, `clickedpercent`, `reputation`) on every reputation read. Three hard-coded thresholds map directly to three of the four auto-suspend triggers shared by all marketing channels. When any threshold trips, the Email channel auto-suspends with the matching reason (`spam` / `bounced` / `open`) and stops sending until support clears the suspension. A reputation reading ≥ 99 is exempt from auto-suspension regardless of any one threshold being briefly crossed.
+The platform polls the merchant's Elastic Email sub-account for reputation metrics (`abusepercent`, `unknownuserspercent`, `openedpercent`, `clickedpercent`, `reputation`) on the 12-hour reputation sync, which evaluates only channels that are currently active. Three hard-coded thresholds map directly to three of the four auto-suspend triggers shared by all marketing channels. When any threshold trips, the Email channel is switched off with the matching reason (`spam` / `bounced` / `open`) and an admin alert; campaigns are not touched. It does not lift by itself. A reputation reading ≥ 99 is exempt from auto-suspension regardless of any one threshold being briefly crossed.
 
 ## Where to find it
 
 - The live values are displayed in the **Reputation** panel on the Email channel card. They come from Elastic Email's `Account.LoadReputationImpact`.
-- The four cross-channel triggers (with `OUT_OF_FUNDS` being the fourth, non-reputation one) are documented on [[marketing-channels#The four auto-suspend triggers]].
+- The four cross-channel triggers (the fourth being the staff denial `cc_denied`, non-reputation) are documented on [[marketing-channels#The four auto-suspend triggers]].
 
 ## What the merchant can do here
 
 - View live **spam%** / **bounce%** / **open%** / **click%** / **reputation%** values.
-- (No self-service unsuspend.) Once auto-suspended, contact support to clear the `suspended_by` flag or set `manual_allowed_suspended`.
+- (No self-service unsuspend.) Once auto-suspended, contact support to clear the `suspended_by` flag or set `manual_allowed_suspended`. Clearing removes the reason but does not switch the channel back on, and **Reconnect** does not help — it deliberately leaves a reputation-suspended channel off (see [[email-channel-reconnect]]).
 
 ## Settings & fields
 
@@ -58,10 +58,19 @@ The reputation check pulls these keys back from Elastic Email and maps them dire
 
 | Setting | Value type | Effect |
 |---|---|---|
-| `suspended_by` | Array of reasons (`spam` / `bounced` / `open` / `OUT_OF_FUNDS`) | Each entry blocks sending; cleared by support when reputation recovers. |
-| `manual_allowed_suspended` | Future-dated expiry | Support-granted override allowing sends during a suspension window. Persists across **Reset configuration** (see [[email-channel-elastic-email-account]]). |
+| `suspended_by` | Array of reasons (`spam` / `bounced` / `open` / `cc_denied`) | Stored when the channel is suspended; cleared only by CloudCart staff (clearing does not switch the channel back on). |
+| `manual_allowed_suspended` | Staff-set temporary thresholds + expiry (next billing date, or month end) | Staff override that replaces the default thresholds until expiry. Persists across **Reset configuration** (see [[email-channel-elastic-email-account]]). |
 
 ## Business rules
+
+### When the check suspends
+
+- No suspension while the channel's send counter is below **500**, or while reputation is **99** or higher.
+- Otherwise it triggers on abuse/spam above **0.5%**, bounced (unknown users) above **5%**, or opens below **5%**.
+- A staff override replaces those thresholds with the staff-set values until its expiry date.
+- A staff denial (`cc_denied`) always suspends.
+
+There is no other reason: no `OUT_OF_FUNDS` suspension exists.
 
 ### Reputation ≥ 99 is the global exemption
 
@@ -95,7 +104,7 @@ All three reasons (`spam` / `bounced` / `open`) write the same `suspended_by` ar
 ## Related
 
 - [[marketing-channels-email]] — hub.
-- [[marketing-channels]] — multi-channel framework + the four auto-suspend triggers (the fourth being `OUT_OF_FUNDS`, non-reputation).
+- [[marketing-channels]] — multi-channel framework + the four auto-suspend triggers (the fourth being the staff denial `cc_denied`).
 - [[email-channel-webhook-feedback]] — AbuseReport + hard-bounce events that feed the reputation metrics.
 - [[email-channel-elastic-email-account]] — `manual_allowed_suspended` persists across Reset configuration; reputation is read using the sub-account's API key.
 - [[email-channel-send-pipeline]] — channel must not be auto-suspended for the send pipeline to run.

@@ -7,8 +7,8 @@ aliases: ["Subscribe Forms", "Subscription forms", "Newsletter popup", "Lead-cap
 tags: [marketing, subscribers, forms, popup, storefront]
 plan_gates: ["subscriber_forms"]
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 9
+updated: 2026-11-09
+source_count: 10
 ---
 
 # Subscribe Forms
@@ -64,15 +64,15 @@ This page is the cluster hub — full business rules live on the aspect pages. T
 
 ## Sub-pages (in this cluster)
 
-This feature is split into 10 aspect pages, each covering one well-scoped slice. The Assistant should drill into the aspect that matches the question, not read every page.
+Drill into the aspect page that matches the question:
 
 - [[subscribe-forms-list]] — admin list view: name / submitted / views / embed / Active toggle, bulk-delete, soft-delete, plan-quota counter, embed-code modal.
 - [[subscribe-forms-builder]] — iframe-sandboxed visual editor: top-level fields, two-page composition (`form` + `success`), styling primitives, popup-vs-embedded mode toggle.
 - [[subscribe-forms-button-actions]] — the **submit button** & confirmation: the two action types (`submit` = show confirmation page / `url` = redirect), the success page (`is_default` vs custom), and the success-page button (`close` / `url`).
-- [[subscribe-forms-templates]] — the 5 structural templates the new-form picker offers: `modal`, `bar`, `panel`, `sidebar`, `fullscreen` (NOT a content library).
+- [[subscribe-forms-templates]] — the 5 templates (Slide-In, Bar, Panel, Sidebar, Fullscreen), their variants and default sizes, the image (fit, link) and the title / description text.
 - [[subscribe-forms-layout]] — the `layoutPosition` enum (15 values, per-device desktop/mobile).
 - [[subscribe-forms-triggers]] — the 3 display triggers (`auto`, `exitIntent`, `timeOnPage`) + `stopDisplaying` complementary array.
-- [[subscribe-forms-fields]] — the 4 built-in input slots (email / phone / first_name / last_name) + 6 custom-field types + per-field configuration.
+- [[subscribe-forms-fields]] — the 4 built-in input slots (show / hide / reorder in the "Полета" list) + 6 custom-field types + per-field configuration.
 - [[subscribe-forms-submission-flow]] — POST `/subscribers/forms/{id}` cascade: validation, visitor-match, channel filtering, verify-action precedence, segment re-evaluation.
 - [[subscribe-forms-gdpr-consent]] — the **inverted-semantic** `cookies_consent` flag, marketing-policy gate, and the consent audit row written per ticked policy.
 - [[subscribe-forms-known-issues]] — by-design carve-outs + missing capabilities (no pixel events, no A/B testing, no Mailchimp sync, no per-device visibility, no per-page-type targeting, etc.).

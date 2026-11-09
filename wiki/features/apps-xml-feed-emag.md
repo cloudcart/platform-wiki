@@ -7,17 +7,17 @@ aliases: ["eMAG feed", "Emag XML feed", "eMAG product feed", "eMAG marketplace f
 tags: [apps, exports, xml, feed, marketplace, emag]
 plan_gates: []
 created: 2026-06-11
-updated: 2026-06-11
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
-> One of the predefined sub-feeds of [[apps-xml-feed]] (the XML Feed app). See that hub for the shared activation / settings / status / public-URL mechanics. For the full two-way eMAG **marketplace** integration (offers, orders, stock sync) see the dedicated app [[apps-emag-sync]].
+> One of the predefined sub-feeds of [[apps-xml-feed]] (the XML Feed app). See that hub for the shared activation / settings / status / public-URL mechanics. This feed is CloudCart's whole eMAG integration; [[apps-emag-sync]] describes the same feed from the marketplace side.
 
 # Emag (marketplace product feed)
 
 ## Purpose
 
-This sub-feed of the [[apps-xml-feed|XML Feed]] app generates a **product feed for the eMAG marketplace**. It is a one-way export (catalogue → feed file). The full **two-way** eMAG integration — pushing offers, receiving orders, syncing stock — is the separate [[apps-emag-sync]] app; use that when you actually sell on eMAG rather than just publish a feed.
+This sub-feed of the [[apps-xml-feed|XML Feed]] app generates a **product feed for the eMAG marketplace**. It is a one-way export (catalogue → feed file at a public address that eMAG reads). It is the only eMAG integration in CloudCart: no app pushes offers, receives eMAG orders or lowers CloudCart stock when eMAG sells ([[apps-emag-sync]]).
 
 ## Where to find it
 
@@ -30,8 +30,8 @@ Sidebar → Apps → **XML Feed** → **Emag** (`/admin/apps/xml_feed/emag`). St
 
 ### What the merchant CANNOT do here
 
-- **Map categories to eMAG categories** — this feed sends the store's own category path; eMAG category mapping (and offer/order sync) is handled by [[apps-emag-sync]], not here.
-- Receive orders or sync stock — that is [[apps-emag-sync]], not this feed.
+- **Map categories to eMAG categories** — the feed sends the store's own category path; matching to eMAG's categories happens on eMAG's side.
+- Receive eMAG orders or have eMAG sales lower CloudCart stock — no CloudCart integration does that.
 
 ## Settings & fields
 
@@ -50,7 +50,7 @@ Product id + variant id, name, SKU, barcode, brand, **category_path** (the store
 ## Business rules
 
 ### Feed vs marketplace sync
-This is a feed FILE only. Selling on eMAG (offers, orders, stock, category mapping to eMAG's taxonomy) requires [[apps-emag-sync]] — a different integration. Don't send a merchant here for order/stock issues.
+This is a feed file only. Orders, offers and category matching are handled in the merchant's eMAG seller account; CloudCart stock does not change when eMAG sells.
 
 ### No category mapping — sends the store category path
 `category_path` is the product's own store category breadcrumb; there is no per-feed eMAG taxonomy mapping in this consumer.
@@ -64,7 +64,7 @@ Per-consumer (app key `app.xml_feed.emag`) — see [[plan-gates]].
 ## Related
 
 - [[apps-xml-feed]] — the XML Feed app hub.
-- [[apps-emag-sync]] — the full two-way eMAG marketplace integration.
+- [[apps-emag-sync]] — the eMAG marketplace view of this feed: one-way, onboarding, product allowance.
 - [[products-categories]] — the category path the feed sends.
 - [[plan-gates]] — per-consumer gating.
 

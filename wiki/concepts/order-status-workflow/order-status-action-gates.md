@@ -5,8 +5,8 @@ aliases: ["Order action gates", "What can I do per status", "Edit gate", "Refund
 tags: [orders, statuses, gates, actions, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[order-status-workflow]]. See the hub for the other aspects (taxonomy, custom statuses, transitions, auto-transitions, side-effects, negative semantics).
@@ -56,7 +56,7 @@ Action gates apply on every order-management surface — the per-order action bu
 | **Capture authorisation** | `authorized` |
 | **Refund** | `paid` (or any status where a payment record is in `completed` state — see "Refund gate" below) |
 | **Mark as Completed** | `paid` **OR** `status_fulfillment = fulfilled` — either one is enough. Only an order that is *neither* is refused (auto-promotion handles the `paid` + `fulfilled` case if `order_complete = 1` — see [[order-status-auto-transitions]]) |
-| **Cancel order** | Any status except `paid` / `completed`; not gated by stock — see [[order-status-transitions]] |
+| **Cancel order** | Status pill: any status except `paid` / `completed`, never stock-gated. One-click menu item: `pending` with enough stock only — see [[order-status-transitions]] |
 | **Issue invoice** | Any status with payment captured (varies by store invoicing settings on [[settings-invoicing]]) |
 | **Issue credit note** | `cancelled` OR `refunded` AND `invoice_number` is populated — see [[orders-credit]] |
 | **Issue receipt** | Any status with payment captured |
@@ -91,7 +91,7 @@ Once the credit note is issued, the order can no longer be re-marked `paid` at a
 
 ### Cancel order — not gated by stock
 
-No endpoint checks stock before cancelling. The only stock-related behaviour is cosmetic: the one-click **Cancel order** shortcut in the order's action menu is hidden when a line can no longer be given back cleanly — but the status pill still cancels the order, and the cancel succeeds.
+No endpoint checks stock before cancelling. Stock only hides the one-click **Cancel order** menu item, shown for a `pending` order whose lines not yet taken from stock are in stock ([[orders-details-header]]); the status pill still cancels.
 
 What can happen silently is the restock: if the product on the order has been DELETED since the order was placed, or its `tracking` flag has been toggled to `no`, the stock-reverse step is skipped — the cancel succeeds but no stock is added back. See [[inventory-restock]].
 

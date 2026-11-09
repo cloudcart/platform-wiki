@@ -7,8 +7,8 @@ aliases: ["Nitrogen Storefronts", "Headless Storefronts list", "Storefronts list
 tags: [nitrogen, storefronts, headless, list, staff-permission]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-04
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Nitrogen → Storefronts (list)
 
@@ -38,7 +38,7 @@ Open the address `/admin/nitrogen`: the admin's menu has no link to this area ([
 |--------|---------------|
 | **Storefront** | The name, which opens [[nitrogen-storefront-overview]], and its address. |
 | **Source** | The GitHub repository, or **Command line**. |
-| **Status** | **Active** or **Paused**. |
+| **Status** | **Active** or **Paused**. Storefronts are created Active and no admin action pauses them; a Paused one cannot be given a domain. |
 | **Created** | Creation date. |
 | (delete) | A delete action on each row. |
 
@@ -68,7 +68,7 @@ This is a list: no editable fields on a row. All editing happens on the tabs of 
 
 ### 10 storefronts per site
 
-The platform allows up to 10 Nitrogen storefronts per site, the same on every plan with Nitrogen. It is not a merchant setting. The merchant deletes a storefront to free a slot. A creation past the cap is refused with *"Maximum of 10 storefronts allowed per site"*.
+The platform allows up to 10 Nitrogen storefronts per site, the same on every plan; Nitrogen has no plan gate ([[headless-nitrogen-overview]]). It is not a merchant setting. The merchant deletes a storefront to free a slot. A creation past the cap is refused with *"Maximum of 10 storefronts allowed per site"*.
 
 ### Each storefront is isolated
 

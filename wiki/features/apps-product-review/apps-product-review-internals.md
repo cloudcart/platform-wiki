@@ -7,8 +7,8 @@ aliases: ["Product Review internals", "Review install hook", "Review lifecycle h
 tags: [apps, others, reviews, qa, internals, segments]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 
 > Part of [[apps-product-review]]. See the hub for the other aspects (settings, moderation, submission, Q&A).
@@ -39,7 +39,9 @@ On install (or re-install), the platform runs a one-shot query to find subscribe
 
 ### Install seeds admin-notification mails — in many languages
 
-The install hook inserts admin-notification email templates for "New review added". The "New review added" template is seeded in English, Bulgarian, Romanian, Greek, Hungarian, German, Spanish, French, Italian, Macedonian (and Serbian / Albanian / Czech / Finnish / Polish per the lang dir). So **the admin notification reaches the operator in their localised language** when their admin UI is set to one of these. The mails fire when a new review is added (per [[settings-admin-notifications]] event subscription).
+The install hook inserts admin-notification email templates for "New review added". The "New review added" template is seeded in English, Bulgarian, Romanian, Greek, Hungarian, German, Spanish, French, Italian, Macedonian (and Serbian / Albanian / Czech / Finnish / Polish per the lang dir). So **the admin notification reaches the operator in their localised language** when their admin UI is set to one of these. ### When "New review added" is sent
+
+It is an **admin** alert to the store's email (`site_email`), never a mail to the reviewer. It goes out for **every review submitted from a product page** (storefront or headless), whether it lands pending or published, with the product, rating, comment and the reviewer's name. It is **not** sent for answers, questions (there is no new-question email at all), reviews added from the admin, or reviews left through a campaign review link ([[apps-product-review-campaign-link]]). It has no repeat limit: each review sends one. It obeys its own on/off row and the master switch on [[settings-admin-notifications]], which defaults to ON.
 
 ### Per-review and per-question lifecycle hooks
 

@@ -7,8 +7,8 @@ aliases: ["Wildcard in old_url", "Old URL wildcards", "Asterisk wildcard 301", "
 tags: [marketing, seo, redirects, wildcards, performance, lookup]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-seo-301-redirects]]. See the hub for the other aspects (types, validation, CSV import, middleware, marketing pass-through, auto-tracking).
@@ -68,6 +68,13 @@ The lookup also tries the URL **with and without trailing slash**. So a rule wit
 
 ## Business rules
 
+### How an address is matched
+
+- **What is compared.** The requested path plus its query string, against every rule's old address. The domain is never compared, so a rule works on every domain of the store.
+- **Full URL in the old address.** Accepted: the admin screen cuts a pasted `https://…` address down to its path and query as it is typed, whatever the domain, and CSV import does the same. Only the path and query are stored.
+- **Letter case.** The comparison uses the database's case-insensitive text matching, so `/Old-Page` matches a rule for `/old-page`, and two rules differing only in case cannot both be saved (verify against the live table).
+- **Precedence.** There is none. Exact duplicates are refused, but when a wildcard rule and another rule both match, the lookup takes whichever row the database returns first, with no ordering by specificity or age. Avoid overlapping rules.
+
 ### `parseOldUrl` strips the fragment, keeps the query
 
 The stored `old_url` is URL-decoded on save and stripped of any `#fragment` (per [[seo-301-redirects-validation]]). The query string IS kept — so a redirect from `/old?source=newsletter` to a new URL only fires when the customer hits `/old?source=newsletter` exactly.
@@ -88,7 +95,7 @@ Concretely: a store with 5 000 rules and a custom prefix can add ~50–200 ms to
 
 ### No regex, no negation
 
-The wildcard syntax is the SQL `LIKE %` wildcard, nothing more. Merchants asking for "match all `/blog/2024-*` except `/blog/2024-draft`" have to create two separate rules (one matching the wildcard, one specifically matching `/blog/2024-draft` to override, where the more specific rule wins on the lookup order).
+The wildcard syntax is the SQL `LIKE %` wildcard, nothing more. "Match all `/blog/2024-*` except `/blog/2024-draft`" cannot be expressed reliably: a second, exact rule does not override the wildcard, because no rule outranks another (see below).
 
 ### Same-URL `creating` callback skip
 

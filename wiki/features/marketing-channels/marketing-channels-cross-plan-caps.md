@@ -7,8 +7,8 @@ aliases: ["Channel plan caps", "Channel send quota", "Usage alert", "Buy more cr
 tags: [marketing, channels, plan-caps, credits, usage, self-credentials]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-channels]]. See the hub for related aspects (catalog, lifecycle, suspension, pre-flight, UI surfaces).
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-How a channel's send volume is metered against the merchant's plan, when the 80% usage-alert notification fires, what the merchant sees when a cap is reached, the Buy-more-credits flow that lets the merchant raise the cap inside the billing cycle, and the Viber-only **self-credentials** override that bypasses CloudCart's metering entirely. This is the layer that turns "this channel is active" into "this channel is allowed to send the next message".
+How a channel's send volume is metered against the merchant's plan, when the 80% usage-alert notification fires, what the merchant sees when a cap is reached, the Buy-more-credits flow that lets the merchant raise the cap, and the Viber-only **self-credentials** override (enabled only for specific stores) that bypasses CloudCart's metering entirely. This is the layer that turns "this channel is active" into "this channel is allowed to send the next message".
 
 ## Where to find it
 
@@ -30,10 +30,10 @@ Sidebar → **Marketing** → **Channels** → **Channels setup**. Each card sho
 
 ## What the merchant can do here
 
-- See current period send count vs plan cap per channel.
-- Receive an Admin Notification when sends cross 80% of the cap.
-- Purchase additional credits (feature pack) to extend the current cycle's cap.
-- For Viber, switch to their own InfoBip credentials to bypass CloudCart's cap entirely.
+- See the cumulative send count vs plan cap per channel.
+- Receive an Admin Notification once sends reach 80% of the cap.
+- Purchase additional credits (feature pack) to raise the cap.
+- For Viber, on stores CloudCart has enabled for it, switch to their own InfoBip credentials to bypass CloudCart's cap entirely.
 
 ## Settings & fields
 
@@ -44,16 +44,16 @@ Every channel has the plan-feature key documented in [[marketing-channels-cross-
 - A **one-time allowance** (the platform code) — e.g., emails-included with the plan tier.
 - A **subscription allowance** (the platform code) — e.g., recurring monthly quota.
 
-**Effective cap** = one-time + subscription. The merchant's send counter for the cycle is metered against this combined cap.
+**Effective cap** = one-time + subscription. The merchant's send counter is cumulative (it never resets) and is metered against this combined cap.
 
 ### Usage-alert threshold
 
-The platform emits the **Usage alert notification** when sends cross the `USAGE_ALERT_PERCENTAGE = 80`% threshold (verify). The alert surfaces:
+Once usage is at or above `USAGE_ALERT_PERCENTAGE = 80`%, the **Usage alert notification** is evaluated before each dispatch (not when the channel sends on own credentials). The alert surfaces:
 
 - In the [[settings-admin-notifications|Admin Notifications]] panel.
 - Via the `campaign.channel.usage.{mapping}` notification group (configurable per channel under [[settings-admin-notifications]]).
 
-The 80% threshold fires once per cycle per channel — repeated sends across 80% don't re-trigger.
+It is one alert per channel, updated in place; the owner is emailed about it at most once per 24 hours. See [[channels-usage-alerts]].
 
 ### "Cap reached" merchant state
 
@@ -61,18 +61,18 @@ When the cap is reached and the merchant doesn't have self-credentials enabled (
 
 *"You have reached your channel limit. Your plan limit is {limit}. You need to purchase more to continue the use of this channel."*
 
-With a **Buy more** button that opens the `PlanFeature` purchase modal scoped to this channel's `plan_feature_key`. Campaigns using the channel pause until either:
+With a **Buy more** button that opens the `PlanFeature` purchase modal scoped to this channel's `plan_feature_key`. At the cap, sends stop:
 
-1. The cap is raised (upgrade plan or buy a feature pack), OR
-2. The next billing cycle resets the counter.
+- **Email** — each campaign step is dropped with an admin alert (*"You have reached:feature limit. Your limit is:limit."* plus *"Purchase more credits"*) and no log row; the channel stays on and the campaign keeps showing as running.
+- **SMS, Viber, Web Push** — the channel is also switched OFF with an important alert (*"… Campaign channel:channel is deactivated."*); later steps drop silently.
 
-The pause is **soft** — already-scheduled campaign actions stop being processed; the campaign itself is not stopped (unlike the deactivation cascade in [[marketing-channels-cross-lifecycle]]). Once the cap is raised, processing resumes from where it stopped.
+Steps are dropped, not paused. The counter never resets, so only raising the cap (upgrade or feature pack) restores sending — and buying credits does **not** re-activate a deactivated channel; the merchant must switch it back on (see [[marketing-channels-cross-lifecycle]]).
 
 ## Business rules
 
 ### Self-credentials override (Viber only)
 
-For **Viber**, the merchant can supply their own InfoBip Viber Business Messages credentials (username, password, scenario key) instead of using CloudCart's shared pool. When `self_credentials_active = true`:
+For **Viber**, and only on specific stores CloudCart has enabled (not generally available), the merchant can supply their own InfoBip Viber Business Messages credentials (username, password, scenario key) instead of using CloudCart's shared pool. When `self_credentials_active = true`:
 
 - Sends use the merchant's InfoBip contract → the merchant is **billed directly by InfoBip**, not by CloudCart.
 - The CloudCart plan-cap for Viber **doesn't apply** — sends are unlimited (from CloudCart's perspective).
@@ -84,11 +84,11 @@ This requires the merchant to have a paid InfoBip account with a registered Vibe
 
 ### Feature-pack purchase flow
 
-Clicking **Buy more** on the Restrictions band opens the same [[plan-features|PlanFeature]] modal CloudCart uses across the admin for upsell purchases. The modal is scoped to the channel's `plan_feature_key` — only feature packs that increase THIS channel's cap are shown. The purchase takes effect immediately on confirmation: the cap rises mid-cycle and queued sends resume.
+Clicking **Buy more** on the Restrictions band opens the same [[plan-features|PlanFeature]] modal CloudCart uses across the admin for upsell purchases. The modal is scoped to the channel's `plan_feature_key` — only feature packs that increase THIS channel's cap are shown. The purchase takes effect immediately on confirmation: the cap rises, but a channel switched OFF at the cap stays off until the merchant re-activates it.
 
-### What "cap" means is per-cycle, not per-channel
+### The counter is cumulative and never resets
 
-The plan-cap counter is per **billing cycle**, not per channel lifetime. Renewing the subscription resets each channel's counter automatically. Crossing the 80% threshold in cycle N does NOT re-fire in cycle N+1 unless the merchant crosses it again in the new cycle.
+Each channel's send counter is cumulative; renewing the subscription does **not** reset it. The cap is the one-time allowance plus the subscription allowance, so headroom grows only when one of them is raised.
 
 ## Related
 
@@ -99,7 +99,7 @@ The plan-cap counter is per **billing cycle**, not per channel lifetime. Renewin
 - [[plan-features]] — the PlanFeature purchase modal opened by Buy more.
 - [[plan-gates]] — the feature-key registry used by the platform code.
 - [[settings-admin-notifications]] — where the 80% usage alert appears.
-- [[merchant-subscription-lifecycle]] — billing-cycle boundaries that reset the cap counter.
+- [[merchant-subscription-lifecycle]] — subscription renewals (they do not reset the send counter).
 
 ## Open questions
 

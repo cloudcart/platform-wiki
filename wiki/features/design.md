@@ -7,8 +7,8 @@ aliases: ["Design", "Дизайн", "Storefront pillar", "Магазин", "Мо
 tags: [design, storefront, hub]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-11-04
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # Design
 
@@ -16,7 +16,7 @@ source_count: 3
 
 > **Making a design? Go to Nitrogen.** When a merchant wants a design of their own, a redesign, or something a theme's settings cannot do, the answer is a Nitrogen storefront, not editing a theme's templates. See [[nitrogen-vs-themes]]. Nitrogen starts from [[headless-starter]], opens at the address `/admin/nitrogen` ([[nitrogen]]), which the menu does not link to, and an agent building it must use the `cloudcart-nitrogen` skill. The screens below adjust the standard theme the store already runs.
 
-Top-level sidebar pillar that groups every **storefront design** surface in one place. From here the merchant picks the store's **theme** (free or paid), edits the **navigation menus** (header, footer, mobile), drops in / re-orders **modules** on the homepage and category pages, opens the **Theme Editor** to tweak colours / fonts / CSS, opens the **Page Builder** to compose drag-and-drop landing pages, and reaches the **Static Pages** CMS (also surfaced under Marketing). The actual editing happens inside each sub-screen; this pillar is the navigation hub for everything that controls how the storefront LOOKS and how visitors NAVIGATE through it.
+Top-level sidebar pillar that groups every **storefront design** surface in one place. From here the merchant picks the store's **theme** (free or paid), edits the **navigation menus** (header, footer, mobile), edits the theme's **modules** on the homepage, category and product pages, opens the **Theme Editor** to tweak colours / fonts / CSS, opens the **Page Builder** to compose drag-and-drop landing pages, and reaches the **Static Pages** CMS (also surfaced under Marketing). The actual editing happens inside each sub-screen; this pillar is the navigation hub for everything that controls how the storefront LOOKS and how visitors NAVIGATE through it.
 
 The sidebar icon is the pen-paintbrush (`fa-light fa-pen-paintbrush`). The label is **Дизайн** (BG) / **Design** (EN), translation key `sidebar.storefront`. The HTML class on the sidebar item is still `my-store` and its internal name is `my_store` — legacy artifacts from when the pillar was labelled "My Store" / "Магазин".
 
@@ -52,14 +52,14 @@ The pillar exposes these sub-screens, grouped by the three sub-headers in the su
 
 **Под "Настройки" / under "Settings":**
 
-- **Модули** *(BG) / **Widgets** *(EN)* — add / remove / re-order homepage, category-page and product-page modules. Route: `admin.storefront.widgets` → `/admin/storefront/widgets`. See [[design-modules]]. (EN label is still "Widgets" — see the BG↔EN asymmetry note below.)
+- **Модули** *(BG) / **Widgets** *(EN)* — edit or switch off the active theme's modules; the theme fixes which exist and where (to add or re-order blocks, use a Dynamic page). Route: `/admin/storefront/widgets`. See [[design-modules]].
 
 ## What the merchant cannot do here
 
 This is a navigation hub with no editable fields of its own — every operation happens inside a child screen. The merchant cannot:
 
 - Build a theme from scratch — only pick from CloudCart's catalogue (the Theme Editor tweaks the active theme; it does not create a new one). A design of the store's own is made with Nitrogen ([[nitrogen-vs-themes]]).
-- Create / publish custom module types — only configure the modules shipped by the active theme.
+- Create module types, or add, remove or re-order the theme's modules.
 - Edit the theme's underlying Smarty templates. A different design is made with Nitrogen, not by changing a theme ([[nitrogen-vs-themes]]).
 
 ## Settings & fields
@@ -116,7 +116,7 @@ If the merchant is on a **paid theme that hasn't been paid for yet** (`unpaid_te
 
 - The label comes from translation key `sidebar.storefront` (**"Дизайн"** in `lang/bg/sidebar.php`, **"Design"** in `lang/en/sidebar.php`); the default click-target is `admin.templates.list` (Themes screen). The whole Дизайн sub-menu is rendered in legacy Smarty (`sidebar.tpl`). There is no `/admin/storefront-new/*` Vue route group; sub-menus are NOT migrated to Vue. Each sub-item has its own narrower permission gate (e.g., `store.builder` for Colors & typography; `store.modules` for Модули / Widgets).
 - The **Theme Editor** (Цветове и шрифтове) and **Page Builder** open separate full-screen builder apps at `/admin/builder` and `/admin/marketing/pages/builder` respectively (NOT embedded admin views). The Page Builder is the same surface as the builder-type Landing Pages editor in [[marketing-landing-pages]].
-- The Page Builder itself is NOT plan-gated; any plan tier can access it (the underlying gates are quantity caps in [[plan-gates]], not access caps).
+- The Page Builder URL is gated by the `storefront_builder` plan feature ([[design-modules-page-builder]]); which plans carry it is set in the billing catalog (verify).
 - BG↔EN label asymmetry: the Bulgarian `sidebar.widgets` translation reads "Модули"; the English value is still "Widgets". The merchant sees different sub-item labels depending on UI locale. See [[admin-sidebar-navigation]] for the full BG / EN label table.
 
 ## Open questions

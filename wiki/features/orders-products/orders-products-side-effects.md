@@ -7,8 +7,8 @@ aliases: ["Order line side effects", "Order line history entries", "Order line p
 tags: [orders, products, line-items, side-effects, history, webhooks, recalculation, ajax]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[orders-products]]. See the hub for the other aspects (add, edit, delete, line discount, fulfillment popover, stock effects).
@@ -41,7 +41,7 @@ Every product / discount change triggers, in order:
 1. **Line totals** — per-line subtotal × quantity.
 2. **Order subtotal** — sum of all line totals.
 3. **Tax recalculation** — per [[settings-taxes]] (delete-and-recompute pattern; see Business rules).
-4. **Shipping recalculation** — if weight / dimensions changed, the courier quote API is re-run; may update the shipping line silently.
+4. **Shipping recalculation** — on an order with a shipping method, every add / changed edit / remove re-quotes shipping, whatever changed; see [[orders-products-courier-requote]].
 5. **Discount re-evaluation** — minimum-order-total rules may newly qualify (or stop qualifying).
 
 The merchant should expect totals to update on every save.
@@ -103,7 +103,7 @@ The platform deletes ALL non-product-level VAT tax records and re-computes them 
 
 ### Shipping re-quote can change the shipping total silently
 
-A weight or value change triggers a courier-quote API call. The new rate replaces the order's shipping line. Merchant should verify the shipping total after any line edit — no notification banner.
+Every line save re-quotes shipping and, on an unlocked unpaid order, the new rate replaces the shipping line with no banner. A failed quote rolls the save back. See [[orders-products-courier-requote]].
 
 ### Bundle-related discounts auto-cleanup
 

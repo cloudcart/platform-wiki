@@ -7,8 +7,8 @@ aliases: ["Reputation auto-suspend", "Email channel suspended by reputation", "S
 tags: [marketing, channels, reputation, auto-suspend, email, deliverability]
 plan_gates: ["campaign.channel.email"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-channels-reputation]]. See the hub for the other aspects (modal surface, metrics, sync cadence).
@@ -17,29 +17,29 @@ source_count: 2
 
 ## Purpose
 
-This page documents **how reputation drives auto-suspension** of the Email channel. After each reputation sync (see [[channels-reputation-sync]]) the platform compares the just-synced spam, bounce, and open metrics against fixed Email-channel thresholds. If a threshold trips — and the channel has cleared a minimum send volume and is not already exempt by a high overall reputation — the channel is deactivated, the reason is recorded, every campaign that uses the channel is stopped, and an admin notification fires. This is the mechanism that protects the store's sender reputation from being driven into the ground by a bad list or bad content.
+This page documents **how reputation drives auto-suspension** of the Email channel. After each reputation sync (see [[channels-reputation-sync]]) the platform compares the just-synced spam, bounce, and open metrics against fixed Email-channel thresholds. If a threshold trips — and the channel has cleared a minimum send volume and is not already exempt by a high overall reputation — the channel is switched off, the reason is recorded, and an admin alert fires. Campaigns are **not** touched: each later campaign step that meets the ban drops itself and raises an alert. This is the mechanism that protects the store's sender reputation from being driven into the ground by a bad list or bad content.
 
 ## Where to find it
 
-The thresholds are surfaced to the merchant in the **yellow warning banner** at the top of the Reputation modal (Sidebar → **Marketing** → **Channels** → **Channels setup** → Email card → **Reputation**). When the channel is suspended, the **channel card** shows a banned-reason message. See [[channels-reputation-modal]] for the modal surface.
+The thresholds are surfaced to the merchant in the **yellow warning banner** at the top of the Reputation modal (Sidebar → **Marketing** → **Channels** → **Channels setup** → Email card → **Reputation**). When the channel is suspended, its **channel card** shows only **Disabled** — no Suspended badge and no reason text. The reason shows as a red-triangle tooltip on the campaign rows, and in the admin alert. See [[channels-reputation-modal]] for the modal surface.
 
 The warning banner text reads verbatim:
 
 > *"We will suspend your account if your campaign has a high spam rate (Spam rate over 0.5%), bounce rate over 5%), or very low open rate (Open rate less than 5%)."*
 
-These percentages are hard-coded to the Email channel's `SUSPENDED_SPAM`, `SUSPENDED_BOUNCED`, `SUSPENDED_OPEN` constants — they do not change per merchant or per plan.
+These percentages are hard-coded to the Email channel's `SUSPENDED_SPAM`, `SUSPENDED_BOUNCED`, `SUSPENDED_OPEN` constants — they do not change per merchant or per plan; only a CloudCart staff override replaces them, temporarily (see Recovery).
 
 ## What the merchant can do here
 
 - **Read the thresholds** in the warning banner before they are crossed.
-- **Read the suspend reason** on the channel card if the channel has already been suspended.
-- **Take corrective action** — clean the list, change content, lower send frequency — then wait for the next sync; the auto-suspend lifts when the metrics recover.
+- **Read the suspend reason** in the campaign-row tooltip or the admin alert if the channel has already been suspended.
+- **Take corrective action** — clean the list, change content, lower send frequency — and contact CloudCart support; the suspension does **not** lift by itself.
 
 ## What the merchant cannot do here
 
-- **Cannot manually unsuspend from the modal** — recovery happens via the next sync once metrics improve, or via a CloudCart staff manual unsuspend.
+- **Cannot manually unsuspend from the modal** — recovery is by CloudCart staff only.
 - **Cannot change the thresholds** — they are platform constants, not merchant settings.
-- **Cannot auto-restart stopped campaigns** — campaigns stopped by the cascade stay stopped; re-activating the channel does not auto-restart them.
+- **Cannot fix it with Reconnect** — Reconnect deliberately leaves a reputation-suspended channel off (see [[email-channel-reconnect]]).
 
 ## Settings & fields
 
@@ -58,7 +58,7 @@ Multiple triggers can fire simultaneously — the `suspended_by` channel setting
 
 ### Banned-reason messages (verbatim)
 
-When suspended, the channel card shows one of:
+The reason text (campaign-row tooltip and admin alert) is one of:
 
 - *"Your spam score is:value which is higher than our maximum of:number"*
 - *"Your bounced score is:value which is higher than our maximum of:number"*
@@ -77,23 +77,23 @@ If the headline `reputation` value is **≥ 99%**, the channel is exempt from au
 
 ### Manual CC denial overrides all reputation checks
 
-If a CloudCart staff member has flagged the channel with a manual denial reason, the suspension result is immediately the `cc_denied` row with the staff-supplied reason — reputation thresholds are not even evaluated. The merchant sees the staff-written reason verbatim on the channel card.
+If a CloudCart staff member has flagged the channel with a manual denial reason, the suspension result is immediately the `cc_denied` row with the staff-supplied reason — reputation thresholds are not even evaluated. The merchant sees the staff-written reason verbatim in the campaign-row tooltip and the alert.
 
-### Auto-suspend cascades to campaigns
+### Auto-suspend does not touch campaigns
 
-When a sync flips the channel into a suspended state, every Campaign whose action references the Email channel is automatically marked stopped. Re-activating the channel later does **not** auto-restart the affected campaigns — the merchant must re-enable each one. See [[marketing-campaigns]] and the cascade note on [[marketing-channels]].
+A suspension changes **no** campaign's state — only a manual switch-off does (see [[marketing-channels-cross-lifecycle]]). Each later campaign step that meets the suspended channel drops itself and raises an alert. See [[marketing-campaigns]].
 
 ### Suspension fires an admin notification
 
-When the suspend check returns a non-empty result, the platform deactivates the channel, writes the `suspended_by` setting, AND fires an admin notification under the channel's group (`campaign.channel.email`). The notification text is built in the control-panel locale — an EN-locale CP shows the EN message, a BG-locale CP shows the BG message.
+When the suspend check returns a non-empty result, the platform deactivates the channel, writes the `suspended_by` setting, AND fires an admin notification under the channel's group (`campaign.channel.email`): EN *"Your campaign channel:channel was suspended with a reason: …"*, BG *„Вашият канал за кампания:channel е спрян с основание: …“*. The notification text is built in the control-panel locale — an EN-locale CP shows the EN message, a BG-locale CP shows the BG message.
 
 ### API-key expiry deactivates without a suspend reason
 
-If the reputation fetch throws an "APIKey Expired" error (Elastic Email rejecting the stored key), the platform deactivates the channel without writing a reputation snapshot row — see [[channels-reputation-sync]]. This is a **pure deactivation** with no reputation suspend reason. To re-activate, the merchant must reconfigure / re-verify the Email channel — see [[marketing-channels-email]].
+If the reputation fetch throws an "APIKey Expired" error (Elastic Email rejecting the stored key), the platform deactivates the channel without writing a reputation snapshot row — see [[channels-reputation-sync]]. This is a **pure deactivation** with no reputation suspend reason. No reconfiguration is needed: the card's **Reconnect** re-issues the key in place and switches the channel back on — see [[email-channel-reconnect]].
 
 ### Recovery
 
-The merchant fixes the underlying problem (clean the list, change content, reduce frequency), waits for the next reputation sync, and the auto-suspend lifts when the metrics recover. A manual unsuspend requires CloudCart staff.
+The suspension does **not** lift by itself: the channel is inactive, and the sync skips inactive channels. Recovery is by CloudCart staff in the Console — they set temporary thresholds that expire at the next billing date or month end, or clear a manual denial. Clearing a suspension removes the reason but does **not** switch the channel back on. The merchant still fixes the underlying problem (clean the list, change content, reduce frequency) so the channel does not trip again.
 
 ## Related
 
@@ -103,7 +103,7 @@ The merchant fixes the underlying problem (clean the list, change content, reduc
 - [[channels-reputation-modal]] — the warning banner surfacing these thresholds.
 - [[marketing-channels]] — channel-setup hub with the full auto-suspend / cascade flow.
 - [[marketing-channels-email]] — re-verification path after an API-key-expiry deactivation.
-- [[marketing-campaigns]] — campaigns auto-stopped by the cascade.
+- [[marketing-campaigns]] — campaigns whose steps drop while the channel is suspended.
 
 ## Open questions
 

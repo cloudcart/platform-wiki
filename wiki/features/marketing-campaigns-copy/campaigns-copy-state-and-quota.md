@@ -7,8 +7,8 @@ aliases: ["Copy always Draft", "Copy campaign quota", "Copy plan limit", "Copy s
 tags: [marketing, campaigns, copy, duplicate]
 plan_gates: ["abandoned_orders", "campaigns"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Copy campaign — state & quota
 
@@ -20,7 +20,7 @@ This aspect covers the **lifecycle and access** rules around Copy: why every cop
 
 ## Where to find it
 
-This is the access / state behaviour of the **Copy** action — Sidebar → **Marketing** → **Campaigns** → any non-archived tab → **Copy** in a row. There is no separate screen; these rules govern whether the Copy succeeds and what state the result is in.
+This is the access / state behaviour of the **Copy** action — Sidebar → **Marketing** → **Campaigns** → any tab, Archived included → **Copy** in a row. There is no separate screen; these rules govern whether the Copy succeeds and what state the result is in.
 
 ## What the merchant can do here
 
@@ -50,6 +50,12 @@ There are no merchant-set fields for this aspect — the relevant values are the
 | Draft | Draft |
 
 This is intentional — the merchant gets to review the clone before launching it, and the copy doesn't auto-enrol anyone. (The reset of `active`, `archived_at`, `progress`, and enrolled subscribers is detailed in [[campaigns-copy-what-transfers]].)
+
+### Launching a copy re-sends to the original audience
+
+A copy is a Draft with **no enrolled subscribers**. Launching it enrolls the whole eligible segment again, so everyone who already received the original receives it again. If the original is later reactivated (by CloudCart staff, or a plan activation while it is still active), both campaigns send.
+
+**Before starting a copy, make sure the original is inactive or archived.**
 
 ### Copy counts against the plan-tier campaign quota
 

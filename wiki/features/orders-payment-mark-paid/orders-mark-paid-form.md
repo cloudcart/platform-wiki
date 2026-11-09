@@ -7,8 +7,8 @@ aliases: ["Mark as paid form", "Provider reference ID", "Complete order payment 
 tags: [orders, payment, manual-payment, offline, smarty]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[orders-payment-mark-paid]]. See the hub for the other aspects (post-paid pipeline, status-flip rules, adjacent actions, API position).
@@ -67,12 +67,16 @@ Click Save → the form submits via AJAX:
 
 ### What the merchant CANNOT do here
 
-- **Mark an online payment as paid** — the action is hidden for online providers (Stripe / PayPal / etc.). For those, the platform listens to webhook events and marks payment automatically; a manual override would conflict with reconciliation.
+- **Mark an online payment as paid** — the action is hidden for online providers (Stripe / PayPal / etc.). For those, the platform listens to webhook events and marks payment automatically; a manual override would conflict with reconciliation. An online payment stuck at „Заявена“ (`requested`) offers **Synchronize** („Синхронизирай плащането“) instead when the gateway supports it, which asks the gateway for the real state. CloudCart Pay re-checks by itself and times an abandoned payment out after 3 hours ([[cloudcart-pay-refunds-webhooks]]).
 - **Specify a partial amount** — the action marks the FULL payment as paid. For partial payments, the merchant uses multiple payment records via the Change Provider workaround (see [[orders-mark-paid-adjacent-actions]]).
 - **Skip the modal** — there's no one-click "Mark paid" that bypasses the reference input. The modal always opens.
 - **Mark a payment that's already in a terminal state** (Completed / Refunded / Cancelled).
 
 ## Settings & fields
+
+### Payment status names on the order page
+
+The payment panel's **Payment status** column („Статус на плащане“) shows the payment record's status by its default name (renamable on [[settings-statuses-payment-tab]]): `requested` „Заявена“ / *Requested*, `pending` „Изчакваща“ / *Pending*, `completed` „Изпълнена“ / *Completed*, `timeouted` „Изтекла“, `failed` „Неуспешна“, `cancelled` „Отказана“, `refunded` „Възстановена“. For an **online** payment that is not `completed`, the badge adds a second line „Не е получено плащане“ / *No payment received*. Offline payments never show that line: a COD payment normally sits at „Заявена“ until it is marked paid or synced from the courier ([[payment-providers-cod]]).
 
 ### Offline payment types
 

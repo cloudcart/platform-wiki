@@ -7,8 +7,8 @@ aliases: ["Per-courier waybill", "Courier waybill form", "Econt waybill", "Speed
 tags: [orders, shipping, waybill, courier, econt, speedy, dpd, boxnow, sameday, omniship]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[orders-shipping-waybill]]. See the hub for other aspects (generate flow, payer side, print PDF, remove/void, generic modal, API path).
@@ -34,18 +34,16 @@ Common field categories across couriers (NOT exhaustive — see each courier app
 | **Package** | Weight, dimensions, number of packages. Derived from products + chosen [[settings-boxes]]. |
 | **Service** | Service tier (standard / express / next-day / overnight / drop-off / pickup). Courier-specific. |
 | **Insurance** | Declared value in store currency. Pre-filled with the order's shippable-products total. |
-| **COD** | Cash-on-delivery amount. Pre-filled with order's invoice total when payment is COD; 0 otherwise. |
+| **COD** | Cash-on-delivery amount. When payment is COD, pre-filled with the computed amount: with or without shipping by pricing type and payer side, less returned items and wallet ([[shipping-provider-mech-cod]]); 0 otherwise. |
 | **Payer side** | Sender / Recipient / Other. See [[waybill-payer-side]] for the per-courier allowed list. |
 | **Notes** | Free-text note to the courier. |
 | **Document/receipt** | Whether customer needs to sign on receipt, return signed document, etc. |
 
 ## Settings & fields
 
-### Cross-courier billing-merge — EXCLUSIVE to Econt
+### Billing company on the waybill
 
-ONLY Econt's controller merges billing-address company data (company name, VAT, MOL, BULSTAT) into the waybill's receiver address. DPD Bulgaria's controller has a milder `client_name` parameter that splits an admin-entered name into first/last — it does NOT pull from billing. Speedy, BoxNow, Sameday, GLS, Cargus, DPD Romania, and all other couriers do NOT auto-merge billing-company data; the waybill uses the shipping address as-is.
-
-If a Bulgarian merchant needs a company-tagged waybill for B2B customers, they must use Econt — other couriers require manually populating the company in the order's shipping address.
+Econt is the only courier that merges billing-address company data (company name, VAT, MOL, BULSTAT) into the receiver; the company is sent whenever the billing Company name is filled in ([[econt-waybill-recipient-mapping]]). DPD Bulgaria, Pigeon Express, MPL and Next Level send a filled-in billing Company name as a separate client name. The other couriers send no company: the order's shipping address has no company fields, in the admin or at checkout.
 
 ### Sameday — sets sender company from site setting
 

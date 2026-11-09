@@ -7,8 +7,8 @@ aliases: ["Social Feed", "Social Feed — Instagram, Facebook & TikTok", "Social
 tags: [apps, marketing, social, instagram, facebook, tiktok, storefront, widget]
 plan_gates: []
 created: 2026-10-05
-updated: 2026-10-05
-source_count: 48
+updated: 2026-11-09
+source_count: 49
 ---
 
 # Social Feed (Instagram, Facebook and TikTok posts in the store)
@@ -36,7 +36,7 @@ Sidebar → **Apps → Social Feed** (`/admin/apps/social_feed`). The page heade
 
 Installing the app opens **Accounts**. Every Facebook or TikTok login also returns there.
 
-Outside the app, the **Social Feed** block is in the page builder: **Marketing → Pages**, then a Dynamic page ([[apps-social-feed-page-block]]).
+Outside the app, **Social Feed** is a page-builder block: **Design → Static pages** → a Dynamic page ([[apps-social-feed-page-block]]).
 
 ## Sub-pages (in this cluster)
 

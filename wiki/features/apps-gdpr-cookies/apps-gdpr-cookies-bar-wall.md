@@ -3,12 +3,12 @@ type: feature
 nav_path: "Apps → GDPR → Cookies → Bar & wall"
 route_name: apps.gdpr.cookies
 route_path: /admin/apps/gdpr/cookies
-aliases: ["Cookie bar", "Cookie wall", "Information Bar", "Cookies consent dialog", "gdpr_popup", "cookies-trigger", "Cookie Consent Mode dropdown"]
+aliases: ["Cookie bar", "Cookie wall", "Information Bar", "Cookies consent dialog", "gdpr_popup", "cookies-trigger", "#cookie-settings", "Cookie Consent Mode dropdown", "Cookie policy page", "Настройки на бисквитките", "Запази настройките", "Приемам", "Отхвърлям"]
 tags: [apps, gdpr, compliance, cookies, consent, storefront]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-08
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # GDPR — Cookies: bar & wall presentation
 
@@ -16,70 +16,80 @@ source_count: 6
 
 ## Purpose
 
-This aspect documents the **storefront presentation** of cookie consent — the two ways the merchant can prompt the visitor (a dismissible **bar** at page-bottom vs a blocking **wall** modal), the text fields shown in each, and the JavaScript hooks the theme uses to render and re-open the consent UI. It is the "how the prompt looks and behaves" slice; the group taxonomy lives on [[apps-gdpr-cookies-groups]] and the consent cookie that records the choice lives on [[apps-gdpr-cookies-consent-state]].
+The **storefront presentation** of cookie consent: the dismissible **bar** or the blocking **wall**, the settings dialog, their texts and buttons, and how a visitor re-opens the settings. The group taxonomy is on [[apps-gdpr-cookies-groups]]; the stored answer is on [[apps-gdpr-cookies-consent-state]]; what each answer stores is on [[gdpr-consent-actions]].
 
 ## Where to find it
 
-Sidebar → Apps → GDPR → **Cookies tab** (`/admin/apps/gdpr/cookies`). The presentation settings sit in two sections: **"Information Bar"** (`InformationCookieSection.vue`) and **"CookiesConsentDescription"** (`ConsentTextSection.vue`).
+Sidebar → Apps → GDPR → **Cookies** tab (`/admin/apps/gdpr/cookies`). The presentation settings sit in two boxes: **Information bar for your cookie policy** and **Cookies consent description**. These are the admin's English labels; its Bulgarian labels are kept in the admin's translations, not in the code.
 
 ## What the merchant can do here
 
-- Choose **Cookie bar** OR **Cookie wall** as the consent presentation mode.
-- Write the **cookie bar text** (rich HTML) shown in the bottom strip.
-- Write the **cookies consent text** shown in the detailed consent dialog (rich text editor).
-- Rely on the built-in modal + trigger hooks so visitors can re-open consent (theme must place the trigger element).
+- Choose **Cookie bar** or **Cookie wall** in the **Cookie Consent Mode** dropdown, inside the **Information bar for your cookie policy** box.
+- Pick the **Cookie policy page**, which the dialog links to.
+- Write the **Information bar text** (the field shows only when the bar is chosen) and the **Cookies consent description** (the dialog's first tab).
 
-### Bar vs wall — mutually exclusive in the modern UI
+### Bar vs wall
 
-The modern Vue UI presents the choice as a **single dropdown** ("Cookie Consent Mode") with two options — **Cookie bar** or **Cookie wall**. Selecting one automatically sets the other to `0`. The legacy backend technically supports both `show_cookies_bar` and `show_cookies_wall` being ON simultaneously, but the merchant-facing UI prevents that combination.
+The dropdown has two options and no "none": choosing one clears the other.
 
-- **Cookie wall** (`show_cookies_wall` ON) is the heavier UX: the storefront JS (`stript.tpl`) auto-opens the `#gdpr_popup` modal on window load **if** the visitor has no `cc-cookie-consent` cookie yet. The modal effectively blocks interaction with the page underneath until the customer accepts or sets preferences. Use only when local law explicitly requires it.
-- **Cookie bar** (`show_cookies_bar` ON) is a thin, dismissible, non-modal strip at page-bottom that the customer can ignore initially.
+- **Cookie bar** — a strip at the bottom; the page stays usable.
+- **Cookie wall** — the settings dialog opens at once, without a close button, and stays until the visitor answers. It is not forced on the cookie policy page itself.
+
+Either one shows until the visitor gives **any** answer, then never again until that answer expires (180 days) or the store switches on a group the answer does not cover.
 
 ## Settings & fields
 
-### Information Bar section
-
 | Field | Key | Notes |
 |---|---|---|
-| **Show information bar** | `show_cookies_bar` | Master toggle — when ON, the bar renders on first visit. |
-| **Cookie wall** | `show_cookies_wall` | When ON, the customer must accept BEFORE seeing storefront content. Mutually exclusive with the bar in the modern UI. |
-| **Cookies bar text** | `cookies_bar_text` | The text shown in the bar (rich HTML supported). |
+| **Cookie Consent Mode** | `show_cookies_bar` / `show_cookies_wall` | One of the two is 1. The box's summary shows them as **Show information bar** and **Cookie wall**. |
+| **Cookie policy page** | `cookie_policy_page` | A store page. When empty, the page with the address `cookie-policy` is used. |
+| **Information bar text** | `cookies_bar_text` | Rich text, per store language. |
+| **Cookies consent description** | `cookies_consent_text` | Rich text; the dialog's **Your Privacy** tab. |
 
-### Cookies Consent dialog section
+### What the visitor sees
 
-| Field | Key | Notes |
+The bar, the dialog and their buttons are built by the platform's storefront script; the theme only styles them. Labels come from the store's language (themes may show them in capitals):
+
+| Element | English | Bulgarian |
 |---|---|---|
-| **Cookies consent text** | `cookies_consent_text` | Long-form text shown in the detailed consent dialog (opened via "Manage preferences"). Rich text editor (TextEditor component). |
+| Bar link that opens the dialog | Cookie Settings | Настройки на бисквитките |
+| Bar button | Reject Cookies | Отхвърлям |
+| Bar and dialog button | Accept Cookies | Приемам |
+| Dialog button | Save settings | Запази настройките |
+| Dialog title | Cookie Preference Center | Настройки на бисквитките |
+| Dialog's first tab | Your Privacy | Вашите права |
+| Link to the cookie policy page | More info | Допълнителна информация |
+
+The dialog has one tab per active cookie group, with its switch (Strictly necessary is always on and locked) and the names of its cookie entries. Before the visitor answers, each switch starts at the group's **Default state**; afterwards it shows the stored answer.
 
 ## Business rules
 
-### The consent modal targets `#gdpr_popup`
+### What the buttons do (since 06.11.2026)
 
-The storefront JS expects a modal with id `gdpr_popup` to exist in the theme. The `cookies-table.tpl` view contains the modal markup with a toggle per cookie group. The **"Accept all"** button (`.js-cookies-accept`) sets every group to `yes`; the **"Save preferences"** button (`.js-cookies-accept-modal`) reads the per-group toggles, saves that state, and triggers the `/gdpr/cookie-consent` endpoint that cleans up rejected cookies (see [[apps-gdpr-cookies-consent-state]]).
+- **Accept Cookies** — on the bar or in the dialog — accepts every group, whatever the switches show.
+- **Save settings** stores what the switches show.
+- **Reject Cookies** refuses every group except Strictly necessary.
+- The bar's **×** hides the bar on the current page and stores nothing.
 
-**The two buttons are not symmetric:** only *Save preferences* calls the cleanup endpoint — *Accept all* does not (accepting everything leaves nothing to clean up). So rejected cookies are actively deleted only along the reject path.
+Each of the three answers dismisses the bar or wall. Until 06.11.2026 the dialog's **Приемам** saved the switches and the bar kept returning until every group was accepted; reports from before that date describe the old behaviour. Details: [[gdpr-consent-actions]].
 
-### Closing the bar with × stores nothing
+### Re-opening the settings
 
-The bar's close control (`.bottom-freezed-bar-close`) **only hides the bar on the current page** — no consent is recorded. The bar therefore returns on the next page load, and every group stays on its `default` assumed state. A visitor who "dismissed the banner" has not answered it. See [[gdpr-consent-actions]].
+After an answer, the dialog stays on every page, closed. It opens from any link whose address ends in `#cookie-settings` (the merchant can add such an item to a menu, see [[design-navigation]]), from an element with the id `cookies-trigger`, from the **Cookie Settings** link while the bar shows, and from the link the `{cookies_table}` placeholder prints on the cookie policy page ([[apps-gdpr-cookies-definitions]]).
 
-### A partial consent does NOT dismiss the bar
+### Not on the checkout
 
-Saving with only some categories enabled stores the choice correctly, but the bar **keeps showing** until every category is accepted — it doubles as a reminder that categories remain unaccepted. Full outcome table and the support playbook: [[gdpr-consent-persistence]].
-
-### Re-open hooks — `#gdpr-trigger` / `#cookies-trigger`
-
-The storefront JS registers click handlers for elements with id `gdpr-trigger` or `cookies-trigger` — clicking either opens the consent modal. **The platform does not auto-inject such a button.** The theme is responsible for placing one (typically a footer link "Cookie settings"). Without theme support, the customer cannot re-open the consent UI from a single click — there is no merchant-configurable "Cookie preferences" button in the stock UI.
+The bar, the wall and the dialog are not shown on the checkout pages; there the app shows only the policy re-acceptance popup ([[apps-gdpr-overview-consent-logging]]).
 
 ### Side effects on save
 
-The storefront bar / wall renders per the new config on the next page load. Existing visitors keep their stored consent until it expires (365 days) or they clear it — changing the bar text does not re-prompt anyone.
+Saving rebuilds the storefront's apps file: signed-in visitors get the new set-up on the next page load, guests within up to 20 minutes (cached page copy, [[storefront-arch-caching-invalidation]]). Stored answers stay until they expire: changing a text asks nobody again, while switching on a group that was off asks every visitor again.
 
 ## Related
 
 - [[apps-gdpr-cookies]] — hub.
-- [[apps-gdpr-cookies-consent-state]] — the `cc-cookie-consent` cookie, the `/gdpr/cookie-consent` cleanup endpoint, and the re-consent triggers (referenced inline above).
+- [[apps-gdpr-cookies-consent-state]] — the `cc-cookie-consent` cookie, the cleanup of declined groups' cookies, and what asks a visitor again.
+- [[gdpr-consent-actions]] — what each answer stores.
 - [[apps-gdpr-overview]] — GDPR app overview, including the no-geo-gating rule (the bar shows to every visitor).
 
 ## Open questions

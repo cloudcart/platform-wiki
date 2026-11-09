@@ -7,8 +7,8 @@ aliases: ["XML Sync Step 2", "XML Sync mapping", "Xml Sync field mapping"]
 tags: [apps, imports, xml, sync, mapping, wizard]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-05-27
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # XML Sync → Step 2 (Field Mapping)
 
@@ -47,16 +47,17 @@ The `sortedSkeletons` data is grouped in stable order; per-group `maxHeight[inde
 ### Per-field mapping
 
 Within a group, each row pairs:
-- **CloudCart field** label (e.g., "Product name", "Price", "SKU").
+- **CloudCart field** label (e.g., "Price", "Quantity", "Status").
 - **XML tag picker** — dropdown of detected XML tags.
 
 Row component variants (per the file structure: `Step2Item.vue`, `Step2Row.vue`, `OnlyRow.vue`, `Step2Header.vue`) handle different complexity:
 - Single value (price, stock).
-- Multi-value (categories, tags).
+- Multi-value (the Stores group, below).
 - Header (group title, non-mapped).
 
 ### What the merchant CANNOT do here
-- Skip required mappings (name, SKU at minimum) — Step 2 won't save.
+- Skip the match-key row (the product identifier) — Step 2 won't save (*"Field is required."*).
+- Map names, descriptions, images or categories — XML Sync has no such fields and never creates products.
 - Map one XML tag to multiple CloudCart fields without explicit duplicate-support.
 - Define new CloudCart skeleton fields here.
 
@@ -74,7 +75,7 @@ When the merchant first lands on Step 2, the platform fetches a small sample of 
 
 ### Required-field validation
 
-The CloudCart skeleton declares required fields (name, SKU, price at minimum). Step 2 won't save with unmapped required fields.
+Only the match-key row is required. The other rows are Price, Discounted price (only when a fixed discount is chosen), Quantity, Minimum order qty and Status, plus **Stores > Store name** and **Stores > Store quantity** when [[apps-stores]] is installed (per-store stock).
 
 ### Re-saving Step 2 may invalidate Step 3
 
@@ -106,21 +107,17 @@ The parser is shared between XML Import and XML Sync — it uses PHP's streaming
 
 Per the controller's `step2` method: when the merchant first opens Step 2 for a new task, ALL CloudCart fields start unmapped. The platform discovers XML paths in the sampled records and surfaces them in pickers — but there's **no name-matching heuristic** ("price" XML → CloudCart "price"), **no library of preset mappings** for known platforms (Woo / Shopify / BigCommerce), and **no "copy from existing task" action** in the UI. Editing an existing task preserves the prior mapping (it's stored serialized on the task row), so day-2 re-sync never re-maps.
 
-### Variant pattern: two tabs, mutually exclusive
+### No variant patterns
 
-XML Sync's variant section exposes TWO patterns (vs three in XML Import — sync omits the "Our template" option):
-- **Multiple variants** (`multilevel`) — nested `<options>` with name + values.
-- **Single variant** (`singlelevel`) — flat per-product variant fields.
-
-Choosing one drops the other from the saved mapping. Switching after save loses fields that belonged to the unchosen pattern.
+Unlike XML Import, XML Sync has no variant tabs: each feed item updates the first variant in the store whose code equals the item's match key.
 
 ### Save raises PHP's time limit to "no limit"
 
-The Step 2 save endpoint runs `set_time_limit(0)` — long mapping payloads with many skeleton fields won't trip the 30-second PHP timeout. Useful when the merchant's task has 100+ category-property mappings (which the platform iterates serially during persist).
+The Step 2 save endpoint runs `set_time_limit(0)` — long mapping payloads with many skeleton fields won't trip the 30-second PHP timeout.
 
 ### "Update" checkbox = "this field can change on next sync"
 
-The per-field Update checkbox (same UX as XML Import) marks which fields refresh on each recurring sync run. When NO field has Update checked, the task is `updatable = 0` — the next 12h tick still re-parses, but the importer treats it as create-only (existing matching products are left untouched). A common config: check Update on price + quantity + active, leave description / images unchecked → merchant's edits to product copy stick across syncs.
+The per-field Update checkbox (same UX as XML Import) marks which fields refresh on each recurring sync run. The admin saves every task as updatable, so even with no box ticked it is re-read each cycle (about hourly) and simply writes nothing. A quantity-only task ticks Update on Quantity only; nothing is ever created.
 
 ## Open questions
 

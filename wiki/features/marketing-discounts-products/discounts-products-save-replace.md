@@ -7,8 +7,8 @@ aliases: ["Discount products save flow", "Discount products full replace", "prod
 tags: [marketing, discounts, fixed, products, save-flow, events, transaction, full-replace]
 plan_gates: ["discount_fixed"]
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Discount products — save flow, full-replace semantics, events
@@ -90,7 +90,7 @@ When the parent Fixed discount has customer-group restrictions, the platform clo
 
 ### Default Fixed discount (auto-created)
 
-The platform has a concept of a **default Fixed discount** — a singleton Fixed discount marked with `for_products = yes` meta, auto-created on first need. Used as a fallback container for products discounted ad-hoc (e.g., via inline price edits on the product page). Most merchants never see this; it's an internal helper. See [[discounts-products-business-rules]].
+The discount block on the product form writes into one auto-created Fixed discount, **Default Fixed Discount**, listed in the Discounts list. While it is inactive, prices entered there are saved but never applied. See [[discounts-products-business-rules]].
 
 ### Events: product-updated + search-engine-sync
 

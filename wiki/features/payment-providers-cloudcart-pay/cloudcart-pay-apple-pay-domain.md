@@ -3,12 +3,12 @@ type: feature
 nav_path: "Settings → Payment methods → CloudCart Pay → Settings → Apple Pay domain"
 route_name: apps.cloudcart_pay.settings
 route_path: /admin/payment-providers/cloudcart_pay/settings
-aliases: ["CloudCart Pay Apple Pay domain", "Apple Pay not showing", "Apple Pay domain registration", "Register domain Apple Pay", "Apple could not verify the domain", "Домейн за Apple Pay", "Apple Pay не се показва", "Регистриране на домейн"]
+aliases: ["CloudCart Pay Apple Pay domain", "Apple Pay not showing", "Apple Pay domain registration", "Register domain Apple Pay", "Apple could not verify the domain", "Домейн за Apple Pay", "Apple Pay не се показва", "Регистриране на домейн", "Apple Pay on cloudcart.net domain"]
 tags: [paymentproviders, payment-providers, cloudcart-pay, apple-pay, domains]
 plan_gates: []
 created: 2026-10-06
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[payment-providers-cloudcart-pay]]. See the hub for the other aspects (account model, activation gate, checkout flow, express checkout, refunds, saved card) and the six tabs.
@@ -71,6 +71,8 @@ A domain can carry only one provider's Apple Pay verification file. When **Revol
 ### After changing the primary domain
 
 Registration is for the primary domain shown on the card. After the store's primary domain changes, the card shows the new domain; if it reads **Not registered**, click **Register domain**.
+
+CloudCart makes no exception for the store's own CloudCart address (`*.cloudcart.net`): when it is the primary domain, the card registers it like any other. Whether Apple verifies a given domain is Apple's decision, shown on the card with Apple's reason.
 
 ### Apple Pay also needs the wallet switched on
 

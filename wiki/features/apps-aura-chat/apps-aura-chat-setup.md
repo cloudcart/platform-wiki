@@ -7,8 +7,8 @@ aliases: ["install Aura Chat", "Aura Chat not showing", "chat not appearing on t
 tags: [apps, ai, chat, install, setup]
 plan_gates: ["aura-chat-credit"]
 created: 2026-09-23
-updated: 2026-09-23
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Aura Chat — installing, what a new store starts with, switching off
@@ -60,11 +60,23 @@ This aspect covers getting the chat onto the storefront. It lists the settings a
 
 Each tab warns ("Aftercare is not installed", "These rules cannot fire yet") and offers **Install Aftercare** / **Install Datalayer**. The button installs that app on the spot; it does not change whether the chat itself is on.
 
+### Product search needs Aura Search
+
+The chat finds products through [[apps-advanced-search|Aura Search]], so **Finding products** and **Advising on products** work only while Aura Search has an active plan, searches left this month, and is installed and switched on. Otherwise both skills are off on **Knowledge & Skills**, whatever was saved, with *"The assistant finds products through Aura Search, so this skill stays off until Aura Search is switched on and has searches left this month."* and the reason with its fix:
+
+| Reason on screen | Button |
+|---|---|
+| *"Aura Search has no active plan, so there are no searches to spend."* | **Activate — choose a plan** |
+| *"This month's Aura Search searches are spent."* | **Buy more searches** |
+| *"Aura Search is not installed."* / *"Aura Search is installed but switched off."* | **Open Aura Search** |
+
+The assistant checks again before every search, so searches spent mid-month stop it at once; the shopper is told it cannot look products up right now, with no word on plans or billing. The chat's own searches do not use up the Aura Search quota. Saving the tab while a skill is stopped saves it as off, so it must be switched on again once Aura Search is available.
+
 ## Business rules
 
 ### The chat appears once the app is installed and enabled
 
-The storefront loads the chat only while the app is both installed and enabled. Look-and-feel changes (colour, position, launcher, questions) are read by the chat when a page loads. They show on the next page view and do not need the storefront scripts rebuilt.
+The storefront loads the chat only while the app is both installed and enabled, and has allowance left ([[apps-aura-chat-usage]]). There is no hidden or test mode: while enabled, the chat shows to every visitor. The **Preview** box on the Settings tab shows only the look ([[apps-aura-chat-appearance]]). Look-and-feel changes (colour, position, launcher, questions) are read by the chat when a page loads. They show on the next page view and do not need the storefront scripts rebuilt.
 
 ### Switching off stops the chat without losing anything
 

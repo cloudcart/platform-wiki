@@ -7,8 +7,8 @@ aliases: ["Recent articles module", "Latest articles module", "recentArticles", 
 tags: [design, modules, blog, homepage, recent]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Storefront Modules — Recent articles (`recentArticles` + page-builder block)
@@ -29,7 +29,7 @@ Both render the same storefront article row, but only the page-builder block exp
 ## Where to find it
 
 - **Legacy variant:** Sidebar → **Design** → **Modules** → **Blogs, articles and comments** tab → click the **Latest articles** card. The form opens in a side panel.
-- **Page-builder variant:** Sidebar → **Marketing** → **Pages** → open a Dynamic page → drag the **Recent Articles** block from the palette. See [[marketing-landing-pages]].
+- **Page-builder variant:** Sidebar → **Design** → **Static pages** → open a Dynamic page → drag in the **Recent Articles** block. See [[marketing-landing-pages]].
 
 ## What the merchant can do here
 

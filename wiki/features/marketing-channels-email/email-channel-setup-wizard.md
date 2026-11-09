@@ -7,8 +7,8 @@ aliases: ["Email setup wizard", "Email configuration modal", "Email channel 4-st
 tags: [marketing, channels, email, setup, wizard, elastic-email]
 plan_gates: ["campaign.channel.email"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[marketing-channels-email]]. See the hub for the other aspects (DNS records, Elastic Email sub-account, webhook feedback, send pipeline, suspend thresholds, settings pane).
@@ -23,7 +23,7 @@ The **Configuration** modal (`MarketingChannelsEmailConfigurationModal`) is the 
 
 Sidebar → **Marketing** → **Channels** → **Channels setup** → click the **Email** channel card → **Configuration** (cog icon) in the Actions band. Title — *"Email configuration"*.
 
-The modal's size auto-grows depending on step (`lg` for profile/domain/email, `xll` for verify, `xl` for completed). Footer button label is dynamic: *"Save"* on profile/domain/email steps, *"Verify"* on the verify step, hidden on the completed step. The cancel button reads *"Cancel"* on all live steps and *"Close"* on completed.
+Footer button label is dynamic: *"Save"* on profile/domain/email steps, *"Verify"* on the verify step, hidden on the completed step. The cancel button reads *"Cancel"* on all live steps and *"Close"* on completed.
 
 ## What the merchant can do here
 
@@ -43,7 +43,7 @@ Card title *"Profile information"*; help text *"Please fill out the information 
 
 Endpoint: `POST /email/configuration/profile` (base `/admin/api/core/marketing/campaigns/channels`).
 
-Per-field validation surfaces via `errorStore.getError('{field}')` from the backend's 422 response. The form is reset to empty values on unmount so re-opening starts clean unless data was saved. Profile defaults auto-populate from the store's existing settings: owner first/last name, country (mapped to Elastic Email's country ID), site city, postal code, site street, site phone (normalised to E.164 via libphonenumber), and `company_name` setting.
+The form is reset to empty values on unmount so re-opening starts clean unless data was saved. Profile defaults auto-populate from the store's existing settings: owner first/last name, country (mapped to Elastic Email's country ID), site city, postal code, site street, site phone (normalised to E.164 via libphonenumber), and `company_name` setting.
 
 ### Step 2 — Domain (`MarketingChannelsEmailConfigurationStep2`)
 
@@ -51,15 +51,15 @@ Card title *"Domain selection"*; help text *"You can select one of all the domai
 
 - **Domain** (`CcSelect` — sourced from `/admin/api/core/settings/domains`, transformed so each option's `id` and `name` are the `host` value). Prefilled with the current site host (`server settings host`, stripped of protocol). Cannot be cleared. The dropdown lists every host attached to the store — see [[settings-domains]].
 
-Endpoint: `POST /email/configuration/domain`. Selecting the domain registers it with Elastic Email and (on Cloudflare-managed zones) auto-creates the tracking CNAME — see [[email-channel-dns-records]].
+Endpoint: `POST /email/configuration/domain`. Selecting the domain registers it with Elastic Email and (on Cloudflare-managed zones) auto-creates the tracking CNAME — see [[email-channel-dns-records]]. CloudCart runs no check of its own on the choice: when Elastic Email rejects the domain (for example *"This domain is associated with another Sub-Account"*), its message shows under the **Domain** field. The list includes the store's `*.cloudcart.net` address, which can't pass Verify because the store can't add DNS records for it.
 
 ### Step 3 — Verify (`MarketingChannelsEmailConfigurationStep3`)
 
-Title — *"Verification for domain '{domain}'"* with help text *"You will need to add the following DNS records to your domain to send emails"*. The body shows **four DNS-record cards** fetched from `apiMarketingChannels.emailVerification.useQuery` — one card per record type (SPF / DKIM / Tracking / DMARC). Each card has a copy-to-clipboard icon next to the value (toast *"Copied to clipboard"*) and an inactive "Status" badge until verification succeeds. Below the four cards is a **Change Domain** button that returns to Step 2 without losing the entered profile.
+Title — *Verification for domain "{domain}"* with help text *"You will need to add the following DNS records to your domain to send emails"*. Four DNS-record cards: *"SPF Record"*, *"Tracking CNAME"*, *"DKIM Record"*, *"DMARC Record"*, each with a copy icon (toast *"Copied to clipboard"*) and a "Status" badge. Below them, **Change Domain** returns to Step 2 without losing the entered profile.
 
 Endpoint: `GET /email/configuration/verify-domain` (+ `/verify-domain/info`). The full record table and per-method verification calls live on [[email-channel-dns-records]].
 
-Clicking the modal's footer **Verify** button on success: toast *"Verified successfully"* + the wizard auto-advances to Step 4. On failure: toast *"Domain verification failed. Please check the DNS settings and try again."* and the modal stays open on Verify.
+The footer **Verify** runs all four checks; all must pass (none is warn-only). Success: toast *"Verified successfully"*, then Step 4. A failed check leaves the modal on Verify, and that card shows the badge *"Not verified"* and a *"Verification status"* row with Elastic Email's own wording. Only the overall verified flag is stored, and the checks never re-run after passing, so DNS that breaks later goes unnoticed.
 
 ### Step 4 — Send email (`MarketingChannelsEmailConfigurationStep4`)
 
@@ -72,6 +72,8 @@ Endpoint: `POST /email/configuration/email`. Validation on the prefix only — R
 1. Builds `send_email = '{prefix}@{domain}'`.
 2. Calls `Domain.SetDefault(send_email)` on Elastic Email — marks this mailbox as the account's default sender.
 3. **Flips `configured = true` AND `active = true` simultaneously.** The Email channel is the only channel where Step 4 of setup also turns the channel ON automatically.
+
+This address is the **From** of every campaign mail and of the subscriber confirmation, with the store's name (Settings → General, [[settings-general-store-details]]) as the display name; **Reply-To** is the same address. There is no separate sender-name or Reply-To field.
 
 ### Completed step (`MarketingChannelsEmailConfigurationPreview`)
 
@@ -95,28 +97,19 @@ After Step 4 succeeds the modal flips to a review pane (size grows to `xl`, foot
 
 The configuration state is loaded via `GET /email/configuration`.
 
-### Validation rules
-
-| Field | Validation | Source |
-|---|---|---|
-| First name / Last name / Country / State / City / Zip / Address | `required` | Step 1 form |
-| Phone | the application framework `phone_number` rule (libphonenumber, country-aware) | Step 1 form |
-| Company | Not required | Step 1 form |
-| Mailbox prefix | Custom `email_prefix` rule: `{prefix}@gmail.com` against PHP's `FILTER_VALIDATE_EMAIL` | Step 4 form |
-
 ## Business rules
 
 ### Profile save is transactional with Elastic Email
 
 The profile-form data flows into Elastic Email's `Account.UpdateProfile` call inside a single DB transaction together with the channel-settings update. If Elastic Email rejects any field (e.g., invalid country code, malformed phone), the **entire setting save rolls back**. The merchant sees the upstream error message inline on the offending field.
 
-### Changing the domain wipes verification state
+### Changing the domain or the sender (current admin)
 
-Re-editing the domain via **Edit Domain** wipes `verify`, `email`, `send_email`, and `configured` settings — the merchant must re-verify the new domain. The old domain stays registered on the Elastic Email sub-account but is no longer the sender. See [[email-channel-dns-records]] for what the verify flow re-runs and [[email-channel-elastic-email-account]] for how the sub-account behaves across this change.
+Re-saving or changing the domain (**Change Domain** / **Edit Domain**) only overwrites the domain: verification is **not** re-run and the sender address is **not** changed. (An older admin screen wiped verification and sender settings.) The sender is always built as `{prefix}@{the channel's domain}`; changing only the sender re-registers it and wipes nothing. The old domain stays registered on the sub-account — see [[email-channel-elastic-email-account]].
 
 ### Step 4 completion also activates the channel
 
-The only channel in the platform where wizard completion auto-flips `active = true`. Other channels require a separate explicit activation. For merchants, this means: finish Step 4 and campaigns can target Email immediately, no second click required.
+The only channel where wizard completion auto-flips `active = true`; other channels need a separate activation. Campaigns send only when the channel is active, configured and installed, so normally an unverified domain cannot send campaigns.
 
 ### Domain dropdown is bounded by [[settings-domains]]
 

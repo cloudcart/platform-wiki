@@ -7,8 +7,8 @@ aliases: ["Flat type_value", "Flat amount in cents", "Flat discount amount cap",
 tags: [marketing, discounts, flat, type_value, cents, validation]
 plan_gates: ["discount_global", "discount_coupon"]
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[marketing-discounts-flat]]. See the hub for the other aspects (form entry, targeting, eligibility, stacking, programmatic access).
@@ -76,7 +76,7 @@ For a **Flat code** on `all` or a specific target, the cart's **matched subtotal
 
 ### Strictly-greater subtotal check on `order_over` Flat
 
-On `order_over`, with or without a code, the cart subtotal must be **strictly greater than** the threshold. The subtotal is the lines after product discounts, line-level codes and product-level Cart Rule reductions. A cart **exactly equal** to the threshold does not qualify. To allow "exactly N or more", merchants should set the threshold to **N − 0.01**.
+On `order_over`, with or without a code, the cart subtotal must be **strictly greater than** the threshold. The subtotal is the lines after product discounts, line-level codes and product-level Cart Rule reductions, at the prices as entered: a store whose prices exclude VAT is compared without VAT. A cart **exactly equal** to the threshold does not qualify. To allow "exactly N or more", merchants should set the threshold to **N − 0.01**.
 
 > No-code free shipping is at or above the threshold — see [[marketing-discounts-shipping|Shipping discounts]].
 

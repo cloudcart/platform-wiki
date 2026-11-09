@@ -7,8 +7,8 @@ aliases: ["Quantity discount plan limit", "discount_quantity gate", "Quantity di
 tags: [marketing, discounts, quantity, plan-gates, json-api-v2, graphql]
 plan_gates: ["discount_quantity", "total_discounts"]
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-discounts-quantity]]. See the hub for the other aspects (form, tier evaluation, stacking, uniqueness constraint, storefront display).
@@ -64,10 +64,11 @@ This feature is gated by these plan-features (see [[plan-gates]], [[plan-vs-feat
 
 | Mapping | Shape | What it controls |
 |---|---|---|
-| `discount_quantity` | Numeric | Usage quota for Quantity (volume / BOGO) discounts, compared only by the Admin GraphQL API's `createDiscount`. Usage counts discounts whether active or not; only deleting lowers it. For a product with one variant the form allows up to 12 tiers (cap is UI-side, not plan-driven — see [[quantity-discount-tier-evaluation]]); the per-variant tier table and the Admin GraphQL API have no cap. Extendable via feature pack. |
+| `discount_quantity` | Numeric | Usage quota for Quantity discounts, compared only by the Admin GraphQL API's `createDiscount`. Usage counts discounts whether active or not; only deleting lowers it. The 12-tier cap for a one-variant product is UI-side, not plan-driven ([[quantity-discount-tier-evaluation]]). Extendable via feature pack. |
 | `total_discounts` | Displayed figure | A count across all discount types; not enforced. |
+| `discount_bogo`, `discount_volume` | Displayed only | No discount type behind them (**Buy X get Y** was removed on 2026-03-05); nothing checks them. |
 
-Only creating is checked; updates are not, on any path.
+Only creating is checked, on any path.
 
 Numeric gates extend via packs ([[plan-vs-feature-pack]]); boolean / access gates require a plan upgrade.
 

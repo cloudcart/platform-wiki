@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Dynamic Pages → Page-builder modules → Code"
+nav_path: "Design → Static pages → Dynamic page → Page-builder modules → Code"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["Code module", "Raw HTML block", "JS embed block", "Модул HTML", "Модул код"]
 tags: [design, modules, page-builder, code, embed, marketing]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Code block (`code`)
@@ -63,7 +63,7 @@ The module does NOT wrap the snippet in an iframe sandbox. If the merchant paste
 
 ### Global vs. per-page injection
 
-The Code block is per-page. To inject HTML / JS into EVERY page of the store (e.g., a chat module that should show site-wide), use [[design-custom-assets]] — that's the global injection point with `<head>` / `<body>` placement options.
+The Code block is per-page. To inject HTML / JS into EVERY page of the store (e.g., a chat module that should show site-wide), use [[design-custom-assets]] — the global injection point, one field placed in the `<head>` of every page (no body placement).
 
 ### Analytics tags need a different surface
 

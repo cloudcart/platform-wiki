@@ -7,8 +7,8 @@ aliases: ["Regular vs Automated campaign", "Campaign action types", "Campaign st
 tags: [marketing, campaigns, types, actions, automation]
 plan_gates: ["campaigns"]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[marketing-campaigns]]. See the hub for the other aspects (tabs & filters, create modal, AI assistant, row actions, rules, execution internals).
@@ -88,7 +88,9 @@ Exceeding the cap returns *"Rows may not be greater than 1"* or *"Rows may not b
 
 ### "Existing subscribers in segment" toggle
 
-For automated campaigns the merchant can toggle *"Execute campaign for existing subscribers in segment"* — when **ON**, all current segment members are enrolled at campaign launch; when **OFF**, only subscribers who newly enter the segment after launch are enrolled.
+For automated campaigns the merchant can toggle *"Execute campaign for existing subscribers in segment"* — when **ON**, current segment members are enrolled at campaign launch; when **OFF**, only subscribers who newly enter the segment after launch are enrolled. (A Regular campaign always enrols existing members.)
+
+Enrolment at launch is channel-specific: only members with a marketable row on the step's channel are enrolled. For Email that means marketing on, not bounced, not unsubscribed, plus verified when *"Sending emails to unverified subscribers"* is OFF. Members excluded at launch leave no log row anywhere — see [[campaigns-subscribers-enrolment]].
 
 ### Per-customer repeat behaviour
 

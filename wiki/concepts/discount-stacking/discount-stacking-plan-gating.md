@@ -5,8 +5,8 @@ aliases: ["Plan-gating per discount type", "discount_global counter", "discount_
 tags: [marketing, discounts, stacking, plan-gates, concepts]
 plan_gates: [discount_global, discount_coupon, discount_fixed, discount_quantity, discount-code-pro, discount-code-pro-generator, discount_labels]
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[discount-stacking]]. See the hub for the other aspects (code_apply toggle, evaluation order, cart code slots, uses counter, Cart Rules interaction, per-variant rows).
@@ -31,7 +31,7 @@ Covered:
 - What `discount_global` and `discount_coupon` each count.
 - The `discount-code-pro` boolean feature for Code PRO availability.
 - The `discount-code-pro-generator` numeric cap on bulk code generation.
-- The `discount_labels` counter for pure-visual rows.
+- The `discount_labels` and `discount_banner` checks for text labels and image banners.
 - What the merchant sees when a check fails.
 - The Countdown and Quantity limits, which are separate from the plan.
 
@@ -65,7 +65,7 @@ Not covered here:
 | **`discount_quantity`** | Quantity discounts | Tiered product discounts. |
 | **`discount-code-pro`** (boolean) | Code PRO type availability | On / off enable for the entire Code PRO feature. |
 | **`discount-code-pro-generator`** (numeric) | Max codes per bulk-generator run | Limits how many codes the merchant can generate at once. |
-| **`discount_labels`** | Visual labels (banner / countdown UI) | Pure-visual rows, no price reduction. |
+| **`discount_labels`** / **`discount_banner`** | New text labels / image banners on [[products-banners-labels]] | Checked when one is created; no price reduction. |
 
 ### Countdown and Quantity limits (separate from the plan)
 

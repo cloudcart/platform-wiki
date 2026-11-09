@@ -7,8 +7,8 @@ aliases: ["Channel plan limit", "plan_value resolution", "One-time + subscriptio
 tags: [marketing, channels, usage, plan, limit, feature-key, plan-gate]
 plan_gates: ["campaign.channel.email", "campaign.channel.sms_msghub_message", "campaign.channel.sms_nth_message", "campaign.channel.web_push", "viber_messages"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-channels-usage]]. See the hub for the other aspects (metric cards, counter model, engagement window, buy-credit flow, alerts).
@@ -17,9 +17,9 @@ source_count: 2
 
 ## Purpose
 
-The **Limit** card in the Usage modal shows a single number — but that number is the **sum of two plan-feature allowances** for the channel. This page documents how the limit is resolved, what the per-channel feature keys are, why the `_subscription` suffix matters, and what happens at send-time when `Remaining` hits zero (the actual block that produces *"You do not have enough credits for:name"*).
+The **Limit** card in the Usage modal shows a single number — but that number is the **sum of two plan-feature allowances** for the channel. This page documents how the limit is resolved, what the per-channel feature keys are, why the `_subscription` suffix matters, and what happens at send time when `Remaining` hits zero.
 
-Understanding limit resolution is the difference between a merchant who buys a one-time feature pack and is confused that the cap resets next month, and one who knows the recurring portion of their cap comes from their plan tier.
+Understanding limit resolution is the difference between a merchant who buys a one-time feature pack and is confused about where the rest of their cap comes from, and one who knows the recurring portion comes from their plan tier. The send counter it is measured against is cumulative and never resets — see [[channels-usage-counter-model]].
 
 ## Where to find it
 
@@ -89,14 +89,14 @@ Both numeric → summed. One non-numeric → only the numeric is shown. Both non
 
 When the plan resolves the feature key as boolean `true` or null sentinel rather than a numeric, the modal displays the localized `Unlimited` string in the Limit card. This is the only non-numeric the merchant ever sees here — there is no "Pending", no "Trial", no "Disabled" rendering. If the channel is not available on the plan at all, the Usage button is hidden from the channel card.
 
-### `getAllowExecuteByPlan` is the send-time block
+### The send-time block at Remaining ≤ 0
 
-When a send job is about to dispatch, the channel manager calls `getAllowExecuteByPlan` which returns:
+Before a send is dispatched, the channel allows it only when the plan is unlimited or `plan_remaining > 0`; zero or negative Remaining blocks it. At the cap:
 
-- `true` if `plan_value` is `true` (unlimited) or `plan_remaining > 0`.
-- `false` if `plan_remaining <= 0`.
+- **Email** — each campaign step is dropped with an admin alert: *"You have reached:feature limit. Your limit is:limit."* plus *"Purchase more credits"*. No log row is written; the channel stays on and the campaign keeps showing as running.
+- **SMS, Viber, Web Push** — the channel is also switched OFF with an important alert (*"… Campaign channel:channel is deactivated."*); later steps drop silently. Buying credits does **not** switch it back on — the merchant must.
 
-A `false` return surfaces to the merchant as *"You do not have enough credits for:name"* on the campaign log. Negative `Remaining` returns `false` here — blocking further sends until the plan increases. See [[marketing-campaigns]] for the campaign-side error rendering.
+Nothing is written to the campaign log. *"You do not have enough credits for:name"* is a different, save-time error — see [[channels-usage-alerts]].
 
 ### Subscription allowance vs one-time — what resets
 
@@ -122,7 +122,7 @@ Each channel has its own `plan_feature_key` and its own counter — exhausting t
 - [[plan-gates]] — concept page on plan feature gating; defines the `campaign.channel.*` and `viber_messages` keys.
 - [[plans]] — plan tiers that define the per-channel subscription cap defaults.
 - [[plan-feature]] — feature-pack purchase target the **Buy credit** button navigates to.
-- [[marketing-campaigns]] — surfaces the *"You do not have enough credits for:name"* error when the send-time block fires.
+- [[marketing-campaigns]] — surfaces the save-time *"You do not have enough credits for:name"* error.
 
 ## Open questions
 

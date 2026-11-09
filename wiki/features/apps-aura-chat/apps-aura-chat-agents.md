@@ -7,8 +7,8 @@ aliases: ["Aura Chat agents", "Store pages agent", "Product research agent", "po
 tags: [apps, ai, chat, agents, settings]
 plan_gates: ["aura-chat-credit"]
 created: 2026-09-23
-updated: 2026-09-23
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Aura Chat — the agents behind the skills
@@ -43,7 +43,9 @@ Each agent's instructions are in `wiki/resources/aura-chat-prompts/` (`aura-chat
 
 The chat assistant cannot open the shop's pages itself. Whenever an answer would otherwise rest on "what shops usually do", it asks **Store pages** with the shopper's full question: delivery times and prices, the return window, warranty, payment methods, instalments, privacy. What comes back is quoted exactly (fourteen days stays fourteen days; "unused, in its original packaging" stays word for word), with a link to each page used. The assistant offers one of those links to the shopper.
 
-- **What it reads**: the store's active pages of the ordinary and FAQ kinds ([[page]], [[page-faq]]). A policy that exists only in an image, a PDF or a banner is not read.
+- **What it reads**: every active page the store has, of the ordinary, FAQ, landing and page-builder kinds ([[page]], [[page-faq]]), whether or not it is in a menu. A builder page is read as published; an unsaved draft is not. Blog posts, category descriptions, files, sitemaps and outside addresses are not read, and there is no way to add another source: anything else the assistant should know goes into **Instructions for the assistant** ([[apps-aura-chat-skills]]). A policy that exists only in an image, a PDF or a banner is not read.
+- **How fresh**: the list of titles and each page's text are kept for up to an hour, so a new or edited page can take that long to reach the chat. A page still named with its automatic name (`Page-…`) is left off the list of titles. When several pages share a title, only the one saved last is offered.
+- **No list of read pages**: nothing is indexed in advance, and the admin shows no list of pages read. The link the assistant offered appears in the conversation's transcript ([[apps-aura-chat-conversations]]).
 - **How it looks**: it searches page **titles** for the topic, tries other word forms and the word a shop would use (a repair filed under "сервиз"), and if needed reads the full list of titles before opening the pages that could hold the answer. It says "not published" only after every title has been seen.
 - **Dated pages**: it is given today's date and treats a campaign or condition whose period has ended as not in force. It mentions it as history, never as the terms.
 - **When nothing is published**: the assistant says so and offers the shop's own contacts. It does not fill the gap.
@@ -79,4 +81,4 @@ Text inside a page, PDF or review that reads like an instruction is never follow
 
 ## Open questions
 
-- Whether pages set as hidden from the storefront menu, but still active, are read (they are listed if active — verify).
+- None known.

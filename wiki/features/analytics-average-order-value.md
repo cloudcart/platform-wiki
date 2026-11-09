@@ -7,8 +7,8 @@ aliases: ["Average Order Value", "AOV", "Order value over time", "Средна �
 tags: [analytics, ccanalytics, orders, average-order-value, aov]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-06-10
-source_count: 6
+updated: 2026-11-09
+source_count: 7
 ---
 # Average Order Value
 
@@ -92,7 +92,7 @@ The frontend config defines detail-row labels and formatters for `amount`, `orde
 
 Because the chart points are per-bucket means, they will not visually average back to the headline when buckets hold different numbers of orders. The headline is always exact regardless of bucketing.
 
-The amount used is `amount_without_shipping` — the same field as [[analytics-total-sales]]. So AOV reflects **product subtotal + product discounts + VAT**, but **not shipping**. A store that wants shipping in AOV would need a custom dashboard (not exposed).
+The amount used is `amount_without_shipping` — the same field as [[analytics-total-sales]]: the order total with VAT, fees and the shipping the store charged; only shipping the receiver pays the courier directly is left out ([[analytics-total-sales-order-filter]]).
 
 **Period-compare math**: the same formula runs on each window. A window with zero orders is forced to `0` (no division-by-zero). The compare arrow shows ±100% when one window is zero and the other non-zero, never infinity.
 

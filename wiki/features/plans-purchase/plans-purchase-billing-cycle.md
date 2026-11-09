@@ -7,8 +7,8 @@ aliases: ["Plan billing cycle", "Plan billing variant", "Monthly vs yearly plan"
 tags: [plans, pricing, billing, subscription, purchase]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[plans-purchase]]. See the hub for the other aspects (recommended add-ons, plan detail view, checkout panel, business rules, subscription outcomes, discount codes).
@@ -61,7 +61,7 @@ The subtotal / VAT / total values are computed in the browser as the merchant to
 
 ### Currency follows invoicing country, not store currency
 
-The currency sign + decimal formatting are determined by the merchant's invoicing-country setup, not by the store's storefront currency. A merchant whose store sells in BGN but is invoiced by the BG entity sees plan prices in BGN; a DE-invoiced store sees EUR. The merchant cannot override the currency on this screen — see [[billing-invoicing]] for managing the invoicing country.
+The currency sign + decimal formatting are determined by the merchant's invoicing-country setup, not by the store's storefront currency. The Terms of Use put every CloudCart price, in the admin included, in EUR without VAT (§11.1, [[terms-of-use-billing-renewal]]), so a merchant invoiced by the Bulgarian entity sees EUR whatever currency the store sells in; a DE-invoiced store sees EUR too. The merchant cannot override the currency on this screen — see [[billing-invoicing]] for managing the invoicing country.
 
 ### Pricing is read-only
 

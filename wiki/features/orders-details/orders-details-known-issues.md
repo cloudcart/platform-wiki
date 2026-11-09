@@ -7,8 +7,8 @@ aliases: ["Order details quirks", "Order details gotchas", "Moderator lock on op
 tags: [orders, order-details, known-issues, by-design, moderator-lock, auto-complete, quirks]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[orders-details]]. See the hub for the other aspects.
@@ -40,9 +40,9 @@ This page has no fields of its own. The settings that drive these behaviours:
 
 ### Opening the page LOCKS the order to the current moderator (by-design)
 
-When the **Lock orders** setting is ON (`lock_orders` on **Settings → General** — see [[settings-general-operational-toggles]] — default yes), opening this page writes a moderator lock. Owner accounts bypass it. If a SECOND admin opens the same order within 7 minutes (configurable via `lock_orders_time`), they get an access-denied screen *"Order is opened from {{user}}"*. The lock expires silently — there's no "Release lock" button.
+When the **Lock orders** setting is ON (`lock_orders` on **Settings → General** — see [[settings-general-operational-toggles]] — default yes), opening this page writes a moderator lock. Owner accounts bypass it. If a SECOND admin opens the same order within 7 minutes (configurable via `lock_orders_time`), they get an access-denied screen *"Поръчката се обработва от <username>"* (EN *"Order is opened from <username>"*). The lock expires silently — there's no "Release lock" button.
 
-**There is no UI indicator showing the lock was written or who held it.** This is the most common "Why can't I open this order?" question — the answer is "another moderator is on it". A locked order shows a "not found" screen, not permission-denied.
+**Nothing on the page shows the lock was written.** This is the most common "Why can't I open this order?" question — the answer is "another admin has it open". The lock is checked only on opening; saves are never blocked by it ([[orders-products-courier-requote]]).
 
 ### Auto-promotion to `completed` on save (by-design, surprising)
 
@@ -121,7 +121,7 @@ The Notify-customer switch sets the order's `notify_customer` field. It is a TOG
 
 The page has TWO different "locks" that are easy to confuse:
 
-- **Moderator lock** — written by opening the page; prevents a second admin from editing. Controlled by `lock_orders`.
+- **Moderator lock** — written on opening; stops another moderator opening it (`lock_orders`).
 - **Recalculate lock** — toggled by a lock icon next to the shipping subtotal; prevents auto-recalculation of totals on save and logs history codes 54 / 55 (see [[orders-details-history]]). Auto-engaged when payment is `completed`; unlocked otherwise.
 
 ### Cancellation reverses fulfilment (by-design)

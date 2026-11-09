@@ -7,8 +7,8 @@ aliases: ["Main SEO layout", "SEO page layout", "SEO seven cards", "SEO page nav
 tags: [marketing, seo, layout, navigation]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[marketing-seo]]. See the hub for the other page-level aspects (card-save model, settings map, save endpoints, trial block) and the seven per-card deep dives.
@@ -30,7 +30,7 @@ The page is the Vue rewrite of the legacy Smarty SEO page. The legacy page, its 
 The screen is laid out as **seven self-contained cards**. Each card pairs an info/description column (left, 5/12 width on desktop) with the actual setting (right, 7/12 width). The cards, in order:
 
 - **Canonical tag** — toggle the `<link rel="canonical">` tag on/off store-wide. See [[marketing-seo-canonical]].
-- **Deindex filtered & sorted pages** — control whether `?filter=…` / `?sort=…` URLs get `<meta name="robots" content="noindex">`, with a parameter-count threshold. See [[marketing-seo-deindex]].
+- **Deindex filtered & sorted pages** — how many filter / sort parameters a listing URL may carry and stay indexable. With the switch OFF (default) any such parameter makes the page `noindex, follow`. See [[marketing-seo-deindex]].
 - **Pagination word in meta** — the literal word ("Page", "Страница", etc.) prefixed to meta titles & descriptions on page 2 of any paginated list. See [[marketing-seo-meta-title]].
 - **Sitemap.xml** — read-only display of the sitemap URL with a copy-to-clipboard control. See [[marketing-seo-sitemap]].
 - **Robots.txt** — full-content text editor for the robots.txt body, guarded by a confirmation modal. See [[marketing-seo-robots]].

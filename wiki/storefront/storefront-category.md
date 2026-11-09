@@ -5,8 +5,8 @@ route_path: /category/{slug}
 themes_using: [all]
 tags: [storefront, category, listing, filters, seo]
 created: 2026-06-08
-updated: 2026-06-08
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Storefront — Category landing (`/category/{slug}`)
@@ -41,9 +41,9 @@ If the slug resolves to no active category, the controller throws a 404 with the
 - **Category header block** — `<h1>` with the category name, and (only on page 1):
   - Category image (if uploaded), 600x600 srcset, with lazy-load.
   - Category description (HTML, `nofilter` so the merchant's WYSIWYG output renders raw).
-- **Sub-category tiles strip** — if the category has children, each child renders as a tile (`_showcase-item one-third`) with image + name + "View more" button. This strip is unique to category pages (other listing surfaces don't have it).
+- **Sub-category tiles strip** — when the category's **Display subcategories** switch is on and it has children, each direct child renders as a tile (`_showcase-item one-third`) with image + name + "View more" button. This strip is unique to category pages (other listing surfaces don't have it).
 - **Sidebar toggle** + **Sort dropdown** + **Per-page dropdown** — identical to [[products-list]].
-- **Filter sidebar** (`products/list-sidebar.tpl`) — same as [[products-list]], but the categories filter renders the active category's descendants (the customer can drill down further), and the variants / properties shown reflect the attributes used by products in this category.
+- **Filter sidebar** (`products/list-sidebar.tpl`) — same as [[products-list]]; which categories its Categories block lists, and why, is on [[design-module-product-filters-sidebar]]. The products listed include every subcategory's products.
 - **Product grid** — same the theme templates as [[products-list]].
 - **Pagination** — same the theme templates.
 
@@ -51,7 +51,7 @@ If the slug resolves to no active category, the controller throws a 404 with the
 
 - Same AJAX behaviour as [[products-list]] — filter toggles, sort changes, per-page changes, and pagination all swap the product grid via AJAX without a full page reload.
 - The category header (image + description) only renders on page 1 (the platform code) — paginated pages 2+ hide it to keep the URL-canonical version slim.
-- Sub-category tile strip is always shown (whenever the category has children) regardless of pagination page — verify.
+- Sub-category tile strip is shown (Display subcategories on, children present) regardless of pagination page — verify.
 
 ## JavaScript behaviour
 
@@ -67,10 +67,10 @@ If the slug resolves to no active category, the controller throws a 404 with the
 | Aspect | Where to configure |
 |--------|--------------------|
 | Category name, description, image, parent, SEO meta | [[products-categories]] → category edit |
-| Whether the category is published / hidden | [[products-categories]] → status |
-| URL handle (slug) | [[products-categories]] (changing it triggers a 301 from old slugs — see [[marketing-seo-301-redirects]]) |
-| Which filters appear in the sidebar | [[design-modules]] → Products filters module |
-| Per-page choices, sort options | [[design-modules]] → Products filters module |
+| Whether the category shows at all | No publish / hidden switch: a category with no active product in it or its subcategories is left out of storefront category lists, though its page still opens by address |
+| URL handle (slug) | [[products-categories]] (changing it makes the old address 301 to the new one for 30 days — see [[seo-301-redirects-auto-tracking]]) |
+| Which filters appear in the sidebar | [[design-module-product-filters-sidebar]] |
+| Per-page choices, sort options | [[design-module-product-filters]], [[design-module-product-filters-sorting]] |
 | Sub-category display style | The base theme uses `_showcase-item one-third` — theme-specific override required to change |
 | Category meta-title / meta-description / canonical | [[marketing-seo-meta]] for global rules + per-category SEO in [[products-categories]] |
 | Custom HTML / WYSIWYG content above the product grid | Category `description` field (rendered `nofilter`) — supports arbitrary HTML |
@@ -111,5 +111,4 @@ If the slug resolves to no active category, the controller throws a 404 with the
 ## Open questions
 
 - Does the sub-category tile strip render on pages 2+ as well, or is it hidden there to match the header? (`category_childs` is loaded unconditionally in the template — verify the per-page logic.)
-- How are out-of-stock products in a category sorted by default — pushed to the end or interleaved? (depends on the active sort + listing-driver settings.)
 - Which JSON-LD microdata does the category page emit besides breadcrumbs? (`microdata/breadcrumb.tpl` is included; product-list microdata may be too.)

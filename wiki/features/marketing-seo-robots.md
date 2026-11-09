@@ -7,8 +7,8 @@ aliases: ["Robots.txt", "Robots", "robots file", "Crawler directives", "Crawl di
 tags: [marketing, seo, robots, crawl-directives]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Robots.txt (crawler directives editor)
 
@@ -62,6 +62,7 @@ The card renders one element — the robots.txt body textarea (stored as `robots
 - [[marketing-seo-meta]] — per-section meta titles & descriptions (no interaction with robots.txt).
 - [[marketing-seo-301-redirects]] — per-URL 301 redirects.
 - [[settings-domains]] — primary domain determines the host crawlers fetch `/robots.txt` from. Each domain serves the same robots.txt body.
+- [[storefront-arch-root-files-and-pwa]] — the other files a store serves at its root; no other file can be uploaded there.
 
 ## Open questions
 

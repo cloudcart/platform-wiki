@@ -7,8 +7,8 @@ aliases: ["Price with VAT", "VAT inclusive", "VAT exclusive", "Inclusive pricing
 tags: [settings, taxes, vat, pricing, storefront]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-taxes]]. See the hub for the other aspects (VAT rules, fees, overrides, OSS / no-VAT, validation, integrations).
@@ -17,14 +17,14 @@ source_count: 3
 
 ## Purpose
 
-Documents the two flags on a VAT rule that decide how prices are shown on the storefront and how the tax-totals math runs at checkout: `price_with_vat` (are the merchant's entered prices VAT-inclusive or VAT-exclusive?) and `shipping` (does this VAT apply to shipping too?). Pricing display is the single biggest source of merchant confusion in CloudCart's tax setup — EU stores typically use inclusive pricing (`price_with_vat=1`) while B2B / US stores typically use exclusive pricing (`price_with_vat=0`).
+Documents the two flags on a VAT rule that decide how prices are shown on the storefront and how the tax-totals math runs at checkout: `price_with_vat` (are the merchant's entered prices VAT-inclusive or VAT-exclusive?) and `shipping` (stored, but it does not decide VAT on shipping). Pricing display is the single biggest source of merchant confusion in CloudCart's tax setup — EU stores typically use inclusive pricing (`price_with_vat=1`) while B2B / US stores typically use exclusive pricing (`price_with_vat=0`).
 
 ## Where to find it
 
 Inside the Tax edit form (`type=tax`):
 
 - **`price_with_vat`** — *"Prices include VAT"* checkbox / switch.
-- **`shipping`** — flag controlling whether the tax also applies to shipping cost.
+- **`shipping`** — a stored yes/no value; VAT on shipping is decided as described under Business rules.
 
 Route: `/admin/settings/taxes/tax/:id?`.
 
@@ -42,7 +42,7 @@ See [[settings-taxes-fees]] for the fee-side hard-override behaviour.
 | Field | Value | Notes |
 |-------|-------|-------|
 | `price_with_vat` | `1` (inclusive) / `0` (exclusive) | Only meaningful for `vat=yes`. Forced to `0` for fees on save. |
-| `shipping` | `yes` / `no` only | Enum is binary (no *"specific"* value — older wiki was wrong). Controls bucketing in the totals pipeline (`tax.before` vs `tax.after`), NOT whether VAT applies to the shipping line itself. Forced to `no` for fees on save. |
+| `shipping` | `yes` / `no` only | Stored on a VAT rule but not read by the totals: it neither decides VAT on the shipping line nor moves the VAT between stages (see Business rules). Forced to `no` for fees on save. |
 
 ## Business rules
 
@@ -66,18 +66,25 @@ The engine combines `price_with_vat` with the customer's `isWithVat` flag (set o
 
 The customer's `isWithVat` flag comes from the billing address — it's flipped via the EU VAT number flow at checkout. See [[settings-taxes-oss-no-vat]] for the *"Without VAT reasons"* text printed on the invoice in these cases.
 
-### Storefront product label
+### The VAT line in the totals ("С включен ДДС")
 
-Storefront product labels prefix the tax name with **"VAT included"** when both `is_vat=true` AND `price_with_vat=1`; otherwise the line is shown after totals with a plain **"VAT"** label.
+The VAT line in the cart, checkout and order totals carries the VAT rule's own name:
 
-### `shipping` flag buckets VAT into `tax.before` vs `tax.after`
+- **Inclusive (`price_with_vat=1`):** it reads *"С включен"* + the rule's name (EN *"Including"*), e.g. *"С включен ДДС"* for a rule named *ДДС*, with the rate. The amount is the VAT already contained in the prices (goods, VAT-bearing fees and taxed shipping, after discounts). It is shown for information and **not added** to the total.
+- **Exclusive (`price_with_vat=0`):** the plain rule name; the amount **is added** to the total.
+- **VAT not due** for the customer (see the table above): the amount is 0.
 
-The `shipping` flag does **NOT** directly say *"VAT is charged on the shipping line"*. What it actually does is decide which bucket the VAT contribution lands in during the cart-totals pipeline:
+### VAT on the shipping line
 
-- `shipping=yes` → VAT contribution from the order goes into `tax.before` (calculated before the shipping line is added).
-- `shipping=no` → VAT contribution goes into `tax.after` (calculated on the post-shipping subtotal).
+The `shipping` value on a VAT rule plays no part. All VAT is worked out after shipping, and the shipping line carries VAT only when all of these hold:
 
-The practical effect is what the merchant intuitively wants — a VAT rule with `shipping=yes` will result in VAT being charged on the shipping line too. But the storage flag is binary and the bucketing is plumbing — not a per-line *"apply VAT to shipping"* toggle.
+- a VAT rule matches the order's address;
+- **the store charges the shipping** (the sender pays): not when the receiver pays the courier directly. Free shipping, a payment method set to make the seller pay, or any wallet amount make the sender pay;
+- the courier integration supports it (DHL and DHL Express never put VAT on shipping).
+
+When the **receiver pays**, the shipping line stays on the order and in its total, but carries no VAT, is left off the invoice and receipt, is not part of the cash-on-delivery amount ([[shipping-provider-mech-cod]]) and counts as 0 in Analytics ([[analytics-total-sales-details]]).
+
+**Is the shipping price gross or net?** When the VAT rule's prices include VAT, the shipping price (the courier's live price or the merchant's own rate) is taken as VAT-inclusive and the VAT is extracted from it. When prices exclude VAT, only the plain courier price model (**calculator**) is taken as net, with VAT added on top; every other model, the courier price plus a fixed fee included, is still taken as VAT-inclusive (verify). With prices including VAT and a customer not charged VAT, the VAT is taken off the shipping price. Whether a courier's own price already contains the courier's VAT is the courier's matter.
 
 ### Rate precision — stored ×100 internally
 

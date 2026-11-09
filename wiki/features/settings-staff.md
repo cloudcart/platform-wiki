@@ -7,8 +7,8 @@ aliases: ["Staff management", "Staff", "Moderators", "Administrators", "Перс
 tags: [settings, staff, access, permissions]
 plan_gates: ["administrators"]
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 14
+updated: 2026-11-09
+source_count: 15
 ---
 # Staff
 
@@ -55,7 +55,7 @@ This feature is split into 7 aspect pages. The Assistant should drill into the a
 - [[settings-staff-create-moderator]] — Add Moderator three-step chain (2FA → Create modal → optional QR); plan-limit gating + upsell modal; one-time hash lifecycle (2 min / 60 min).
 - [[settings-staff-edit-profile]] — Edit modal sections; avatar upload constraints (250×250, 25 KB); change-password rules; validation caps; field-level edit restrictions (non-owner editing owner blocked).
 - [[settings-staff-permissions-tree]] — the permission hierarchy; greyed-out nodes; `backups` node plan-gating; adding moderators stays with the owner.
-- [[settings-staff-2fa]] — Email-2FA always-active vs authenticator-app TOTP on your own account; QR Setup modal; the "is 2FA required for this edit?" gating helper.
+- [[settings-staff-2fa]] — email codes (a CloudCart platform switch) vs authenticator-app TOTP on your own account; QR Setup modal; the "is 2FA required for this edit?" gating helper.
 - [[settings-staff-delete]] — Delete moderator inline confirm; per-row visibility rules; server-side guard against deleting the owner; no soft-delete / no audit log.
 - [[settings-staff-force-signout]] — Owner-only mass logout button; invalidates every admin/moderator session; difference vs the session-key rotation on [[settings-general]].
 
@@ -99,7 +99,7 @@ A moderator without the `settings.admins.all` permission cannot even open or lis
 
 ### No merchant-facing audit log
 
-There is **no merchant-facing audit-log page** for staff actions, and the internal logging hooks are currently inactive. Lifecycle visibility is therefore limited to the four admin email notifications above. For richer accountability, merchants must contact CloudCart support.
+No log of staff changes is kept, for the merchant or for support; the store's event log records staff sign-ins only. The four emails above, each sent to the person changed, are the only trace.
 
 ### Cache behavior
 

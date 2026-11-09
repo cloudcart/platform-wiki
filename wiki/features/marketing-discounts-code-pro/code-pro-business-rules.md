@@ -7,8 +7,8 @@ aliases: ["Code PRO business rules", "Code PRO save flow", "Code PRO barcode mod
 tags: [marketing, discounts, code-pro, business-rules, save-flow]
 plan_gates: ["discount-code-pro"]
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-discounts-code-pro]]. See the hub for the other aspects (overview, form, fields, checkout, endpoints).
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-This page documents the **non-obvious admin-side behaviours** around Code PRO codes: the per-code active flag (independent from the parent), the deletes-and-recreates save transaction, customer-group / region targeting toggles, stacking flags, barcode mode, and bulk operations. Use it when answering *"why did this child row disappear?"*, *"how does barcode mode work?"*, or *"can I stack a Code PRO on a discounted product?"*.
+This page documents the **non-obvious admin-side behaviours** around Code PRO codes: the per-code active flag, the save transaction, editing a code already handed out, targeting toggles, stacking flags, barcode mode and bulk operations.
 
 For the form layout see [[code-pro-form]]. For field definitions see [[code-pro-fields]]. For checkout-time behaviour see [[code-pro-checkout]].
 
@@ -43,12 +43,11 @@ The merchant can pause one specific code (e.g., an influencer whose contract exp
 
 ### Conditions are deleted-and-recreated on save
 
-When the merchant edits a code's conditions, the controller wraps the save in a **single DB transaction** that:
+A save deletes the code's conditions and customer-group rows and re-inserts them from the form, in one transaction, so the result is exactly what was submitted. **Integrations holding target / join row IDs see them change on every save** and must look up by `code_id`.
 
-1. **Deletes all `targets` and `customer_groups` join rows** for the code.
-2. Re-inserts them from the submitted payload.
+### Editing a code already handed out
 
-This means stale conditions don't accumulate; the post-save state is exactly what the merchant submitted. **External integrations that hold references to specific target / join row IDs will see those IDs change after every save** — they must re-look-up by `code_id`, not by row ID.
+The code text, its **Uses** count and its limits stay as they are; a save never resets the count. Carts use the new conditions from their next recalculation. Orders already placed keep the discount they got: an order stores its own copy of the code's conditions, and editing that order recalculates from the copy.
 
 ### Save flow — full sequence
 
@@ -102,8 +101,6 @@ The list at `/admin/marketing/discounts/code-pro/:id` supports bulk status toggl
 
 - **Set status active** / **Set status unactive** → POST to `/admin/api/core/discounts/code-pro/:id/status` with `{ ids: [...], status: 1|0 }`.
 - **Delete** → DELETE to `/admin/api/core/discounts/code-pro/:id?ids[]=...`.
-
-Bulk delete removes the selected codes in one step, and their conditions and customer-group rows go with them.
 
 ### Delete cascade
 

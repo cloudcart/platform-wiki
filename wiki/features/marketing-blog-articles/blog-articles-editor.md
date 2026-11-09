@@ -7,8 +7,8 @@ aliases: ["Blog article editor", "Add article", "Edit article", "Article editor"
 tags: [marketing, blog, content, articles, editor]
 plan_gates: ["blog_articles"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[marketing-blog-articles]]. See the hub for the other aspects (list, CSV import, rules, storefront visibility, API).
@@ -56,7 +56,7 @@ A two-column grid.
 | Field | Validation | Notes |
 |-------|------------|-------|
 | **Title** (`name`) | Required. 3 ≤ length ≤ 191 chars. | *"Name is required"* / *"Name is too long"* / *"Name is too short"*. Drives auto-slug. |
-| **URL handle** (`url_handle`) | Auto-derived from title; overrideable. Storefront URL becomes `/article/<url_handle>`. | Unique per store. Renaming creates a 301 redirect from the old handle (see [[marketing-seo-301-redirects]]). |
+| **URL handle** (`url_handle`) | Auto-derived from title; overrideable. Storefront URL becomes `/article/<url_handle>`. | Unique per store. A rename keeps the old handle only in a hidden 30-day history ([[seo-301-redirects-auto-tracking]]); no row is added on [[marketing-seo-301-redirects]]. |
 | **Content** (`content`) | String. Effectively unlimited length. | Stored as HTML via the rich-text editor. Inline images in the editor are uploaded into CloudCart's media library. |
 | **Author** (`author_id`) | Required. Must be an existing admin user. | *"Author is required"* / *"Author does not exist"*. Picked from the store's admin users — see [[settings-staff]]. |
 | **Blog category** (`blog_id`) | Required. Must be an existing blog category. | *"Blog is required"* / *"Blog does not exist"*. Picked from the blog categories list. |

@@ -7,8 +7,8 @@ aliases: ["Theme customization layers", "Theme customisation layers", "Theme lay
 tags: [design, theme, customization, scss, css, concepts]
 plan_gates: []
 created: 2026-05-23
-updated: 2026-11-04
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # Theme customization layers
@@ -19,7 +19,7 @@ CloudCart's storefront design is shaped by **three independent customisation lay
 
 1. **Layer 1 — Theme** ([[design-themes]]) — the base template the merchant installs from CloudCart's catalogue (67 themes available, free + paid; ~45 declare `page_builder: true`). Each theme decides the storefront's overall layout, the available module slots, the page-builder block library, the default colour palette, the default typography, and the catalogue of variables the next layer can edit.
 2. **Layer 2 — Theme Editor** ([[design-theme-editor]]) — the visual customiser at `/admin/builder`. The merchant edits the **named variables** the active theme exposes — colours (hex picker, 80–130 per theme), typography (Google Fonts dropdown, 88 families, sizes, weights, styles), image aspect ratios. The values are stored per-theme; saving recompiles the storefront stylesheet to S3 and bumps a cache-buster.
-3. **Layer 3 — Custom CSS/JS** ([[design-custom-assets]]) — the raw-code escape hatch at `/admin/storefront/custom-assets`. The merchant pastes arbitrary HTML / CSS / JavaScript into a CodeMirror editor; whatever they paste is injected verbatim into the `<head>` of EVERY storefront page. No validation, no sanitisation, no per-page targeting.
+3. **Layer 3 — Custom CSS/JS** ([[design-custom-assets]]) — the raw-code escape hatch at `/admin/design/custom-assets`. The merchant pastes arbitrary HTML / CSS / JavaScript into a CodeMirror editor; whatever they paste is injected verbatim into the `<head>` of EVERY storefront page. No validation, no sanitisation, no per-page targeting.
 
 Each layer's content survives across the others' changes, but **switching the active Theme hides ALL three layers' content for any non-active theme** — the customisations are scoped per-theme (keyed by the site's `template` slug), so re-installing the previous theme restores its Theme Editor variables AND its Custom CSS/JS. There is no "carry customisations to a new theme" affordance.
 
@@ -33,7 +33,7 @@ This concept is split into 6 aspect pages, each covering one well-scoped slice. 
 
 - [[theme-customization-themes]] — Layer 1 (the base theme); site `template` slug; what a theme switch recompiles, re-seeds, and regenerates; theme-update auto-sync of Layer 2 variable schema.
 - [[theme-customization-editor]] — Layer 2 (the Theme Editor at `/admin/builder`); the variable catalogue + types; Save flow (theme.css recompile to S3 + `stylesheet_version` cache-buster + `google_fonts_url`); Reset semantics.
-- [[theme-customization-custom-assets]] — Layer 3 (Custom CSS/JS at `/admin/storefront/custom-assets`); CodeMirror `htmlmixed` editor; verbatim `<head>` injection; no validation / no per-page targeting / no explicit cache flush.
+- [[theme-customization-custom-assets]] — Layer 3 (Custom CSS/JS at `/admin/design/custom-assets`); CodeMirror `htmlmixed` editor; verbatim `<head>` injection; no validation / no per-page targeting / no explicit cache flush.
 - [[theme-customization-cascade]] — render order + CSS specificity stack across the three layers; what survives a theme switch vs. a Theme Editor reset; the "Layer 3 wins on equal specificity" rule.
 - [[theme-customization-plan-gating]] — plan-feature gating + permissions per layer (free vs paid themes, the `storefront_builder` feature, the `store.builder` permission); what is NOT plan-gated.
 - [[theme-customization-overlay]] — sister-site module overlay (`config/site_widgets.site_<site_id>`); a fourth, platform-managed layer set by CloudCart staff for multi-site deployments.
@@ -71,7 +71,7 @@ The cluster touches three admin screens, all keyed by the site's `template` slug
 
 - **Layer 1** — [[design-themes]] (catalogue + install + purchase).
 - **Layer 2** — [[design-theme-editor]] at `/admin/builder` (deep-links `?colors`, `?typography`, `?images`).
-- **Layer 3** — [[design-custom-assets]] at `/admin/storefront/custom-assets`.
+- **Layer 3** — [[design-custom-assets]] at `/admin/design/custom-assets`.
 
 The **Header / Footer / Buttons / Grid** modules in [[design-modules]] (deep-linked from the Theme Editor sidebar) sit between Layer 1 and Layer 2 — they're technically Module settings, but they pick from theme-provided layout templates and feel like part of Layer 2's job.
 

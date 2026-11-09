@@ -3,12 +3,12 @@ type: feature
 nav_path: "Settings → Payment methods → CloudCart Pay → Onboarding → Review, approval time & alerts"
 route_name: apps.cloudcart_pay.onboarding
 route_path: /admin/payment-providers/cloudcart_pay/onboarding
-aliases: ["CloudCart Pay approval time", "How long does CloudCart Pay approval take", "CloudCart Pay review", "Submitted waiting for review", "CloudCart Pay account alerts", "CloudCart Pay capability alert", "Колко време отнема одобрението", "Изпратено — изчаква преглед", "Известия CloudCart Pay акаунт", "Кога ще бъде одобрен акаунтът"]
+aliases: ["CloudCart Pay approval time", "CloudCart Pay case number", "Escalate CloudCart Pay review", "How long does CloudCart Pay approval take", "CloudCart Pay review", "Submitted waiting for review", "CloudCart Pay account alerts", "CloudCart Pay capability alert", "Колко време отнема одобрението", "Изпратено — изчаква преглед", "Известия CloudCart Pay акаунт", "Кога ще бъде одобрен акаунтът"]
 tags: [paymentproviders, payment-providers, cloudcart-pay, onboarding, review, notifications]
 plan_gates: []
 created: 2026-10-06
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[payment-providers-cloudcart-pay-onboarding]]. See the hub for the other aspects (wizard flow, fields, people, documents, verification, bank, status, connect/disconnect).
@@ -60,6 +60,10 @@ The acknowledgement ends:
 ### Unreviewed documents are chased
 
 The compliance team is told when the account is submitted, when a request is answered, when a document is uploaded again in the same round, and when the account becomes active. If a document answering a request is still unreviewed after **3 business days**, the team is reminded, and again every 3 business days until it is reviewed, answered again or 14 days have passed. A submitted account still inactive with nothing asked of the merchant is chased too. The merchant does not need to do anything for this and receives none of these reminders.
+
+### No case number; asking about a long review
+
+The review has no case or ticket number. The account's reference is its **Connected Account ID** (ID на свързания акаунт), copied in step 1 ([[ccpay-onboarding-account-business-fields]]); the merchant quotes it to CloudCart support. The review is done by hand by the payment service provider's compliance team. The admin offers no contact with that team, no deadline and no review stage beyond the **Status** step ([[ccpay-onboarding-status-capabilities]]); CloudCart chases a waiting account itself, as above. What the reviewers need before activating card payments or payouts is their decision.
 
 ### Account alerts
 

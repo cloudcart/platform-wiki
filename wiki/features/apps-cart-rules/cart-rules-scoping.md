@@ -7,8 +7,8 @@ aliases: ["Cart rule scoping", "Cart-level vs product-level rules", "Rule target
 tags: [apps, cart-rules, marketing, promotions, scoping]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[apps-cart-rules]]. See the hub for the other aspects (conditions, actions, stacking, cooldowns, examples, known issues).
@@ -80,7 +80,7 @@ When the cart's order has no customer (guest checkout), a **default customer is 
 
 A merchant can exclude one specific customer from a rule by:
 
-- Putting them in a [[customers-custom-groups|custom group]] that the rule's `customer_group` trigger does NOT target (use `customer_group` with `operator=not_in`).
+- Putting them in a [[customers-custom-groups|custom group]] and selecting, in the rule's `customer_group` condition, every group except that one. The condition has no "not in": it matches only the groups selected.
 
 No per-customer "blocklist" exists separately from groups.
 

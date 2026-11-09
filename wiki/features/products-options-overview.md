@@ -3,12 +3,12 @@ type: feature
 nav_path: "Products → Options"
 route_name: apps.product_options.overview
 route_path: /admin/products/options/overview
-aliases: ["Product Options", "Per-product Options", "Custom product options", "Опции"]
+aliases: ["Product Options", "Per-product Options", "Custom product options", "Опции", "Продуктови опции"]
 tags: [apps, administration, products, options, customisation]
 plan_gates: ["product_options"]
 created: 2026-05-22
-updated: 2026-06-10
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 # Product Options
 
@@ -24,7 +24,7 @@ Each option has its own input type, a required flag, an optional price impact, a
 
 ## Where to find it
 
-Sidebar → Products → **Options** (visible only when the Product Options app is installed). Sub-pages of the app itself:
+Sidebar → Products → **Product options**, in the menu's second group (**Other**), with Bundles, Parameters, Categories properties and Product statuses; visible only when the Product Options app is installed. A merchant's Bulgarian admin showed the entry as *Опции на продукта* under *Разширени* (October 2026); the old admin called it *Продуктови опции*. Link the merchant to `/admin/products/options`; `/admin/products/options-new` does not exist and gives the admin's 404 page. Sub-pages of the app itself:
 
 | Sub-page | Route |
 |----------|-------|
@@ -75,7 +75,7 @@ Standard apps permission scope applies.
 
 ## Sub-pages (in this cluster)
 
-- [[products-options-types]] — the 10 supported input types (text, textarea, select, radio, checkbox, file, image, length, weight, square), their storefront UI, the value-required rule, and the type-LOCKED-on-edit rule.
+- [[products-options-types]] — the 9 input types the form offers (text, textarea, select, radio, checkbox, file, image, length, square), their storefront UI, the value-required rule, and the type-LOCKED-on-edit rule.
 - [[products-options-pricing]] — price-impact mechanics: `amount`, `amount_type` (flat / percent / per-quantity), `per_item`, `allow_negative`, `apply_over_price_type`, `min_square`, and the measure-based pricing for length / weight / square.
 - [[products-options-assignment]] — the four assignment scopes (product / category / vendor / selection), the mapping-target pickers, and the Appearance card.
 - [[products-options-order-handling]] — customer-entered values stored on the order line, the file-upload cascade on option delete, Required-blocks-checkout enforcement, uninstall behaviour, and JSON-API v2 parity.

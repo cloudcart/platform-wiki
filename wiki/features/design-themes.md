@@ -7,8 +7,8 @@ aliases: ["Themes", "Templates", "Storefront theme", "Theme picker", "Storefront
 tags: [design, themes, templates]
 plan_gates: ["change_theme"]
 created: 2026-05-23
-updated: 2026-11-04
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 # Themes
@@ -19,7 +19,7 @@ source_count: 4
 
 The **Themes** screen is the merchant's catalogue of storefront themes (also called "templates") — where they see the **currently active** theme, browse **free** and **paid** theme catalogues, preview any theme on a live demo URL, **install** a free theme (or one already purchased), and **purchase** a paid theme through the in-platform checkout. Each theme controls the storefront's look-and-feel: layout, default modules, page-builder block library, default colours, default typography, and the customisation options exposed by the Theme Editor.
 
-Changing the theme is a single click + confirmation, but it is a **big, store-wide visual change** — every page on the storefront immediately switches. Merchants typically follow up with a pass through [[design-theme-editor]] (colours / fonts), [[design-modules]] (homepage layout), and [[design-navigation]] (menus) to tune the new theme to their brand.
+Changing the theme is a single click + confirmation, but it is a **big, store-wide visual change** — every storefront page switches (guests once their cached copy expires, up to 20 minutes). Merchants typically follow up with a pass through [[design-theme-editor]] (colours / fonts), [[design-modules]] (homepage layout), and [[design-navigation]] (menus) to tune the new theme to their brand.
 
 This concept is split into 7 aspect pages — each covers one well-scoped slice. The Assistant should drill into the aspect that matches the question, not read every page.
 
@@ -66,6 +66,7 @@ Each theme is identified by a `mapping` slug (the theme's machine name, e.g., `f
 - Cannot **return / refund** a purchased theme through this screen.
 - Cannot **revert** to a previous theme by undo — switching back means installing the previous theme again (customisations are preserved per theme).
 - Cannot **upload / import a custom theme** — only CloudCart's catalogue themes are installable. A design of the store's own is made with Nitrogen ([[nitrogen-vs-themes]]).
+- Cannot **reach the theme's files on a server** — a store has no FTP, SSH, cPanel or database access ([[storefront-architecture]]); custom code goes in [[design-custom-assets]].
 
 ## Settings & fields
 

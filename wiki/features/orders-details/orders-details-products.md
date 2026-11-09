@@ -7,8 +7,8 @@ aliases: ["Order products section", "Order summary products", "Order line items"
 tags: [orders, order-details, products, line-edit, discount]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[orders-details]]. See the hub for the other aspects (header, addresses, payment, shipping, history, actions, known issues).
@@ -50,13 +50,7 @@ A three-row layout per line:
 
 ### Add product (below the table)
 
-The `+` button under the products table opens an **Add product** browser:
-
-- **Wide modal** (`data-modal-ajax`) when not in preview mode.
-- **Side-panel** when in preview mode.
-- **Content**: searchable, paginated grid of every catalog product / variant, with a quantity input + **Add** button per row. Same filters as the main product list.
-
-The added line shows up immediately in the order summary; on success the summary, history, and preview reload. Full field catalogue: [[orders-products]].
+The `+` button under the products table opens an **Add product** browser (a wide window, or a side panel in preview mode): a searchable grid of catalog products with a quantity and **Add** per row. For a product with variants the merchant picks the variant; every variant is listed, whatever its parameter's **Active** switch says. The line appears at once. Full field catalogue: [[orders-products]].
 
 ### Order-level discount slot
 

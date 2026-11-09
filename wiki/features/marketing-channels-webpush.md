@@ -7,19 +7,19 @@ aliases: ["Web Push", "Web push notifications", "Browser push", "Browser notific
 tags: [marketing, channels, web-push, vapid, pwa, browser-push]
 plan_gates: ["campaign.channel.web_push"]
 created: 2026-05-23
-updated: 2026-11-03
-source_count: 10
+updated: 2026-11-09
+source_count: 11
 ---
 
 # Web Push channel
 
 ## Purpose
 
-The **Web Push** channel delivers **browser push notifications** to the merchant's storefront visitors — short, tappable alerts that pop up on a customer's desktop or mobile browser even when the customer isn't on the merchant's site. Used for: cart abandonment recovery, restock alerts, promotional flash sales, order-status updates, and re-engagement of dormant subscribers.
+The **Web Push** channel delivers **browser push notifications** to the merchant's storefront visitors — short, tappable alerts that pop up on a customer's desktop or mobile browser even when the customer isn't on the merchant's site. Used in campaigns (flash sales, re-engagement, and automated campaigns on segments such as an abandoned cart or a product back in stock) and for order-status updates through its system messages. The built-in **Abandoned cart reminder** itself sends only by email or Messenger ([[abandoned-cart-channels]]).
 
 Web Push works without an email address or phone number. The customer's "subscription identifier" is a per-device push endpoint URL (issued by their browser's push service — Mozilla Autopush, Google FCM, Apple WebPush gateway) plus a pair of cryptographic keys (`p256dh` + `auth`) the browser generated when the customer accepted the permission prompt.
 
-The channel is **delivery-free for CloudCart** — the actual push delivery is handled by browser-vendor push services (free). The plan-cap on `campaign.channel.web_push` is therefore typically more generous than Email / SMS / Viber.
+Push delivery itself is done by the browser vendors' push services. Sends are metered against the plan's `campaign.channel.web_push` allowance like any channel ([[marketing-channels-cross-plan-caps]]); the allowance per plan and any price for installing the channel are in the billing catalogue (verify).
 
 ## Where to find it
 
@@ -36,7 +36,7 @@ This feature is split into 7 aspect pages, each covering one well-scoped slice. 
 - [[webpush-channel-storefront-prompt]] — the **Settings - Web Push** modal; two-stage prompt design (CloudCart popup → native browser prompt); `checkout`, `popup_status`, `popup_text`, `popup_ok_button`, `popup_discard_button`, `popup_image`, `message`, `cookie_life_time`.
 - [[webpush-channel-subscription-flow]] — `/web-push-subscribe` endpoint; `endpoint` + `p256dh` + `auth` keys; subscriber + WebPush channel row creation; `_cc_wp` cookie; implicit Email-channel link for logged-in customers; geo-IP + User-Agent capture.
 - [[webpush-channel-send-pipeline]] — message validation (`max:63` / `max:128`); per-recipient pre-flight checks; restricted merge tags (only 3); queued send job with 5× retry + 2-second backoff; HTTP send-request shape; push-service status mapping.
-- [[webpush-channel-dlr-webhook]] — delivery-report webhook (`dlrUrl`); `message_hash` + `status` validation; status mapping (`DELIVERED` / `CLICKED` / `PENDING`); admin-click filter; expired → `bounced = 1`.
+- [[webpush-channel-dlr-webhook]] — delivery-report webhook (`dlrUrl`); `message_hash` + `status` validation; status mapping (`DELIVERED` / `CLICKED` / `PENDING`); admin-click filter; expired → unsubscribed.
 - [[webpush-channel-system-messages]] — System messages modal; 2 event templates (`order_status_change`, `order_status_fulfillment_change`); 4-section editor; live Chrome-style preview.
 - [[webpush-channel-browser-support]] — Chrome / Firefox / Safari / iOS Safari / in-app-browser matrix; PWA requirement for Safari (16.1+ macOS, 16.4+ iOS); fallback strategy.
 
@@ -92,7 +92,7 @@ Detail lives on the aspect pages; this is the quick-reference index.
 
 | Key | Notes |
 |---|---|
-| `campaign.channel.web_push` | Send-count cap. Typically much higher than other channels — push delivery is free for CloudCart. |
+| `campaign.channel.web_push` | Send-count cap; values per plan in the billing catalogue (verify). At the cap the channel is switched off. |
 
 ## Business rules
 
@@ -103,7 +103,8 @@ The deep mechanics live on each aspect page; what every merchant must know at th
 - **Two-stage prompt design.** The CloudCart pre-prompt popup fires first; only customers who click Allow ever see the native browser prompt. Preserves the merchant's ability to re-prompt (the native prompt is one-shot per user). See [[webpush-channel-storefront-prompt]].
 - **Only 3 merge tags allowed.** `{$subscriber_first_name}`, `{$subscriber_last_name}`, `{$shop_name}`. The 128-char body limit makes longer dynamic content impractical. See [[webpush-channel-send-pipeline]].
 - **Conditional branching: `link_clicked` only.** No `message_read` — push services don't reliably report displayed. See [[webpush-channel-send-pipeline]].
-- **Expired subscription → `bounced = 1` permanently** until the customer re-subscribes. See [[webpush-channel-dlr-webhook]].
+- **Expired subscription → unsubscribed.** The subscriber's WebPush channel is marked unsubscribed until the customer subscribes again. See [[webpush-channel-send-pipeline]].
+- **No catalogue triggers.** No campaign starts on a product being added or a price falling: automated campaigns start only when a subscriber gets into or out of a segment ([[campaigns-edit-step-2-trigger]]). New products are announced with a Regular campaign.
 - **Safari requires the PWA path.** Web Push on Safari (macOS 16.1+ / iOS 16.4+) only works when the storefront is installed as a Web App. In-app browsers (Instagram, Facebook, TikTok) cannot subscribe at all. See [[webpush-channel-browser-support]].
 - **Logged-in admin clicks are filtered from stats** by the DLR webhook to keep campaign statistics clean. See [[webpush-channel-dlr-webhook]].
 

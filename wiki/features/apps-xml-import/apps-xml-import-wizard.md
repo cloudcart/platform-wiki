@@ -7,8 +7,8 @@ aliases: ["XML Import wizard", "XML Import — create task", "XML Import — 3-s
 tags: [apps, imports, xml, wizard, mapping]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[apps-xml-import]]. See the hub for the other aspects (job pipeline, fetch transport, mapping fields, plan gates, side effects).
@@ -32,11 +32,12 @@ Apps → XML Import → **+ New task** button. Existing tasks are edited from th
 The merchant points the integration at the feed and picks operational defaults:
 
 - **Feed URL** — required, must be a valid HTTP/HTTPS URL. File upload is NOT accepted in this app (use [[apps-csv-import]] for files). See [[apps-xml-import-fetch-transport]] for the fetch rules.
-- **Import type** — new products / update existing / both.
+- **Action** — "Import and update" (creates new products and updates matched ones) or "Update" (rows matching no product are skipped). **Compare by** — "Official ID" (default), "SKU" or "Barcode"; see matching below.
+- **Publish imported products** — off by default, so new products are created inactive until it is switched on.
 - **Track inventory** (`track_inventory`) — whether the imported `quantity` field is written to Variant stock. ON = quantity from XML applied (missing-or-zero = 0 stock); OFF = quantity ignored, merchant manages stock manually. See [[inventory-variant-model]] for what `quantity` means on a Variant.
 - **Continue selling** (`continue_selling`) — copied to every imported product. See [[inventory-oversell]].
-- **Disable missings** (`disable_missings`) — opt-in: when ON, products that previously came from this task but are no longer in the feed get deactivated automatically. OFF by default — feed-shrink doesn't touch the catalog. The platform looks up by "product was imported by THIS task AND its task-row ID is no longer in the current feed" and queues a disable-missings job.
-- **Fixed category** (`category_id`) — when set, the XML's category mapping is IGNORED and every imported product lands in the chosen category. When blank, the wizard's category mapping (Step 3) drives placement.
+- **Disable missings** (`disable_missings`) — opt-in: when ON, products that previously came from this task but are no longer in the feed get deactivated automatically. OFF by default — feed-shrink doesn't touch the catalog.
+- **Fixed category** (`category_id`) — when set, the XML's category mapping is IGNORED and every imported product lands in the chosen category. When blank, the Category row mapped in Step 2 drives placement.
 
 ### Step 2 — XML tag mapping
 
@@ -50,7 +51,7 @@ The merchant identifies which XML tag is the "product" (the repeating element th
 
 The wizard collects the remaining configuration before persisting the mapping:
 
-- **Category mapping** — when no fixed `category_id` is set, the merchant maps the XML's category tag to CloudCart category placement (auto-create paths on `>` separator; see [[apps-xml-import-mapping-fields]]).
+- **Category operations** — Split / Has rules on the category value mapped in Step 2 (see [[apps-xml-import-mapping-fields]]).
 - **Default tax / vendor** — applied per product when the field is unmapped.
 - **Custom field assignments** — category properties, description tabs, supplier metadata. See [[apps-xml-import-mapping-fields]].
 
@@ -71,7 +72,7 @@ The wizard writes to a single task record. Key fields:
 | `lines` | Step 2 | Preview-window size (20–1500) for structure detection. |
 | Structure pattern | Step 2 | `multilevel` / `singlelevel` / `template` variant pattern. |
 | Field mapping | Step 2 | Per-field tag bindings + Update checkbox flags. |
-| Category / tax / vendor | Step 3 | Finalisation. |
+| Category operations / tax / vendor | Step 3 | Finalisation; the Category row is mapped in Step 2. |
 
 ## Business rules
 
@@ -85,11 +86,11 @@ Editing the task URL, parameters, name or any Step 1/2/3 field resets `xml_hash`
 
 ### Per-field Update checkbox is the update strategy
 
-Only the fields the merchant ticks as "updatable" in Step 2 are overwritten on subsequent re-parses. Matching of an existing product to its row uses the task's import ID + a per-row task key stored on the product — so re-imports correctly find and update the right row instead of duplicating.
+Only the fields the merchant ticks as "updatable" in Step 2 are overwritten on subsequent re-parses. With Compare by "Official ID", a product matches by the task's "Task ID number" plus the feed's product ID stored on it, never by SKU: a changed feed ID creates a new product, and tasks sharing a Task ID number share matches. With "SKU" or "Barcode", any variant in the store with that code matches. A store importing another CloudCart store's generator feed keeps a stable key by mapping its `<id>`, the plain product id ([[apps-xml-feed-generator]]).
 
-### Step 1 `category_id` overrides Step 3 mapping
+### Step 1 `category_id` overrides the category mapping
 
-When the merchant sets a fixed `category_id` in Step 1, the XML's category tag is ignored — every product from the feed lands in that one category regardless of what Step 3 maps. This is for "the supplier feed is one product line; I know it belongs in this one category" cases.
+When the merchant sets a fixed `category_id` in Step 1, the XML's category tag is ignored — every product from the feed lands in that one category regardless of the mapped category.
 
 ### `disable_missings` only deactivates this-task products
 

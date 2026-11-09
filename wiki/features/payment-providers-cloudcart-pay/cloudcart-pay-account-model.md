@@ -3,12 +3,12 @@ type: feature
 nav_path: "Settings → Payment methods → CloudCart Pay → Account model"
 route_name: apps.cloudcart_pay.overview
 route_path: /admin/payment-providers/cloudcart_pay
-aliases: ["CloudCart Pay account model", "CloudCart Pay connected account", "CloudCart Pay sub-account", "Why CloudCart Pay", "CloudCart Pay vs third-party", "CloudCart Connect account", "Свързан акаунт CloudCart Pay"]
+aliases: ["CloudCart Pay account model", "CloudCart Pay connected account", "CloudCart Pay sub-account", "Why CloudCart Pay", "CloudCart Pay vs third-party", "CloudCart Connect account", "Свързан акаунт CloudCart Pay", "CloudCart Pay with a bank POS", "CloudCart Pay и виртуален ПОС на банка"]
 tags: [paymentproviders, payment-providers, cloudcart-pay]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[payment-providers-cloudcart-pay]]. See the hub for the other aspects (activation gate, checkout flow, express checkout, Apple Pay domain, refunds, saved card) and the six tabs.
@@ -57,6 +57,12 @@ On a shared account, the Onboarding, Transactions, Tax Invoices and Payouts tabs
 
 - **Per store:** transactions and totals ([[cloudcart-pay-transactions-live-read]]).
 - **Per account:** onboarding details, bank accounts, payouts and tax invoices, which therefore mix the stores' amounts. Account alerts reach every store on the account.
+
+CloudCart does not compare the account's country with the country of a store it is linked to, so a store in another country can share it. Each store charges in its own currency ([[cloudcart-pay-checkout-flow]]); whether CloudCart Pay takes that currency for the account is not checked by CloudCart (verify).
+
+### Next to other payment methods
+
+CloudCart Pay does not switch other payment methods off. It can be active together with others, a bank's own card gateway included, and the shopper picks one at checkout ([[payment-provider-checkout-visibility]]). Two limits: a domain serves only one provider's Apple Pay ([[cloudcart-pay-apple-pay-domain]]), and the NRA declaration card covers only CloudCart Pay, so the bank gives the details of its own POS ([[ccpay-onboarding-nra-declaration]]).
 
 ### Storefront label is not locked
 

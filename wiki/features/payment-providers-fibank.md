@@ -7,14 +7,14 @@ aliases: ["Fibank", "First Investment Bank", "Първа Инвестицион�
 tags: [paymentproviders, payment-providers, fibank, card-gateway, bulgaria]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Fibank
 
 ## Purpose
 
-**Fibank** (First Investment Bank / Първа Инвестиционна Банка) is the bank-card gateway for merchants with an e-commerce contract through **First Investment Bank Bulgaria**. The customer is redirected to Fibank's hosted "Ecomm" payment page, enters their Visa / Mastercard / Maestro card, and on a successful 3DS challenge the money settles to the merchant's Fibank business account. The integration uses the older **EGate** / Ecomm protocol (XML over mutual-TLS with a PKCS#12 client certificate) — set-up is more involved than DSK Bank's username/password flow, but lighter than Borica Way4's CSR-and-certificate dance.
+**Fibank** (First Investment Bank / Първа Инвестиционна Банка) is the bank-card gateway for merchants with an e-commerce contract through **First Investment Bank Bulgaria**. The customer is redirected to Fibank's hosted "Ecomm" payment page, enters their Visa / Mastercard / Maestro card, and on a successful 3DS challenge the money settles to the merchant's Fibank business account. The integration uses the older **EGate** / Ecomm protocol (requests over mutual TLS with a PKCS#12 client certificate) — set-up is more involved than DSK Bank's username/password flow, but lighter than Borica Way4's CSR-and-certificate dance.
 
 This is the **card-acquiring** Fibank product — distinct from [[payment-providers-fibank-bnpl]] which is Fibank's installment / buy-now-pay-later loan product (different gateway, different contract).
 
@@ -51,7 +51,7 @@ For the full certificate upload + environment card mechanics, see [[fibank-setup
 | **Test / Live certificate** | PKCS#12 (.p12) file Fibank provides per environment. | Empty | See [[fibank-setup-certificates]] for upload + validation rules. |
 | **Test / Live certificate password** | Password Fibank gave alongside the PKCS#12. | Empty | Required when uploading certificate. |
 | **Test / Live Currency** | BGN (975) or EUR (978). | None | Required. One currency per terminal — see [[fibank-payment-lifecycle]]. |
-| **Return URL** | Read-only display of the URL the merchant tells Fibank to send the customer back to. | `<cc_payments_domain>/return/provider/fibank` | Copy-paste into Fibank's terminal configuration. |
+| **Return URL** | Read-only display of the URL the merchant tells Fibank to send the customer back to. | `<cc_payments_domain>/return/provider/fibank` | Copy-paste into Fibank's terminal configuration; the same URL serves as both OK URL and Fail URL. |
 
 ## Business rules
 

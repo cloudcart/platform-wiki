@@ -5,8 +5,8 @@ aliases: ["Abandoned cart detection", "abandoned_remainder_interval", "Cart reco
 tags: [orders, checkout, cart, abandoned, concepts]
 plan_gates: [abandoned_notification]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[checkout-flow]]. See the hub for the other aspects (cart entity, submit-to-order, guest vs registered, lifecycle overview, discounts & rules, events & webhooks).
@@ -34,7 +34,7 @@ Not covered here:
 
 ## Contrasts
 
-- **Eligible vs sent** — eligibility is triggered by `updated_at` age; whether the email actually goes out depends on the `abandoned_notification` plan-feature ([[plan-gates]]) AND the customer's marketing-consent state.
+- **Eligible vs sent** — eligibility is triggered by `updated_at` age; whether the email actually goes out depends on the `abandoned_notification` plan-feature ([[plan-gates]]) AND, for a guest cart only, the subscriber's Email-channel marketing consent ([[abandoned-cart-eligibility]]).
 - **Recovered via restore link vs direct resubmit** — only the **restore-link handler** sets `abandoned = 1` on the cart (then copied to the order at submit) and records `restore_source`. A customer who returns directly to the site and submits the same cart produces a NORMAL order with `abandoned = 0` and no Recovered banner.
 
 ## Where it applies

@@ -7,8 +7,8 @@ aliases: ["Discount lifecycle", "Discount scheduling", "Discount start date", "D
 tags: [marketing, discounts, promotions, lifecycle, scheduling]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Discount lifecycle, scheduling & activation
@@ -58,7 +58,7 @@ Failing any one of these makes the discount invisible to the checkout lookup. Th
 
 ### Auto-disable on expiry — hourly background sweep
 
-A platform-wide job runs **every 3 600 seconds (60 minutes)** and **toggles `active = no`** on an expired discount at the first run after 00:00 UTC on the day after its `date_end`. This retires expired holiday sales without manual intervention. Skipped for plan-expired stores.
+A platform-wide job runs **every 3 600 seconds (60 minutes)** and **toggles `active = no`** on an expired discount at the first run after 00:00 UTC on the day after its `date_end`. Skipped for plan-expired stores. Nothing ends a discount when a product runs out of stock: only the end date, the uses limit or switching it off.
 
 ### Status switch — immediate
 
@@ -78,6 +78,8 @@ The `active` flag and the date window are independent:
 - `active = yes` + `date_end` in the past → skipped at checkout immediately; next hourly sweep flips `active = no`.
 
 For Black-Friday-midnight starts, pre-create with `active = yes` + `date_start = target date`. There is no "activate at X o'clock" cron beyond the date window.
+
+When the start date arrives, the cart and the product page read the price rows (written at save, carrying the dates) directly, so they switch on that day in store time (verify for a cached page). Listings, filters and search follow at the nightly price / discount patch at 00:10 UTC ([[apps-listing-engine-reindex]]), and **Sale** smart collections at the nightly check at about the same time ([[smart-collection-entity-discount-link]]).
 
 ### Counted statuses — when `uses` ticks
 

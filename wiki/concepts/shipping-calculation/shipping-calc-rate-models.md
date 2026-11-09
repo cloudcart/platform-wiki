@@ -5,8 +5,8 @@ aliases: ["Shipping rate models", "Based on price", "Based on weight", "Based on
 tags: [shipping, checkout, rates, custom-methods, marketplace, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[shipping-calculation]]. See the hub for the other aspects (geo gating, carrier integrations, the checkout cascade, COD surcharge, discounts + Cart Rules, persistence).
@@ -32,23 +32,23 @@ Custom-method models (`price`, `weight`, `price_and_weight`, `marketplace`) live
 Every custom-method rate row has a `from / to` range and an `amount`:
 
 - **Both bounds are inclusive.** A row matches when `from ≤ value` **and** `value ≤ to`. So a row `from = 50, to = 100` matches `50.00 ≤ subtotal ≤ 100.00` (the engine tests `from ≤ value AND (value ≤ to OR to is blank)`).
-- **A blank `to` (upper bound) means NO upper limit — the bracket runs to infinity** ("`from` and above"). This is the normal, intended way to write the top open-ended row. A blank upper bound does **NOT** make the row invalid and does **NOT** hide the method at checkout — quite the opposite, it is what guarantees every heavier/pricier cart is still covered. A single row with `from = 0` (or blank) and a blank `to` therefore matches **every** cart.
+- **A blank `to` (upper bound) means NO upper limit** ("`from` and above"), the intended way to write the top row. It never makes the row invalid or hides the method. A single row with `from = 0` (or blank) and a blank `to` matches **every** cart.
 - **A blank `from` (lower bound) means start at 0** — no lower limit.
 - **On overlap, the cheapest matching row wins.** Because both bounds are inclusive, a boundary value (e.g. exactly `50` against rows `0–50` and `50–100`) matches BOTH rows; the engine then keeps the one with the **lowest `amount`** (category-specific rows are tried first — see the category-rate split below). Overlapping brackets don't error — they resolve to the cheaper rate.
-- `amount = 0` renders as **"Free"** at checkout — the customer sees zero, no negative line, no discount paired.
-- The method is **dropped** from checkout only when **NO row matches**, and the single way that happens is a cart value **below the lowest `from`** (e.g. subtotal `30` against a table whose lowest `from` is `50`). An open-ended top row (blank `to`) is exactly what prevents the equivalent gap at the high end — so "the upper bound is empty" is **never** the reason a method fails to show.
+- `amount = 0` prices the method at zero: its row at checkout shows a zero amount (e.g. 0.00 €), not the word "Free" (verify per theme); no negative line, no discount paired.
+- The method is **dropped** from checkout when **NO row matches**: a cart value below the lowest `from`, inside a gap between rows (rows `0–50` and `60–100`, subtotal `55`), or above a closed top row. An open-ended top row (blank `to`) prevents the high-end case, so "the upper bound is empty" is **never** the reason a method fails to show.
 
 ## Scope
 
 Covered:
 
 - The five rate models and which is editable by the merchant.
-- Rate-row table semantics: `from`-inclusive, `to`-exclusive, blank-`to` unbounded, `$0` = free.
+- Rate-row table semantics: both bounds inclusive, blank-`to` unbounded, `$0` = zero price.
 - **Based on price** lookup against cart subtotal (line totals + per-product taxes, BEFORE shipping).
 - **Based on weight** lookup against cart total weight (sum of `weight × quantity` in the store's [[settings-general]] unit — kg or lb); products with no weight = zero weight, which under-quotes.
 - **Based on price and weight** — two-dimensional matching.
 - **Local Pickup / Marketplace** — physical store location selection with configured pickup fee.
-- **Category-rate split** — Step 4 of the cascade; per-category secondary rate table summed with the default.
+- **Category-rate split** — Step 4 of the cascade; the per-category table is tried first, else the default table; never summed.
 
 Not covered here:
 
@@ -109,9 +109,8 @@ The customer does not pay a typical shipping fee — they pick a physical **stor
 
 Custom methods support a SECOND rate table scoped to specific product categories. When "Different price for categories" is turned ON for the method:
 
-- For each line item whose product belongs to one of the category-specific categories, the platform computes the rate from the **category-specific rate table** for that line's contribution to the subtotal.
-- Lines that don't match the category use the default rate table.
-- The two contributions are **summed** for the final method quote.
+- The lookup value is still the **whole cart** (subtotal, weight, or both). If a category row matches it for the category of **any** product in the cart, the **cheapest** such row prices the whole method.
+- Otherwise the default table is used. The two tables are **never summed** or split per line. The same rule applies to the per-category table of courier apps on fixed tables (e.g. [[apps-boxnow]]).
 
 Useful for "heavy furniture costs more to ship than other products" patterns. The split applies only to `price`, `weight`, and `price_and_weight` — `marketplace` and `integration` ignore the category-rate split entirely.
 

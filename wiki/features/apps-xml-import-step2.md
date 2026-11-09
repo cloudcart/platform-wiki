@@ -7,8 +7,8 @@ aliases: ["XML Import Step 2", "XML Import mapping", "Xml Import field mapping"]
 tags: [apps, imports, xml, mapping, wizard, plan-gated]
 plan_gates: ["xml_import_limit"]
 created: 2026-05-21
-updated: 2026-05-28
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # XML Import → Step 2 (Field Mapping)
 
@@ -43,7 +43,7 @@ Fields are organised into collapsible groups (e.g., "Product data", "Variants", 
 
 ### Per-field mapping
 
-Within a group, each row pairs a **CloudCart field** label (e.g., "Product name", "Price", "SKU", "Stock quantity") with an **XML tag picker** — a dropdown of detected XML tags; the merchant picks the tag whose value should populate that field. Rows come in a few shapes: single value (price, stock), multi-value (categories list, tag list), and non-mapped header rows (group titles).
+Within a group, each row pairs a **CloudCart field** label (e.g., "Product name", "Price", "SKU", "Stock quantity") with an **XML tag picker** — a dropdown of detected XML tags; the merchant picks the tag whose value should populate that field. Rows come in a few shapes: single value (price, stock), multi-value (extra Category rows, which join into one category path rather than adding categories; tag list), and non-mapped header rows (group titles).
 
 ### What the merchant CANNOT do here
 - Skip mandatory mappings — XML import refuses to save Step 2 with unmapped REQUIRED fields (e.g., product name, SKU).

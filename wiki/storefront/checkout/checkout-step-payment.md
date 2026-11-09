@@ -8,8 +8,8 @@ aliases: ["Checkout payment step", "Card payment", "Offline payment", "COD", "Ba
 tags: [storefront, checkout, payment, providers, card, offline, bnpl, leasing]
 plan_gates: []
 created: 2026-06-12
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[checkout]]. Follows [[checkout-step-shipping-method]]; precedes [[checkout-page-submit]]. The full backend filter pipeline that decides which providers reach this step lives in [[settings-payment-providers]] + this page's "How filtering works" section.
@@ -71,7 +71,7 @@ The controller (the platform code line ~1651) runs a multi-stage filter on the p
 | 8 | If the cart is **not shippable** (digital-only), `cod` and `pop` are dropped from the list. |
 | 9 | **Installed apps** get the last word and may only remove methods. The **Nekorekten** app removes `cod` for a buyer who is on its blocked list or reported on nekorekten.com, depending on its settings. The same app check runs again when the order is placed, so a withheld method cannot be submitted. See [[apps-nekorekten-checkout]]. |
 
-So a single missing provider can be traced to any of these 9 stages. Common support diagnostics:
+A missing provider traces to one of these stages; none checks country or geo zone. Diagnostics:
 
 - *"Stripe is missing but I configured it"* → check shipping manager's `provider->payments` allowlist (stage 7) and category restrictions (stage 4).
 - *"COD missing for digital goods"* → stage 8.

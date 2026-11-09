@@ -7,8 +7,8 @@ aliases: ["Customer mail labels", "Transactional email types", "Mail label catal
 tags: [marketing, omnichannel, email, notifications, transactional, labels]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-omnichannel-mails-list]]. See the hub for related aspects (editor modal, toggles & gating, variables, abandoned-cart, customisation limits).
@@ -38,29 +38,28 @@ For every label below, the merchant can open its row to customise **Name**, **Su
 | `email_confirmed` | Customer successfully confirmed their email |
 | `password_change` | Customer changed their password |
 | `send_password_reset_link` | Customer requested a password reset |
-| `order_add` | Customer placed a new order |
+| `order_add` | Order confirmation for every payment method except the three below (card and online payments once paid, leasing, Pay on place, fast orders) — see [[omnichannel-mails-order-confirmation]] |
 | `order_product_add` | Product added to an order |
 | `order_product_remove` | Product removed from an order |
 | `order_product_fulfil` | Order product(s) fulfilled / shipped |
 | `order_status_change` | Order status changed (e.g., processing → shipped) |
 | `order_payment_add` | Manual payment request sent to the customer |
 | `order_payment_error` | A payment failed for this order |
-| `order_payment_via_bwt` | Bank wire transfer payment instructions |
-| `order_payment_via_cod` | Cash-on-delivery payment confirmation |
-| `order_payment_via_voucher` | Voucher payment confirmation |
+| `order_payment_via_bwt` | Order confirmation for bank transfer (with the bank details) |
+| `order_payment_via_cod` | Order confirmation for cash on delivery |
+| `order_payment_via_voucher` | Order confirmation for voucher payment |
 | `order_payment_status_change` | Order's payment status changed |
 | `send_order_files_download_link` | Digital-products download link |
 | `send_invoice` | Invoice attached / sent |
 | `send_credit_notify` | Credit notification |
-| `order_leasing` | Leasing / financed order |
+| `order_leasing` | Defined, but not sent: leasing orders are confirmed with `order_add` |
 | `manual_order` | Order created from the admin panel |
 | `abandoned_restore_link` | Abandoned-cart recovery — sends a "come back" link with cart contents (see [[omnichannel-mails-abandoned-cart]]) |
 | `customer_newsletter_subscribe` | Customer subscribed to newsletter |
 | `customer_newsletter_unsubscribe` | Customer unsubscribed |
 | `product_out_of_stock` | Product the customer favourited went out of stock |
 | `product_quantity_low` | Low-stock alert for a favourited product |
-| `product_review_added` | Customer's review was approved |
-| `rate_orders_products` | Post-purchase review-request |
+| `rate_orders_products` | Post-purchase review request: defined (name and variables), but **never sent**: no code path dispatches it, so it has no trigger, delay or per-order condition, and its switch changes nothing. Stores ask for reviews by campaign, see [[apps-product-review-campaign-link]] |
 | `remove_account_request` | Customer requested account deletion (GDPR) |
 | `account_banned` | Customer account banned by merchant |
 | `account_ban_lifted` | Ban lifted |
@@ -77,7 +76,7 @@ Three labels are forced-on regardless of per-mail Active flag (security/auth cri
 
 ### Label is the dispatcher key
 
-Every event firing a customer email passes its `label` (e.g., `order_add`) into the send pipeline. The platform looks up the merchant's `Mail` row by `(site_id, label)`, picks the `MailLanguage` for the recipient's locale, and renders. **Label collisions are impossible** — each label is unique per store.
+Every event firing a customer email passes its `label` (e.g., `order_add`) into the send pipeline. The platform looks up the merchant's `Mail` row by `(site_id, label)`, picks the template's version in the store's language (the English version when there is none; never the recipient's or the admin's language), and renders. **Label collisions are impossible** — each label is unique per store.
 
 ### Recipient is fixed per label
 
@@ -86,7 +85,9 @@ Every event firing a customer email passes its `label` (e.g., `order_add`) into 
 - `abandoned_restore_link` → the cart's customer OR the email-channel [[subscriber]] linked to the cart.
 - `customer_newsletter_*` → the subscriber.
 - `product_out_of_stock` / `product_quantity_low` → customers who favourited the product (see [[products-favorite-products]] + [[products-missing-product]]).
-- `rate_orders_products` / `product_review_added` → the order's customer.
+- `rate_orders_products` → the order's customer.
+
+`product_review_added` ("New review added") is **not** a customer email: it is an admin alert to the store's email, see [[apps-product-review-internals]].
 - `contact` → the merchant (`site_email`), NOT the customer.
 
 The merchant cannot override the recipient or add CC / BCC — see [[omnichannel-mails-customisation-limits]].

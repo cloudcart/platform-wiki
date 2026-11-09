@@ -7,8 +7,8 @@ aliases: ["Withdraw from contract", "Withdrawal from contract", "Отказ от
 tags: [apps, compliance, eu, withdrawal, returns, orders, beta]
 plan_gates: ["aftercare_pro"]
 created: 2026-06-24
-updated: 2026-11-03
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 # Withdraw from contract (Aftercare)
 
@@ -24,7 +24,7 @@ The **free core** covers the legal requirement in full; a paid **`aftercare_pro`
 
 - **Install + configure:** Sidebar → Apps → install **Withdraw from contract**, then run the 4-step setup wizard — see [[aftercare-settings-setup]].
 - **The requests inbox:** Sidebar → **Orders → Withdraw from contract** (`orders.aftercare.list`, `/admin/orders/aftercare`) — see [[aftercare-withdrawals-admin]].
-- **On the storefront:** a floating button + optional menu link opening the withdrawal flow at `/withdrawal` — see [[storefront-withdrawal]].
+- **On the storefront:** a floating button and/or a menu link opening the withdrawal flow at `/withdrawal` — see [[storefront-withdrawal]]. The menu link is added under **Design → Navigation** with the store section **Withdraw from contract** — see [[aftercare-settings-setup]].
 
 ## Sub-pages (in this cluster)
 

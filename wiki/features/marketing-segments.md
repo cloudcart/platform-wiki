@@ -7,17 +7,17 @@ aliases: ["Segments", "Customer segments", "Subscriber segments", "Сегмен�
 tags: [marketing, segments, subscribers, targeting]
 plan_gates: ["segments", "subscribers", "subscribers-rfm"]
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 15
+updated: 2026-11-09
+source_count: 16
 ---
 
 # Segments
 
 ## Purpose
 
-A **Segment** is a named, rule-based grouping of subscribers (and through them, customers and visitors) the merchant uses to target campaigns, discounts, cross-sell offers, and analytics. The merchant declares a logical AND-chain of conditions ("subscribed in last 30 days" AND "viewed products from category 'Shoes'" AND "has not ordered") and the platform evaluates the subscriber population against them, attaching/detaching subscribers as they qualify or stop qualifying.
+A **Segment** is a named, rule-based grouping of subscribers (and through them, customers and visitors) the merchant uses to target campaigns and analytics. The merchant declares a logical AND-chain of conditions ("subscribed in last 30 days" AND "viewed products from category 'Shoes'" AND "has not ordered") and the platform evaluates the subscriber population against them, attaching/detaching subscribers as they qualify or stop qualifying.
 
-Segments are the **primary audience-selection object** in CloudCart marketing: every email/SMS/messenger campaign in [[marketing-campaigns]] targets a segment, the discounts in [[marketing-discounts]] can require a segment match, and recommendation engines in [[marketing-cross-sell]] use segment membership as a trigger. Two segment types coexist — **One-time** (`regular`, snapshot) and **Automated** (`automated`, continuously re-evaluated) — and the merchant can also add/remove individual subscribers manually on top of the rule output.
+Segments are the **primary audience-selection object** in CloudCart marketing: every email/SMS/messenger campaign in [[marketing-campaigns]] targets a segment. Discounts, Cart Rules and cross-sell offers cannot be limited to a segment; discounts and Cart Rules are limited by [[customers-custom-groups|customer group]]. Two segment types coexist — **One-time** (`regular`, snapshot) and **Automated** (`automated`, continuously re-evaluated) — and the merchant can also add/remove individual subscribers manually on top of the rule output.
 
 ## Where to find it
 
@@ -47,7 +47,7 @@ The editor lives on [[marketing-segments-editor]]; the per-segment subscriber li
 - Click the **Log** link to open the segment change log ([[marketing-segments-log]]) — an audit trail of attach/detach over time.
 - Toggle a segment **Active**/Inactive. Inactive segments stop being recalculated and can't be selected as a campaign target.
 - Delete one or many segments — blocked if a campaign is attached (see Business rules).
-- Generate a **CSV file** of the segment's subscribers via the per-row export.
+- (Cannot) export a segment's subscribers: rows offer only **Log** and delete, no CSV.
 - **Rename** a segment via a dedicated modal (the editor itself doesn't expose a name field).
 
 ## Settings & fields
@@ -108,8 +108,7 @@ Segments are exposed at [[api-segments]] but are **read-only** — POST / PATCH 
 - [[marketing-subscribers]] — the people who get filtered into segments.
 - [[marketing-subscribers-subscribe-forms]] — storefront forms that produce new subscribers + can be filtered via the `from_form` condition.
 - [[marketing-campaigns]] — primary consumer; every campaign targets a segment.
-- [[marketing-discounts]] — discounts can require a segment match (audience-targeted promotions).
-- [[marketing-cross-sell]] — segment membership can trigger cross-sell offers.
+- [[marketing-discounts]] — no segment targeting; a segment can find buyers who used a given discount.
 - [[marketing-segments-editor]] — the conditions-tree builder modal.
 - [[marketing-segments-subscribers]] — per-segment subscriber list + manual add/remove.
 - [[marketing-segments-log]] — attach/detach audit log.

@@ -7,8 +7,8 @@ aliases: ["Linked products module", "linkedProducts module", "product.linked", "
 tags: [design, modules, products, linked]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Product module — Linked products (`product.linked`)
@@ -32,7 +32,7 @@ Renders on the product detail page; the exact slot is theme-controlled. The modu
 - Title the row.
 - Toggle whether to show the row title, image, price, buy button, and quick-view link.
 - Pick how many products per row on desktop and on mobile.
-- Pick a render position — variant / recommended / section_recommended (theme slot key).
+- Pick a render position — see `position` below.
 - Cap the maximum number of card title lines.
 
 ## What the merchant cannot do here
@@ -60,13 +60,7 @@ Renders on the product detail page; the exact slot is theme-controlled. The modu
 
 ### Validation strings
 
-| Scenario | Message |
-|----------|---------|
-| Save success | *"Module successfully edited"* |
-| Reset success | *"Module successfully reset"* |
-| `per_row_desktop` out of 1-6 | Field-level integer-range error |
-| `per_row_mobile` out of 1-4 | Field-level integer-range error |
-| `position` not in enum | Field-level enum error |
+Shared Save / Reset messages ([[design-modules-products]]); out-of-range numbers and unknown values get field-level errors.
 
 ## All themes vs theme-specific
 
@@ -91,15 +85,23 @@ If the product has no linked products (or only itself), the row self-hides — n
 
 ### `position` controls theme slot
 
-The `position` value (`variant`, `recommended`, `section_recommended`) is a slot identifier the theme template reads to decide WHERE on the product page to render the row. Themes that do not recognise the value fall back to the default slot. This is the merchant's only control over WHERE the row appears (vs WHAT it contains).
+**Позиция** decides WHERE on the product page the row appears (Bulgarian admin labels):
+
+| Option | Value | Where |
+|---|---|---|
+| **Като разновидност** (As variant) | `variant` | Inside the product's options area, before the variant choice, like an extra option |
+| **Като препоръчани продукти под секция Купи** | `recommended` | Under the Buy section |
+| **Като секция Сходни продукти** | `section_recommended` | A separate section lower on the page |
+
+Themes that do not recognise the value fall back to the default slot.
 
 ### Quick view mode
 
 When `show_as_quick_view=on`, clicking a card opens the product in a side-panel modal instead of navigating to the product page. The card itself still links to the product page; only the click handler changes.
 
-### Cache invalidation on save / reset
+### Two-way links (product editor)
 
-Standard — save / reset bump the per-site cache key.
+Each linked product in the editor has a **two-way** switch. On: the current product is added to the other product's linked list too. Turning it off later removes that reverse link. Removing a product from the list always removes the reverse link as well, even one added on the other product separately. Bulgarian label in the editor: translations database.
 
 ## Related
 

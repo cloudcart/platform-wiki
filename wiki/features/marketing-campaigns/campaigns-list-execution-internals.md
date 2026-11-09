@@ -7,8 +7,8 @@ aliases: ["Campaign enrolment pipeline", "Campaign send pipeline", "Campaign sta
 tags: [marketing, campaigns, queue, statistics, internals]
 plan_gates: ["campaigns"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[marketing-campaigns]]. See the hub for the other aspects (tabs & filters, create modal, AI assistant, row actions, types & actions, rules).
@@ -26,11 +26,10 @@ This logic is invisible to the merchant directly. The merchant sees its effects 
 - The Campaigns list `reached` / `orders` / `turnover` columns (hourly aggregation).
 - The per-campaign [[marketing-campaigns-statistics]] dashboard.
 - The per-message [[marketing-campaigns-statistics-log]] view.
-- The [[background-queue-inventory]] Queue View page.
 
 ## What the merchant can do here
 
-Nothing directly — the merchant configures the campaign and clicks Start; the rest is platform-internal. The merchant CAN observe ramp-up via the Queue View ([[background-queue-inventory]]).
+Nothing directly — the merchant configures the campaign and clicks Start; the rest is platform-internal. All campaign jobs are hidden from the store's queue view (*„Задачи на опашка“*), so the merchant can NOT watch campaign progress there.
 
 ## Settings & fields
 
@@ -72,7 +71,7 @@ Aggregated stats are written by the hourly statistics job; per-channel reputatio
 
 ### Insert batch size for enrolment
 
-When a Regular or Automated campaign launches with **Execute campaign for existing subscribers in segment** ON, the platform builds the enrolment list and adds subscribers in batches of **500 per insert**. Subsequent action-processing then chunks subscribers into batches of **50 per execute-parts queue job**. For a 10 000-subscriber segment this means 20 inserts followed by 200 execute-parts jobs — the campaign appears to "ramp up" rather than fire all messages at once.
+On launch the trigger segment is refreshed first; execution then starts at the start time. When a Regular or Automated campaign launches with **Execute campaign for existing subscribers in segment** ON, the platform builds the enrolment list and adds subscribers in batches of **500 per insert**. Subsequent action-processing then chunks subscribers into batches of **50 per execute-parts queue job**. For a 10 000-subscriber segment this means 20 inserts followed by 200 execute-parts jobs — the campaign appears to "ramp up" rather than fire all messages at once.
 
 ### The statistics store backing logs + statistics
 
@@ -90,7 +89,18 @@ Campaign logs and stats live in a separate statistics store (not the main store 
 
 ### Auto-archive on completion (Regular only)
 
-A Regular campaign auto-archives on completion (sets `progress = completed` AND `archived_at = now`). Automated campaigns can keep running indefinitely. The auto-archive happens at the end of the final send batch — not as a separate scheduled job.
+A Regular campaign auto-archives on completion (sets `progress = completed` AND `archived_at = now`). Automated campaigns can keep running indefinitely. Completion is marked both when the last pending subscriber completes AND by an hourly progress-check job; either way, completion auto-archives the campaign.
+
+### Stuck at "Executing" with no sends
+
+A campaign can sit at *"Executing"* while nothing goes out because:
+
+- the channel is off, not configured, suspended, or at its plan cap;
+- the trigger segment is inactive;
+- the campaign was archived and restored (unarchive does not re-create the dropped per-subscriber jobs — see [[campaigns-archive-unarchive-restore]]);
+- the store is in maintenance or its plan expired;
+- the Email channel's provider key is rejected — see [[email-channel-reconnect]];
+- or it is a genuine ramp-up on a large segment (see the batch sizes above).
 
 ### Order attribution via the `cc_campaign_id` order tag
 
@@ -108,7 +118,7 @@ The reached / opened / clicked / orders / turnover columns are populated by the 
 - [[marketing-campaigns-statistics]] — per-campaign statistics dashboard (reads Channel statistics).
 - [[marketing-campaigns-statistics-log]] — per-message log view (reads Channel logs).
 - [[marketing-campaigns-statistics-full]] — full last-touch attribution mechanic.
-- [[background-queue-inventory]] — Queue View — observe enrolment + execute-parts + send jobs in flight.
+- [[background-queue-inventory]] — background-process catalogue (campaign jobs are hidden from the store's queue view).
 - [[notification-delivery]] — outbound delivery internals (the per-channel send jobs).
 
 ## Open questions

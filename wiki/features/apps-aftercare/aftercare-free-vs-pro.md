@@ -7,8 +7,8 @@ aliases: ["Aftercare Pro", "aftercare_pro", "Aftercare free vs pro", "withdrawal
 tags: [apps, aftercare, plan-gates, pro, withdrawal]
 plan_gates: ["aftercare_pro"]
 created: 2026-07-24
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[apps-aftercare]]. See the hub for the other aspects (compliance, admin inbox, settings, storefront flow).
@@ -25,7 +25,7 @@ The `aftercare_pro` feature is bought from the plan / feature-pack prompt shown 
 
 ## What the merchant can do here
 
-Decide whether the free compliance core is enough, or whether the Pro automation / retention extras are worth the feature pack — the split below is the whole decision.
+Decide whether the free core is enough or the Pro extras are worth the feature pack.
 
 ## Settings & fields
 
@@ -38,9 +38,10 @@ The Pro-gated settings themselves (`auto_create_return`, `use_custom_page` / `cu
 | Capability | Free (any plan) | Pro (`aftercare_pro`, paid) |
 |---|---|---|
 | Storefront withdrawal function (button / form, guest, email verification) | ✅ | ✅ |
+| Item picker (tick lines, quantities) + whole / partial tabs | ❌ whole order only; items described in the optional note | ✅ |
 | Acknowledgement email + terms snapshot + 14-day window | ✅ | ✅ |
 | Admin inbox + `pending → returned / cancelled` lifecycle | ✅ | ✅ |
-| `withdrawal` resolution + **bank** refund (recorded, paid out manually) | ✅ | ✅ |
+| `withdrawal` resolution, refund paid out manually by the merchant | ✅ (no refund details collected) | ✅ (bank IBAN / BIC asked) |
 | My-account withdrawal-history list | ✅ | ✅ |
 | Auto-create a core order-return (`auto_create_return`) | ❌ | ✅ |
 | Refund **to card** offered in the flow (via the core return) | ❌ | ✅ |
@@ -52,26 +53,26 @@ The Pro-gated settings themselves (`auto_create_return`, `use_custom_page` / `cu
 | `cancel` resolution for a whole not-yet-shipped order | ❌ | ✅ |
 | Store-credit **voucher** / **exchange** / **wallet** refunds in the withdrawal flow | — declared, **not offered** — | |
 
-`aftercare_pro` is a **paid plan feature**, sold as a monthly / yearly feature pack (bought from the app's Settings wizard — see [[aftercare-settings-setup]]). Without it, the Pro rows above stay disabled behind a "paid service / Buy here" prompt.
+`aftercare_pro` is a **paid plan feature** (monthly / yearly feature pack). Without it, the Pro rows above stay disabled behind a "paid service / Buy here" prompt, and the app's name in its header carries " (Free)". The feature and its packs are named after the app plus " Pro" („Отказ от договора Pro“ / "Withdraw from contract Pro", verify in the catalogue). The upgrade panel shows the active monthly and yearly packs with their prices from the billing catalogue; the wiki does not carry the price.
 
 ### Free compliance core (any plan)
 
 The **free core** works on any plan — the legal minimum every EU store must offer:
 
-- the storefront withdrawal button + form ([[storefront-withdrawal]]), **guest-accessible**, with email-code verification;
+- the storefront withdrawal button + form ([[storefront-withdrawal]]), **guest-accessible**, with email-code verification. The free form has **no item picker**: every request covers the **whole order**, and the customer can say which items in the optional **Note** („Забележка (по желание)“), shown to the merchant as **Customer's note** on the request. The merchant's email then has an empty *Requested items* list ([[aftercare-withdrawals-admin]]);
 - the always-on **acknowledgement of receipt** and the **terms snapshot** ([[aftercare-compliance]]);
 - the **14-day (or longer) window**, counted from delivery;
 - the admin inbox with the `pending → returned / cancelled` lifecycle ([[aftercare-withdrawals-admin]]);
-- the `withdrawal` resolution and **bank-transfer** refunds.
+- the `withdrawal` resolution; the merchant arranges the refund (no IBAN is asked on Free).
 
 ### Aftercare Pro (`aftercare_pro`)
 
-Sold as a monthly / yearly feature pack. It adds:
+Pro adds:
 
 - **`auto_create_return`** — every new withdrawal auto-creates a matching PENDING **core order-return** (for a committed order, once only), which then **drives the request's status** and carries the customer's refund choice into the store's normal returns / restock / refund flow. This is the biggest Pro behaviour — see [[aftercare-order-return-sync]].
 - **Refund to card** — when the order was paid by a supporting online card gateway, the customer can pick a card refund instead of bank transfer. It is executed from the core return's refund button — **full or partial** — via the gateway; partial refunds are live for **Stripe / PayPal / Revolut / CloudCart Pay** (others are full-only or bank-only). Card is offered **per scope**: the option only shows on the scope the gateway supports. See [[aftercare-order-return-sync]].
 - **`notify_viber`** — Viber messages on withdrawal events. Unlike email (2 status mails), Viber sends **three**: a `pending` *"request received"* message on creation (the Viber counterpart of the email acknowledgement, since there is no separate Viber acknowledgement) plus `returned` / `cancelled` on the status change — each a plain-text message with an inlined tracking link. Email stays the free, always-on channel.
-- A **custom-page button** (`use_custom_page` / `custom_page_id`) — point the storefront button / menu link at one of your own pages carrying the withdrawal widget, instead of `/withdrawal`.
+- A **custom-page button** (`use_custom_page` / `custom_page_id`) — the floating button opens one of your own pages instead of `/withdrawal`. The form goes on that page through the page-builder widget **Withdraw from contract** („Отказ от договора“, described as embedding the withdrawal form in a landing page), offered in the builder only while the app is installed and Pro is active ([[landing-pages-types]]). A menu link to the withdrawal section still opens `/withdrawal`. The **Withdrawal page** list offers the store's pages except page-builder pages, as the code reads (verify on a live store).
 - **Webhook events** — `withdrawal.created` and `withdrawal.status_changed`, wired at `/settings/hooks` like any core event; the payload carries the order, customer, status, resolution, the refund choice, the withdrawn products (with VAT-aware totals), and the window dates.
 - A **live withdrawal countdown + one-click CTA** on the logged-in customer's account (`/account/withdrawals`) and order pages, plus a **`/withdrawal/order/{hash}` shortcut** that — for the order's logged-in owner, while the window is open — **skips the order-lookup and email-verification** (the login already proves ownership) and drops them straight into the item picker. The standalone `/withdrawal` guest form (with verification) stays free.
 - **`block_resubmit`** — after a request is `cancelled`, keep its lines locked so the customer cannot re-open a withdrawal for them (by default a cancel frees the lines for re-submission).

@@ -7,8 +7,8 @@ aliases: ["Aura Search settings", "Advanced Search settings", "search engine set
 tags: [apps, search, settings, autocomplete, ranking]
 plan_gates: ["advanced_search"]
 created: 2026-06-10
-updated: 2026-09-23
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 > Part of [[apps-advanced-search]]. See the hub for the other aspects (plans, overview, searches, pins, vocabulary, AI, indexing).
@@ -50,6 +50,8 @@ A short summary of the most-used controls, plus a live **Preview**:
 | **Search Relevance & Weights** — a switch per field (`filter.*`) and a weight (`weight.*`) | only **name** on | Fields: product name (always on), description, category name, vendor name, variants, properties, tags, and brand & model when [[brand-model]] is installed. |
 
 **Weights are saved in the range 1–100** (defaults: name 10, description 2, the rest 5), although the pane's help text describes them as 0 to 10. With AI semantic search on, the field switches still govern the word-matching part. Matching by meaning looks at the product as a whole and cannot be limited to fields.
+
+**What "properties" searches.** Each variant carries its product's property pairs as text, *"Material: Cotton"*: the property's name and the value's name, for active properties attached to the product's main category. A value's **Description**, **SEO title** and **SEO description** ([[products-property-values]]) are not in the index, so no search finds words that appear only there. **Description** searches the product's own short description and description (the first 1,000 characters each, without formatting).
 
 ### Results & filters
 

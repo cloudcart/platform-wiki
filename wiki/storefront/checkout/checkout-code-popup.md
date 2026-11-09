@@ -8,8 +8,8 @@ aliases: ["Checkout code popup", "Recognised account", "You have an account with
 tags: [storefront, checkout, customer, login, email-code, popup]
 plan_gates: []
 created: 2026-11-03
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[checkout]]. The step around it is [[checkout-step-customer]].
@@ -20,7 +20,7 @@ source_count: 3
 
 A guest at the checkout's customer step types an email that already has an account. The store mails a 6-digit code to that address and opens a popup over the checkout to enter it. The right code signs the customer in, and the checkout continues with their profile.
 
-The mail goes out while the platform option `checkout_login_code` is on. It has no screen in the admin. This page describes the flow with the option on.
+**The popup cannot be switched off.** It opens for every registered email, on every store. "Registered" means an account; the record of an earlier guest order does not count. The platform option `checkout_login_code` controls only whether the code email is sent. CloudCart sets this option for all stores, and can override it for a single store. The merchant cannot change it: it has no screen in the admin and no field in the Admin GraphQL API. This page describes the flow with the option on.
 
 ## URL & route
 
@@ -61,6 +61,11 @@ Six digit fields take typing or a paste. On a phone the popup rises from the bot
 - **After the right code**, the popup closes with *"You are signed in to your account."* and the checkout reloads with the customer's data.
 - **An inactive account** is refused with *"Your user account is not active"*. A banned account is refused too.
 - **The password login** stays available through the **You have an account?** link in the step's header ([[checkout-step-customer]]).
+- **After the hour,** the right code is refused like a wrong one. **Send a new code** then mails a new code.
+
+### The code email
+
+The code goes out as the customer email **"Двуфакторно удостоверяване в CloudCart с код"** / **"CloudCart two-factor authentication with a code"**. Its subject is *"<store name> - Код за удостоверяване"* / *"<store name> - Authentication code"*. The email comes from the store's name and email address ([[settings-general-store-details]]). It is always sent through CloudCart's own sending service, even when the [[apps-smtp|SMTP app]] is active. The email has its own on/off in the list of customer emails ([[marketing-omnichannel-mails-list]]). When it is off, no code is mailed, but the popup still opens.
 
 ## JavaScript behaviour
 
@@ -76,7 +81,7 @@ The template is shared from the global checkout templates, so every theme shows 
 
 ## Known issues / by-design vs bug
 
-None recorded.
+- **The popup opens but no code arrives.** The popup does not depend on the email being sent. Check whether `checkout_login_code` is on for the store and whether the code email is switched on in the list of customer emails. The customer can still give another address through **Change email**, or reload the page and sign in with a password through **You have an account?**.
 
 ## Related
 

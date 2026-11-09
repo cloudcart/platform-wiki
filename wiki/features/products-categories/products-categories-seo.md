@@ -7,8 +7,8 @@ aliases: ["Category SEO", "Category URL handle", "Category SEO title", "Category
 tags: [products, categories, seo, url]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-11
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[products-categories]]. See the hub for the other aspects (list & organize, edit modal, hierarchy rules, cart restrictions, deletion rules, JSON-API/validation). Google-Shopping / feed **taxonomy** mapping is on [[products-categories-taxonomy]].
@@ -59,7 +59,7 @@ The URL handle must be **unique across all categories**. On a duplicate:
 - **JSON-API v2** ([[api-categories]]) — follows the admin behaviour: duplicate handles return 422. See [[products-categories-api-validation]].
 
 ### URL handle change records a 301 redirect
-When the merchant changes the URL handle on an existing category, the previous handle is recorded in a URL-handle history store and the storefront serves a permanent HTTP 301 redirect from the old URL to the new one — protecting bookmarked links and search-engine equity. No merchant-facing UI surfaces this redirect list directly (verify).
+When the merchant changes the URL handle on an existing category, the previous handle is recorded in a URL-handle history store and the storefront serves a permanent HTTP 301 redirect from the old URL to the new one — protecting bookmarked links and search-engine equity. This lasts **30 days** from the rename and adds no row on [[marketing-seo-301-redirects]], where a permanent rule can be added ([[seo-301-redirects-auto-tracking]]).
 
 ### Per-category image dimensions are merchant-controlled
 The `width`, `height`, and `max_thumb_size` fields set the recommended image dimensions for that category. The platform imposes no hard category-image cap.

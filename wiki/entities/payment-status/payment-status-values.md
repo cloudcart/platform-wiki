@@ -3,8 +3,8 @@ type: entity
 aliases: ["Payment status values", "Payment status enum", "13 payment statuses", "Payment status meanings", "Стойности на платежен статус"]
 tags: [orders, payments, entity]
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 
 > Part of [[payment-status]]. See the hub for the other aspects (lifecycle, vs order status, provider mappings).
@@ -37,7 +37,7 @@ The payment-status enum has **13 values** (verbatim keys preserved):
 | `failed` | Payment attempt failed (card declined, insufficient funds, gateway error). | Negative state. Unless another payment on the order is still open, the order moves to `cancelled`; a new attempt or a late successful payment moves it on. |
 | `refunded` | Money has been returned to the customer (full refund). | Set after a successful refund call to the gateway. |
 | `voided` | Authorisation was cancelled before capture (no charge ever happened). | Set when the merchant clicks **Cancel authorization** on an `authorized` payment. |
-| `cancelled` | Payment was cancelled (customer abandoned, merchant cancelled, gateway reported cancelled). | Distinguished from `failed` — typically used when the customer explicitly aborted vs. the card was declined. |
+| `cancelled` | Payment was cancelled (customer abandoned, merchant cancelled, gateway reported cancelled). | Which of `failed` and `cancelled` a declined card produces is the provider's mapping, not a fixed rule: Fibank and myPOS's payment page write a decline as `cancelled`, Borica Way4 as `failed` (see [[payment-status-provider-mappings]]). For the order both mean the same: it moves to `cancelled`. |
 | `timeouted` | Gateway timed out before returning a final answer. | The platform gave up waiting for the gateway's response. Unless another payment on the order is still open, the order moves to `cancelled`; the payment keeps `timeouted`. |
 | `chargebacked` | The customer's bank initiated a chargeback against the captured payment. | Set via reconciliation / sync with the gateway. |
 | `disputed` | The payment is under dispute or investigation. | Pre-chargeback state — gateway has flagged the transaction. |

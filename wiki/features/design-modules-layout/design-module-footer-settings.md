@@ -3,12 +3,12 @@ type: feature
 nav_path: "Design → Modules → Layout → Foot settings"
 route_name: admin.storefront.widget
 route_path: /admin/storefront/widgets/footerConfiguration
-aliases: ["Footer settings module", "Footer layout", "Footer configuration", "Foot settings", "Модул футър", "Настройки на футъра"]
+aliases: ["Footer settings module", "Footer layout", "Footer configuration", "Foot settings", "Модул футър", "Настройки на футъра", "ODR notice", "ОРС", "сайта ОРС", "online dispute resolution footer", "Онлайн магазин от CloudCart", "footer bottom bar"]
 tags: [design, modules, layout, footer]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Footer settings module (`layout.footer`)
@@ -62,15 +62,30 @@ The `footer_max_cols_count` select only renders for themes whose Smarty footer t
 
 The footer module has no enable / disable toggle — the footer is always rendered on every storefront page that uses the master layout. To remove the footer, the merchant must use a Dynamic page in [[marketing-landing-pages]] that does NOT include the master layout.
 
+### The bottom bar's fixed lines
+
+Besides the merchant's text and links, the footers of the classic themes, and the checkout's footer, print these lines:
+
+| Line | Where it comes from | Can the merchant change it? |
+|---|---|---|
+| The store's copyright text | **Footer copyright** in [[settings-general-store-details]] | Yes. |
+| **Онлайн магазин От CloudCart** / *ECommerce website By CloudCart* | The CloudCart credit | Hidden with **Show CloudCart information in the footer**, on plans with the `brand_removal` feature ([[settings-general-store-details]]). |
+| **При възникване на спор, свързан с покупка онлайн, можете да ползвате сайта ОРС** (the online dispute resolution notice) | A platform text in the visitor's language. "сайта ОРС" links to the European Commission's consumer redress site, in the visitor's language where it offers one, otherwise in English | No: no setting, module or text field holds it. |
+| **Упражни правата си!** / *Exercise Your Rights!* link to `/gdpr`, with "Powered by CloudCart" | Shown only while the GDPR app is active ([[apps-gdpr-overview]]) | Only by switching the app off. |
+
+Which of these a footer template prints, and where, is the theme's choice (verify per theme).
+
 ### Footer text and links are separate modules
 
-Footer content is the responsibility of three separate module types:
+This module only changes the footer's structure. Where the footer's links come from depends on the theme (classic themes, read from their footer templates):
 
-- **Layout** (this module): which footer TEMPLATE renders + how many columns.
-- **`extra.text` instance `footerText`**: the static footer copy (about, contact summary, legal blurb).
-- **`navigation.links` instances `footerLinks1` / `footerLinks2` / `footerLinks3`**: the link columns.
+| Themes | Footer links come from |
+|---|---|
+| Nearly all classic themes (Amber, Bond, Echappe, Flair, Themex, Zora and the rest) | The **Footer menu** in [[design-navigation]] |
+| The Knowledge Freedom, Jobs and Motivation families | The **Footer menu** plus the footer text module, in the footer template picked here |
+| Virtuoso | Separate link-list modules (`footerLinks1`, `footerLinks2`, …), each with its own title |
 
-To change footer content, the merchant edits those instances; this module only changes the footer's visual structure.
+Some themes add footer text modules (for example Amber's three text blocks and a contacts block). The social icons come from the **Social links** module ([[design-module-social]]).
 
 ## Related
 

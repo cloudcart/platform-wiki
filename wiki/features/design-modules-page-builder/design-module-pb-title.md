@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Dynamic Pages → Page-builder modules → Title"
+nav_path: "Design → Static pages → Dynamic page → Page-builder modules → Title"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["Title module", "Heading block", "Section title block", "H1 block", "Модул заглавие"]
 tags: [design, modules, page-builder, title, seo, marketing]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Title block (`title`)

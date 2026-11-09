@@ -7,8 +7,8 @@ aliases: ["Invoice PDF rendering", "Invoice template", "invoice_body", "Invoice 
 tags: [orders, invoice, pdf, mpdf, smarty, rendering]
 plan_gates: ["invoices"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 > Part of [[orders-invoice]]. See the hub for the other aspects (action surfaces, numbering, eligibility, customer email).
 
@@ -35,7 +35,23 @@ The renderer reads `invoice_body` (custom template HTML), `invoice_watermark` (w
 
 ### PDF rendering — mPDF
 
-The platform uses the **mPDF** PHP library to render invoice PDFs from Smarty-rendered HTML. mPDF supports most modern HTML / inline CSS (no JavaScript). The PDF is rendered in A4 portrait with 20 mm margins, with the title set to *"Invoice <number>"*.
+The platform uses the **mPDF** PHP library to render invoice PDFs from Smarty-rendered HTML. mPDF supports most modern HTML / inline CSS (no JavaScript). The PDF is A4 portrait, titled *"Invoice <number>"*. The margins in the code are written in a form the current PDF library ignores, so its defaults apply: about 15 mm left and right, 16 mm top and bottom (verify on a printed copy).
+
+### How the standard invoice fills pages
+
+The standard template (empty `invoice_body`) has **no page-break or keep-together rule**. Its blocks run top to bottom and break wherever a page is full:
+
+1. The top block: invoice logo, number, date, order number and its barcode. It prints once, on page 1.
+2. The title, then the seller and buyer blocks side by side.
+3. One table with the product lines and, under them, the totals. A long table continues on the next page, its heading row repeated (verify).
+4. The **Payments** table, when **Display payment details** is on and the order has a payment; then the payment method's description, when that option is on.
+5. The no-VAT reasons, when the order has them.
+6. On **Bulgarian-language** invoices only: *Съставил: <name>* and *Подпис: шифър <code>*, beside the footer note (or, without one, the sentence that a code may replace a signature). Being last, this is the "signature" that lands alone on page 2 when page 1 is just full. Where the name comes from: [[settings-invoicing-issuer-block]].
+7. Blocks that apps add at the end.
+
+A centred *"Page X of Y"* line is the page footer. What pushes the last block over: more product lines, product images or barcodes in the list, the payments table, the payment description, the no-VAT reasons, header rows and a long footer note. Credit notes use the same layout. A custom `invoice_body` follows its own HTML.
+
+The preview on Settings → Invoicing is a drawing of the sections, not the PDF: it has no page boundaries, so it cannot show where a page will break ([[settings-invoicing-template-editor]]).
 
 ### Custom template via `invoice_body`
 
@@ -67,6 +83,7 @@ The route accepts an `output` parameter (`I` inline, `D` download), but the plat
 
 - [[orders-invoice]] — hub.
 - [[settings-invoicing]] — `invoice_body`, `invoice_watermark`, layout settings.
+- [[settings-invoicing-issuer-block]] — the *Съставил* name and code.
 - [[orders-invoice-single-numbering]] — the rendered (formatted) number that appears on the PDF.
 - [[orders-invoice-single-surfaces]] — the View-invoice link that triggers rendering.
 - [[order]] — entity carrying the order locale that drives render language.

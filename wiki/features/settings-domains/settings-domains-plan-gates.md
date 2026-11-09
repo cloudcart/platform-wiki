@@ -7,8 +7,8 @@ aliases: ["domains plan gate", "custom_hostname plan gate", "CNAME usage chip", 
 tags: [settings, domains, plan-gates, custom-hostname, upsell]
 plan_gates: ["domains", "custom_hostname"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[settings-domains]]. See the hub for related aspects (add flow, DNS / Cloudflare, SSL, primary, deletion).
@@ -17,7 +17,7 @@ source_count: 3
 
 ## Purpose
 
-How the merchant's plan controls the number of custom domains they can attach, the difference between the two plan-feature keys (`domains` for standard-zone domains, `custom_hostname` for Cloudflare-for-SaaS CNAME-mode domains), the **"Other domains" usage chip** visible at the top of the page, and the PlanFeature modal that opens when the merchant tries to exceed their quota. Also documents the **plan whitelist** restricting `custom_hostname` purchases to `cc-pro` and `unicorn` tiers only.
+How the merchant's plan controls the number of custom domains they can attach, the difference between the two plan-feature keys (`domains` for standard-zone domains, `custom_hostname` for Cloudflare-for-SaaS CNAME-mode domains), the **"Other domains" usage chip** visible at the top of the page, and the PlanFeature modal that opens when the merchant tries to exceed their quota. Also documents which plans the admin lets buy CNAME slots.
 
 ## Where to find it
 
@@ -29,14 +29,14 @@ How the merchant's plan controls the number of custom domains they can attach, t
 
 - **See current usage** at a glance via the chip.
 - **Buy additional CNAME slots** through the PlanFeature modal's pack-checkout — uses the merchant's stored payment method on their plan subscription. On payment success the parent's `cnameFeature` ref is updated and the original action retries automatically.
-- **Upgrade plan** for cases where pack-purchase is not allowed (the `custom_hostname` whitelist below).
+- **Upgrade plan** when the admin does not offer CNAME slots on the current plan (below).
 
 ## Settings & fields
 
 | Mapping | Shape | What it controls |
 |---|---|---|
 | `domains` | Numeric quota | How many custom domains (Cloudflare-zone path) the merchant can attach beyond the default `*.cloudcart.net` subdomain. Adding a domain past the cap surfaces a plan-upgrade prompt or pack offer in the Add domain modal. Mapped to the platform code in the platform code (verify). |
-| `custom_hostname` | Numeric quota + access gate (cc-pro / unicorn only) | How many SaaS-mode Cloudflare Custom-Hostname domains the merchant can attach. Restricted via `plan.restrict.feature_purchase.custom_hostname` to the **`cc-pro`** and **`unicorn`** plans only — merchants on other plans cannot purchase additional `custom_hostname` slots even via the pack-checkout flow. the platform code is checked when activating the CNAME path on a domain; lower plans get HTTP 402 with `redirect_after_pay` to the upsell screen. Visible to the merchant as the **"Other domains" usage chip** in the page header. |
+| `custom_hostname` | Numeric quota | How many **Manage with CNAME** domains the store can attach, one slot each ([[settings-domains-external-dns]]). Activation checks the remaining allowance; with none left the server answers 402 and the admin opens the buy panel or an upgrade prompt (below). A slot stays used until its domain is removed. |
 
 ## Business rules
 
@@ -53,27 +53,21 @@ When the merchant tries to add a domain past the `domains` cap:
 
 This is the standard pack-checkout UX shared with [[settings-backups]] and other quota-extensible features. See [[plan-vs-feature-pack]].
 
-### `custom_hostname` whitelist — only `cc-pro` and `unicorn`
+### Which plans can buy CNAME slots
 
-The `custom_hostname` plan-feature is restricted via a hard whitelist to the **`cc-pro`** and **`unicorn`** plans only. Stores on other plans cannot purchase additional `custom_hostname` slots even via the pack-checkout flow — the platform refuses the purchase. The merchant sees a plan-upgrade prompt instead.
-
-Merchants on lower tiers wanting custom domains must:
-
-- Use the standard Cloudflare zone path (full nameserver delegation, not Custom Hostname) where their plan supports it, OR
-- Upgrade to cc-pro or unicorn.
+The server no longer limits buying by plan: that restriction was removed because the plans it listed had been retired. The admin offers the buy panel only on the plans `unicorn`, `cc-pro`, `cc-master` and `cc-pro-2` (the Activate Domain modal shows the badges **CC Pro**, **CC Master**, **Unicorn**). On any other plan, with no slot left, it shows *"Upgrade current plan"*: *"If you want to activate this domain using CNAME, you need to upgrade to anothen plan."* Slots the store already holds, including a pack sold from the Console on another plan, activate on any plan. How many slots each plan includes, and the price of a slot, are in the billing catalogue (verify).
 
 ### Activation modal Method 2 → `custom_hostname` check
 
-When the merchant clicks **Manage with CNAME** on the Activate Domain modal (Method 2 — see [[settings-domains-dns-cloudflare]]):
+When the merchant clicks **Manage with CNAME** ([[settings-domains-dns-cloudflare]]):
 
-1. The button emits `open-plan-feature` with feature key `custom_hostname`.
-2. The PlanFeature modal opens.
-3. If the merchant's plan permits pack purchase (cc-pro / unicorn) and the quota is exhausted, they can buy a slot.
-4. If the merchant's plan does NOT permit pack purchase (any plan outside the whitelist), the modal becomes a plan-upgrade prompt.
+1. With a slot left, the domain is attached at once.
+2. With none, on a plan above, the PlanFeature panel opens to buy slots; after payment the activation runs automatically.
+3. With none, on any other plan, the upgrade prompt opens.
 
-### Set-as-primary with exhausted cnameFeature
+### Manage DNS while the store has CNAME slots
 
-When the merchant tries to set as primary a domain that's running in Custom-Hostname mode while `cnameFeature` is exhausted, the ConfirmModal opens with the `manageDnsWithPaidCNAME` payload — routing to the PlanFeature panel instead of completing the primary switch. The merchant must resolve the quota issue before retrying. See [[settings-domains-primary]] for the other gates.
+When the store has CNAME slots, **Manage DNS** first shows *"IMPORTANT!"*: *"You are currently using a Custom Hostname for your domain settings. Switching to DNS Management will require you to use our Cloudflare infrastructure. This means you must change your nameservers to ours."*, then opens the DNS modal. **Set as primary** goes straight to the server checks ([[settings-domains-primary]]).
 
 ### PlanFeature modal — what the merchant sees
 
@@ -83,14 +77,14 @@ Standard plan-feature upsell modal — shows:
 - The per-slot price.
 - A **Buy** button.
 
-On payment success the parent's `cnameFeature` ref is updated and the original action (Activate / Set as primary / Add) retries automatically.
+On payment success the allowance is updated and the CNAME activation runs automatically.
 
 ### "Plan limit reached" error — what it means
 
 This error surfaces when:
 
 - The merchant has hit `domains` cap and pack purchase is being attempted.
-- The merchant has hit `custom_hostname` cap and they're outside the cc-pro / unicorn whitelist.
+- The merchant has no `custom_hostname` slot left on a plan that cannot buy them.
 
 Either upgrade the plan or buy an additional slot — see [[plan-gates]] for the general gating model and [[plan-features]] for the per-feature upsell screen.
 

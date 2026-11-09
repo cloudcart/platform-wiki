@@ -7,8 +7,8 @@ aliases: ["Banners and labels", "Product banners", "Product labels", "Image labe
 tags: [marketing, products, banners-labels]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 10
+updated: 2026-11-09
+source_count: 11
 ---
 # Banners & Labels
 
@@ -36,7 +36,7 @@ The top-right "Create new" button opens a modal that asks the merchant to choose
 
 - [[products-banners-labels-fields]] — the create / edit forms for banners (image) vs labels (text): fields, positions, hex-colour + date validation, sub-screen routes.
 - [[products-banners-labels-targeting]] — the conditions / record-type system (category / vendor / product / selection / discount / tag), auto-population on save, `ProductSaved` re-sync, bundle / draft / inactive exclusions, smart-collection sync.
-- [[products-banners-labels-scheduling]] — storefront visibility scope (`status` + `active_from` + `active_to`), daily auto-disable on expiry, `products_banners` plan gate, staff permissions, delete cleanup.
+- [[products-banners-labels-scheduling]] — storefront visibility scope (`status` + `active_from` + `active_to`), daily auto-disable on expiry, `discount_banner` / `discount_labels` plan gates, staff permissions, delete cleanup.
 
 ## What the merchant can do here
 
@@ -57,7 +57,7 @@ The badge definition splits across the three aspects:
 |--------|------------------------|
 | [[products-banners-labels-fields]] | `name`, `description`, `image` (banner), `color` / `text_color` (label), `position` (`tl` / `tr` / `bl` / `br`) |
 | [[products-banners-labels-targeting]] | `record_type` conditions (1-2 rows) + the auto-maintained product junction |
-| [[products-banners-labels-scheduling]] | `status`, `active_from`, `active_to`, `products_banners` plan gate |
+| [[products-banners-labels-scheduling]] | `status`, `active_from`, `active_to`, `discount_banner` / `discount_labels` plan gates |
 
 ## Business rules
 
@@ -68,7 +68,7 @@ The detailed, backend-verified rules live on the sub-pages. In brief:
 - **Visibility scope** — a badge shows only when `status = 1` AND `active_from` ≤ today AND `active_to` ≥ today, in the store timezone. See [[products-banners-labels-scheduling]].
 - **Auto-disable** — a daily 02:00 UTC job deactivates badges more than 6 hours past `active_to`. See [[products-banners-labels-scheduling]].
 - **Validation** — labels enforce `#RRGGBB` hex colours; `active_to` must be ≥ `active_from`. See [[products-banners-labels-fields]].
-- **Plan + permissions** — new banners need the `products_banners` plan feature; sidebar visibility needs `products` + `products.banners` (or `products.labels`) staff permissions. See [[products-banners-labels-scheduling]].
+- **Plan + permissions** — a native screen, no app; new banners are checked against `discount_banner`, new labels against `discount_labels`; a moderator needs the **Products** section permission. See [[products-banners-labels-scheduling]].
 - **No per-customer-group targeting** — every visitor sees the same badges. See [[products-banners-labels-targeting]].
 
 ## Related
@@ -83,5 +83,5 @@ The detailed, backend-verified rules live on the sub-pages. In brief:
 
 ## Open questions
 
-- How does the storefront handle two badges on the same position? Stacking order is theme-dependent. `(verify)`
+- Visual stacking of several badges is theme styling `(verify per theme)`; their page order and markup are on [[products-banners-labels-fields]].
 - Does the storefront cache the banner-to-product mapping? Stale view possible if so. `(verify)`

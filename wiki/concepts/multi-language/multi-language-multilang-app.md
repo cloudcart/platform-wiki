@@ -5,8 +5,8 @@ aliases: ["Multilang app overview", "Master sister sites", "Sister site", "Maste
 tags: [i18n, multi-language, apps, multilang, sister-site, concepts]
 plan_gates: [multilang_product_translate, multilang_product_copy]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[multi-language]]. See the hub for the other aspects (three layers, customer/order locale, translation engine, sister-site model, sync/fallback, SEO + switcher).
@@ -40,7 +40,7 @@ Not covered here:
 
 ## Contrasts
 
-- **Multilang vs [[apps-stores]]** — Multilang is "one catalog, many languages" — sister sites share the catalog with translations; the master is the canonical source. [[apps-stores]] is "many catalogs / many businesses" — independent stores with potentially different products. Different apps, different data models.
+- **Multilang vs [[apps-stores]]** — Multilang is "one source catalog, many languages" — each sister holds its own copy of the products, filled from the master by copy / translation; the master is the canonical source. [[apps-stores]] is "many catalogs / many businesses" — independent stores with potentially different products. Different apps, different data models.
 - **Cloudio AI vs Multilang translation** — Cloudio uses OpenAI (via the merchant's `cloudio_ai` token balance). Multilang uses Google Cloud Translation API v3 (via its own plan feature `multilang_product_translate`). The merchant's Cloudio tokens do **not** subsidise Multilang. See [[multi-language-translation-engine]] and [[apps-cloudio-overview]].
 - **Single store vs master+sister setup** — adding a single language to a CloudCart store doubles (or more) the billing footprint: each sister is a separate CloudCart site with its own plan subscription, its own paid apps, and its own SSL.
 

@@ -5,8 +5,8 @@ aliases: ["Variant pricing", "Per-Variant price", "Price override", "price_from 
 tags: [catalog, variants, parameters, options, concepts, pricing]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[variants-model]]. See the hub for the other aspects (Parameter, Option, matrix generation, inventory link, image mapping, known issues).
@@ -22,7 +22,7 @@ The parent Product also carries two **denormalised** fields recomputed on every 
 - `price_from` — min(Variant.price across this product's Variants).
 - `price_to` — max(Variant.price across this product's Variants).
 
-These are the "from / to" range the storefront shows on category cards when the customer hasn't picked a Variant yet. The `default_variant_id` — the Variant shown in the listing card's price box by default — is also auto-recomputed on price save: lowest price wins, ties broken by Variant ID (oldest / first-created wins). The merchant cannot pick it manually; to force a Variant to be the default, price it lower than all siblings (and raising the cheapest sibling's price can demote it). See [[variants-matrix-generation]] for the auto-recomputation chain.
+These are the "from / to" range the storefront shows on category cards when the customer hasn't picked a Variant yet. The `default_variant_id` — the Variant shown in the listing card's price box by default — is also auto-recomputed on price save: lowest price wins, ties broken by Variant ID (oldest / first-created wins). The merchant cannot pick it manually; to force a Variant to be the default, price it lower than all siblings. One exception: when all Variants share one price and at least two have different sale prices on the default Fixed discount, the one with the lowest sale price becomes the default (a tie goes to the oldest). See [[variants-matrix-generation]] for the auto-recomputation chain.
 
 Both `price` and `discount_price` are capped at 1,000,000,000 minor units — effectively unlimited for normal goods, but a guard against import-data overflow.
 
@@ -61,7 +61,7 @@ Per-Variant pricing surfaces on:
 - The Variants matrix on [[products-products]] — the merchant edits per-Variant `price`, `discount_price`, `delivery_price`, `weight`, `minimum` directly in the grid. Bulk-edit by selecting rows.
 - [[products-inventory]] — drill into per-Variant `quantity`; some price fields visible on the row.
 - The storefront product detail page — Variant price shown when the customer picks Options; `price_from` / `price_to` shown before any pick. Discounted Variants show the strikethrough price + the discounted price.
-- The storefront category page — each card shows the `default_variant_id`'s price (or `price_from` if the variant-aware listing mode is off).
+- The storefront category page — cards price the product from its Variants; a parameter's **Show each variant as a separate product in the product listing** setting gives each Variant its own card ([[products-variants-listing-toggle]]).
 - [[marketing-discounts]] — a Fixed discount sets a price per Variant. Other discounts target products, categories, vendors or smart collections and reach their Variants. Among the prices saved for a Variant, the lowest applies, see [[discount-stacking-evaluation-order]].
 - [[marketing-discounts-quantity]] — quantity-tier discounts work on per-Variant stock (e.g. a 5-for-4 deal on a specific Colour-Size evaluates against that Variant's cart quantity).
 

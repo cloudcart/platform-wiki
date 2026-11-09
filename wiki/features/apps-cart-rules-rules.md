@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Apps → Cart Rules → Rules"
+nav_path: "Marketing → Apps → Cart Rules → Rules"
 route_name: apps.cart-rules.settings
 route_path: /admin/apps/cart-rules/rules, /admin/apps/cart-rules/rules/:id
 aliases: ["Cart Rules list", "Rules list", "Rule editor", "Create cart rule"]
 tags: [apps, marketing, automation, rules-engine, list]
 plan_gates: ["cart_rules_total", "cart_rules_range", "cart_rules_conditions", "cart_rules_actions"]
 created: 2026-05-22
-updated: 2026-06-10
-source_count: 7
+updated: 2026-11-09
+source_count: 8
 ---
 
 # Cart Rules — list + editor (hub)
@@ -19,7 +19,7 @@ The **Rules** screen of the Cart Rules app is where the merchant manages every p
 
 ## Where to find it
 
-**Sidebar → Apps → Cart Rules → Rules tab.**
+**Sidebar → Marketing → Apps → Cart Rules** — the link opens the **Rules** tab. The **Cart rules** card under Marketing → Discounts → **Add discount** opens it too.
 
 Route: `/admin/apps/cart-rules/rules` (route name `apps.cart-rules.settings`). Create / edit child routes: `/admin/apps/cart-rules/rules/create/:type/:rule` (`apps.cart-rules.create`) and `/admin/apps/cart-rules/rules/:id` (`apps.cart-rules.edit`). API endpoints under `/admin/api/cart-rules/...`.
 
@@ -63,7 +63,7 @@ The detailed field reference lives on the aspect pages: editor sections + server
 The hub-level rules (full detail on the aspect pages):
 
 - **Drag-and-drop reorder + status toggle are instant** — no save step; sort order is normalized to 1, 2, 3, … on every drag. See [[apps-cart-rules-rules-list]].
-- **Date window applies BEFORE everything else**, and **Draft status (`status = 2`)** means the rule exists but never fires. See [[apps-cart-rules-rules-editor]].
+- **Date window applies BEFORE everything else.** The editor's switch sets only Active or Inactive; Draft exists in the data but cannot be set in the admin ([[cart-rules-known-issues]]).
 - **AI-generated rules pass schema validation by construction**; templates bypass the AI at zero token cost. See [[apps-cart-rules-rules-ai]].
 - **Four independent plan-tier limits gate the feature**, read live on every save. See [[apps-cart-rules-rules-plan-limits]].
 - **Soft-delete keeps the rule's data** but stops it firing; recovery requires support. See [[apps-cart-rules-rules-list]].

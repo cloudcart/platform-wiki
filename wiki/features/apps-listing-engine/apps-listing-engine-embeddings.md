@@ -7,8 +7,8 @@ aliases: ["Listing Engine embeddings", "e5-small", "Embedding model", "Embedding
 tags: [apps, search, infrastructure, the search index, embeddings]
 plan_gates: ["advanced_search_ai_semantic_search"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[apps-listing-engine]]. See the hub for the other aspects (statistics, re-indexing).
@@ -72,7 +72,7 @@ The standard search driver implements lexical / property-based filtering (keywor
 
 ### Embedding tokens are tracked, not billed per token
 
-Each entity's text fields (name, description) are passed through the embedding service, and token consumption is tracked centrally as an internal usage metric — NOT a per-token charge the merchant pays. Tokens consumed during re-indexing or query embedding do not translate to a separate line item; high token usage simply indicates many text changes flowing through the index.
+Each variant gets one embedding, made from one text: the product name, its brand, its category paths, its property pairs (*"Material: Cotton"*: property and value names, for active properties of the main category), the brands and models it fits ([[brand-model]], when installed), the variant's parameters (*"Size: M"*) and the first 1,000 characters of the product description. Nothing else is embedded: not the short description, tags, or a property value's own description and SEO fields ([[products-property-values]]). The embedding is remade only when that text changes. Token consumption is tracked centrally as an internal usage metric — NOT a per-token charge the merchant pays. Tokens consumed during re-indexing or query embedding do not translate to a separate line item; high token usage simply indicates many text changes flowing through the index.
 
 The `advanced_search_ai_semantic_search` plan-feature **mapping exists** (it is created with the Advanced Search app), but as of this revision its **access-enforcement checks are commented out in code** — every the platform code gate is currently disabled. So AI Semantic Search is **not actually plan-gated at present**: availability is driven by the deployment driver + embeddings being enabled + the merchant's toggle (below), not the plan flag. The mapping may be re-activated later, but documenting it as a live gate would be inaccurate today. (verify whether the gate gets re-enabled in a future release.)
 

@@ -4,8 +4,8 @@ nav_path: "Entity → Blog Article → Lifecycle"
 aliases: ["Blog Article lifecycle", "Blog Article states", "Article draft", "Article scheduled", "Article published", "Article deleted", "Scheduled publish", "Article publish_date", "Article auto-publish"]
 tags: [entity, blog, marketing, content, lifecycle, status, scheduling]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[blog-article]]. See the hub for the other aspects (data model, business rules, storefront & modules, programmatic access).
@@ -37,7 +37,7 @@ A Blog Article moves through these merchant-controlled states:
 Save-time transitions worth noting:
 
 - Saving an article re-renders any cached category / tag feeds it appears in.
-- Slug changes auto-create an SEO redirect entry from the old slug to the new one (see [[blog-article-entity-business-rules]] for the full slug rule).
+- Slug changes keep the old slug in a hidden 30-day history; no entry is added on the 301 Redirects screen (see [[blog-article-entity-business-rules]]).
 - The first publish (`active` flips from `no` to `yes`) sets `published_at` to now unless the merchant supplied a future time.
 
 ## Scheduled publish

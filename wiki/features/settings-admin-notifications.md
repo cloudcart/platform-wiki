@@ -7,8 +7,8 @@ aliases: ["Admin notifications", "Email notifications to admins", "Извест�
 tags: [settings, notifications, email]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-06-10
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 # Notifications to administrators
 
@@ -42,7 +42,7 @@ The merchant cannot:
 
 This feature is split into 7 aspect pages. Each is small enough that the Assistant can read just the relevant one to answer a question.
 
-- [[admin-notifications-master-switch]] — the master toggle, its two different defaults (display vs dispatch), and the "flip-once" guidance for new merchants.
+- [[admin-notifications-master-switch]] — the master toggle; it defaults to ON, both on screen and when sending.
 - [[admin-notifications-per-type-toggles]] — the 14 toggleable rows, the `mail_<label>` setting keys, per-type defaults, and the hidden 18th notification (`product_review_added`).
 - [[admin-notifications-mandatory-three]] — `email_confirmation`, `two_factor_action`, `alert_notification` and the three enforcement layers (UI / API / helper bypass) that keep them always-on.
 - [[admin-notifications-recipient-routing]] — `site_email` as default recipient for 15 of 17 types; the two exceptions; sender = CloudCart-branded From; single-recipient model with no per-administrator copies.
@@ -83,7 +83,7 @@ The detailed business rules are distributed across the sub-pages; this list maps
 - Saves are immediate; no draft / cancel — see [[admin-notifications-master-switch]] + [[admin-notifications-per-type-toggles]].
 - Settings cache invalidation is immediate on save — see [[admin-notifications-delivery-queue]].
 - Permission gate uses `settings.general`, not a dedicated permission — see [[admin-notifications-permissions-locale]].
-- Master toggle has two different defaults in code (display path vs dispatch path) — see [[admin-notifications-master-switch]].
+- Master toggle defaults to ON when never saved — see [[admin-notifications-master-switch]].
 
 ## Related
 

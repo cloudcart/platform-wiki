@@ -3,12 +3,12 @@ type: feature
 nav_path: "Products → Banners Labels → Scheduling & status"
 route_name: product-banners.list
 route_path: /admin/products/banners-labels
-aliases: ["Banner scheduling", "Label scheduling", "Active from active to", "Banner expiry", "Auto-disable banner", "Banner status", "Banner permissions", "Plan gate products_banners", "График на банер", "Активен от до"]
+aliases: ["Banner scheduling", "Label scheduling", "Active from active to", "Banner expiry", "Auto-disable banner", "Banner status", "Banner permissions", "Plan gate discount_banner", "Plan gate discount_labels", "График на банер", "Активен от до"]
 tags: [marketing, products, banners-labels]
-plan_gates: [products_banners]
+plan_gates: [discount_banner, discount_labels]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 10
+updated: 2026-11-09
+source_count: 11
 ---
 
 > Part of [[products-banners-labels]]. See the hub for the other aspects (fields & forms, targeting / auto-population).
@@ -65,13 +65,15 @@ A scheduled job runs **daily at 02:00 UTC**:
 
 So after a badge expires it stays in the catalog but auto-deactivates the next morning — the merchant doesn't have to remember to turn it off. To reuse it, edit `active_to` to a future date and re-toggle Active.
 
-### Plan feature: `products_banners`
+### Plan features: `discount_banner` and `discount_labels`
 
-Creating a **new banner** is gated by the plan feature `products_banners`, mapped to a feature-usage check on the create route. Plans without the feature get a paywall on the create button. Labels do not carry the same plan gate in the same way — they may be available on lower tiers. `(verify)`
+The screen is native: no app needs installing. Creating a **banner** is checked against the plan feature `discount_banner` and creating a **label** against `discount_labels` (an on / off feature or a count, per plan; no value means no limit). A plan without room refuses the save. Editing, switching and deleting existing ones are not checked.
+
+The Admin GraphQL API's banner and label operations are stricter: they answer *"Product Labels app is not installed."* (or the banner equivalent) unless an app of that name is installed on the store (verify).
 
 ### Permissions
 
-The banners sidebar entry requires both `products` **AND** `products.banners` staff permissions. Labels require `products` **AND** `products.labels`. Moderators without these sections can't see or edit the page.
+The sidebar entry and the screen's actions open for a moderator holding the **Products** section permission (or a `products.banners` / `products.labels` key). The moderator permission tree has no separate Banners or Labels entry, so in practice a moderator needs the whole Products section.
 
 ### Delete: deactivate and clean up
 

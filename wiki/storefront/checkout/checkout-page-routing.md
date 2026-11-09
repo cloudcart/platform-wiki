@@ -5,8 +5,8 @@ route_path: /checkout
 themes_using: [all]
 tags: [storefront, checkout, routing, middleware, plan-gate]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 
 > Part of [[checkout]]. See the hub for the other aspects (steps & layout, submit & payment handoff, JavaScript hooks, merchant customisation).
@@ -95,7 +95,7 @@ The full settings catalogue (layout, billing, maps, defaults) is on [[checkout-p
 
 - **`max_quantity_reached` and `has_minimum_stock` bounce back to cart** — if a cart line becomes invalid between cart and checkout (e.g. another buyer ate the last unit), the customer is bounced back. By design.
 - **Crawlers get 404** — the `cart_checkout` middleware rejects crawler requests with `noindex`. Checkout is uncrawlable.
-- **`site.sandbox` middleware on payment submit** — in sandbox mode, real payment submits are blocked; only test cards work. By design.
+- **`site.sandbox` middleware on payment submit** — before Go live, only an order with the owner's login email goes through ([[site-entity-lifecycle]]). By design.
 - **Plan-gate** — sandbox / trial plans without `checkout` enabled cannot reach this page. By design.
 - **Checkout opens in a side panel from `/cart`** — clicking "Continue to checkout" on the cart page can open the checkout as a slide-over panel (history-pushed). Hitting back lands on the cart. By design.
 

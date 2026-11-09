@@ -7,8 +7,8 @@ aliases: ["Elastic Email sub-account", "Email channel master account", "account_
 tags: [marketing, channels, email, elastic-email, sub-account, credentials, reset]
 plan_gates: ["campaign.channel.email"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-channels-email]]. See the hub for the other aspects (setup wizard, DNS records, webhook feedback, send pipeline, suspend thresholds, settings pane).
@@ -22,13 +22,14 @@ CloudCart owns the relationship with Elastic Email centrally — merchants do **
 ## Where to find it
 
 - **Sub-account provisioning** happens transparently during Step 2 of the [[email-channel-setup-wizard]] (Domain selection). The merchant never sees their `account_token`.
-- **Reset configuration** is exposed as an auto-injected button on the **Reputation** panel of the Email channel card — visible only when an `expired` error fires from a reputation check.
+- **Reconnect** and **Reset configuration** appear on the Email card when Elastic Email rejects the store's key — see [[email-channel-reconnect]].
 
 ## What the merchant can do here
 
 - (Transparently) Have the sub-account provisioned on first domain pick — no merchant action required.
 - View live reputation / spam% / bounce% / open% / click% — values that come from the sub-account via `Account.LoadReputationImpact` (see [[email-channel-suspend-thresholds]]).
-- **Reset configuration** — nuclear wipe of the entire Elastic Email binding, when prompted by an `expired` error. Confirmation prompt: *"Are you sure?"* (via `data-confirm`).
+- **Reconnect** — the non-destructive repair for a rejected key — see [[email-channel-reconnect]].
+- **Reset configuration** — nuclear wipe of the entire Elastic Email binding; only when Reconnect fails. Confirmation prompt: *"Are you sure?"* (via `data-confirm`).
 
 ## Settings & fields
 
@@ -36,9 +37,9 @@ CloudCart owns the relationship with Elastic Email centrally — merchants do **
 
 | Setting | Stored value | What it does |
 |---|---|---|
-| `account_email` | `{primary-host}@cloudcart.net` (or development pendant) | Sub-account email — auto-generated, NOT the merchant's own email. |
+| `account_email` | `{service-name}@cloudcart.net` (or development pendant) | Sub-account email — auto-generated, NOT the merchant's own email. |
 | `account_password` | 32-char random string | Sub-account password. |
-| `account_token` | Elastic Email sub-account API key | Auth header on every Elastic Email API call. |
+| `account_token` | Elastic Email sub-account API key (the platform's permanent key — see [[email-channel-reconnect]]) | Auth header on every Elastic Email API call. |
 
 Hard-coded API base URL (`EmailChannelManager`):
 
@@ -50,6 +51,7 @@ Hard-coded API base URL (`EmailChannelManager`):
 
 | Action | Route | Effect |
 |---|---|---|
+| Reconnect | `campaigns.channels.channel.reconnect` | Re-issues the key in place; nothing else changes. |
 | Reset configuration | `campaigns.channels.channel.reset` | Wipes the credentials triple + verify / domain / configured settings. |
 
 ## Business rules
@@ -58,9 +60,9 @@ Hard-coded API base URL (`EmailChannelManager`):
 
 The merchant doesn't pay Elastic Email directly. CloudCart bills the merchant via the plan-cap `campaign.channel.email`. The 80%-plan-cap pre-emit fires before a campaign send if the merchant is approaching the cap — see [[email-channel-send-pipeline]].
 
-### Sub-account email uses a host-based convention, not the merchant's email
+### Sub-account email uses the store's service name, not the merchant's email
 
-The Elastic Email sub-account email is auto-generated as `{primary-host}@cloudcart.net`. The password is a 32-char random string. The merchant never enters either value. If a sub-account for that email already exists in CloudCart's master Elastic Email account, the platform pulls the existing API key + force-resets the password. Otherwise it creates a new sub-account in the `Campaigns` package.
+The Elastic Email sub-account email is auto-generated as `{service-name}@cloudcart.net`, from the store's own `*.cloudcart.net` address (service address `broshka.cloudcart.net` → `broshka@cloudcart.net`), never from its custom domain. Once stored, the address wins over the derived one. The password is a 32-char random string. The merchant never enters either value. If a sub-account for that email already exists in CloudCart's master Elastic Email account, the platform pulls the existing API key + force-resets the password. Otherwise it creates a new sub-account in the `Campaigns` package.
 
 ### Credentials are persisted twice for recovery
 
@@ -79,9 +81,9 @@ Per-store sub-accounts mean: one merchant's bad sending behaviour does not pollu
 
 The Reset path removes all per-channel settings **EXCEPT** `unconfirmed_send` and `manual_allowed_suspended` — those persist across a reset so a merchant's send-to-unverified preference and a support-granted override don't get wiped by accident. All other settings (`account_token`, `account_email`, `account_password`, `firstName`, `domain`, `verify`, `email`, `send_email`, `configured`) are removed and the merchant restarts from Step 1 of [[email-channel-setup-wizard]].
 
-### Reputation panel auto-injects the Reset button on `expired` errors
+### A rejected key offers Reconnect first, the reset second
 
-When `getLinks` is called and reputation is fetched, any thrown exception whose message contains "expired" (case-insensitive) injects an extra **Reset configuration** action button into the channel's `actions` set with a `data-confirm` confirmation. This is how the merchant discovers their sub-account credentials have expired — they see a clear "Reset configuration" call-to-action instead of a raw API error.
+When loading the card's live check against Elastic Email fails with an "expired" error, the card gets two actions: **Reconnect**, which re-issues the key in place and keeps the domain, and the **Reset configuration** wipe, which costs a full domain re-verification. Campaigns cannot send until one of them is done — see [[email-channel-reconnect]].
 
 ### The sender domain belongs to the merchant, not the sub-account
 
@@ -96,6 +98,7 @@ If the merchant adds a new domain to the store later but wants to send from it, 
 - [[email-channel-dns-records]] — the sender domain attached to the sub-account.
 - [[email-channel-suspend-thresholds]] — reputation reads use the sub-account's API key.
 - [[email-channel-send-pipeline]] — every send goes through `API_URL` with the sub-account `account_token`.
+- [[email-channel-reconnect]] — a rejected key and the Reconnect repair.
 - [[settings-domains]] — sender domains are merchant-owned, attached to this sub-account.
 - [[marketing-channels]] — multi-channel framework.
 

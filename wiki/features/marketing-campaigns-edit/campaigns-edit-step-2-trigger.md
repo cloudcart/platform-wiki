@@ -7,8 +7,8 @@ aliases: ["Campaign trigger", "Campaign segment", "Trigger condition", "Subscrib
 tags: [marketing, campaigns, edit, segments, step-2]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[marketing-campaigns-edit]]. See the hub for the other aspects (main settings, actions, conditions, exit, message modals, launch flow, validation rules).
@@ -19,7 +19,10 @@ source_count: 1
 
 Step 2 picks the audience. For Regular campaigns it's a single segment — the audience that receives the campaign at launch. For Automated campaigns it's the **trigger** — subscribers enter (or leave) the campaign as they move in / out of the segment. The card is titled *"Trigger"* with a description that varies by type (*"Choose a segment for this campaign"* for Regular, *"Trigger campaign when a customer."* for Automated).
 
-The card includes a live **Subscribers count chip** that estimates how many subscribers are eligible for this campaign's channels (intersection of segment, channel marketing flag, not-bounced, not-unsubscribed).
+The card includes a live **Subscribers count chip**. What it counts depends on the type:
+
+- **Regular** — segment members reachable on the campaign's channels (marketing on, not bounced, not unsubscribed on that channel; for Email also verified when *"Sending emails to unverified subscribers"* is OFF).
+- **Automated** — segment members with **any** marketable channel, so it can be far higher than the number who will actually receive the message (enrolment filters by the step's channel — see [[campaigns-subscribers-enrolment]]).
 
 ## Where to find it
 
@@ -54,6 +57,8 @@ Second box on the **Edit campaign** screen ([[marketing-campaigns-edit]]). Laid 
 
 **`makes_an_order` and `is_in_segment` are NOT `trigger_condition` values.** `makes_an_order` is the campaign's exit setting (`purpose`) on Step 5, which decides when a subscriber leaves, not when they join — see [[campaigns-edit-exit-and-tagging]]. `is_in_segment` ("Is in segment") survives only as a legacy display label and is not a value the modern editor saves.
 
+**No catalogue-event triggers.** An Automated campaign starts only when a subscriber gets into or out of a segment. Segments describe subscribers (what they ordered, viewed, put on a wish list or subscribed to), so nothing starts a campaign because a product was added to the catalogue or its price fell. The closest native routes are a Regular campaign announcing new products, and an Automated campaign on the segment condition *"Subscribed for product availability, and which are already available"* ([[products-missing-product]]).
+
 ### Inline segment-create flow
 
 Below the row, when not read-only, the **Create segment** link opens the **Segment add modal** (`MarketingSegmentAddModal`) → segment-type chooser → **Segment create/edit modal** (`MarketingSegmentCreateOrEditModal`) inline.
@@ -64,7 +69,7 @@ On segment-created success, the new segment is automatically selected into `form
 
 The count chip's data comes from `apiMarketingCampaigns.triggerSegmentCount` (`GET /admin/api/core/marketing/campaigns/set-segment/{campaign}/{segment}/0`). The response has:
 
-- `customers_count` (string) — the deliverable subscribers count.
+- `customers_count` (string) — the count described above (channel-filtered for Regular, any-channel for Automated).
 - `processing` (boolean) — true while the segment is still being filtered server-side.
 
 The query auto-refetches on segment change and skips `refetchOnWindowFocus`. The "Your subscribers are currently being filtered" spinner is shown while `processing=true`.

@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Dynamic Pages → Page-builder modules → CloudCart form"
+nav_path: "Design → Static pages → Dynamic page → Page-builder modules → CloudCart form"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["CloudCart form module", "CC form block", "Form embed block", "Subscriber form embed", "Модул форма CloudCart"]
 tags: [design, modules, page-builder, forms, marketing, subscribers]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # CloudCart form block (`cc_form`)

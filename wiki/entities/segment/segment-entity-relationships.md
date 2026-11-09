@@ -5,8 +5,8 @@ aliases: ["Segment relationships", "Segment and Campaign", "Segment and Subscrib
 tags: [entity, marketing, segments, relationships, plan-gates]
 plan_gates: ["segments"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 
 > Part of [[segment]]. See the hub for the other aspects (attributes schema, types, lifecycle, membership, API access).
@@ -15,7 +15,7 @@ source_count: 4
 
 ## Identity
 
-A [[segment|Segment]] sits at the centre of the marketing graph: it has a membership of [[subscriber|Subscribers]], it is targeted by [[campaign|Campaigns]] and [[discount|Discounts]], and it reads through [[customer|Customer]] data for order-based conditions. This page maps each relation, the deletion-blocked-by-campaigns rule, the cached counts, and the `segments` plan cap.
+A [[segment|Segment]] sits at the centre of the marketing graph: it has a membership of [[subscriber|Subscribers]], it is targeted by [[campaign|Campaigns]], and it reads through [[customer|Customer]] data for order-based conditions. This page maps each relation, the deletion-blocked-by-campaigns rule, the cached counts, and the `segments` plan cap.
 
 ## Aliases
 
@@ -36,7 +36,8 @@ A Segment:
 A Segment is targeted by:
 
 - [[campaign|Campaigns]] (`campaign.segment_id`) — the campaign send list.
-- [[discount|Discounts]] where the merchant restricts a discount to a specific Segment.
+
+Nothing else targets a segment: [[discount|Discounts]] and Cart Rules are limited by customer group, not segment.
 
 ### Deletion is blocked by attached campaigns
 
@@ -59,7 +60,7 @@ The cap counts **ALL** Segments — active AND inactive. There is no distinction
 
 - [[marketing-segments]] — the list showing `subscribers_count`, `campaigns_count`, and the deletion-blocked message.
 - [[marketing-campaigns]] — campaign creation picks a Segment; this is what populates `campaigns_count`.
-- [[marketing-discounts]] — discount restriction to a Segment.
+- [[marketing-discounts]] — read by the segment's Discount condition (orders that used a discount).
 - [[marketing-segments-log]] — rebuild-log relation.
 
 ## Related
@@ -70,7 +71,7 @@ The cap counts **ALL** Segments — active AND inactive. There is no distinction
 - [[subscriber]] — the membership; M2M via `segment_subscribers`.
 - [[campaign]] — every Campaign targets exactly one Segment; attached campaigns block deletion.
 - [[customer]] — order-based conditions read through the Customer record.
-- [[discount]] — Discounts can be restricted to a Segment.
+- [[discount]] — read by the segment's Discount condition; discounts cannot be restricted to a segment.
 
 ### Cross-cutting concepts
 

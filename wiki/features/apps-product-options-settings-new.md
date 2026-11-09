@@ -7,8 +7,8 @@ aliases: ["Product Options Settings (modern)", "Options settings new", "no enabl
 tags: [apps, administration, product-options, settings, modern-vue]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 # Product Options → Settings (modern Vue)
 
@@ -70,7 +70,7 @@ The platform validates the option's `type` to be ONE OF:
 - `textarea` — multi-line text input.
 - `file` — file upload, under the store's limits: up to 25 MB; pdf, doc, jpeg, jpg, png, gif, tiff, zip, rar. Through the Storefront API see [[headless-cart-rules]].
 - `length` — length-with-unit input.
-- `weight` — weight-with-unit input.
+- `weight` — weight-with-unit input; accepted by the platform but not offered in the form.
 - `square` — area / square measurement.
 - `image` — image-based option (e.g., colour swatch with thumbnail).
 
@@ -112,6 +112,6 @@ The sort order is changed via `POST /api/product-options/sort` (not as part of t
 
 Each option has an active/inactive status, toggled via `GET /api/product-options/status/{status_id}/{status?}`. So merchants can disable an option temporarily without deleting it (preserving any historical orders that referenced it).
 
-### Modern Vue route falls back to a redirect controller
+### The old address redirects
 
-The modern route `/admin/product-options/{any?}` actually redirects via the platform code rather than serving a Vue page directly. The Vue app is reached after the redirect resolves. This is a transitional pattern — the URL works, but internal navigation flows through a redirect layer.
+The old address `/admin/product-options/...` serves no page: any path under it redirects to the options list (verify that it lands on `/admin/products/options`). Give merchants `/admin/products/options` directly.

@@ -5,8 +5,8 @@ route_path: /contacts/{product_url_handle?}
 themes_using: [all]
 tags: [storefront, contacts, forms, recaptcha]
 created: 2026-06-08
-updated: 2026-06-08
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Contacts page (storefront)
@@ -48,7 +48,7 @@ Always-visible fields:
 - `subject` (required text).
 - `message` (required textarea).
 - GDPR acceptances block (per the `gdpr_form='contacts'` configuration).
-- Google reCAPTCHA v3 hidden field (the platform code) — see **apps-google-recaptcha-v3** / [[settings-general]] for the global key configuration.
+- Google reCAPTCHA v3 hidden field (the platform code) — invisible, with the platform's own keys and always on; the merchant has no CAPTCHA setting ([[seo-ai-visibility]]).
 - Submit button labelled `sf.global.act.send`.
 
 Logged-in customers skip the name / e-mail / phone fields — those identity values are pulled from the account.
@@ -60,7 +60,8 @@ Logged-in customers skip the name / e-mail / phone fields — those identity val
 - **reCAPTCHA v3** — the hidden `g-recaptcha-response` token is regenerated on every submit attempt; on success/error the script replaces `#contact_us_id` and calls `onloadCallback` to refresh the token.
 - **GDPR** — `gdpr_policy_acceptances` middleware enforces the consent boxes when the store has GDPR policies configured.
 - **Product-context contact** — when the URL includes `/contacts/{product_url_handle}`, hidden fields `requested_product_id` and `requested_variant_id` are added so the merchant sees which item triggered the question.
-- The e-mail is sent to the merchant's configured `site_email` (verify exact setting key — typically configured under [[settings-general]] / store contact settings).
+- **Where it goes.** Each submission is sent as the **Contact request** admin notification (`contact`) to the store email, `site_email` ([[settings-general]] → Store Details → Email). The visitor's name is the sender name and their address the Reply-To, so replying answers the visitor. It is not sent when that notification or the admin-notifications master switch is off ([[settings-admin-notifications]]).
+- **Nothing is kept in the admin.** The message is not saved anywhere in the admin panel and raises no alert at the bell; the email is the only copy. The sender's email is added to [[marketing-subscribers]] (source: contact form) when the store uses the Email channel; marketing consent is set only if they gave it on the form.
 
 ## JavaScript behaviour
 
@@ -77,8 +78,8 @@ Logged-in customers skip the name / e-mail / phone fields — those identity val
 - **Google Map module** — enable / disable, set address pin and zoom (uses the merchant's Google Maps key).
 - **show_form / show_custom_information / page_text** — three settings on the module; control which sections render.
 - **GDPR text** — managed under the GDPR / legal policies area (see [[settings-general]] — verify exact location).
-- **reCAPTCHA keys** — global per store under integration settings.
-- **`site_email` recipient** — where submissions land; configurable in store / general settings.
+- **reCAPTCHA** — nothing to configure: the keys are the platform's own and the check is always on.
+- **`site_email` recipient** — where submissions land; one store-wide address, set under [[settings-general]].
 
 ## Theme variations
 
@@ -98,13 +99,10 @@ Logged-in customers skip the name / e-mail / phone fields — those identity val
 ## Related
 
 - [[settings-general]]
-- **apps-google-recaptcha-v3**
 - [[storefront-architecture]]
 - [[storefront-known-issues]]
 
 ## Open questions
 
-- Confirm exact controller class path (`Site\the platform code`) and the `send` method's e-mail dispatch destination.
 - Confirm the storefront module key/path the merchant uses to edit `show_form` / `page_text` / `show_custom_information` (likely under Theme Editor → Pages → Contacts — verify).
 - Confirm whether `gdpr_policy_acceptances` blocks the request entirely or returns a structured validation error for the AJAX submit.
-- Confirm whether reCAPTCHA v3 is mandatory or only enforced when the merchant has configured site keys.

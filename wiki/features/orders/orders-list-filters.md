@@ -7,8 +7,8 @@ aliases: ["Orders list filters", "Order filter bar", "Order list filter operator
 tags: [orders, list, filters, operators, search, saved-filters, url-encoding, smarty]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 > Part of [[orders]]. See the hub for the other aspects (columns, bulk actions, status taxonomy, default visibility, export, locking).
@@ -60,7 +60,7 @@ This is the right answer to *"I run the same filter every morning"* — no need 
 - **Shipping provider** — Is / Is not + autocomplete from configured shipping integrations.
 
 **Customer:**
-- **Customer** — Autocomplete from the customer list.
+- **Customer** — one customer, picked by autocomplete; no operator: `filters[customer]=<customer id>`. The *(N)* link in the Order column opens it ([[orders-list-columns]]).
 - **Customer group** — Autocomplete from customer groups.
 
 **Discounts:**
@@ -96,7 +96,7 @@ The filter operators in the URL query string are numeric codes, NOT free text:
 
 | Operator | Numeric code | Used by filters |
 |---|---|---|
-| Is | 1 | status, payment status, payment provider, shipping provider, customer, products |
+| Is | 1 | status, payment status, payment provider, shipping provider, products |
 | Is not | 2 | same as above |
 | Less than | 3 | order total |
 | More than | 4 | order total |
@@ -106,11 +106,11 @@ The filter operators in the URL query string are numeric codes, NOT free text:
 | After | 3 | date added |
 | From-To range | 4 | date added (with separate `value[from]` + `value[to]`) |
 
-Yes / No flag filters use string values: `yes` / `no` / `1` / `0` depending on the filter (Fast order uses 1/0, Archived uses yes/no, Draft uses yes-only, Created-by-admin uses yes-only).
+Yes / No flags: Fast order uses 1/0, Archived yes/no, Draft and Created-by-admin yes only.
 
 ### Filter URL conventions
 
-All filters serialize into the URL as `filters[<key>][operator]=<code>&filters[<key>][value]=<value>`. Multi-value filters (autocomplete) post their selected ID(s) into `filters[<key>][value]`. Date-range filters use the bracket form `filters[dateAdded][value][from]` + `filters[dateAdded][value][to]`. The merchant CAN share the URL with another admin to reproduce the same view. Appending `?filter_reset` clears the remembered filters (see below).
+Filters with an operator serialize as `filters[<key>][operator]=<code>&filters[<key>][value]=<value>`; Customer is the plain `filters[customer]=<id>`. Date-range filters use the bracket form `filters[dateAdded][value][from]` + `filters[dateAdded][value][to]`. A shared URL reproduces the view; `?filter_reset` clears the remembered filters.
 
 ## Settings & fields
 

@@ -7,8 +7,8 @@ aliases: ["What notify_customer suppresses", "Notification suppression scope", "
 tags: [orders, notification, customer, email]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-08-06
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[orders-notify-customer]]. See the hub for the other aspects (the toggle, send-URL flow, manual re-send).
@@ -37,11 +37,10 @@ The merchant reasons about a single order's outbound emails:
 The flag gates these automated customer emails:
 - **Status change** — every transition that has a notification template configured in [[settings-statuses]].
 - **Product fulfillment** — fires when the courier confirms dispatch.
-- **Files download link** for NON-digital orders.
 
 ### What it does NOT suppress
 
-- **Digital download link on paid / completed.** For orders containing DIGITAL products that transition to `paid` or `completed`, the platform STILL sends the file-download-link email even when `notify_customer = no` — the customer needs the link to access what they paid for. This is the only non-suppressible automated path.
+- **Digital download link on paid / completed.** For orders containing DIGITAL products that transition to `paid` or `completed`, the platform STILL sends the file-download-link email even when `notify_customer = no` — the customer needs the link to access what they paid for. An order without a digital product never gets this email. This is the only non-suppressible automated path.
 - **Explicit merchant sends.** Manually-triggered invoice / credit-note / receipt sends are direct merchant actions and proceed regardless of the flag. See [[orders-notify-customer-resend]].
 
 ### Channels — email only

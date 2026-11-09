@@ -1,33 +1,33 @@
 ---
 type: feature
-nav_path: "Apps → Cart Rules"
+nav_path: "Marketing → Apps → Cart Rules"
 route_name: apps.cart-rules.overview
 route_path: /admin/apps/cart-rules
-aliases: ["Cart Rules", "Cart rules engine", "Conditional discounts", "Trigger-action rules", "Касови правила", "Маркетингови правила", "no enable disable button", "app has no active toggle"]
+aliases: ["Cart Rules", "Aura Cart Rules", "Правила за количката", "Cart rules engine", "Conditional discounts", "Trigger-action rules", "Касови правила", "Маркетингови правила", "no enable disable button", "app has no active toggle"]
 tags: [apps, marketing, automation, rules-engine, discounts]
 plan_gates: ["cart_rules_total", "cart_rules_range", "cart_rules_conditions", "cart_rules_actions"]
 created: 2026-05-22
-updated: 2026-11-04
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 
 # Cart Rules
 
 ## Purpose
 
-**Cart Rules** is the merchant's most powerful marketing-automation tool — a **trigger-and-action rules engine** that runs against every cart at checkout. It is far more capable than simple [[marketing-discounts]] (one discount, one condition). Cart Rules let the merchant declare composite conditional promotions — e.g. *"10% off when the cart has 3+ items from Vendor X AND total > 50 EUR"*, *"Buy 5, get the cheapest free"*, or tiered stacked deals.
+**Cart Rules** (marketed as **Aura Cart Rules**) is a **trigger-and-action rules engine** that runs against every cart. Unlike simple [[marketing-discounts]] (one discount, one condition), it declares composite promotions — e.g. *"10% off when the cart has 3+ items from Vendor X AND total > 50 EUR"*, *"Buy 5, get the cheapest free"*, or tiered deals.
 
-One rule can hold **multiple distinct deals** (called "rows"). Every cart at checkout passes through every active rule in **priority order** (sort order, descending). Matching rules **partially stack** — product-level matches accumulate on the targeted lines; cart-level matches are winner-takes-all (only the single highest-`value` cart-level match applies). Each row can show a **custom checkout message** to motivate the customer (*"Add 6 EUR more for free shipping"*) — it is customer-facing and shows on the cart and at checkout, so it is worth filling in on every rule as a built-in upsell (see [[apps-cart-rules-rules-editor]] for the guidance).
+One rule can hold **multiple distinct deals** (called "rows"). Every cart at checkout passes through every active rule in **priority order** (sort order, descending). Matching rules **partially stack** — product-level matches accumulate on the targeted lines; cart-level matches are winner-takes-all (only the single highest-`value` cart-level match applies). Each row can carry a **customer message** (*"Add 6 EUR more for free shipping"*): a dashed box in the cart and the checkout summary, shown while the shopper has **not** reached that row — see [[cart-rules-stacking]] for exactly when it shows and [[apps-cart-rules-rules-editor]] for hiding it.
 
 > This page is the **hub**. It defines what Cart Rules is, then points to focused aspect pages for every dimension. For deep dives, follow the wikilinks below — the body here does not repeat them.
 
-> **No on/off control — this app has no "active / inactive" state.** Once it is installed it simply works; there is no Enable / Disable button and no "Activate application" switch on its screen. So *"the app is disabled"* is never the explanation for it not working — check its own settings, credentials, or plan access instead, and use **Uninstall** if the merchant genuinely wants it off.
+> **No on/off control.** Once installed, the engine runs; its screen has no Enable / Disable switch. The installed-apps list may still show Cart Rules as **inactive**: that list reads the app record's on/off flag, which installing sets to off and which an app without a switch never changes. So *"the app is inactive"* never explains a rule not applying — check the rule itself, and use **Uninstall** to turn the app off.
 >
-> What *can* be switched off is an individual **rule** — every cart rule has its own Active / Inactive / Draft status and its own date window, see [[cart-rules-cooldowns]].
+> What *can* be switched off is an individual **rule** — every cart rule has its own Active / Inactive switch and its own date window, see [[cart-rules-cooldowns]].
 
 ## Where to find it
 
-**Sidebar → Apps → Cart Rules.** The Overview lives at `/admin/apps/cart-rules` (route `apps.cart-rules.overview`); the rules list + editor lives at `/admin/apps/cart-rules/rules` (route `apps.cart-rules.settings`) — see [[apps-cart-rules-rules]] for the list/editor UI specifics. Routes are namespaced under `apps.cart-rules.*` (overview / settings / create / edit). Admin API endpoints are at `/admin/api/cart-rules/...`.
+**Sidebar → Marketing → Apps → Cart Rules** (the link, marked with the app icon, opens the rules list). The **Cart rules** card under Marketing → Discounts → **Add discount** opens the same list; on a store without the app, the app's install screen shows instead. The Overview lives at `/admin/apps/cart-rules` (route `apps.cart-rules.overview`); the rules list + editor lives at `/admin/apps/cart-rules/rules` (route `apps.cart-rules.settings`) — see [[apps-cart-rules-rules]] for the list/editor UI specifics. Routes are namespaced under `apps.cart-rules.*` (overview / settings / create / edit). Admin API endpoints are at `/admin/api/cart-rules/...`.
 
 ## Sub-pages (in this cluster)
 
@@ -50,7 +50,7 @@ Split into 7 aspect pages, each one well-scoped slice. Drill into the matching a
 
 - Run actions other than discounts — `action_type` is fixed to **discount** (no auto-add free product, no upgrade shipping tier, no send notification).
 - Trigger on browsing history, session length, or time-of-day. The filter taxonomy is fixed to cart / product / customer attributes (see [[cart-rules-conditions]]).
-- Test a rule against a fake cart before activating — no simulator. Workaround: create as Draft, briefly activate, test, set back. (Draft state itself is API-inaccessible — see [[cart-rules-known-issues]].)
+- Test a rule against a fake cart before activating — no simulator. Workaround: save it Inactive, briefly activate, test, set it back to Inactive. (Draft cannot be set in the admin — see [[cart-rules-known-issues]].)
 - Bulk-edit rules; export / import rules; clone a rule (no Clone action).
 
 ## Settings & fields
@@ -74,14 +74,14 @@ The cross-cutting rules that span all aspects:
 - **Row evaluation = AND across triggers** — no OR within a row; use multiple rows or rules for OR. Multi-row rules are an **OR-fallback ladder, not accumulating tiers** — only ONE row per rule fires. See [[cart-rules-stacking]].
 - **Products are consumed across rules** — once a rule matches a product, no later rule can match it; priority decides first pick. **Cart Rules + Discounts stack**: Cart Rules see the cart after product discounts and line-level codes from [[marketing-discounts]], and before order-level discounts. See [[cart-rules-stacking]].
 - **Any admin can access** — no per-role gate; every staff member can create / modify / delete rules. **No audit log of edits** (only `created_at` / `updated_at` / `deleted_at`; no actor, no diff history). See [[cart-rules-known-issues]].
-- **Value scale — you enter the HUMAN value; it is stored ×100.** Send `50` for 50 EUR and `10` for 10% — the save step multiplies both by 100 (stored `5000` / `1000`). Quantities and counts are plain integers. Because money is then held in cents and percent as percent×100, the two are compared in **different units** during cart-level stacking — which is the root of the winner-takes-all gotcha. See [[cart-rules-conditions]] → *Value scale* and [[cart-rules-stacking]].
+- **Value scale.** Enter the human value (`50` for 50 EUR, `10` for 10%); it is stored ×100, and quantities stay plain integers. Cart-level stacking compares the stored values across the two units — see [[cart-rules-conditions]] and [[cart-rules-stacking]].
 - **Plan-tier gating — FOUR distinct limits** — `cart_rules_total`, `cart_rules_range`, `cart_rules_conditions`, `cart_rules_actions`, each individually expandable via feature packs. See [[plan-features]] + [[plan-vs-feature-pack]].
 
 ## Programmatic access
 
 - **GraphQL — fully supported** at `/api/gql` (queries + create / update / status / delete / sort mutations). Status enum: `INACTIVE=0, ACTIVE=1, DRAFT=2` (but Draft cannot be set via create/update — see [[cart-rules-cooldowns]]); condition-type enum `PRODUCT, CART, CUSTOMER`; action value-type enum `AMOUNT, PERCENT, FREE_SHIPPING`. Operations on a store without the app installed return *"Cart Rules app is not installed."*
 - **JSON-API v2 — NOT exposed.** No `/api/v2/*` resource; integrations must use GraphQL.
-- **AI generation** (*+ Generate with AI* button, `POST /admin/api/cart-rules/ai`) — admin-session only; calls OpenAI directly, NOT via [[apps-cloudio-overview|Cloudio]]. Request: `question` required, max 255 chars. Failures surface as *"Unexpected error. Please try again later"*.
+- **AI generation** (*+ Generate with AI*, `POST /admin/api/cart-rules/ai`) — admin-session only; calls OpenAI directly, not [[apps-cloudio-overview|Cloudio]]. `question` max 255 chars; failures show *"Unexpected error. Please try again later"*.
 
 ## Related
 
@@ -102,4 +102,4 @@ The cross-cutting rules that span all aspects:
 
 ## Open questions
 
-None open. Currency handling and the simulator gap (with the Draft-activate-test workaround) are documented above. Aspect-specific open questions live on the relevant aspect page.
+None open. Aspect-specific open questions live on the aspect pages.

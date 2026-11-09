@@ -7,16 +7,16 @@ aliases: ["BoxNow", "Box Now", "BoxNow locker", "Locker delivery", "Activate cas
 tags: [apps, shipping, locker, multi-country, omniship]
 plan_gates: []
 created: 2026-05-22
-updated: 2026-11-03
-source_count: 4
+updated: 2026-11-09
+source_count: 5
 ---
 # BoxNow (locker shipping)
 
 ## Purpose
 
-**BoxNow** is a **locker-only** delivery network operating across multiple countries (Bulgaria, Romania, Greece, Cyprus, Croatia, and others). Unlike traditional couriers ([[apps-econt|Econt]], [[apps-dpdbulgaria-speedy|Speedy]]), BoxNow does NOT deliver to home addresses — packages are deposited in self-service lockers at convenient locations (gas stations, shops, residential complexes), and the customer picks up using a code BoxNow sends by SMS.
+**BoxNow** is a **locker-only** delivery network operating across multiple countries (Bulgaria, Romania, Greece, Cyprus, Croatia, and others). Unlike traditional couriers ([[apps-econt|Econt]], [[apps-dpdbulgaria-speedy|Speedy]]), BoxNow does NOT deliver to home addresses — packages are deposited in self-service lockers, and the customer picks up using a code BoxNow sends by SMS.
 
-Through the platform, BoxNow handles locker selection at checkout (the customer picks a specific locker), waybill generation, and parcel tracking. The integration uses the OmniShip abstraction with provider-specific behaviour for the locker-only flow. A defining UX trait: in [[orders-address-edit]] the "To address" shipping method is **hidden** for BoxNow — only "To locker" is offered.
+Through the platform, BoxNow handles locker selection at checkout (the customer picks a specific locker), waybill generation, and parcel tracking. A defining UX trait: in [[orders-address-edit]] the "To address" shipping method is **hidden** for BoxNow — only "To locker" is offered.
 ## Where to find it
 
 Sidebar → **Apps** → install → **BoxNow**, or via direct routes. Four sub-pages, no Addresses tab (the locker network is BoxNow-side) and no Payments tab (see Business rules):
@@ -24,7 +24,7 @@ Sidebar → **Apps** → install → **BoxNow**, or via direct routes. Four sub-
 | Sub-page | Route name |
 |----------|------------|
 | Overview | `apps.boxnow.overview` |
-| Settings | `apps.boxnow.settings` |
+| Settings | `apps.boxnow.settings` (`/admin/shipping/boxnow/settings`) |
 | Shipments | `apps.boxnow.shipments` |
 | Shipments return | `apps.boxnow.shipments-return` |
 
@@ -37,7 +37,7 @@ Sidebar → **Apps** → install → **BoxNow**, or via direct routes. Four sub-
 - **Print labels** in bulk (A4 / A6).
 - **Issue return shipments** via the Shipments return sub-page (merchant-initiated; the customer drops the parcel in a BoxNow locker).
 
-The merchant **cannot**: deliver to home addresses (locker-only by design); use BoxNow without an active contract in the operation country; override locker availability (if the chosen locker is full, BoxNow may reject — pick another); or use a live price calculator (BoxNow's API does not return live quotes).
+The merchant **cannot**: deliver to home addresses (locker-only by design); use BoxNow without an active contract in the operation country; override locker availability (if the chosen locker is full, BoxNow may reject — pick another); or get a live price from BoxNow (there is no calculator).
 
 ## Settings & fields
 
@@ -54,14 +54,9 @@ A **Connect** button validates the credentials against BoxNow's API; "Invalid cr
 
 **4–5. Services / rate cards** — BoxNow supports only the **locker** channel, so a single rate card. **6. Geo zones** + **7. Payment providers** — standard.
 
-**Pricing models** — pick ONE (there is NO calculator mode, so no `calculator` / `calculator_fixed` / `free` and no fallback-price table — the rate table is the price):
-- **Fixed price without BOX NOW calculator** (`fixed_price`) — flat tier per order subtotal.
-- **Fixed weight value without BOX NOW calculator** (`fixed_weight`) — flat tier per weight.
-- **Fixed value by price and weight without BOX NOW calculator** (`price_and_weight`) — combined matrix.
+**Pricing models** — pick ONE. BoxNow has no calculator: at checkout the platform asks **BoxNow for no price**, so a table row is the price (no `calculator` / `calculator_fixed` / `free`, no fallback table): `fixed_price` (rows by order subtotal), `fixed_weight` (rows by weight) or `price_and_weight` (both). The app's own names are „Фиксирана стойност по цена / по тегло / по цена и тегло без BOX NOW калкулатор“ ("Fixed price / Fixed weight value / Fixed value by price and weight without BOX NOW calculator"); the Settings screen's option texts come from the admin's translations (verify on screen). Field reference: [[shipping-calc-rate-card-fields]].
 
-Each model also exposes a **per-category** sub-table for charging chosen categories differently. The shared field-by-type reference is on [[shipping-calc-rate-card-fields]].
-
-> **Rate-table rule (avoids a common false diagnosis):** in the from/to rate table, an **empty upper bound (`до` / `to`) means NO upper limit — the bracket runs to infinity**, and both bounds are inclusive. A single row with a blank `до` is the correct, intended way to cover *every* weight/price; it does **not** make the row invalid and is **never** the reason BOX NOW fails to appear at checkout. A method is dropped only when **no row matches** — i.e. the cart value is below the lowest `from`. See [[shipping-calc-rate-models]] for the full lookup arithmetic.
+> **Rate-table rules (avoid a common false diagnosis):** both bounds are **inclusive**, and a blank upper bound (`до` / `to`) means **no upper limit**, so one row with a blank `до` covers every cart and is never why BOX NOW is missing. Overlapping rows: the **cheapest** matching row wins. A cart that matches **no row** (below the lowest `from`, in a gap between rows, or above a closed top row) gets no price, and BOX NOW is **not offered**. A row with amount **0** prices delivery at 0, shown in the method's row as a zero amount (e.g. 0.00 €), not as "Free". With the **per-category** table on, a matching row for the category of any product in the cart prices the **whole parcel** (the cheapest such row); otherwise the base table applies; nothing is summed. Arithmetic: [[shipping-calc-rate-models]].
 
 **Package types** picked when generating a waybill: **Small** / **Medium** / **Large**.
 
@@ -75,12 +70,12 @@ Each model also exposes a **per-category** sub-table for charging chosen categor
 ## Business rules
 
 - **Locker-only design.** BoxNow does not operate home delivery, so the "To address" radio is hidden in [[orders-address-edit]] for both merchant and customer — only a locker can be selected.
-- **No platform-side country restrictions.** Which markets a merchant ships to is decided entirely by their BoxNow contract plus what the lockers API returns — not by CloudCart. Cross-border (e.g. a BG merchant shipping to a RO customer) follows the same rule. BoxNow does not expose detailed city/country APIs; locker selection is via the lockers API.
+- **No platform-side country restrictions.** Which markets a merchant ships to is decided entirely by their BoxNow contract plus what the lockers API returns — not by CloudCart. BoxNow does not expose detailed city/country APIs; locker selection is via the lockers API.
 - **Locker selection at checkout.** The customer picks a nearby locker from BoxNow's list; the locker data is stored on the order. A locker takes up to 20 kg in compartments of 8 / 17 / 36 × 45 × 60 cm, and is offered only when the cart fits one: [[shipping-provider-mech-locker-fit]].
 - **Locker capacity is real-time.** If a chosen locker fills before the waybill is generated, BoxNow's API may reject at generation time — the merchant picks a different locker or asks the customer to re-choose.
 - **Default sender pays** for the shipment; can be overridden per shipment if the contract allows. Each merchant typically has one configured pickup location — no automatic rotation between senders.
 - **Open-before-pay requires the SENDER to pay.** Per the in-app help text: *"The option 'Open before paying' can only be used if the payer of the shipment is the SENDER"* — if the customer is set to pay (typical for COD), Open-before-pay is silently disabled.
-- **Default weight 100 g.** When a product has no weight, 100 g is used as a fallback — light enough not to inflate cost, heavy enough to qualify for most locker tiers.
+- **Default weight 100 g** when a product has no weight.
 - **COD is contract-driven**, gated by three checks: (1) the OmniShip base check (BoxNow's contract allows COD), (2) the merchant's COD-enabled flag (`cd`) is true, (3) the order's COD amount is within BoxNow's market-specific server-side limit. The platform cap is **10000 BGN** per order, but only when the store currency is the literal `BGN` (legacy) — a store on `EUR` (the new Bulgarian norm) gets no platform cap, only BoxNow's server-side limit. The merchant can lower it with a per-courier cap setting. Above the cap, COD is silently hidden. When COD is supported and the order uses a non-default currency, the COD amount is converted to the destination currency at waybill generation.
 - **Shipping recalculation on payment-method change** is supported only when COD is supported (switching off COD removes the COD fee).
 - **No Payments tab.** Unlike Econt / Speedy, BoxNow's Settings mounts no Payments sub-page in the modern Vue — visibility is controlled by the integration's `supports.cod_payment` flag, which is false when BoxNow's market does not enable COD.

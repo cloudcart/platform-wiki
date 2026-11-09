@@ -7,8 +7,8 @@ aliases: ["Carousel module", "Slider module", "Homepage slider", "Hero slider", 
 tags: [design, modules, content, carousel, slider, homepage]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Carousel / Slider module (`extra.carousel`)
@@ -121,7 +121,7 @@ When `img_type=video`, the slide embeds a YouTube / Vimeo / Wistia player. Brows
 
 ### Cache invalidation on save / reset
 
-Both **Save** and **Reset** regenerate the per-site cache key. The storefront picks up the new configuration on the very next request.
+Both **Save** and **Reset** regenerate the per-site cache key; pages rendered afterwards use the new configuration, while guests may get a cached page for up to 20 minutes ([[storefront-arch-caching-invalidation]]).
 
 ### Theme-controlled rendering
 

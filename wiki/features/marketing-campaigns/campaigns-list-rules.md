@@ -7,8 +7,8 @@ aliases: ["Campaigns business rules", "Campaign validation", "Campaign quota", "
 tags: [marketing, campaigns, rules, validation, quota, attribution]
 plan_gates: ["campaigns"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[marketing-campaigns]]. See the hub for the other aspects.
@@ -58,13 +58,12 @@ A confirm modal warns: *"Clicking the 'Start Campaign' button will launch your c
 
 ### Channel-level guards
 
-Before sending, the platform checks the channel:
+Activating a campaign checks its channels:
 
 - *"Channel ":name" is not configured"* — not installed or settings incomplete.
 - *"Channel ":name" is not active"* — installed but inactive (`status = 0`).
-- *"You do not have enough credits for:name"* — credit-billed channel, empty balance.
 
-A campaign requiring a turned-off channel auto-deactivates (see channel-status flip below).
+*"You do not have enough credits for:name"* is a save-time check (see below). At send time, a step on such a channel is dropped silently. A campaign requiring a turned-off channel auto-deactivates (see channel-status flip below).
 
 ### Channel suspension by spam/bounce/open thresholds
 
@@ -115,9 +114,9 @@ Every campaign creation — manual, predefined-clone, copy, or AI-from-suggestio
 
 Regular max **1** step; Automated max **5**. Exceeding returns *"Rows may not be greater than 1"* / *"Rows may not be greater than 5"*. See [[campaigns-list-types-and-actions]].
 
-### Audience filter at execution time matches the segment-picker preview
+### Audience filter at launch is channel-specific
 
-At send time the audience is filtered through the **same** marketing-flag intersection the picker counter shows: subscribers must be on the relevant channel, `marketing = 1`, `bounced = 0`, `unsubscribed = 0`, and for email channels with `unconfirmed_send = false`, also `verified = 1`. So the Step 2 customer-count chip matches the deliverable population. The picker dialog states verbatim: *"To be subscribed to the {channel} channel..., to accept marketing, not to be unsubscribed, and not to be marked as Bounced."*
+At launch only members with a marketable row on the step's channel are enrolled: `marketing = 1`, `bounced = 0`, `unsubscribed = 0`, and for Email with `unconfirmed_send` OFF, also `verified = 1`. The Step 2 chip matches this for **Regular** campaigns only; for **Automated** it counts any-channel members and can be far higher. The picker dialog states: *"To be subscribed to the {channel} channel..., to accept marketing, not to be unsubscribed, and not to be marked as Bounced."* See [[campaigns-subscribers-enrolment]].
 
 ### Channel credit check happens on save, not just on send
 

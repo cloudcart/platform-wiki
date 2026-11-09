@@ -5,8 +5,8 @@ route_path: /page/{slug?}
 themes_using: [all]
 tags: [storefront, cms, static-page]
 created: 2026-06-08
-updated: 2026-11-03
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 # Static page (storefront)
@@ -21,7 +21,7 @@ Generic CMS page used for any rich-text content the merchant needs: Terms of Ser
 - **Path:** `/page/{slug?}` with `where('slug', '(.*)')` — the slug regex accepts any characters, including `/`, so nested-looking paths like `/page/help/shipping` resolve to the same route with `slug = help/shipping`.
 - **Middleware:** `uuid_generate`, `subscriber_uuid`, `TSStatistic:page` (analytics tracking).
 - **Method:** `GET`.
-- **Preview variant:** `/preview/page/{page_id}/{history_id?}` — route name `site.preview.page`, used by the page builder to preview drafts. It needs the builder's signature; without it the answer is the store's 404.
+- **Preview variant:** `/preview/page/{page_id}/{history_id?}` — route name `site.preview.page`, used by the page builder to preview drafts. It needs the builder's `signature` parameter; without it, or with a wrong one, the answer is the store's 404. The signature is derived from the page and version alone, so it **never expires**: anyone holding the link can open that version (even unpublished, or of an inactive page) for as long as the version is kept, with no login. A language prefix or extra parameters on the address do not break it.
 
 ## How it loads
 
@@ -36,7 +36,8 @@ Generic CMS page used for any rich-text content the merchant needs: Terms of Ser
 
 ## What the customer sees
 
-- Breadcrumb: **Home › <Page name>**.
+- Breadcrumb: **Home › <Page name>**. It is part of every theme's static page template, with no switch to turn it off at page, theme or module level.
+- On themes that have it (about half of them, including the `knowledge` and `motivation` families), a **left sidebar box** with the links of the **Странично меню - Страници** module (EN *Page menu - Pages*, `navigationLinksPage`); the box shows only the links, not the module's title. Turning that module off (**Design → Modules → Други**) removes the box and the text takes the full width. Regular and FAQ pages only: Dynamic (builder) and External pages, the homepage and category pages never show it. See [[design-module-navigation-links]].
 - `<h1>` page name.
 - Rich-text body inside `_textbox`.
 - When loaded via AJAX or as an iframe (the platform code), the template renders a modal-friendly variant (`_popup _popup-terms`) WITHOUT the header/footer — used by the checkout to pop ToS in an overlay.

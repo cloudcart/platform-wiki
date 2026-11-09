@@ -1,14 +1,14 @@
 ---
 type: feature
 nav_path: "Design → Navigation → Link resolution"
-route_name: admin.navigation.list
-route_path: /admin/storefront/navigation/{group?}
+route_name: design.navigation
+route_path: /admin/design/navigation
 aliases: ["Navigation link resolution", "Menu URL resolution", "Menu active state", "Section route name", "URL verbatim", "Резолюция на меню връзки"]
 tags: [design, navigation, menus]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 0
+updated: 2026-11-09
+source_count: 1
 ---
 # Navigation — link resolution & active state
 
@@ -20,13 +20,13 @@ This page explains how each menu item resolves to a real storefront URL at rende
 
 ## Where to find it
 
-This is render-time behaviour on the storefront, configured implicitly when the merchant picks an item type and target under Sidebar → **Design** → **Navigation**. The same admin route `/admin/storefront/navigation/{group?}` also serves both the full-page HTML and the per-tree AJAX data (see *How it works*).
+This is render-time behaviour on the storefront, configured implicitly when the merchant picks an item type and target under Sidebar → **Design** → **Navigation**. The screen's address is `/admin/design/navigation`; each menu's tree is loaded separately in the background (see *How it works*).
 
 ## What the merchant can do here
 
 - Pick a typed target (Product, Category, Brand, Blog category, Article, Static page, Smart Collection) and rely on the storefront to resolve the current slug automatically — even if the slug changes later.
-- Pick a **Store section** and rely on it following the theme's current URL for that route.
-- Paste an **External address** that is stored and rendered exactly as typed.
+- Pick a **Theme section** and rely on it following the theme's current URL for that route.
+- Paste an **External link address** that is stored and rendered exactly as typed.
 
 ## What the merchant cannot do here
 
@@ -74,13 +74,13 @@ The menu item's "active" / highlight state on the storefront is computed at rend
 
 ## How it works (verified against backend)
 
-### Two screen modes — full HTML and AJAX tree fetch
+### The screen and the tree data are separate requests
 
-The same `/admin/storefront/navigation/{group?}` URL serves both the initial full-page HTML (no `group` param) and the AJAX tree-data response when `group=main` or `group=footer` is requested via XHR. A non-XHR request without `group` renders the parent shell with both trees; an XHR request without one of those two valid groups returns 404.
+The address `/admin/design/navigation` serves only the admin screen. The screen then loads the list of menus and, for the open menu, fetches its tree in a separate background request keyed by the menu's group key (`main` or `footer`); a group key that does not exist returns 404. The old combined address `/admin/storefront/navigation/{group?}`, which served both the page and the tree data, was removed in July 2026 and now lands on a 404.
 
-### Tree data loads on demand per node
+### Each tree loads whole
 
-Each tree fetches its root-level nodes on page load, then lazy-loads children when a parent is expanded — the tree element's data URL points to the same list endpoint with `node=<parent_id>` as a query parameter. Each node response includes a `load_on_demand` flag based on its `children_count`, so the UI knows whether to render an expand arrow.
+A menu's tree arrives complete in one response, with every nesting level included and expanded on load; children are not fetched separately when a parent is opened.
 
 ## Related
 

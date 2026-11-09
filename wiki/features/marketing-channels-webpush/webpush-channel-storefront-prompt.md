@@ -7,8 +7,8 @@ aliases: ["Web Push popup", "Web Push prompt", "WebPush opt-in popup", "Subscrip
 tags: [marketing, channels, web-push, popup, prompt, storefront, ux]
 plan_gates: ["campaign.channel.web_push"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-channels-webpush]]. See the hub for the other aspects (subscription flow, VAPID config, send pipeline, DLR webhook, system messages, browser support).
@@ -111,7 +111,7 @@ When the channel is configured and active, the platform injects this `renderSf` 
 }
 ```
 
-The storefront's service worker reads this config and orchestrates the popup → native-prompt → subscribe-endpoint POST flow.
+The storefront's page script, not the service worker, reads this config and runs the flow: it shows the popup, asks for the browser permission, subscribes through the registered service worker (`/cc-sw.js`) and POSTs the subscription to `/web-push-subscribe`.
 
 ### Settings persist across channel reinstall
 

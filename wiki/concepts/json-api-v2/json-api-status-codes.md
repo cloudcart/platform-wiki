@@ -4,8 +4,8 @@ nav_path: "Concept → JSON-API v2 → HTTP status codes"
 aliases: ["JSON-API v2 status codes", "JSON-API v2 errors", "HTTP 401 422 429 503 JSON-API", "JSON-API error envelope", "402 Payment Required", "406 Not Acceptable", "415 Unsupported Media Type"]
 tags: [api, json-api, status-codes, errors, integration, concepts]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[json-api-v2]]. See the hub for the other aspects (auth, headers/envelope, pagination, filtering & sorting, endpoints, webhooks, audit log, CORS & soft-delete, atomic operations).
@@ -14,7 +14,7 @@ source_count: 3
 
 ## Definition
 
-JSON-API v2 returns a fixed set of HTTP statuses. Every non-2xx response carries the JSON:API **error envelope** — `{errors: [{status, title, detail?, source?}]}` — under `Content-Type: application/vnd.api+json`. Some statuses surface platform-specific semantics: **402** for plan expiry, **429** with `Retry-After: 60` for rate-limit, **503** when the merchant has enabled maintenance mode, and **422** as the catch-all wrapper for app-gated 404s (a framework quirk).
+JSON-API v2 returns a fixed set of HTTP statuses. Every non-2xx response carries the JSON:API **error envelope** — `{errors: [{status, title, detail?, source?}]}` — under `Content-Type: application/vnd.api+json`. Some statuses surface platform-specific semantics: **402** for failed payments or plan quotas, **429** with `Retry-After: 60` for rate-limit, **503** when the merchant has enabled maintenance mode, and **422** as the catch-all wrapper for app-gated 404s (a framework quirk).
 
 ## Scope
 
@@ -32,7 +32,7 @@ Not covered:
 ## Contrasts
 
 - **2xx vs error response shape** — 2xx returns `{data: ...}`; everything else returns `{errors: [...]}`. The envelope is mutually exclusive at the top level.
-- **402 (plan expired) vs 403 (forbidden)** — plan-feature overflows return 402 at the JSON-API layer. The 403 status documented for some discount feature-pack rejections lives at a DIFFERENT layer — the admin app, not JSON-API v2. Integrators calling JSON-API v2 should expect 402, not 403.
+- **402 vs 403** — failed payments and plan-feature overflows return 402 here. The 403 seen for some discount rejections comes from the admin app, not JSON-API v2.
 - **404 (resource not found) vs 422 wrapping 404 (app not installed)** — direct resource-not-found returns 404. App-gated resources requested without the app installed return **422 with a 404 inside** (framework quirk). Integrators must check both.
 - **400 (malformed) vs 422 (validation failure)** — 400 means the request couldn't be parsed; 422 means it parsed but failed business validation.
 
@@ -45,8 +45,8 @@ Not covered:
 | **204 No Content** | Successful DELETE — no body returned |
 | **400 Bad Request** | Malformed JSON body; malformed query parameters; invalid content-negotiation; unexpected type-mismatch errors caught at the controller layer |
 | **401 Unauthorized** | Missing / invalid / inactive `X-CloudCart-ApiKey` header. Body: `{errors:[{status:"401",title:"Unauthenticated"}]}` — see [[json-api-auth]] |
-| **402 Payment Required** | The merchant's plan is expired, past-due, or the trial has ended. Body: `{errors:[{status:"402",title:"Payment Required", detail:"..."}]}`. The exception is also persisted server-side for support diagnostics. |
-| **403 Forbidden** | (Practically not emitted by this API — the framework's default authorizer is a permissive no-op. Plan-feature overflows return 402, not 403, at this layer; the 403 documented for some discount feature-pack rejections lives at a DIFFERENT layer — the admin app, not JSON-API v2.) |
+| **402 Payment Required** | (a) Every call while the store is Past due or Expired or its plan expired: detail *"You have failed payments"*, and the admin gets the alert *"API: You have failed payments"*. One past-due add-on is enough; see [[expired-subscription-data-lifecycle]]. (b) A create over a plan quota. Body: `{errors:[{status:"402",title:"Payment Required",detail:"..."}]}`. |
+| **403 Forbidden** | Practically never emitted: the default authorizer is a permissive no-op, and plan-feature overflows return 402 here. |
 | **404 Not Found** | Resource ID does not exist on the store; OR the `Host` header does not match a known store; OR an app-gated resource is requested while the app isn't installed (some app-not-installed paths return 422 with a 404 inside — framework quirk) |
 | **405 Method Not Allowed** | The verb is blocked at the routing layer (e.g., POST on a read-only resource, POST/DELETE on `orders`, PATCH on `images`) — see [[json-api-endpoints]] for the full read-only list |
 | **406 Not Acceptable** | The `Accept` header does not match `application/vnd.api+json` — see [[json-api-headers-envelope]] |
@@ -103,7 +103,7 @@ Every non-2xx response uses this envelope:
 
 - Every JSON-API v2 response carries one of these statuses.
 - The 503 response is triggered by [[settings-general|maintenance mode]] — integrators should poll-and-back-off when they see it.
-- The 402 response is triggered by the merchant's plan-renewal failure — integrators should surface this in their UI (and notify the merchant) rather than retry.
+- A failed-payments 402 comes from a failed renewal of any subscription, not only the plan; it clears on the first call after the payment. Integrators should tell the merchant rather than retry.
 
 ## Related
 

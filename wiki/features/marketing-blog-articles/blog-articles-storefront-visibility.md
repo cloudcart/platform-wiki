@@ -7,8 +7,8 @@ aliases: ["Article visibility", "Article publishing", "Publish toggle", "Publish
 tags: [marketing, blog, articles, storefront, publishing, comments]
 plan_gates: ["blog_articles"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[marketing-blog-articles]]. See the hub for the other aspects (list, editor, CSV import, rules, API).
@@ -58,7 +58,7 @@ The storefront pages render only articles where `active='yes'` AND `publish_date
 
 ### Status: publish toggle, not workflow
 
-There is no draft / review / scheduled workflow in the modern editor — `active` is a simple yes / no flag. The article is either live on the storefront or hidden. Toggling it OFF immediately removes the article from `/blog/` listings + the `/article/<slug>` detail page on the next page load (no cache delay beyond Cloudflare's edge TTL).
+There is no draft / review / scheduled workflow in the modern editor — `active` is a simple yes / no flag. The article is either live on the storefront or hidden. Toggling it OFF removes the article from freshly rendered `/blog/` listings and the `/article/<slug>` page; guests can get a cached copy for up to 20 minutes and crawlers for 1–2 days ([[storefront-arch-caching-invalidation]]).
 
 ### Scheduled publishing is available, but only via legacy paths
 

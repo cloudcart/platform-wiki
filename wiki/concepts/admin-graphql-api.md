@@ -5,15 +5,15 @@ aliases: ["Admin GraphQL API", "Admin GraphQL", "GraphQL Admin API", "admin gql"
 tags: [api, graphql, admin, permissions, rate-limit, bulk, concepts]
 plan_gates: []
 created: 2026-11-03
-updated: 2026-11-03
-source_count: 5
+updated: 2026-11-09
+source_count: 6
 ---
 
 # Admin GraphQL API
 
 ## Definition
 
-The Admin GraphQL API is the programmatic way to do what the admin panel does: products, orders, customers, discounts, design, settings, apps. It answers at `<store-host>/api/gql`, and the store's address decides which store a request reaches. Its clients are the CloudCart Admin mobile app ([[mobile-admin-app]]), the CloudCart CLI, AI agents ([[ai-agent]]) and the merchant's own scripts.
+The Admin GraphQL API is the programmatic way to do what the admin panel does: products, orders, customers, discounts, design, settings, apps. It answers at `<store-host>/api/gql`; the address decides the store. Its clients are the CloudCart Admin mobile app ([[mobile-admin-app]]), the CloudCart CLI, AI agents ([[ai-agent]]) and the merchant's own scripts.
 
 Every query and mutation states what it needs. A staff member gets the same rights through the API as in the admin panel.
 
@@ -81,7 +81,7 @@ An operation whose sections span two areas, such as shipping (orders and setting
 
 ### Request limit
 
-Admin GraphQL allows **300 requests a minute per store address**. All callers on that address share the count: the mobile app, the CLI, agents and scripts. Responses carry `X-RateLimit-*` headers. Over the limit, the answer is HTTP 429 with the code `TOO_MANY_REQUESTS`.
+Admin GraphQL allows **300 requests a minute per store address**, shared by every caller on it (app, CLI, agents, scripts). Responses carry `X-RateLimit-*` headers. Over the limit, the answer is HTTP 429 with the code `TOO_MANY_REQUESTS`.
 
 For large changes, one background job costs far fewer requests than a loop over single records.
 
@@ -97,18 +97,19 @@ Errors carry a code in `extensions.code`.
 | Token may not change anything | `ACCESS_DENIED`, reason `permission_denied`: `` `<operation>` writes data, which this token's scopes do not allow. `` Next step: *"Use a token with write access to this resource, or a full-access token."* |
 | Token lacks the scope | `ACCESS_DENIED`, reason `permission_denied`: `` `<operation>` needs the `<scope>` scope, which this token does not have. `` Next step: *"Use a token that includes the scope, or a full-access token."* |
 | Too many requests | `TOO_MANY_REQUESTS`, HTTP 429 |
+| Store Past due or Expired | `PAYMENT_REQUIRED`, HTTP 402: *"GraphQL API: You have failed payments"*, on every call ([[expired-subscription-data-lifecycle]]) |
 | Store in maintenance | `SERVICE_UNAVAILABLE`, HTTP 503: *"Maintenance mode. Try again in a few minutes."* |
 
-The refusal names the permission that is missing and returns none of the data.
+The refusal names what is missing and returns no data.
 
-An admin who gets `ACCESS_DENIED` can ask the owner to tick that section under [[settings-staff]], then repeat the request. The permission applies from the next request.
+An admin who gets `ACCESS_DENIED` can ask the owner to tick that section under [[settings-staff]]; it applies from the next request.
 
 ### Background jobs
 
 Bulk changes run in the background. A bulk mutation answers at once with a `jobId` and a `queuedCount`, and the work goes on in the queue. These cover products (`productsBulkCreate` and the other `productsBulk*` operations), orders, customers, discounts, segments, subscribers, categories, variants and inventory.
 
 - **`bulkOperationStatus(jobId)`** reports `status` (`PENDING`, `RUNNING`, `COMPLETED`, `FAILED`, `CANCELLED`), `totalCount`, `processedCount`, `affectedCount`, `skippedIds` and, on failure, `error`.
-- **`bulkOperationCancel(jobId)`** stops the job at its next chunk. What is already done stays done. On a finished job it changes nothing and returns the status.
+- **`bulkOperationCancel(jobId)`** stops the job at its next chunk; what is done stays done. On a finished job it only returns the status.
 
 `COMPLETED` can still include skipped records: `skippedIds` lists the ones the job left unchanged. On `ordersBulkChangeStatus`, these are the orders the status rules refused ([[orders-status-change-admin-graphql]]).
 
@@ -118,7 +119,7 @@ Starting a job needs the operation's own permission.
 
 - **Admin GraphQL vs JSON-API v2** — [[json-api-v2]] signs in with a store API key ([[settings-api-keys]]), handles one resource per request, and has a budget set by the plan. Admin GraphQL signs in as a person or as the owner, and alone offers bulk jobs and many admin operations.
 - **Admin GraphQL vs the Storefront API** — the Storefront API serves shoppers on a headless storefront ([[headless-storefront]]). Admin GraphQL serves the people who run the store.
-- **Staff permission vs sign-in type** — the same moderator has the same rights in the admin panel and through a browser sign-in. A token does not act as that moderator, because it is always the owner's.
+- **Staff permission vs sign-in type** — a moderator has the same rights in the admin panel and through a browser sign-in. A token never acts as a moderator: it is always the owner's.
 
 ## Where it applies
 

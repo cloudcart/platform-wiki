@@ -5,8 +5,8 @@ aliases: ["Subscription invoices", "Auto-invoice generation", "InvoiceMail", "In
 tags: [billing, subscription, invoice, pdf, email, lifecycle, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[merchant-subscription-lifecycle]]. See the hub for the other aspects (states, renewal-retry, expiration, cancellation, feature packs, payment methods, support flow).
@@ -63,8 +63,7 @@ When the daily renewal pipeline OR a manual purchase OR a Renew click results in
 
 **(a) Invoice details** — the company info CloudCart prints:
 
-- **Where**: Profile dropdown → Billing / Cards → opens the *Details → Billing* area → header summary on the page → pencil icon next to the *Invoice details* block.
-- **Exact URL**: `/admin/billing/invoicing` (side-panel form).
+- **Where**: owner's user menu → **Merchant profile** (`/admin/merchant`) → *Invoice details* card → pencil (or **Add invoice details**) → **Confirm**. Not on *Billing / Cards*.
 - **Full documentation**: [[billing-invoicing]].
 
 **(b) Invoices list** — issued PDFs:
@@ -85,6 +84,10 @@ Every approved transaction with an issued invoice has a **Download** button → 
 
 The same Download button is also available on the rows of `/admin/details/invoices` for invoices the merchant wants to retrieve directly without going via the transaction history.
 
+### Issued invoices keep the details they were issued with
+
+Each invoice is linked to one stored invoice-details record (the current one at issue (verify)), and its PDF is built from it. A save adds a record rather than changing the old one, so new details (a rename, a new VAT number) affect later invoices only. The admin offers no re-issue or correction of an issued invoice; that happens outside this code, in CloudCart's billing system (verify the procedure). See [[billing-invoicing-save-flow]].
+
 ### Invoice language behaviour
 
 The PDF language is determined by the recipient's language preference **at the moment the invoice was issued** — stored on the Invoice record itself. Subsequent merchant locale changes do NOT retroactively re-issue invoices in the new language. If the merchant needs an invoice in a different language for tax / regulatory reasons, support can re-issue.
@@ -103,6 +106,7 @@ Every issued invoice fires the `invoice.create` webhook event (alongside the `su
 
 - [[merchant-subscription-lifecycle]] — hub.
 - [[billing-invoicing]] — the invoice-details form (company info printed on each invoice).
+- [[terms-of-use-billing-renewal]] — Terms §11.15 (invoices follow each store's details) and §11.10 (invalid e-mail or spam folder).
 - [[details-billing]] — transaction history + per-row Download links.
 - [[subscription-payment-methods]] — the card on file that gets charged (and the LTA / manual carve-out where invoices issue differently).
 - [[subscription-renewal-retry]] — the daily pipeline that fires the InvoiceCreate event on success.

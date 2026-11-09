@@ -7,8 +7,8 @@ aliases: ["Product option types", "Option field types", "Option input types", "�
 tags: [apps, products, options, customisation]
 plan_gates: ["product_options"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[products-options-overview]]. See the hub for the other aspects (pricing, assignment, order handling).
@@ -21,17 +21,17 @@ Lets the merchant choose **how the customer enters or picks** an option's value 
 
 ## Where to find it
 
-Sidebar → Products → **Options** → **+ Create new option** (or edit an existing one) → **General settings** card → **Field type** dropdown.
+Sidebar → Products → **Product options** (*Продуктови опции*) → **+ Create new option** (or edit an existing one) → **General settings** card → **Field type** dropdown.
 
 ## What the merchant can do here
 
-- Pick one of 10 input types, grouped into four families in the dropdown.
+- Pick one of 9 input types, grouped into four families in the dropdown.
 - For Select-group types, build a list of values (Name + Amount + optional image per row).
-- For measure types (length / weight / square), pick the unit the customer enters in.
+- For measure types (length / square), pick the unit the price is set for and the unit the customer enters in.
 
 ## Settings & fields
 
-The **Field type** dropdown is a grouped picker — 10 types across 4 groups:
+The **Field type** dropdown is a grouped picker — 9 types across 4 groups:
 
 | Group | Type | Storefront UI | Notes |
 |-------|------|---------------|-------|
@@ -41,10 +41,11 @@ The **Field type** dropdown is a grouped picker — 10 types across 4 groups:
 | **Select** | **image** ("Photo") | Customer picks one image from a merchant-defined gallery | Each value has its own image + price impact. Single selection from multiple options with image preview. |
 | **Text** | **text** | Single-line text input | For names, engraving. |
 | **Text** | **textarea** | Multi-line text input | For longer messages, gift notes. |
-| **File** | **file** | Customer uploads an image | Allowed mime types: jpg, jpeg, png, bmp, webp. Deleting a file-type option also deletes past uploads — see [[products-options-order-handling]]. |
-| **Other** | **length** | Numeric input + length unit selector | Built-to-measure (e.g. per metre of cable). |
-| **Other** | **weight** | Numeric input + weight unit selector | Price applies per gram / kg. |
-| **Other** | **square** | Numeric input + area unit selector | Price applies per m². |
+| **File** | **file** | Customer uploads one file | pdf, doc, jpeg, jpg, png, gif, tiff, zip or rar, up to 25 MB; other files are refused when adding to cart. Deleting a file-type option also deletes past uploads — see [[products-options-order-handling]]. |
+| **Other** | **length** (Length) | One number field, in the option unit | Built-to-measure (e.g. per metre of cable). |
+| **Other** | **square** (Square) | Two number fields, length × width, in the option unit | Priced per area (e.g. per m²). |
+
+A **weight** type exists in the platform's data but the form does not offer it; an option created with it earlier keeps working (verify).
 
 For the Select-group types (radio / select / checkbox / image), the **Values editor** appears: per-value rows with Name + Amount + (optional) Image, each with a delete button and a "+" to add rows.
 
@@ -56,11 +57,11 @@ Once an option is created, the **Field type** select is **disabled** — the typ
 
 ### Value-required rule
 
-A list of at least one value is **required** when the type is `select`, `radio`, or `checkbox`. Each value's Name is required (max 191 chars). Without a value, the save is rejected. Text / textarea / file / measure types carry a single global price instead of per-value amounts.
+A list of at least one value is **required** when the type is `select`, `radio`, or `checkbox`. Each value's Name is required (max 191 chars). Without a value, the save is rejected. Text / textarea / file carry a single price for the option; measure types carry none.
 
 ### Measure types behave differently from the rest
 
-For `length`, `weight`, and `square`, the platform auto-sets `per_item = 1` on save — the price is charged per unit the customer measures (e.g. per metre of cable × number of cables). The price-impact controls these types show are documented in [[products-options-pricing]].
+A `length` or `square` option has **no price of its own**: it scales the product's price (the chosen variant's price is the price per unit) by the size the customer enters, and every unit in the cart is charged that way. Formula, units and minimums: [[products-options-pricing]].
 
 ### The image type is not a variant
 

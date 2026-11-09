@@ -7,8 +7,8 @@ aliases: ["Subscribe form GDPR", "cookies_consent semantic", "Marketing policy g
 tags: [marketing, subscribers, forms, gdpr, consent, cookies, audit, storefront]
 plan_gates: ["subscriber_forms"]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 3
+updated: 2026-11-09
+source_count: 4
 ---
 
 > Part of [[marketing-subscribers-subscribe-forms]]. See the hub for the other aspects (list view, builder, templates, layout, triggers, fields, submission flow, known issues).
@@ -43,13 +43,13 @@ This page documents the inverted `cookies_consent` semantic — the most-misread
 
 ### The `cookies_consent` flag — INVERTED SEMANTIC (critical)
 
-This is the single most-misread setting on the form record. The flag does **NOT** mean "form requires consent". It means the OPPOSITE:
+This is the single most-misread setting on the form record (builder checkbox *"Покажи формата дори още да не са приети политиките за Бисквитки"*, under **"Политики за Бисквитки"**; the terms block is **"Политики за приемане"** → **"Показване на политики за приемане"**). The flag does **NOT** mean "form requires consent". It means the OPPOSITE:
 
 | `cookies_consent` value | Meaning | Storefront behaviour |
 |-------------------------|---------|----------------------|
 | **`true`** | "The form itself handles consent" — i.e. the form's own UI captures marketing consent; the storefront should serve it regardless of the GDPR `targeting` cookie group state. | Form is shown to ALL eligible visitors, even those who haven't accepted the `targeting` cookie group yet. |
 | **`false`** | "The form needs the platform's targeting consent first." | Form is **suppressed** until the visitor accepts the `targeting` cookie group via the GDPR consent banner. |
-| **`null`** (default — unset) | Same as `false` — the form needs targeting consent. | Suppressed until targeting cookies accepted. |
+| **`null`** (never saved since the field existed; every builder save writes `true` / `false`) | Same as `true`. | Shown before consent. |
 
 When the visitor has not accepted the `targeting` cookie group, only forms with `cookies_consent = true` OR `cookies_consent = null` are served. Critical takeaway: `cookies_consent = true` is the **bypass**, not the gate.
 
@@ -124,9 +124,9 @@ To capture defensible, auditable marketing consent from subscribe forms, the sto
 - [[subscribe-forms-submission-flow]] — how marketing consent + `PolicyAcceptanceLog` writes fit into the end-to-end submit pipeline.
 - [[subscribe-forms-triggers]] — `popup-subscription-displayed_<form-id>` cookie is one of several display gates.
 - [[apps-gdpr-overview]] — `marketing_policy` setting + the overall GDPR app surface.
-- [[apps-gdpr-cookies]] — the `targeting` cookie group that gates `cookies_consent = false / null` forms.
+- [[apps-gdpr-cookies]] — the `targeting` cookie group that gates `cookies_consent = false` forms.
 - [[apps-gdpr-policy]] — legal terms pages attached to forms.
 
 ## Open questions
 
-- Exact direction of the filter for the third `cookies_consent` state — `null` vs `false` semantics in the storefront controller. The semantic above ("null = unset = suppressed until consent, same as false") matches the original page documentation; should be re-verified against the controller source. (verify)
+No outstanding questions.

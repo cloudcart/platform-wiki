@@ -7,8 +7,8 @@ aliases: ["Segment editor operators", "Segment editor value controls", "Segment 
 tags: [marketing, segments, editor, operators, value-controls]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 > Part of [[marketing-segments-editor]]. See the hub for the other aspects (modal layout, condition builder, create popup, validation, save pipeline, plan gates).
@@ -17,7 +17,7 @@ source_count: 2
 
 ## Purpose
 
-Every condition row in the editor has an **operator** (the comparison verb) and a **value** (the right-hand side). The operator vocabulary depends on the condition's `value_kind`; the value-control vocabulary depends on the condition's identity. This page catalogues both vocabularies. The row mechanics around these modules are on [[segments-editor-condition-builder]].
+Every condition row has an **operator** (the comparison verb, set by the condition's `value_kind`) and a **value** (whose control depends on the condition). This page catalogues both. Row mechanics are on [[segments-editor-condition-builder]].
 
 ## Where to find it
 
@@ -25,8 +25,8 @@ Inside any condition row in the Segment editor modal, between the condition pick
 
 ## What the merchant can do here
 
-- **Pick the comparison verb** (operator) — available operators depend on the condition's `value_kind`. See the operator table below.
-- **Enter or pick the right-hand value** — the value-control module changes with the condition (multi-select, autocomplete, date picker, currency input, etc.). See the value-control table below.
+- **Pick the operator** — see the operator table below.
+- **Enter or pick the value** — see the value-control table below.
 - **Switch the City picker scope** by first picking a Country in a parent / sibling Country condition.
 - **Combine cascading dropdowns** for Device type (Type → Manufacturer → Model) and Subscriber custom field (Field → Option).
 
@@ -80,7 +80,7 @@ The operator-select control offers no clear button — the operator is always on
 | **Customer group** | Tag picker against `/admin/api/core/customer-groups/search`. |
 | **Vendor** (standalone) | Tag picker against `/admin/api/core/vendors/search`. |
 | **Times** (under `view.product` etc.) | Number input + a **Grouped by record** switch (controls whether to count product views aggregated by product or by event row; serialised as `meta.group_by = 'record_id'`). |
-| **Amount / Price / Average** (currency) | Currency input (formatted with the store's currency). |
+| **Amount / Price / Average** (currency) | Currency input. Under an order condition, **Order amount** (`Сума на поръчките`) is the **sum** of the totals of all the subscriber's orders that match the other order conditions; **Order price total** (`Сума на поръчката`) is **one** order's total; **Order average** is their average. |
 | **Click rate / Open rate** | Percentage input (0–100). |
 | **Default** (text values) | Plain text input. |
 

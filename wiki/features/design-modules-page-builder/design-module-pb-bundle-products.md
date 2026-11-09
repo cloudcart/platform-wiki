@@ -1,14 +1,14 @@
 ---
 type: feature
-nav_path: "Marketing → Dynamic Pages → Page-builder modules → Bundle products"
+nav_path: "Design → Static pages → Dynamic page → Page-builder modules → Bundle products"
 route_name: admin.pages.builder
 route_path: /admin/marketing/pages/builder/{page_id?}
 aliases: ["Bundle products module", "Bundle showcase block", "Модул пакети"]
 tags: [design, modules, page-builder, bundles, marketing]
 plan_gates: [storefront_builder]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 2
+updated: 2026-11-09
+source_count: 3
 ---
 
 # Bundle products block (`bundle-products`)

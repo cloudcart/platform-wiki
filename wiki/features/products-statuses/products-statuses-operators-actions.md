@@ -7,8 +7,8 @@ aliases: ["Quantity operators", "If the quantity is dropdown", "Buy button actio
 tags: [products, statuses, stock, customer-facing]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 8
+updated: 2026-11-09
+source_count: 9
 ---
 # Product statuses — operators & action types
 
@@ -65,7 +65,7 @@ The **Continue selling** operator is the way merchants who allow oversell (per t
 
 ### "Show as subscribe" connects to back-in-stock email
 
-When a status uses **Show as subscribe for quantity**, the storefront button collects customer emails. When stock returns (the product becomes in-stock again), the platform sends a back-in-stock notification email to all subscribers and clears the subscription. Subscriptions are managed at [[products-missing-product]].
+When a status uses **Show as subscribe for quantity**, the storefront button collects customer emails. When stock returns, nothing is sent by itself: the subscribers are reached by a campaign on a back-in-stock segment, and drop off the waiting list once a campaign has messaged them. Subscriptions and the campaign route are on [[products-missing-product]].
 
 ### "Show as request" depends on the Request app
 

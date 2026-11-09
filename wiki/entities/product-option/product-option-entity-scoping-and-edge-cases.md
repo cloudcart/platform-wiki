@@ -4,8 +4,8 @@ nav_path: "Entity → Product Option → Scoping & edge cases"
 aliases: ["Product Option scoping", "Option attachment scope", "Option category scope", "Option vendor scope", "Option selection scope", "Option file-upload cascade", "Option bundle bypass"]
 tags: [catalog, products, options, scoping, edge-cases, entity]
 created: 2026-06-10
-updated: 2026-06-10
-source_count: 1
+updated: 2026-11-09
+source_count: 2
 ---
 
 > Part of [[product-option]]. See the hub for the other aspects (attributes, pricing, order-line storage).
@@ -27,7 +27,7 @@ How an Option is attached to products beyond the simple per-product case, plus t
 | Attribute | What the merchant controls | Notes |
 |-----------|----------------------------|-------|
 | **Attachment scope** | `product` / `category` / `vendor` / `selection` | Determines how broadly the Option attaches: one product, all products in a category, all products of a vendor brand, or a custom multi-pick list of products. |
-| **File-upload caps** | n/a — inherited, not per-Option | File-upload Options have no per-Option size or MIME limit; they inherit the store-wide caps from [[settings-files]]. |
+| **File-upload caps** | n/a — platform-wide, not per-Option | pdf, doc, jpeg, jpg, png, gif, tiff, zip or rar, up to 25 MB; not the file manager's list in [[settings-files]]. |
 
 ## Scoping rules
 
@@ -46,7 +46,7 @@ Attaching at category / vendor / selection scope is broader than per-product —
 
 ### File-upload caps come from store-wide settings
 
-File-upload Options do NOT enforce per-Option size or MIME limits — uploads use the platform's general file-upload caps from [[settings-files]] and the platform's mime-type rules. There is no per-Option override.
+File-upload Options have no per-Option size or type setting. Every File option takes one file of type pdf, doc, jpeg, jpg, png, gif, tiff, zip or rar, up to 25 MB — a shorter list than the file manager's in [[settings-files]].
 
 ### Deleting a File-upload Option cascades to in-progress cart selections
 
@@ -61,7 +61,7 @@ Bundles compose pre-selected products only. If a [[bundle|Bundle]] child has Req
 - [[products-options-overview]] — where the merchant sets the attachment scope and deletes Option definitions (triggering the File cascade).
 - [[product]] — per-product attachment via the product editor's Options section.
 - [[category]] — category-scope attachment applies the Option to every product in the category.
-- [[settings-files]] — the store-wide file-upload caps inherited by File-upload Options.
+- [[settings-files]] — the file manager (its own, longer type list).
 - [[cart]] — active cart rows wiped when a File-upload Option is deleted.
 - [[bundle]] — Bundles bypass their child products' Required Options.
 
