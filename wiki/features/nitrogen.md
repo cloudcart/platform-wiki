@@ -1,13 +1,13 @@
 ---
 type: feature
-nav_path: "Nitrogen (Headless storefronts)"
+nav_path: "Design → Nitrogen (Headless storefronts)"
 route_name: nitrogen
 route_path: /admin/nitrogen
-aliases: ["Nitrogen", "Headless storefronts", "Nitrogen admin", "Nitrogen page", "Where is Nitrogen", "Витрини Nitrogen", "Хедлес магазин", "Къде е Nitrogen", "Страница Nitrogen"]
+aliases: ["Nitrogen", "Headless storefronts", "Nitrogen admin", "Nitrogen page", "Where is Nitrogen", "Design Nitrogen", "Дизайн Nitrogen", "Витрини Nitrogen", "Хедлес магазин", "Къде е Nitrogen", "Страница Nitrogen"]
 tags: [nitrogen, hub, staff-permission]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-04
+updated: 2026-11-05
 source_count: 4
 ---
 # Nitrogen (Headless storefronts)
@@ -20,13 +20,15 @@ The area manages storefronts. It has no design tools: the storefront itself is c
 
 ## Where to find it
 
-Open the address `/admin/nitrogen`. **For now, the admin's menu has no link to this area**: not in the main menu, nor under Design or Settings. The screens' breadcrumb starts at **Nitrogen**.
+Sidebar → **Дизайн** / **Design** → **Nitrogen**, the first link of that menu, tagged **new**. The page that **Design** opens leads here too, through **Go to Nitrogen** ([[design]]). The address is `/admin/nitrogen`.
+
+On these pages the Design menu stays open, with **Nitrogen** lit. The first page has no breadcrumb; those after it start at **Nitrogen**.
 
 ## The screens
 
 | Screen | Address | Page |
 |---|---|---|
-| Storefronts list | `/admin/nitrogen` | [[nitrogen-storefronts]] |
+| First page: an introduction, or the storefronts | `/admin/nitrogen` | [[nitrogen-storefronts]] |
 | Create storefront | `/admin/nitrogen/create` | [[nitrogen-create-storefront]] |
 | Create storefront: repository | `/admin/nitrogen/create/repository` | [[nitrogen-create-storefront-repository]] |
 | A storefront: **Overview** | `/admin/nitrogen/:storefrontId` | [[nitrogen-storefront-overview]] |
@@ -42,18 +44,20 @@ Open the address `/admin/nitrogen`. **For now, the admin's menu has no link to t
 
 **Storefronts**
 
-- See every storefront with its name, address, source, status and date, and how many of the 10 allowed are used.
-- Create one, open one, or delete one.
+- With none yet, read what Nitrogen is, on an introduction page.
+- See every storefront as a box: a picture of what is live, its address, name, status and source, and a link to view it.
+- Create one (up to 10), or open one. Deleting is on a storefront's **General** tab.
 
 **Creating a storefront**
 
-- Name it and choose how it deploys: **GitHub** or **Command line or CI/CD**. This cannot be changed later.
+- Name it and choose how it deploys: **GitHub**, marked **Recommended**, or **Command line or CI/CD**. This cannot be changed later.
 - On GitHub: connect a GitHub account, then create a new repository from the starter (private or public) or connect an existing one, and follow the setup step by step ([[nitrogen-create-storefront-provisioning]]).
-- On the command line: receive the deployment token, shown once, and the commands to run.
+- On the command line: receive one box to copy for an AI agent and, under **Advanced**, the deployment token, shown once, and the commands to run.
 
 **Developing and deploying**
 
-- Copy the commands to develop locally and to deploy.
+- Copy one instruction for an AI agent, which sets itself up and designs the storefront with the merchant ([[nitrogen-storefront-overview]]).
+- Under **Advanced**, copy the commands to develop locally and to deploy.
 - See what is live: the screenshot, commit, branch and address, or why the last deploy failed, with links to the build logs on GitHub.
 - Read the history of deploys and the details of each.
 
@@ -90,7 +94,7 @@ Not applicable: the fields are on the screens above.
 
 ### The Nitrogen Storefronts permission
 
-The entire Nitrogen area (`/admin/api/core/nitrogen/*`: storefronts, tokens, deployments, deployment tokens, variables, domains, GitHub connection) requires the **Nitrogen Storefronts** permission, a row of its own in the [[settings-staff]] permission tree. The store owner always has it; a moderator can list, create, edit or delete storefronts and generate tokens only when that permission is ticked for them. Without it, the calls are refused with HTTP 403.
+The entire Nitrogen area (`/admin/api/core/nitrogen/*`: storefronts, tokens, deployments, deployment tokens, variables, domains, GitHub connection) requires the **Nitrogen Storefronts** permission, a row of its own in the [[settings-staff]] permission tree. The store owner always has it. Whoever has it sees the **Design** menu with its **Nitrogen** link. A moderator can list, create, edit or delete storefronts and generate tokens only when that permission is ticked for them. Without it, the calls are refused with HTTP 403.
 
 ### What an agent can do through the API
 

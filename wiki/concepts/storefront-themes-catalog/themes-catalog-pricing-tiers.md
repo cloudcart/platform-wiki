@@ -4,7 +4,7 @@ nav_path: "Concept → Storefront themes catalog → Pricing tiers"
 aliases: ["Themes catalog pricing tiers", "Theme free vs paid", "Paid theme subscription", "Theme price", "site_subscriptions"]
 tags: [storefront, themes, catalog, pricing, reference]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-05
 source_count: 1
 ---
 
@@ -17,7 +17,7 @@ source_count: 1
 Each row in the theme catalogue has a nullable `price` and `currency`. The catalog screen groups templates into **Free** and **Paid** tabs at render time based on those columns. The rule:
 
 - `price` is null or `<= 0` → the platform treats the theme as *settled / nothing owed* and the **Install** action proceeds immediately. The row appears under **Free**.
-- `price > 0` → the merchant needs a `site_subscriptions` row matching the theme's `mapping`. With one, the theme is treated as already-purchased; **Install** proceeds. Without one, **Install** redirects to `admin.templates.purchase/{mapping}` which seeds the cart with the theme and hands off to `/admin/checkout`. The row appears under **Paid**.
+- `price > 0` → the merchant needs a `site_subscriptions` row matching the theme's `mapping`. With one, the theme is treated as already-purchased; **Install** proceeds. Without one, the card shows **Buy** with the price, which opens the checkout panel. The row appears under **Paid**.
 
 At the time of the snapshot every active catalog row had `price = null`, so the catalog rendered every theme as free. This is the current production state but is not a permanent rule of the platform — the paid-theme machinery is live and the columns are in active use schema-wise.
 
@@ -27,7 +27,7 @@ Covered:
 
 - The `price` / `currency` columns and free-vs-paid resolution.
 - The `site_subscriptions` join keyed by `mapping`.
-- The purchase-flow handoff at `admin.templates.purchase`.
+- The purchase handoff to the checkout panel.
 
 Not covered here:
 
@@ -43,7 +43,7 @@ Not covered here:
 
 - **`site_subscriptions` row vs `front_theme` row** — `site_subscriptions` records that the merchant has purchased the theme (a commercial fact); `front_theme` records the merchant's per-theme customisations (variables, custom CSS/JS). Switching to a paid theme requires a `site_subscriptions` row but doesn't touch `front_theme`. Switching away from a paid theme leaves both rows in place — they re-activate if the merchant switches back.
 
-- **Snapshot state vs platform capability** — every catalog row had `price = null` in the inspected snapshot, but the schema supports paid themes and the purchase flow at `admin.templates.purchase` is wired through. Treat "everything is free right now" as a current-state observation, not a permanent rule.
+- **Snapshot state vs platform capability** — every catalog row had `price = null` in the inspected snapshot, but the schema supports paid themes and the purchase flow through the checkout panel is wired through. Treat "everything is free right now" as a current-state observation, not a permanent rule.
 
 - **Plan-gate vs per-theme purchase** — `change_theme` is a plan-level feature gate that controls whether the merchant can change theme at all. The `price` column is a separate, per-theme cost. A merchant on a plan that doesn't include `change_theme` can't install ANY theme; a merchant on a plan that DOES include it still needs to pay for a paid theme. See [[plan-gates]].
 
@@ -51,9 +51,9 @@ Not covered here:
 
 The pricing tier shows up at three points in the merchant's journey:
 
-- **Catalog browse** — `/admin/storefront/templates` groups rows under **Free** and **Paid** tabs. The split is computed at render from `price` (null/0 → Free; > 0 → Paid).
-- **Install click** — `admin.templates.change/{mapping}` checks the "settled" flag. If the theme is paid and no subscription exists, it redirects to `admin.templates.purchase/{mapping}` instead of running the change.
-- **Purchase / checkout** — `admin.templates.purchase/{mapping}` seeds the cart with the theme as a line item and hands off to `/admin/checkout`. On successful checkout, a `site_subscriptions` row is written keyed by `(site_id, mapping)`. The next time the merchant clicks **Install** on the same theme, the "settled" flag evaluates true and the install runs normally.
+- **Catalog browse** — `/admin/design/templates` groups rows under **Free** and **Paid** tabs. The split is computed at render from `price` (null/0 → Free; > 0 → Paid).
+- **Install click** — `POST /admin/api/design/templates/{mapping}/change` checks the "settled" flag. If the theme is paid and no subscription exists, it answers `status: purchase` instead of running the change.
+- **Purchase / checkout** — **Buy** opens the checkout panel with the theme. On successful checkout, a `site_subscriptions` row is written keyed by `(site_id, mapping)`. The next time the merchant clicks **Install** on the same theme, the "settled" flag evaluates true and the install runs normally.
 
 The `currency` column is per-theme. Paid themes can be priced in different currencies; the checkout consumes whichever currency the row carries. The merchant's billing currency does not override the theme's price currency (verify).
 

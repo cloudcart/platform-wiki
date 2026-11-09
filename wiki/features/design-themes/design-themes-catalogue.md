@@ -1,13 +1,13 @@
 ---
 type: feature
 nav_path: "Design → Themes → Catalogue"
-route_name: admin.templates.list
-route_path: /admin/storefront/templates
+route_name: design.templates
+route_path: /admin/design/templates
 aliases: ["Themes catalogue", "Theme listing", "Free vs paid themes", "Theme cards"]
 tags: [design, themes, templates, catalogue]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
+updated: 2026-11-05
 source_count: 4
 ---
 
@@ -21,7 +21,7 @@ The Themes screen's bottom section is a card catalogue of every theme CloudCart 
 
 ## Where to find it
 
-Sidebar → **Design** → **Themes** → bottom section (below the "current theme" panel). Route `/admin/storefront/templates`.
+Sidebar → **Design** → **Themes** → bottom section (below the "current theme" panel). Route `/admin/design/templates`.
 
 ## What the merchant can do here
 

@@ -1,6 +1,6 @@
 ---
 type: feature
-nav_path: "Nitrogen → Storefronts → Create Storefront → Provisioning"
+nav_path: "Design → Nitrogen → Create Storefront → Provisioning"
 route_name: nitrogen.storefront.select-repo
 route_path: /admin/nitrogen/create/repository
 aliases: ["Nitrogen provisioning step", "Setting Up Your Storefront", "Nitrogen provision steps", "Nitrogen create payload"]

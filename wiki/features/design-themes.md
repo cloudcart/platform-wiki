@@ -1,9 +1,9 @@
 ---
 type: feature
 nav_path: "Design → Themes"
-route_name: admin.templates.list
-route_path: /admin/storefront/templates
-aliases: ["Themes", "Templates", "Storefront theme", "Theme picker", "Storefront template", "Темплейт", "Темплейти", "Шаблон", "Готови дизайни", "Избери дизайн"]
+route_name: design.templates
+route_path: /admin/design/templates
+aliases: ["Themes", "Templates", "Storefront theme", "Theme picker", "Storefront template", "Choose design", "Ready-made templates", "Темплейт", "Темплейти", "Шаблон", "Готови дизайни", "Готови шаблони", "Избери дизайн"]
 tags: [design, themes, templates]
 plan_gates: ["change_theme"]
 created: 2026-05-23
@@ -26,8 +26,8 @@ This concept is split into 7 aspect pages — each covers one well-scoped slice.
 ## Sub-pages (in this cluster)
 
 - [[design-themes-catalogue]] — listing query, free/paid tabs, theme attributes (`mapping`, `price`, `active`, `coming_soon`, `new`, `in_dev`, `has_demo`), `is_paid` derivation, badges, sort order, screenshots.
-- [[design-themes-install]] — the Install action (`admin.templates.change/{mapping}`), confirmation prompt, AJAX response, install transaction side-effects (CSS recompile, `db:translation` regen, demo-pages reseed, gate-vs-routing dual-write).
-- [[design-themes-purchase]] — paid theme purchase flow (`admin.templates.purchase/{mapping}`), cart clearing, checkout, `redirectAfterPay` session key, theme-as-subscription model.
+- [[design-themes-install]] — the Install action, confirmation prompt, AJAX response, install transaction side-effects (CSS recompile, `db:translation` regen, demo-pages reseed, gate-vs-routing dual-write).
+- [[design-themes-purchase]] — paid theme purchase flow, cart clearing, checkout, `redirectAfterPay` session key, theme-as-subscription model.
 - [[design-themes-unpaid-middleware]] — the `unpaid_template` flag that locks the entire admin to Themes / Checkout / Login / Billing / 2FA until the merchant pays or switches to a free theme.
 - [[design-themes-switch-effects]] — what's preserved vs lost on a switch: catalogue data, per-theme customisations, theme-specific modules, page-builder blocks, demo-pages reseed via `pages.json`, 500-version page-history cap.
 - [[design-themes-plan-gates]] — the `change_theme` plan-feature gate + `store` / `store.templates` permission keys + the orthogonal paid-theme subscription requirement.
@@ -35,18 +35,19 @@ This concept is split into 7 aspect pages — each covers one well-scoped slice.
 
 ## Where to find it
 
-Sidebar → **Design** → **Themes** (also reachable by clicking the top-level **Design** label, which routes here by default).
+Sidebar → **Design** → **Choose Design** (**Избери дизайн**), the link after **Nitrogen**. Also **See the templates** on the page that **Design** opens ([[design]]). A staff member without the **Nitrogen Storefronts** permission comes here directly on clicking **Design**.
 
-Route `/admin/storefront/templates`, rendered by the legacy view `storefront.templates.list`. Breadcrumb reads **Design** → **Themes**.
+Route `/admin/design/templates`. Breadcrumb reads **Design** → **Choose design**.
 
 Sub-routes:
 
 | Action | Route name | Path | Method |
 |--------|------------|------|--------|
-| List themes | `admin.templates.list` | `/admin/storefront/templates` | GET |
-| Install / change theme | `admin.templates.change` | `/admin/storefront/templates/change/{mapping}` | GET |
-| Open purchase page (paid theme) | `admin.templates.purchase` | `/admin/storefront/templates/purchase/{mapping}` | GET |
-| Add theme to cart and start checkout | (paid theme buy) | `/admin/storefront/templates/purchase/{mapping}` | POST |
+| List themes | `design.templates` | `/admin/design/templates` | GET |
+| Install / change theme | `admin.api.design.templates.change` | `/admin/api/design/templates/{mapping}/change` | POST |
+| Activate a theme after payment | `admin.design.templates.activate` | `/admin/design/templates/activate/{mapping}` | GET |
+
+A paid theme is bought in the checkout panel that its **Buy** button opens on this screen.
 
 Each theme is identified by a `mapping` slug (the theme's machine name, e.g., `flair`, `motion`, `summer`).
 

@@ -1,10 +1,10 @@
 ---
 type: concept
 nav_path: "Concept → Storefront themes catalog → Install flow"
-aliases: ["Themes catalog install flow", "Theme install transaction", "Theme change flow", "admin.templates.change", "Theme install side-effects"]
+aliases: ["Themes catalog install flow", "Theme install transaction", "Theme change flow", "admin.api.design.templates.change", "Theme install side-effects"]
 tags: [storefront, themes, catalog, install, reference]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-05
 source_count: 1
 ---
 
@@ -14,11 +14,11 @@ source_count: 1
 
 ## Definition
 
-The merchant changes the active theme by clicking **Install** on a catalog card at **Design → Themes** (`/admin/storefront/templates`). The Install action posts to `admin.templates.change/{mapping}` after a confirmation dialog. The change is a **single-transaction rewrite** of the storefront — it recompiles CSS, regenerates translations, re-seeds landing pages for the new theme, and invalidates the per-tenant cache.
+The merchant changes the active theme by clicking **Install** on a catalog card at **Design → Choose Design** (`/admin/design/templates`). The Install action posts to `/admin/api/design/templates/{mapping}/change` after a confirmation dialog. The change is a **single-transaction rewrite** of the storefront — it recompiles CSS, regenerates translations, re-seeds landing pages for the new theme, and invalidates the per-tenant cache.
 
 There is **no preview-without-commit path**. Clicking Install commits the change immediately; the only way to "undo" is to install the prior theme again, which re-runs the same full transaction.
 
-For a paid theme without a matching `site_subscriptions` row, the Install button silently redirects to `admin.templates.purchase/{mapping}` instead of running the change — see [[themes-catalog-pricing-tiers]]. For a theme that is `active = 'no'`, the change is rejected at the server-side visibility check even if the route is hand-crafted — see [[themes-catalog-data-source]].
+For a paid theme without a matching `site_subscriptions` row, the card shows **Buy** rather than **Install**, and the endpoint answers `status: purchase` instead of running the change — see [[themes-catalog-pricing-tiers]]. For a theme that is `active = 'no'`, the change is rejected at the server-side visibility check even if the route is hand-crafted — see [[themes-catalog-data-source]].
 
 ## Scope
 
@@ -49,12 +49,12 @@ Not covered here:
 
 The full Install / change sequence runs from the catalog screen. The merchant flow:
 
-1. Sidebar **Design → Themes** opens `/admin/storefront/templates`.
+1. Sidebar **Design → Themes** opens `/admin/design/templates`.
 2. Hover any catalog card → button reveals:
    - **Install** (free / already-purchased), OR
    - **Buy** (paid, not purchased) — redirects to purchase flow.
 3. Click Install → confirmation dialog ("Are you sure?" with theme name).
-4. Confirm → request goes to `admin.templates.change/{mapping}`.
+4. Confirm → request goes to `/admin/api/design/templates/{mapping}/change`.
 5. Server-side: the platform re-validates the target row against the catalog visibility rules. If the row is missing, `in_dev = 1`, or `active = 'no'`, the request is rejected.
 6. Server-side transaction:
    - Update `users_sites.template_id` in the gate DB.

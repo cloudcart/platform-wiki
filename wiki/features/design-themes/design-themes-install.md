@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Design → Themes → Install action"
-route_name: admin.templates.change
-route_path: /admin/storefront/templates/change/{mapping}
+route_name: design.templates
+route_path: /admin/design/templates
 aliases: ["Install theme", "Change theme", "Theme switch", "Apply theme"]
 tags: [design, themes, templates, install]
 plan_gates: ["change_theme"]
@@ -23,11 +23,11 @@ The install itself is a single click + confirmation, but it is a **big, store-wi
 
 ## Where to find it
 
-Triggered from a theme card on `/admin/storefront/templates` — see [[design-themes-catalogue]]. The handler routes are:
+Triggered from a theme card on `/admin/design/templates` — see [[design-themes-catalogue]]. The handler routes are:
 
 | Action | Route name | Path | Method |
 |--------|------------|------|--------|
-| Install / change theme | `admin.templates.change` | `/admin/storefront/templates/change/{mapping}` | GET |
+| Install / change theme | `admin.api.design.templates.change` | `/admin/api/design/templates/{mapping}/change` | POST |
 
 Each theme is identified by its `mapping` slug.
 
@@ -50,7 +50,7 @@ Every install on a non-current theme requires confirmation: *"Are you sure you w
 
 ### Action response shape
 
-The endpoint responds either with a normal redirect to `admin.templates.list` (for non-AJAX) or with a JSON `{status: 'success', msg: 'Theme changed successfully.', redirect: ...}` for AJAX.
+The endpoint answers with JSON: `{status: 'success', msg: ...}`; `{status: 'purchase', redirect: '/admin/design/templates'}` for a paid theme not yet owned; or an error with HTTP 422.
 
 ## Business rules
 

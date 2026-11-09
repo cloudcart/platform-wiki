@@ -1,11 +1,11 @@
 ---
 type: concept
 nav_path: "Concept → Nitrogen or a standard theme"
-aliases: ["Nitrogen vs theme", "Nitrogen vs standard theme", "Nitrogen or theme", "Standard theme vs Nitrogen", "Classic theme vs Nitrogen", "Theme vs headless", "Make a design", "Build a design", "Custom design", "Own design", "Custom storefront design", "Redesign", "Edit theme templates", "Edit template files", "Standard theme", "Нитроген или тема", "Нитроген срещу тема", "Разлика между Nitrogen и тема", "Витрина с Nitrogen", "Витрина или тема", "Направи ми дизайн", "Искам дизайн", "Нов дизайн", "Собствен дизайн", "Индивидуален дизайн", "Уникален дизайн", "Редизайн", "Редакция на темплейт", "Редакция на темплейтите", "Промяна на темплейт", "Стандартна тема", "Стандартни теми"]
+aliases: ["Nitrogen vs theme", "Nitrogen vs standard theme", "Nitrogen or theme", "Standard theme vs Nitrogen", "Classic theme vs Nitrogen", "Theme vs headless", "Make a design", "Build a design", "Custom design", "Own design", "Custom storefront design", "Redesign", "Edit theme templates", "Edit template files", "Standard theme", "Ready-made templates", "Готови шаблони", "Нитроген или шаблон", "Нитроген или тема", "Нитроген срещу тема", "Разлика между Nitrogen и тема", "Витрина с Nitrogen", "Витрина или тема", "Направи ми дизайн", "Искам дизайн", "Нов дизайн", "Собствен дизайн", "Индивидуален дизайн", "Уникален дизайн", "Редизайн", "Редакция на темплейт", "Редакция на темплейтите", "Промяна на темплейт", "Стандартна тема", "Стандартни теми"]
 tags: [nitrogen, headless, design, themes, metafields, metaobjects, concepts]
 plan_gates: []
 created: 2026-11-04
-updated: 2026-11-04
+updated: 2026-11-05
 source_count: 5
 ---
 
@@ -18,7 +18,7 @@ A CloudCart store shows its customers one of two kinds of storefront. Both run o
 - A **standard theme** is a ready design from CloudCart's catalogue ([[design-themes]]). The merchant adjusts what the theme exposes.
 - A **Nitrogen storefront** is the store's own application, made from CloudCart's starter ([[headless-starter]]). It reads the store through the Storefront API ([[headless-storefront]]).
 
-**When a merchant wants to make a design, the answer is Nitrogen, not editing a theme's templates.** Nitrogen was built for full freedom. Together with metafields and metaobjects ([[metafields-metaobjects]]), it gives a fully custom, interactive online store on modern technology, whose content the merchant still manages from the admin. A theme's template files are not open to merchants at all.
+**When a merchant wants to make a design, the answer is Nitrogen, not editing a theme's templates.** Nitrogen was built for full freedom. Together with metafields and metaobjects ([[metafields-metaobjects]]), it gives a fully custom, interactive online store on modern technology, whose content the merchant still manages from the admin. A theme's template files are not open to merchants at all. The admin puts the same choice to the merchant: clicking **Design** opens a page with Nitrogen, marked **Recommended**, and ready-made templates ([[design]]).
 
 Changing the colours, fonts, logo, menus or module order of the theme a store already runs is not making a design. Those stay on the [[design]] screens.
 
@@ -55,14 +55,15 @@ A merchant who wants to open a store with no code, no agent and no developer ins
 
 ## Contrasts
 
-- **Nitrogen is not in Design → Themes.** The catalogue holds only standard themes. Nitrogen has its own area at `/admin/nitrogen` ([[nitrogen]]), which the admin's menu does not link to.
+- **Nitrogen is not in Design → Themes.** The catalogue holds only standard themes. Nitrogen has its own area, the first link under **Design** (`/admin/nitrogen`, [[nitrogen]]).
 - **The starter vs a theme.** A theme is configured from the admin. The starter's files become the project's own and change as code.
 - **This page vs [[headless-legacy-vs-nitrogen]].** This page compares the two for a merchant choosing. That one maps which addresses the platform keeps on a routed domain.
-- **Standard, classic and legacy theme** are the same thing under the names other pages use.
+- **Standard, classic and legacy theme** are the same thing under the names other pages use. The page that **Design** opens calls them ready-made templates.
 
 ## Where it applies
 
-- [[design]] and [[design-themes]]: where a merchant asking for a design arrives.
+- [[design]]: the page that asks the merchant to choose, and the menu.
+- [[design-themes]]: the ready-made templates.
 - [[nitrogen]] and [[nitrogen-create-storefront]]: where a storefront is created.
 - [[metafields-use-cases]]: what to build with the store's own data.
 - [[ai-agent-capabilities]]: an agent doing the build.

@@ -1,13 +1,13 @@
 ---
 type: feature
 nav_path: "Design → Themes → Unpaid-theme middleware"
-route_name: admin.templates.list
-route_path: /admin/storefront/templates
+route_name: design.templates
+route_path: /admin/design/templates
 aliases: ["Unpaid theme", "unpaid_template flag", "Theme admin lock", "Unpaid template middleware"]
 tags: [design, themes, templates, middleware, billing]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-05
 source_count: 4
 ---
 
@@ -27,13 +27,13 @@ The middleware runs on **every admin request**. The merchant lands on the unpaid
 
 Only these routes remain reachable while `unpaid_template` is set:
 
-- **Themes** (`admin.templates.*`) — so the merchant can switch back to a free theme.
+- **Themes** (any address containing `design/templates`) and the page that **Design** opens (`/admin/design`), which leads to them — so the merchant can switch back to a free theme.
 - **Checkout** (`admin.checkout` and `admin.checkout.*`) — so the merchant can complete payment.
 - **Login** (`admin.login`) — so the merchant can sign in.
 - **Billing** (`admin.billing.*`) — so the merchant can manage billing.
 - **2FA flows** (`admin.account.cc2fa` and `admin.account.cc2fa.*`, `admin.core.cc2fa.*`).
 
-Every other admin request is **redirected to checkout** for the unpaid theme.
+Every other admin request, Nitrogen's pages included, is **redirected to checkout** for the unpaid theme.
 
 ## What the merchant cannot do here
 
@@ -68,7 +68,7 @@ If the current route is **not** in the allowed list (Themes / Checkout / Login /
 
 The merchant has two ways out:
 
-1. **Pay for the theme** — complete checkout. After successful payment, the platform redirects to `admin.templates.change/{mapping}` which installs the theme and clears `unpaid_template`. See [[design-themes-purchase]] for the full payment flow.
+1. **Pay for the theme** — complete checkout. After successful payment, the platform redirects to `admin.design.templates.activate` which installs the theme and clears `unpaid_template`. See [[design-themes-purchase]] for the full payment flow.
 2. **Switch to a free theme** — open Themes (the allowed route) and install any free theme. The install handler clears `unpaid_template` as part of its side-effects (see [[design-themes-install]]).
 
 ### Demo user is short-circuited
@@ -77,7 +77,7 @@ If the logged-in user is CloudCart's demo user (`demo.user_id` from config), the
 
 ### The flag is cleared in two ways
 
-- Successful payment of the theme purchase (via `redirectAfterPay` → `admin.templates.change/{mapping}` → clears flag in the install transaction).
+- Successful payment of the theme purchase (via `redirectAfterPay` → `admin.design.templates.activate` → clears flag in the install transaction).
 - Switching to a free theme via the Themes screen (the free-theme install also clears the flag).
 
 ## Related

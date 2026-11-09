@@ -1,13 +1,13 @@
 ---
 type: feature
 nav_path: "Design → Themes → Plan gates & permissions"
-route_name: admin.templates.list
-route_path: /admin/storefront/templates
+route_name: design.templates
+route_path: /admin/design/templates
 aliases: ["change_theme plan-feature", "Theme plan gate", "Theme permission", "store.templates permission"]
 tags: [design, themes, templates, plan-gates, permissions]
 plan_gates: ["change_theme"]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-05
 source_count: 4
 ---
 
@@ -29,7 +29,7 @@ Plus the orthogonal **paid-theme subscription** requirement that applies regardl
 The gates run wherever the merchant tries to:
 
 - Click **Themes** in the Design sidebar (permission check).
-- Click **Install** on a theme card at `/admin/storefront/templates/change/{mapping}` (plan-feature check).
+- Click **Install** on a theme card at `/admin/design/templates` (plan-feature check).
 
 ## What the merchant can do here
 

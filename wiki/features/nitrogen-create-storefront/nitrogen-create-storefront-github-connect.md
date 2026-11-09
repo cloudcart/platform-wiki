@@ -1,6 +1,6 @@
 ---
 type: feature
-nav_path: "Nitrogen → Storefronts → Create Storefront → Connect GitHub"
+nav_path: "Design → Nitrogen → Create Storefront → Connect GitHub"
 route_name: nitrogen.storefront.create
 route_path: /admin/nitrogen/create
 aliases: ["Connect GitHub for Nitrogen", "Nitrogen GitHub App", "Nitrogen GitHub OAuth", "github=connected return signal"]

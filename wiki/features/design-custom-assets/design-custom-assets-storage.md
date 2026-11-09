@@ -1,7 +1,7 @@
 ---
 type: feature
 nav_path: "Design → Custom CSS/JS → Storage & lifecycle"
-route_name: admin.custom.assets
+route_name: design.custom-assets
 route_path: /admin/design/custom-assets
 aliases: ["Custom CSS/JS storage", "Custom code per theme", "Custom assets lifecycle", "custom-css-js row", "Persistiranе на персонализиран код"]
 tags: [design, custom, css, js, advanced]

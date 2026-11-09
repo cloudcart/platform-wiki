@@ -5,7 +5,7 @@ aliases: ["Nitrogen starter", "Starter theme", "Nitrogen starter theme", "Nitrog
 tags: [nitrogen, headless, starter, ai, concepts]
 plan_gates: []
 created: 2026-11-04
-updated: 2026-11-04
+updated: 2026-11-05
 source_count: 4
 ---
 
@@ -26,6 +26,7 @@ The **starter** is CloudCart's public template, `cloudcart/nitro-starter`: a wor
 - **Claude Code, Cursor, Gemini CLI and VS Code** have the skill with the CloudCart plugin ([[ai-agent-toolkit]]).
 - **Claude Desktop, OpenAI Codex and other MCP clients** do not install it. They read it from the toolkit first: `https://raw.githubusercontent.com/cloudcart/ai-toolkit/main/skills/cloudcart-nitrogen/SKILL.md`, and the files in its `references/` folder beside it.
 - **The Storefront MCP** is needed as well. An agent set up as *Manage my store* adds the build profile first.
+- **The merchant starts the agent** with the text copied from the storefront's page ([[nitrogen-storefront-overview]]), which leads the agent through this setup.
 
 The skill works in five stages: the store and its design, the build, SEO and security, analytics and the merchant's pixels, and a review of the whole site, including a mobile speed score of 90 or more. Its rule for the design is to build on the starter, never over it: through the design tokens and the existing components, not through a second copy of them. It pushes and deploys only when the merchant says so, because a deploy changes the live storefront.
 

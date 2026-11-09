@@ -5,7 +5,7 @@ aliases: ["Nitrogen env vars", "System variables", "Read-only variables", "Custo
 tags: [nitrogen, headless, environment-variables, configuration, concepts]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-03
+updated: 2026-11-05
 source_count: 5
 ---
 
@@ -43,15 +43,15 @@ Not covered:
 
 ### Read-only variables
 
-*"Set by CloudCart for every environment of this storefront."*
+*"Set by CloudCart for every environment of this storefront. Its secret values reach your project only through the CLI's env pull."*
 
 | Name | What it is |
 |---|---|
 | `PUBLIC_STOREFRONT_API_TOKEN` | The public Storefront API token (see [[headless-storefront-api]]). |
-| `PRIVATE_STOREFRONT_API_TOKEN` | The private Storefront API token. Shown masked. |
+| `PRIVATE_STOREFRONT_API_TOKEN` | The private Storefront API token. Not listed on the tab. |
 | `PUBLIC_STORE_DOMAIN` | The store's domain; the routed domain while one is routed. |
 | `PUBLIC_API_ORIGIN` | Present only while a domain is routed: `https://` plus the store's main host, so the storefront's server calls the API directly rather than looping back into its own worker. |
-| `SESSION_SECRET` | Generated once, at creation. Shown masked. |
+| `SESSION_SECRET` | Generated once, at creation. Not listed on the tab. |
 | `PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID`, `PUBLIC_CUSTOMER_ACCOUNT_API_URL` | Only for a storefront whose customer account was set up before that tab was removed. Sign-in does not read them (see [[headless-customer-accounts]]). |
 
 `PUBLIC_STOREFRONT_ID` and `SHOP_ID` are no longer written, and those names are free for a custom variable. A deployed storefront keeps them until its next deploy.

@@ -5,7 +5,7 @@ aliases: ["CloudCart AI Toolkit", "ai-toolkit", "cloudcart-plugin", "CloudCart C
 tags: [ai, agent, cli, mcp, setup, developer, concepts]
 plan_gates: []
 created: 2026-11-03
-updated: 2026-11-04
+updated: 2026-11-05
 source_count: 3
 ---
 
@@ -34,6 +34,10 @@ The agent asks which one fits before it installs anything:
 
 - **Manage my store** (the default, if the merchant is unsure): products, prices, stock, orders, customers, questions about the platform.
 - **Build or develop on my store**: all of the above plus the Storefront MCP, for a Nitrogen storefront or other custom work. It can be added later.
+
+### The instruction for a Nitrogen storefront
+
+A storefront's page in the admin gives the merchant its own text to copy ([[nitrogen-storefront-overview]]). It points the agent at `design_prompt.md` in the toolkit, rather than `prompt.md`, and carries the commands for that storefront. The agent makes sure the build profile is installed and the store is connected, sets up the project, and hands it to the `cloudcart-nitrogen` skill.
 
 ### Requirements
 

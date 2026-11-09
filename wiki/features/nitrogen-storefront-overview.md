@@ -1,13 +1,13 @@
 ---
 type: feature
-nav_path: "Nitrogen → Storefronts → (storefront)"
+nav_path: "Design → Nitrogen → (storefront)"
 route_name: nitrogen.storefront.overview
 route_path: /admin/nitrogen/:storefrontId, /admin/nitrogen/:storefrontId/general, /admin/nitrogen/:storefrontId/environment, /admin/nitrogen/:storefrontId/nova, /admin/nitrogen/:storefrontId/api, /admin/nitrogen/:storefrontId/domains
-aliases: ["Nitrogen storefront page", "Storefront detail", "Storefront settings", "Develop locally", "Production address", "Delete storefront", "Environments and variables", "Deployment tokens", "Storefront API tab", "Domains tab", "Route to this storefront", "Back to the store theme", "Настройки на витрината"]
+aliases: ["Nitrogen storefront page", "Storefront detail", "Storefront settings", "Copy this and give it to your AI agent", "Copy the setup instruction", "Agent instruction", "Инструкция за агента", "Develop locally", "Production address", "Delete storefront", "Environments and variables", "Deployment tokens", "Storefront API tab", "Domains tab", "Route to this storefront", "Back to the store theme", "Настройки на витрината"]
 tags: [nitrogen, storefronts, headless, domains, tokens, staff-permission]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-04
+updated: 2026-11-05
 source_count: 4
 ---
 # Nitrogen storefront page
@@ -18,13 +18,13 @@ This is the page of one Nitrogen storefront. From it the merchant develops and d
 
 ## Where to find it
 
-A storefront's name on [[nitrogen-storefronts]], at `/admin/nitrogen`; the admin's menu has no link to this area ([[nitrogen]]). New storefronts open here after [[nitrogen-create-storefront]].
+A storefront's box on [[nitrogen-storefronts]], under **Design → Nitrogen**. New storefronts open here after [[nitrogen-create-storefront]].
 
 The header shows the storefront's name, its address, an **Active** or **Paused** badge, and the buttons **View storefront** (once it has an address) and **All deployments** ([[nitrogen-deployments]]).
 
 ## What the merchant can do here
 
-- Copy the commands to develop locally and deploy (**Overview**).
+- Copy one instruction for an AI agent or, under **Advanced**, the commands to develop locally and deploy (**Overview**).
 - Rename the storefront, copy its address, delete it (**General**).
 - Add, delete and copy custom variables, and read the read-only ones (**Environments and variables**).
 - See the deployment source, connect or disconnect a GitHub account, create, turn off and on, and delete deployment tokens (**Deployments**).
@@ -49,6 +49,11 @@ The old `/admin/nitrogen/:storefrontId/customer-account` address opens **General
 ### Overview
 
 - After creation, a notice reads *"Storefront created and connected to GitHub."* or *"Storefront created."*
+- **Copy this and give it to your AI agent** — *"It sets itself up, runs the commands and designs your storefront with you."* The button **Copy the setup instruction** copies a text the page does not show, then reads *"✓ Copied — now paste it into your agent"*. It can offer backups first, as described on [[ai-agent-connect]].
+  - The text tells the agent to follow `design_prompt.md` from the toolkit ([[ai-agent-toolkit]]), lists this storefront's commands, and says how it deploys.
+  - On GitHub, it starts from the storefront's own repository and says no deployment token is needed.
+  - From the command line, the agent asks the merchant for a deployment token when asked to deploy. The merchant makes one on the **Deployments** tab.
+- **Advanced** slides open what a person does by hand: the two cards below.
 - **Develop locally** — the commands: `npm install -g @cloudcart/cli`; for a GitHub storefront `git clone` and `npm install`, for a command-line one `cloudcart nitrogen init`; then `cloudcart nitrogen link --storefront "<name>"`, `cloudcart nitrogen env pull`, `npm run dev`.
 - **Deploy** — on GitHub: *"Every push to the {branch} branch of {repository} deploys to production."* with **View the runs on GitHub**. From the command line: *"Deploy from the command line with a deployment token, set as CLOUDCART_NOVA_TOKEN in.env."* and `cloudcart nitrogen deploy`. The card's button, **Deployment settings** or **Deployment tokens**, opens the **Deployments** tab.
 - **Production** (aside) — the current deployment, with **View all**:
@@ -74,7 +79,7 @@ The old `/admin/nitrogen/:storefrontId/customer-account` address opens **General
 
 - **Production** — the branch, or *"Deployed from the command line"*, and the address. *"The variables are bound to the storefront when it is deployed: a change takes effect with the next deploy."*
 - **Custom variables** — *"Your storefront's own settings and keys. A secret's value stays hidden here; cloudcart nitrogen env pull writes it to.env."* Columns **Key**, **Value**, **Environment**, and a delete action. Clicking a value copies it; a secret shows as dots. **Add variable** asks for **Key** (*"Upper-case letters, digits and underscores, starting with a letter."*), **Value**, **Environment** (**All environments** or **Production**) and **Secret** (*"Its value is hidden in the admin once saved."*). Empty: *"No custom variables yet."*
-- **Read-only variables** — *"Set by CloudCart for every environment of this storefront."* Those ending in `_TOKEN` or `_SECRET` show as dots.
+- **Read-only variables** — *"Set by CloudCart for every environment of this storefront. Its secret values reach your project only through the CLI's env pull."* The platform's own secrets are not listed here. The public token is shown.
 
 Key rules, the names and the limits are on [[headless-environment-variables]].
 

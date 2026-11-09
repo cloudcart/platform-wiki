@@ -1,13 +1,13 @@
 ---
 type: feature
 nav_path: "Design → Themes → Edge cases"
-route_name: admin.templates.list
-route_path: /admin/storefront/templates
+route_name: design.templates
+route_path: /admin/design/templates
 aliases: ["Theme edge cases", "Demo user theme behaviour", "Coming-soon themes", "In-dev themes", "Demo URL fallback"]
 tags: [design, themes, templates, edge-cases]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
+updated: 2026-11-05
 source_count: 4
 ---
 
@@ -21,7 +21,7 @@ This aspect collects the special-case behaviours that don't belong to any single
 
 ## Where to find it
 
-These behaviours manifest on `/admin/storefront/templates`.
+These behaviours manifest on `/admin/design/templates`.
 
 ## What the merchant can do here
 

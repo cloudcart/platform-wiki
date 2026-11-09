@@ -79,7 +79,7 @@
 - [[marketing]] — discounts, campaigns, channels, SEO, cross-sell / up-sell, subscribers, abandoned-cart.
 - [[analytics]] — dashboard boxes + reports (sales, orders, customers, sessions, traffic).
 - [[settings]] — store settings: general, shipping, payments, taxes, invoicing, staff, statuses, boxes, geo zones, hooks.
-- [[design]] — themes, storefront modules, page builder, widgets; to make a design of the store's own, see [[nitrogen-vs-themes]].
+- [[design]] — the Design menu: the page choosing Nitrogen or ready-made templates, then themes, storefront modules, page builder, widgets; to make a design of the store's own, see [[nitrogen-vs-themes]].
 - [[payment-providers]] — directory of every payment gateway (jump to a provider's config); CloudCart Pay, the built-in one, is free of transaction fees until 31.12.2026.
 - [[settings-payment-providers]] — the Payment methods screen (install / activate / order providers).
 - [[shipping]] — directory of every courier integration (jump to a courier's page).
@@ -88,7 +88,7 @@
 - [[account]] — the signed-in admin's personal profile / account.
 - [[merchant]] — the account-owner record (billing identity; owner-only).
 - [[contracts]] — long-term-agreement (LTA) surface for negotiated accounts.
-- [[nitrogen]] — headless storefronts: every Nitrogen screen and what it does, at `/admin/nitrogen`; where a design of the store's own begins.
+- [[nitrogen]] — headless storefronts, at Design → Nitrogen: every Nitrogen screen and what it does; where a design of the store's own begins.
 - [[dashboard]] — the admin home screen (sign-in landing panels).
 - [[virtual-wallet]] — store credit per customer: top-up settings, transactions and approvals, wallet at checkout, expiry, refunds to wallet.
 

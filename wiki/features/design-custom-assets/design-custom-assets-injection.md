@@ -1,7 +1,7 @@
 ---
 type: feature
 nav_path: "Design → Custom CSS/JS → Injection point"
-route_name: admin.custom.assets
+route_name: design.custom-assets
 route_path: /admin/design/custom-assets
 aliases: ["Custom CSS/JS injection", "Custom code head injection", "Where custom code is injected", "Custom assets render order", "async defer custom script", "CSP custom script", "cookie consent tool in custom code", "Инжектиране на персонализиран код"]
 tags: [design, custom, css, js, advanced]

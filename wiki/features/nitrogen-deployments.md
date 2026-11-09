@@ -1,13 +1,13 @@
 ---
 type: feature
-nav_path: "Nitrogen → Storefronts → (storefront) → All deployments"
+nav_path: "Design → Nitrogen → (storefront) → All deployments"
 route_name: nitrogen.deployments
 route_path: /admin/nitrogen/:storefrontId/deployments, /admin/nitrogen/:storefrontId/deployments/:deploymentId
 aliases: ["Nitrogen deployments", "Deployment history", "Deployment status", "Nova deployments", "Failed deployment", "История на деплойментите"]
 tags: [nitrogen, deployments, staff-permission]
 plan_gates: []
 created: 2026-05-21
-updated: 2026-11-04
+updated: 2026-11-05
 source_count: 3
 ---
 # Deployments

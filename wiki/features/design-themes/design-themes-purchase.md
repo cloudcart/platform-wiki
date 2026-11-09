@@ -1,13 +1,13 @@
 ---
 type: feature
 nav_path: "Design → Themes → Purchase flow"
-route_name: admin.templates.purchase
-route_path: /admin/storefront/templates/purchase/{mapping}
+route_name: design.templates
+route_path: /admin/design/templates
 aliases: ["Buy theme", "Theme purchase", "Paid theme checkout", "Theme subscription purchase"]
 tags: [design, themes, templates, purchase, billing]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-05
 source_count: 4
 ---
 
@@ -21,12 +21,11 @@ Paid themes are sold as **site subscriptions** — independent of the merchant's
 
 ## Where to find it
 
-Triggered from a paid (not-yet-purchased) theme card on `/admin/storefront/templates` — see [[design-themes-catalogue]].
+Triggered from a paid (not-yet-purchased) theme card on `/admin/design/templates` — see [[design-themes-catalogue]].
 
 | Action | Route name | Path | Method |
 |--------|------------|------|--------|
-| Open purchase page | `admin.templates.purchase` | `/admin/storefront/templates/purchase/{mapping}` | GET |
-| Add theme to cart and start checkout | (paid theme buy) | `/admin/storefront/templates/purchase/{mapping}` | POST |
+| Activate the theme after payment | `admin.design.templates.activate` | `/admin/design/templates/activate/{mapping}` | GET |
 
 ## What the merchant can do here
 
@@ -54,10 +53,9 @@ On the **purchase page** for a paid theme:
 
 ### Paid theme purchase flow — end to end
 
-1. The merchant clicks **Buy** on the theme card → routes to `admin.templates.purchase/{mapping}` (a one-item purchase page showing the theme screenshot + headline price + VAT notice).
-2. The merchant clicks **Buy** on the purchase page → POSTs to the same URL, which **clears the cart** and re-initialises it with this theme as the only item, then redirects to `/admin/checkout`.
-3. The merchant completes payment on the checkout (standard CloudCart payment flow — see [[details-billing]] / [[details-billing]]).
-4. After successful payment, the site is redirected to `admin.templates.change/{mapping}` for this theme, which installs it as the active theme and clears the `unpaid_template` flag — see [[design-themes-install]].
+1. The merchant clicks **Buy** with the price on the theme card, which opens the checkout panel on the same screen.
+2. The merchant completes payment in the panel (standard CloudCart payment flow — see [[details-billing]]).
+3. After successful payment, `admin.design.templates.activate` installs the theme as the active theme and clears the `unpaid_template` flag — see [[design-themes-install]].
 
 ### The cart is **cleared** when adding a theme
 
@@ -69,7 +67,7 @@ If the theme is already paid for (`is_paid = true`), the purchase page redirects
 
 ### `redirectAfterPay` puts the install URL in the SESSION, not a DB column
 
-After a paid theme is fully paid for, the platform reads `session('redirect_after_install')` to route the merchant straight into the install endpoint. The theme record's `redirectAfterPay` hook stamps that session key with `route('admin.templates.change', $mapping)` AND clears `unpaid_template` to 0. Standard CloudCart checkout's post-success handler consumes that session key.
+After a paid theme is fully paid for, the platform reads `session('redirect_after_install')` to route the merchant straight into the install endpoint. The theme record's `redirectAfterPay` hook stamps that session key with `route('admin.design.templates.activate', $mapping)` AND clears `unpaid_template` to 0. Standard CloudCart checkout's post-success handler consumes that session key.
 
 ### Theme as a subscription
 

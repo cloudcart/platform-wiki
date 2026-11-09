@@ -4,7 +4,7 @@ nav_path: "Concept → Storefront themes catalog → Data source"
 aliases: ["Themes catalog data source", "Templates DB table", "in_dev flag", "active flag", "coming_soon flag", "Mapping slug"]
 tags: [storefront, themes, catalog, reference]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-11-05
 source_count: 1
 ---
 
@@ -14,7 +14,7 @@ source_count: 1
 
 ## Definition
 
-The catalog is rendered from rows in the theme catalogue. The merchant catalog screen at **Design → Themes** (`/admin/storefront/templates`) shows every template where `in_dev = 0` AND (`active = 'yes'` OR `coming_soon = 1`), grouped into **Free** and **Paid** tabs. Three boolean-ish flags decide whether a row is in the catalog at all:
+The catalog is rendered from rows in the theme catalogue. The merchant catalog screen at **Design → Themes** (`/admin/design/templates`) shows every template where `in_dev = 0` AND (`active = 'yes'` OR `coming_soon = 1`), grouped into **Free** and **Paid** tabs. Three boolean-ish flags decide whether a row is in the catalog at all:
 
 | Flag | Meaning | Effect |
 |---|---|---|
@@ -53,9 +53,9 @@ Not covered here:
 
 The data-source rules apply everywhere theme identity is read or written:
 
-- **The catalog screen** at `/admin/storefront/templates` runs the `in_dev = 0 AND (active = 'yes' OR coming_soon = 1)` filter.
-- **The Install action** at `admin.templates.change/{mapping}` re-validates `active = 'yes'` server-side; this is why an `active = 'no'` theme cannot be switched to even if a URL is hand-crafted. See [[themes-catalog-install-flow]].
-- **The Purchase action** at `admin.templates.purchase/{mapping}` similarly resolves the row by `mapping` and rejects `in_dev = 1` rows for non-staff sessions.
+- **The catalog screen** at `/admin/design/templates` runs the `in_dev = 0 AND (active = 'yes' OR coming_soon = 1)` filter.
+- **The Install action** at `POST /admin/api/design/templates/{mapping}/change` re-validates `active = 'yes'` server-side; this is why an `active = 'no'` theme cannot be switched to even if a URL is hand-crafted. See [[themes-catalog-install-flow]].
+- **The Purchase action** goes through the checkout panel ([[design-themes-purchase]]).
 - **Routing + view path** — the active `mapping` becomes the segment in `themes/<mapping>/templates/` that the renderer searches first; missing templates fall through to the theme templates (see [[themes-catalog-inheritance]]).
 - **Theme-scoped tables** — `front_theme` keys per-merchant variable overrides by `(site_id, mapping)`; `site_subscriptions` keys paid-theme purchases by `mapping`. Switching themes leaves the prior `(site_id, prev_mapping)` rows in place — they re-activate if the merchant ever switches back.
 

@@ -1,13 +1,13 @@
 ---
 type: feature
-nav_path: "Nitrogen → Storefronts → Create Storefront → Repository"
+nav_path: "Design → Nitrogen → Create Storefront → Repository"
 route_name: nitrogen.storefront.select-repo
 route_path: /admin/nitrogen/create/repository
 aliases: ["cloudcart/nitro-starter", "Connect a Repository", "Nitrogen create new repo", "Nitrogen connect existing repo", "Nitrogen starter template", "cloudcart/nitrogen-starter"]
 tags: [nitrogen, storefronts, create, wizard, github, repository]
 plan_gates: []
 created: 2026-06-10
-updated: 2026-11-04
+updated: 2026-11-05
 source_count: 5
 ---
 # Nitrogen → Create Storefront — Repository selection

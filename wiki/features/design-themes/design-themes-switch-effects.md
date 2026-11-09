@@ -1,8 +1,8 @@
 ---
 type: feature
 nav_path: "Design → Themes → Switch effects"
-route_name: admin.templates.change
-route_path: /admin/storefront/templates/change/{mapping}
+route_name: design.templates
+route_path: /admin/design/templates
 aliases: ["What is preserved on theme switch", "Demo pages reseed", "Theme switch preservation", "pages.json installer", "Theme-seeded pages", "Връщане и замяна empty page", "Доставка и плащане empty page"]
 tags: [design, themes, templates, switch, pages]
 plan_gates: []

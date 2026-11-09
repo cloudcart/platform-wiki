@@ -21,13 +21,12 @@ The merchant-facing labels are locale-dependent (BG vs EN) and must be cited **e
 
 ## Scope
 
-Covered: the 9 top-level items + their locale labels, the full sub-menu of the "Дизайн" item (where "Модули" lives), and the nav_path conventions used elsewhere in the wiki.
+Covered: the 9 top-level items + their locale labels, what clicking "Дизайн" opens, its full sub-menu (Nitrogen first, "Модули" last), and the nav_path conventions used elsewhere in the wiki.
 
 Not covered: per-screen feature details (the individual `wiki/features/` pages); per-item permission gating (see [[settings-staff]]); how the dashboard "Setup guide" composes its steps (see [[dashboard]]).
 
 ## Contrasts
 
-- **HTML class name vs displayed label** — the "Дизайн" item carries the legacy HTML class `my-store` and the translation key `sidebar.storefront`, both survivors of an older "Design" label. Neither is the merchant-facing label. Cite the **displayed label per locale**, not the class or key.
 - **Translation key vs displayed label** — `sidebar.widgets` displays as "Модули" in BG but "Widgets" in EN (see Definition). Cite the displayed label in body prose; preserve the route / permission key (`store.widgets`, `admin.storefront.widgets`) verbatim.
 - **Lang-file label vs per-site value** — where a screenshot differs from the lang-file label (e.g. screenshot **Анализи** vs lang-file "Анализ"), a per-site translation override or an outdated lang entry is in play; the screenshot is what that merchant actually sees. Verified on site 2160: no `sidebar.*` overrides, so the lang-file value applies there.
 
@@ -44,35 +43,40 @@ The **9 top-level items** in display order (labels verified against the BG and E
 | 5 | **Анализ** *(screenshot: **Анализи** — per-site `(verify)`)* | Analytics | `sidebar.analytics` | `sidebar-reports-link` | Табло за анализи · **АНАЛИЗИ** · Общо продажби · Общо поръчки · Продажби по продукти · Продажби по пакети · Продукти по продадени бройки · Трафик по продукти · … |
 | 6 | **Маркетинг** | Marketing | `sidebar.marketing` | `sidebar-marketing-link` | Marketing suite · Кампании ▾ · Отстъпки · Канали ▾ · SEO ▾ · Бутон за покупка · Блог ▾ · **ПРИЛОЖЕНИЯ** · Cart Rules · Bumpcart |
 | 7 | **Приложения** | Apps | `sidebar.apps` | `sidebar-apps-link` | Apps catalogue (see [[apps]]) |
-| 8 | **Дизайн** | **Design** | `sidebar.storefront` | `sidebar-store-link` | See sub-menu below — Дизайн → Модули lives here |
+| 8 | **Дизайн** | **Design** | `Design` | n/a | Opens a page with the choice between Nitrogen and ready-made templates; sub-menu below, starting with **Nitrogen** |
 | 9 | **Настройки** | Settings | `sidebar.settings` | `sidebar-settings-link` | See [[settings]] hub for the full sub-menu |
 
-**Nitrogen has no entry in this menu.** Its area opens at the address `/admin/nitrogen` ([[nitrogen]]).
+**Nitrogen is the first link under Дизайн**, at `/admin/nitrogen` ([[nitrogen]]). It has no top-level entry.
 
-Items 8 and 9 are top-level chips, but their **sub-menus** are still rendered by the legacy admin layer rather than the modern one — so the "Дизайн" sub-menu structure below is the authoritative reference for that branch.
+### What clicking "Дизайн" opens
 
-### Дизайн sub-menu (verified 2026-06-10 against the BG / EN sidebar lang files)
+The page `/admin/design`, *"How do you want to design your store?"*, with the choice between **Nitrogen** and **Ready-made templates** ([[design]]). A staff member without the **Nitrogen Storefronts** permission goes to **Избери дизайн** instead, and one with Nitrogen but without the templates permission goes to Nitrogen. The sub-menu is open on that page and on Nitrogen's pages.
 
-This is what the merchant sees on clicking "Дизайн". **"Модули"** sits under the **НАСТРОЙКИ** subsection of Дизайн — it is **not** a top-level Design item.
+### Дизайн sub-menu (order and addresses verified 2026-11-05 against the admin's code)
 
-| Item (BG) | Item (EN) | Translation key | Route | Wiki |
-|---|---|---|---|---|
-| **Избери дизайн** | **Themes** | `sidebar.templates` | `admin.templates.list` | [[design-themes]] |
-| **Навигация** | **Navigation** | `sidebar.navigation` | `admin.navigation.list` | [[design-navigation]] |
-| **Банери** *(specific clients only)* | **Banners** | `sidebar.banners` | `admin.banners.list` | (client-specific carve-out) |
-| **Лого** | **Logo** | `sidebar.logo` | `admin.setting.logo_panel` (ajax panel) | [[design-themes#Logo]] |
-| **Редакция на дизайн** | **Design edit** | `sidebar.design_edit` | (section header — not clickable) | — |
-| **Цветове и шрифтове** | **Colors & typography** | `global.label.colors` + `global.label.typography` | `/admin/builder` | [[design-themes#Theme Editor]] |
-| **Добавяне на CSS/JS** | **Custom CSS/JS** | `template.custom_css_js` | `admin.custom.assets` | [[design-custom-assets]] |
-| **Страници** | **Static Pages** *(section header)* | `sidebar.pages` | (section header) | — |
-| **Начална** | **Homepage** | `sidebar.homepage` | `marketing/pages/builder/system_page/home` | [[marketing-landing-pages]] |
-| **Целеви страници** | **Static pages** | `sidebar.static_pages` | `admin.pages.list` → `/admin/design/pages` | [[marketing-landing-pages]] |
-| **Успешна поръчка** | **Thank You Page** | `sidebar.thank_you_page` | `marketing/pages/builder/system_page/thank_you` | [[marketing-landing-pages]] |
-| **Грешка 404** | **Error 404** | `sidebar.error_404` | `marketing/pages/builder/system_page/error.404` | [[marketing-landing-pages]] |
-| **Често Задавани Въпроси** | **FAQ** | `sidebar.faq` | `/admin/design/pages/add/faq` | [[marketing-landing-pages]] |
-| **Външна страница** | (no fixed EN) | `page.help.landing_page` | `/admin/design/pages/add/landing` | [[marketing-landing-pages]] |
-| **Настройки** | **Settings** *(section header)* | `sidebar.settings` | (section header) | — |
-| **Модули** | **Widgets** ← *not "Modules" in EN* | `sidebar.widgets` *(legacy key)* | `admin.storefront.widgets` → `/admin/storefront/widgets` | [[design-modules]] |
+**"Модули"** sits under the **НАСТРОЙКИ** subsection of Дизайн — it is **not** a top-level Design item. The English labels are the code's; the Bulgarian ones come from translations held outside the code.
+
+| Item (BG) | Item (EN) | Address | Wiki |
+|---|---|---|---|
+| **Nitrogen** *(tagged new)* | **Nitrogen** | `/admin/nitrogen` | [[nitrogen]] |
+| **Избери дизайн** | **Choose Design** | `/admin/design/templates` | [[design-themes]] |
+| **Навигация** | **Navigation** | `/admin/design/navigation` | [[design-navigation]] |
+| **Банери** *(specific clients only)* | **Banners** | route `design.banners` | (client-specific carve-out) |
+| **Лого** | **Logo** | `/admin/settings/brand` | [[settings-brand]] |
+| **Редакция на дизайн** | **Design edit** | (section header — not clickable) | — |
+| **Цветове и шрифтове** | **Colors and Fonts** | `/admin/builder` | [[design-theme-editor]] |
+| **Добавяне на CSS/JS** | **Custom CSS/JS** | `/admin/design/custom-assets` | [[design-custom-assets]] |
+| **Страници** | **Pages** *(section header)* | (section header) | — |
+| **Начална** | **Homepage** | `/admin/marketing/pages/builder/system_page/home` | [[marketing-landing-pages]] |
+| **Целеви страници** | **Static pages** | `/admin/design/pages` | [[marketing-landing-pages]] |
+| **Успешна поръчка** | **Thank you page** | `/admin/marketing/pages/builder/system_page/thank_you` | [[marketing-landing-pages]] |
+| **Грешка 404** | **Error 404 page** | `/admin/marketing/pages/builder/system_page/error.404` | [[marketing-landing-pages]] |
+| **Често Задавани Въпроси** | **FAQ** | `/admin/design/pages/add/faq` | [[marketing-landing-pages]] |
+| **Външна страница** | **External page** | `/admin/design/pages/add/landing` | [[marketing-landing-pages]] |
+| **Настройки** | **Settings** *(section header)* | (section header) | — |
+| **Модули** | **Widgets** ← *not "Modules" in EN* | `/admin/storefront/widgets` | [[design-modules]] |
+
+Nitrogen shows only with the **Nitrogen Storefronts** permission. **Начална**, **Успешна поръчка** and **Грешка 404** show only on a theme with the page builder.
 
 **Nav_path convention for pages under Дизайн → Модули:** use `"Design → Modules → <Category> → <Module>"`. The **НАСТРОЙКИ** divider inside Дизайн is a typographic section header, not a clickable nav level, so it does **not** appear in the `nav_path` breadcrumb.
 
@@ -86,6 +90,8 @@ Each sidebar item is wrapped in a permission check. Staff with restricted roles 
 - [[dashboard]] — drives the "Първи стъпки" / Setup guide top-level chip.
 - [[settings]] — full sub-menu under "Настройки".
 - [[design-modules]] — the Modules screen (route `/admin/storefront/widgets`).
+- [[design]] — the page "Дизайн" opens.
+- [[nitrogen]] — the first link under "Дизайн".
 - [[design-themes]] — Choose design / templates / theme editor.
 - [[design-navigation]] — Navigation menus editor.
 - [[design-custom-assets]] — Custom CSS / JS injection.
@@ -94,5 +100,4 @@ Each sidebar item is wrapped in a permission check. Staff with restricted roles 
 
 ## Open Questions
 
-- Migration of the Дизайн and Настройки **sub-menus** from the legacy layer to the modern admin — the top-level chips are already modern, but the sub-menus below them are not. Sequencing is `(verify)`.
 - Whether the screenshot label **Анализи** (vs lang-file "Анализ") is a per-site override or a stale lang entry `(verify)`.

@@ -1,6 +1,6 @@
 ---
 type: feature
-nav_path: "Nitrogen → Storefronts → Create Storefront"
+nav_path: "Design → Nitrogen → Create Storefront"
 route_name: nitrogen.storefront.create
 route_path: /admin/nitrogen/create
 aliases: ["Create Nitrogen Storefront", "Create headless storefront", "Nitrogen storefront wizard", "New storefront"]
@@ -41,7 +41,7 @@ Both routes render inside the settings wrapper with the rocket icon (`far fa-roc
 ## What the merchant can do here
 
 - **Name the storefront** and pick a deployment method (**GitHub** or **Command line or CI/CD**) — see [[nitrogen-create-storefront-setup]].
-- **Take the CLI path** — create the storefront immediately, receive a one-time deployment token and the next-step commands, skip all repo steps — see [[nitrogen-create-storefront-setup]].
+- **Take the CLI path** — create the storefront immediately, receive one box to copy for an AI agent and, under **Advanced**, a one-time deployment token and the next-step commands, skip all repo steps — see [[nitrogen-create-storefront-setup]].
 - **Connect a GitHub account** via OAuth + the CloudCart Nitrogen GitHub App, or disconnect / switch accounts — see [[nitrogen-create-storefront-github-connect]].
 - **Create a new GitHub repo** from the `cloudcart/nitro-starter` template (choose name + Private/Public visibility), OR **connect an existing repo** from a searchable list — see [[nitrogen-create-storefront-repository]].
 - **Watch provisioning** complete step-by-step, retry a failed step, and land on the new storefront's detail page — see [[nitrogen-create-storefront-provisioning]].

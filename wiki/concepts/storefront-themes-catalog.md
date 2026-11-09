@@ -4,7 +4,7 @@ nav_path: "Concept → Storefront themes catalog"
 aliases: ["Storefront themes catalog", "Theme catalog", "Theme list", "Templates list", "Каталог теми", "Шаблони catalog"]
 tags: [storefront, themes, catalog, reference]
 created: 2026-06-08
-updated: 2026-11-04
+updated: 2026-11-05
 source_count: 1
 ---
 
@@ -12,9 +12,9 @@ source_count: 1
 
 ## Definition
 
-The **storefront themes catalog** is the merchant-visible library of installable storefront templates surfaced in the admin at **Design → Themes** (`/admin/storefront/templates`, route `admin.templates.list`). Each merchant has exactly one **active theme** at any moment — the theme's `mapping` slug is stored on the site record and drives every page of the storefront: layout, default modules, page-builder block library, colour palette, typography, and the set of variables the Theme Editor can edit.
+The **storefront themes catalog** is the merchant-visible library of installable storefront templates surfaced in the admin at **Design → Choose Design** (`/admin/design/templates`, route `design.templates`). Each merchant has exactly one **active theme** at any moment — the theme's `mapping` slug is stored on the site record and drives every page of the storefront: layout, default modules, page-builder block library, colour palette, typography, and the set of variables the Theme Editor can edit.
 
-The catalog draws from the theme catalogue table. The page shows every template where `in_dev = 0` AND (`active = 'yes'` OR `coming_soon = 1`), grouped into **Free** and **Paid** tabs. A template's *Free vs Paid* status is computed at render time: a template with `price` null/0 behaves as **free** for any merchant; a template with `price > 0` is **paid** and requires an active subscription (`site_subscriptions` row keyed by `mapping`) — without one, the **Install** button silently redirects to the purchase flow at `admin.templates.purchase`.
+The catalog draws from the theme catalogue table. The page shows every template where `in_dev = 0` AND (`active = 'yes'` OR `coming_soon = 1`), grouped into **Free** and **Paid** tabs. A template's *Free vs Paid* status is computed at render time: a template with `price` null/0 behaves as **free** for any merchant; a template with `price > 0` is **paid** and requires an active subscription (`site_subscriptions` row keyed by `mapping`) — without one, the card shows **Buy** with the price, which opens the checkout panel.
 
 The catalog is **not** the same as the set of all themes that exist on disk or in the DB. It is a curated subset filtered by three flags (`in_dev`, `active`, `coming_soon`), shadowed by the merchant's plan gates, and shaped by the inheritance fallback to the theme templates. The pages in this cluster decompose those mechanics aspect by aspect.
 
